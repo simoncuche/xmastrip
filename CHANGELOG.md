@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.6.2 – 03.10.2026
+
+- Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden.
+
 ## 1.6.1 – 03.10.2026
 
 - Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis.
