@@ -42,7 +42,9 @@ function prerenderMap(m) {
     o.cv = c;
     if (o.emit) { const [ec, ex] = canvas(W, H); o.emit(ex, W, H, o); o.ecv = ec; }
     o.px = o.x * TS - o.padX; o.py = o.y * TS - o.drawH;
-    o.sortY = (o.y + o.h) * TS - (o.sortOff || 0);
+    /* Tiefenlinie knapp über der untersten Kachelreihe: Wer in der untersten Reihe steht (z. B. in einer Tür), wird vor dem Objekt gezeichnet;
+       Akteure haben ihre Füsse bei Kachel*16+3 … +18, darum -14. */
+    o.sortY = (o.y + o.h) * TS - 14 - (o.sortOff || 0);
   }
 }
 

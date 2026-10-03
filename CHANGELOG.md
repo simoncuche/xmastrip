@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.6.4 – 03.10.2026
+
+- Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht.
+
 ## 1.6.3 – 03.10.2026
 
 - Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor.
