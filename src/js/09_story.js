@@ -72,6 +72,17 @@ const DEP_TIME = 9 * 60 + 10;
 const TICKET_PRICE = 468; /* 12 × 39.00 CHF */
 const TICKET_CASH = 500;  /* was der Kassier für das Billett herausrückt */
 const latecomer = () => who('smoke'); /* der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat */
+/* Am Torbogen müssen der Partylöwe (Proviant), der Fotograf (Tipp) und der Kassier (Geld fürs Billett) begrüsst werden,
+   dazu insgesamt mindestens vier. meetNeed() liefert, wer noch fehlt. */
+const listNames = (ids) => { const n = ids.map(fname); return n.length <= 1 ? n.join('') : n.slice(0, -1).join(', ') + ' und ' + n[n.length - 1]; };
+const moreStr = (k) => (k === 1 ? 'einen weiteren Kollegen' : `${k} weitere Kollegen`);
+function meetNeed() {
+  const met = G.S.flags.met || {};
+  const req = [who('party'), who('foto')].concat(playerIsKassier() ? [] : [who('kassier')]);
+  const missing = req.filter((x) => !met[x]);
+  const more = Math.max(0, 4 - Object.keys(met).length - missing.length);
+  return { req, missing, more };
+}
 /* Jemand aus der Gruppe, der eine Rolle spricht – aber nie der Nachzügler selbst. */
 function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; return Object.keys(FRIENDS).find((x) => x !== id) || id; }
 
@@ -150,7 +161,14 @@ const Story = {
   objective() {
     const s = G.S.stage, org = playerIsKassier() ? null : fname(who('kassier'));
     switch (s) {
-      case 'meet': return playerIsKassier() ? 'Triff die Jungs beim Torbogen – du kaufst das Gruppenbillett. Abfahrt 9:10!' : `Triff die Jungs beim Torbogen – ${org} gibt dir das Geld fürs Billett. Abfahrt 9:10!`;
+      case 'meet': {
+        const n = meetNeed();
+        if (!n.missing.length && !n.more) return 'Alle da – gleich geht\'s zum Gleis. Abfahrt 9:10!';
+        const parts = [];
+        if (n.missing.length) parts.push(listNames(n.missing));
+        if (n.more) parts.push(moreStr(n.more));
+        return `Torbogen: Begrüss ${parts.join(' – dazu ')} · Abfahrt 9:10!`;
+      }
       case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
       case 'arrived': return 'Innsbruck Hbf! Aussteigen – Zugtür im Vorraum links vom Speisewagen';
@@ -174,7 +192,7 @@ const Story = {
   objectiveTag() { return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
   steps() {
     return [
-      { t: 'Die Jungs beim Torbogen treffen', d: 'Bahnhofplatz Luzern', done: stageAt('board') },
+      { t: 'Die Jungs beim Torbogen treffen', d: `Bahnhofplatz Luzern – ${playerIsKassier() ? `${fname(who('party'))} und ${fname(who('foto'))}` : `${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}`} begrüssen, insgesamt mindestens vier`, done: stageAt('board') },
       { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
       { t: 'Pünktlich um 9:10 in den IR nach Zürich', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
       { t: 'Hotel Zirbe finden', d: 'Gasse südlich vom Goldenen Dachl', done: stageAt('checkin') },
@@ -246,6 +264,8 @@ const Story = {
         const sp = spots[k++ % spots.length];
         add(id, sp[0], sp[1], sp[2], 'stand', { bubbleRand: id === org ? ['?'] : ['dots', 'note'] });
       }
+      /* Wer noch begrüsst werden muss, winkt dauerhaft mit „!“ */
+      for (const n of G.npcs) if (n.friend && meetNeed().missing.includes(n.id)) { n.bubbleRand = ['!']; n.bubble = '!'; n.bubbleT = 99; }
       return;
     }
     if (m.id === 'luzern_halle' && s === 'board') {
@@ -254,7 +274,12 @@ const Story = {
       return;
     }
     if (m.id === 'zug' && (s === 'ride' || s === 'arrived')) {
-      if (s === 'arrived') { let k = 0; for (const id of ids) { add(id, 20 + (k % 3), 3 + Math.floor(k / 3), 3, 'stand', { bubbleRand: ['!'] }); k++; } return; }
+      if (s === 'arrived') {
+        /* Warten vor der Tür (Reihen 5–6) und an den Bistrotischen – nicht fest, damit der Spieler zur Tür durchkommt */
+        const spots = [[20, 5], [21, 5], [22, 5], [20, 6], [21, 6], [22, 6], [25, 3], [27, 3], [29, 3], [31, 3], [33, 3], [35, 3]];
+        let k = 0; for (const id of ids) { const sp = spots[k++ % spots.length]; add(id, sp[0], sp[1], 3, 'stand', { bubbleRand: ['!'], solid: false }); }
+        return;
+      }
       const tm = trainState().tm;
       const seats = [[46, 3, 2], [46, 2, 2], [48, 2, 1], [46, 5, 2], [48, 5, 1], [46, 6, 2], [48, 6, 1], [50, 2, 2], [52, 2, 1], [50, 3, 2], [52, 3, 1]];
       const jassP = who('jass');
@@ -445,6 +470,9 @@ const Story = {
   async meetTalk(id) {
     const fl = G.S.flags, org = who('kassier'), party = who('party'), foto = who('foto');
     fl.met[id] = 1;
+    const me = G.npcs.find((n) => n.friend && n.id === id);
+    if (me) { me.bubbleRand = ['dots', 'note']; me.bubble = null; me.bubbleT = 0; }
+    UI.hud();
     if (id === party && !fl.gotBeer) {
       fl.gotBeer = 1; addInv('dosenbier');
       await this.say(id, 'Hoi! Ich hab Reiseproviant geholt. Da, ein Dosenbier für dich – aber erst im Zug aufmachen!');
@@ -466,9 +494,11 @@ const Story = {
       G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
       UI.toast(hasInv('billett') ? 'Die Jungs gehen zum Gleis. Durch den Bahnhof zu Gleis 4!' : 'Die Jungs gehen zum Gleis. Kauf das Billett am Automaten in der Halle – bis 9:10!');
     } else {
-      const left = need.filter((x) => !fl.met[x]).map(fname);
-      if (left.length) UI.toast(`Noch nicht begrüsst: ${left.join(', ')}`);
-      else if (metCount < 4) UI.toast(`Begrüss noch ${4 - metCount} weitere Kollegen.`);
+      const n = meetNeed();
+      const parts = [];
+      if (n.missing.length) parts.push(`noch ${listNames(n.missing)} begrüssen (${n.missing.map((x) => FRIENDS[x].role).join(', ')}) – die mit dem „!“`);
+      if (n.more) parts.push(`dazu ${moreStr(n.more)}`);
+      UI.toast(`Torbogen: ${parts.join(', ')}.`);
     }
   },
   async lateTalk(id) {

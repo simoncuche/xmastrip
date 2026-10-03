@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.7.2 – 03.10.2026
+
+- Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.
+- Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei.
+
 ## 1.7.1 – 03.10.2026
 
 - Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter.

@@ -354,9 +354,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.7.1";
+const APP_VERSION = "1.7.2";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -4657,6 +4657,17 @@ const DEP_TIME = 9 * 60 + 10;
 const TICKET_PRICE = 468; /* 12 × 39.00 CHF */
 const TICKET_CASH = 500;  /* was der Kassier für das Billett herausrückt */
 const latecomer = () => who('smoke'); /* der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat */
+/* Am Torbogen müssen der Partylöwe (Proviant), der Fotograf (Tipp) und der Kassier (Geld fürs Billett) begrüsst werden,
+   dazu insgesamt mindestens vier. meetNeed() liefert, wer noch fehlt. */
+const listNames = (ids) => { const n = ids.map(fname); return n.length <= 1 ? n.join('') : n.slice(0, -1).join(', ') + ' und ' + n[n.length - 1]; };
+const moreStr = (k) => (k === 1 ? 'einen weiteren Kollegen' : `${k} weitere Kollegen`);
+function meetNeed() {
+  const met = G.S.flags.met || {};
+  const req = [who('party'), who('foto')].concat(playerIsKassier() ? [] : [who('kassier')]);
+  const missing = req.filter((x) => !met[x]);
+  const more = Math.max(0, 4 - Object.keys(met).length - missing.length);
+  return { req, missing, more };
+}
 /* Jemand aus der Gruppe, der eine Rolle spricht – aber nie der Nachzügler selbst. */
 function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; return Object.keys(FRIENDS).find((x) => x !== id) || id; }
 
@@ -4735,7 +4746,14 @@ const Story = {
   objective() {
     const s = G.S.stage, org = playerIsKassier() ? null : fname(who('kassier'));
     switch (s) {
-      case 'meet': return playerIsKassier() ? 'Triff die Jungs beim Torbogen – du kaufst das Gruppenbillett. Abfahrt 9:10!' : `Triff die Jungs beim Torbogen – ${org} gibt dir das Geld fürs Billett. Abfahrt 9:10!`;
+      case 'meet': {
+        const n = meetNeed();
+        if (!n.missing.length && !n.more) return 'Alle da – gleich geht\'s zum Gleis. Abfahrt 9:10!';
+        const parts = [];
+        if (n.missing.length) parts.push(listNames(n.missing));
+        if (n.more) parts.push(moreStr(n.more));
+        return `Torbogen: Begrüss ${parts.join(' – dazu ')} · Abfahrt 9:10!`;
+      }
       case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
       case 'arrived': return 'Innsbruck Hbf! Aussteigen – Zugtür im Vorraum links vom Speisewagen';
@@ -4759,7 +4777,7 @@ const Story = {
   objectiveTag() { return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
   steps() {
     return [
-      { t: 'Die Jungs beim Torbogen treffen', d: 'Bahnhofplatz Luzern', done: stageAt('board') },
+      { t: 'Die Jungs beim Torbogen treffen', d: `Bahnhofplatz Luzern – ${playerIsKassier() ? `${fname(who('party'))} und ${fname(who('foto'))}` : `${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}`} begrüssen, insgesamt mindestens vier`, done: stageAt('board') },
       { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
       { t: 'Pünktlich um 9:10 in den IR nach Zürich', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
       { t: 'Hotel Zirbe finden', d: 'Gasse südlich vom Goldenen Dachl', done: stageAt('checkin') },
@@ -4831,6 +4849,8 @@ const Story = {
         const sp = spots[k++ % spots.length];
         add(id, sp[0], sp[1], sp[2], 'stand', { bubbleRand: id === org ? ['?'] : ['dots', 'note'] });
       }
+      /* Wer noch begrüsst werden muss, winkt dauerhaft mit „!“ */
+      for (const n of G.npcs) if (n.friend && meetNeed().missing.includes(n.id)) { n.bubbleRand = ['!']; n.bubble = '!'; n.bubbleT = 99; }
       return;
     }
     if (m.id === 'luzern_halle' && s === 'board') {
@@ -4839,7 +4859,12 @@ const Story = {
       return;
     }
     if (m.id === 'zug' && (s === 'ride' || s === 'arrived')) {
-      if (s === 'arrived') { let k = 0; for (const id of ids) { add(id, 20 + (k % 3), 3 + Math.floor(k / 3), 3, 'stand', { bubbleRand: ['!'] }); k++; } return; }
+      if (s === 'arrived') {
+        /* Warten vor der Tür (Reihen 5–6) und an den Bistrotischen – nicht fest, damit der Spieler zur Tür durchkommt */
+        const spots = [[20, 5], [21, 5], [22, 5], [20, 6], [21, 6], [22, 6], [25, 3], [27, 3], [29, 3], [31, 3], [33, 3], [35, 3]];
+        let k = 0; for (const id of ids) { const sp = spots[k++ % spots.length]; add(id, sp[0], sp[1], 3, 'stand', { bubbleRand: ['!'], solid: false }); }
+        return;
+      }
       const tm = trainState().tm;
       const seats = [[46, 3, 2], [46, 2, 2], [48, 2, 1], [46, 5, 2], [48, 5, 1], [46, 6, 2], [48, 6, 1], [50, 2, 2], [52, 2, 1], [50, 3, 2], [52, 3, 1]];
       const jassP = who('jass');
@@ -5030,6 +5055,9 @@ const Story = {
   async meetTalk(id) {
     const fl = G.S.flags, org = who('kassier'), party = who('party'), foto = who('foto');
     fl.met[id] = 1;
+    const me = G.npcs.find((n) => n.friend && n.id === id);
+    if (me) { me.bubbleRand = ['dots', 'note']; me.bubble = null; me.bubbleT = 0; }
+    UI.hud();
     if (id === party && !fl.gotBeer) {
       fl.gotBeer = 1; addInv('dosenbier');
       await this.say(id, 'Hoi! Ich hab Reiseproviant geholt. Da, ein Dosenbier für dich – aber erst im Zug aufmachen!');
@@ -5051,9 +5079,11 @@ const Story = {
       G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
       UI.toast(hasInv('billett') ? 'Die Jungs gehen zum Gleis. Durch den Bahnhof zu Gleis 4!' : 'Die Jungs gehen zum Gleis. Kauf das Billett am Automaten in der Halle – bis 9:10!');
     } else {
-      const left = need.filter((x) => !fl.met[x]).map(fname);
-      if (left.length) UI.toast(`Noch nicht begrüsst: ${left.join(', ')}`);
-      else if (metCount < 4) UI.toast(`Begrüss noch ${4 - metCount} weitere Kollegen.`);
+      const n = meetNeed();
+      const parts = [];
+      if (n.missing.length) parts.push(`noch ${listNames(n.missing)} begrüssen (${n.missing.map((x) => FRIENDS[x].role).join(', ')}) – die mit dem „!“`);
+      if (n.more) parts.push(`dazu ${moreStr(n.more)}`);
+      UI.toast(`Torbogen: ${parts.join(', ')}.`);
     }
   },
   async lateTalk(id) {
@@ -6905,8 +6935,8 @@ async function startGame(state, fresh) {
     G.busy++;
     await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
     await Story.say(null, playerIsKassier()
-      ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
-      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
+      ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen – begrüss vor allem ${fname(who('party'))} (Proviant) und ${fname(who('foto'))} (Fototipp), die winken mit einem „!“. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
+      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen – begrüss dort ${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
     if (Input.touch) await Story.say(null, 'Zieh mit dem Daumen links auf dem Bildschirm, um zu gehen. Weit ziehen heisst rennen. Mit A sprichst du mit Leuten und benutzt Dinge. Oben rechts ist dein Handy.');
     else await Story.say(null, 'WASD oder Pfeiltasten zum Gehen, Shift zum Rennen, E für Aktionen, M für dein Handy.');
     G.busy--;
