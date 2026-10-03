@@ -64,7 +64,7 @@ function itemIconURL(icon) {
 const UI = {
   els: {}, dlgOpen: false, _dlgResolve: null, _typing: null, _choices: null, _sel: 0, ovOpen: false,
   init() {
-    for (const id of ['hud', 'hClock', 'hDay', 'hPlace', 'hEur', 'hChf', 'hProm', 'boardText', 'boardGl', 'toasts', 'dialog', 'dlgPort', 'dlgName', 'dlgText', 'dlgChoices', 'overlay', 'fade', 'fadeText', 'touch', 'btnA', 'actLabel', 'coaster', 'btnPhone']) this.els[id] = document.getElementById(id);
+    for (const id of ['hud', 'hClock', 'hDay', 'hPlace', 'hEur', 'hChf', 'hProm', 'boardText', 'boardGl', 'toasts', 'dialog', 'dlgPort', 'dlgName', 'dlgText', 'dlgChoices', 'overlay', 'fade', 'fadeText', 'fadeCv', 'touch', 'btnA', 'actLabel', 'coaster', 'btnPhone']) this.els[id] = document.getElementById(id);
     this.els.dialog.addEventListener('pointerdown', (e) => { if (e.target.closest('.choice')) return; e.preventDefault(); this.dlgAdvance(); });
     this.els.btnPhone.addEventListener('click', () => { if (!G.busy && !this.ovOpen) Phone.open(); });
   },
@@ -209,8 +209,8 @@ const UI = {
     return true;
   },
   /* ---- Überblenden ---- */
-  fadeOut(text = '') { this.els.fadeText.textContent = text; this.els.fade.classList.add('on'); return sleep(380); },
-  fadeIn() { this.els.fade.classList.remove('on'); return sleep(300); },
+  fadeOut(text = '') { this.els.fade.classList.remove('scene'); this.els.fadeText.textContent = text; this.els.fade.classList.add('on'); return sleep(380); },
+  async fadeIn() { this.els.fade.classList.remove('on'); await sleep(300); this.els.fade.classList.remove('scene'); },
   async card(text, ms = 1600) { await this.fadeOut(text); await sleep(ms); await this.fadeIn(); },
   /* Spiel verloren: Es gibt nur den Neustart. */
   gameOver(title, text) {

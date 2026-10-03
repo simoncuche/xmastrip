@@ -543,11 +543,9 @@ const Story = {
     await this.say(voice('party'), 'Der raucht noch vor dem Bahnhof! Ich hab\'s ihm dreimal gesagt.');
     Snd.sfx('ding');
     await this.say(null, '🔊 „Bitte zurücktreten, die Türen schliessen.“ Die Türen zischen zu. Der IR 70 rollt an – und draussen auf dem Perron rennt jemand mit einer Zigarette im Mund hinterher. Zu spät.');
-    await UI.fadeOut('IR 70 · Luzern → Zürich HB');
+    await Scene.play('train', { text: 'IR 70 · Luzern → Zürich HB', ms: 2600, label: 'IR 70', col: '#c8302a', keep: true });
     passTime(46);
-    await sleep(1400);
-    UI.els.fadeText.textContent = 'Umsteigen in Zürich HB · Railjet nach Innsbruck';
-    await sleep(1600);
+    await Scene.play('train', { text: 'Umsteigen in Zürich HB · Railjet nach Innsbruck', ms: 2600, label: 'RAILJET', col: '#a8282a', lake: true, keep: true });
     G.S.flags.trainDep = G.S.time + 2;
     this.setStage('ride');
     enterMap('zug', 'start');
@@ -706,11 +704,10 @@ const Story = {
       mins = wake - t;
     }
     const drunk = st.prom;
-    await UI.fadeOut(mins > 300 ? 'Gute Nacht …' : 'Zzz …');
+    await Scene.play('sleep', { text: mins > 300 ? 'Gute Nacht …' : `Zzz … (${Math.round(mins / 60)} Std.)`, ms: mins > 300 ? 3200 : 2000, long: mins > 300, keep: true });
     passTime(mins, { sleep: true, rate: mins > 300 ? 0.3 : 0.38 });
     G.S.lastSleep = mins > 300 ? G.S.time : Math.min(G.S.time, G.S.lastSleep + mins * 3);
     if (mins > 300) { st.energy = 100; if (drunk > 1.2) { st.hang = 100; mood(-10); } else mood(8); G.warned = {}; }
-    await sleep(1300);
     G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
     this._lastHour = Math.floor(hourOf(G.S.time));
     await UI.fadeIn();
@@ -752,13 +749,11 @@ const Story = {
     if (c === 0) { st.smell = Math.max(0, st.smell - 20); energy(3); mood(1); Snd.sfx('splash'); UI.toast('Erfrischt.'); }
   },
   async shower() {
-    await UI.fadeOut('Du duschst ausgiebig …');
+    Snd.sfx('splash');
+    await Scene.play('shower', { text: 'Du duschst ausgiebig … und singst dabei.', ms: 3000 });
     passTime(15);
     const st = G.S.st;
     st.wet = 0; st.smell = 0; energy(12); mood(8); st.prom = Math.max(0, st.prom - 0.05); st.nau = Math.max(0, st.nau - 8);
-    Snd.sfx('splash');
-    await sleep(1000);
-    await UI.fadeIn();
     achieve('dusche');
     UI.toast(st.prom > 1.4 ? 'Kalt duschen hilft. Ein bisschen.' : 'Frisch wie ein Bergbach!');
   },
@@ -769,7 +764,7 @@ const Story = {
     opts.push('Zurück');
     const c = await this.ask(null, where === 'zug' ? 'Das Zug-WC. Es schaukelt.' : 'Das WC.', opts);
     const k = opts[c];
-    if (k === 'Kurz aufs WC') { passTime(3); mood(1); UI.toast('Erleichtert.'); }
+    if (k === 'Kurz aufs WC') { await Scene.play('toilet', { text: where === 'zug' ? 'Das Zug-WC schaukelt …' : 'Kurz aufs WC …', ms: 3000, zug: where === 'zug' }); passTime(3); mood(1); UI.toast('Erleichtert.'); }
     if (k === 'Hände waschen') { st.smell = Math.max(0, st.smell - 10); Snd.sfx('splash'); }
     if (k === 'Kontrolliert übergeben') {
       Snd.sfx('vomit'); G.fx.shake = 0.5;
@@ -1017,18 +1012,18 @@ const Story = {
     if (c === 0) { if (pay('eur', 1)) { Snd.sfx('splash'); mood(4); await this.say(null, pick(['Du wünschst dir, dass der Kater morgen ausbleibt.', 'Du wünschst dir einen Jass-Sieg.', 'Du wünschst dir, dass dieser Ausflug nie endet.'])); } }
     if (c === 1) { Snd.sfx('splash'); energy(6); st.nau = Math.max(0, st.nau - 5); UI.toast('Brrr! Wach!'); }
     if (c === 2) {
-      await UI.fadeOut('PLATSCH!');
       Snd.sfx('splash');
+      const cop0 = G.npcs.find((n) => n.id === 'polizei');
+      const copComes = !!(cop0 && Math.hypot(cop0.x - G.player.x, cop0.y - G.player.y) < 200 && Math.random() < 0.7);
+      await Scene.play('bath', { text: 'Eiskalt! Erzherzog Leopold schaut streng herab.', ms: 2600, cop: copComes });
       for (let i = 0; i < 30; i++) addPart({ x: G.player.x + rnd(-14, 14), y: G.player.y - rnd(0, 20), vx: rnd(-40, 40), vy: rnd(-70, -20), g: 160, life: 0.9, kind: 'splash' });
       st.wet = 60; energy(15); mood(12); st.prom = Math.max(0, st.prom - 0.15); st.nau = Math.max(0, st.nau - 10);
       G.S.flags.bathAt = G.S.time;
       passTime(5);
-      await sleep(700);
-      await UI.fadeIn();
       achieve('brunnen');
       await this.say('me', st.prom > 1 ? 'JUHUUU! Das Wasser ist eiskalt! Herrlich!' : 'Eiskalt! Aber irgendwie… befreiend.');
-      const cop = G.npcs.find((n) => n.id === 'polizei');
-      if (cop && Math.hypot(cop.x - G.player.x, cop.y - G.player.y) < 200 && Math.random() < 0.7) {
+      const cop = cop0;
+      if (copComes) {
         cop.path = [{ x: G.player.x + 14, y: G.player.y }];
         await sleep(600);
         await this.say(cop, 'Heast! Baden im Brunnen ist verboten. Des kostet a Organmandat: 30 Euro.');
@@ -1067,7 +1062,7 @@ const Story = {
     if (c === 1) { mood(3); UI.toast('Das Pferd schnaubt zufrieden.'); }
     if (c === 0) {
       if (!pay('eur', 40)) { await this.say('Fiakerin', 'Leider nur gegen Bares.'); return; }
-      await UI.card('Klipp, klapp … vorbei an Hofburg, Dom, Goldenem Dachl und Annasäule …', 2200);
+      await Scene.play('fiaker', { text: 'Klipp, klapp … vorbei an Hofburg, Dom, Goldenem Dachl und Annasäule …', ms: 4200 });
       passTime(30); mood(10); energy(5);
       await this.say('Fiakerin', 'Und? Schön war\'s, gell? Das Goldene Dachl hat übrigens 2.657 vergoldete Schindeln.');
     }
@@ -1084,7 +1079,7 @@ const Story = {
     const c = await this.ask(null, 'Stadtturm: 133 Stufen bis zur Aussichtsplattform auf 31 Metern.', [{ t: 'Hinaufsteigen', r: '5,00 €' }, { t: 'Zu viele Stufen' }]);
     if (c !== 0 || !pay('eur', 5)) return;
     if (G.S.st.energy < 15) { await this.say('me', 'Nach 60 Stufen gibst du auf. Zu müde.'); energy(-5); return; }
-    await UI.card('… 131, 132, 133!', 1000);
+    await Scene.play('tower', { text: '133 Stufen … Stufe für Stufe …', ms: 3000 });
     energy(-8); passTime(25);
     await Mini.panorama('turm');
     achieve('turm'); mood(8);
@@ -1096,9 +1091,8 @@ const Story = {
     if (c !== 0) return;
     if (!pay('eur', 38)) { await this.say(null, 'Nicht genug Geld. Am Bankomat beim Hauptbahnhof kannst du abheben.'); return; }
     G.S.flags.bahnTicket = dayOf(G.S.time);
-    await UI.fadeOut('Hungerburgbahn … Umsteigen … Seegrubenbahn …');
+    await Scene.play('cable', { text: 'Hungerburgbahn … Umsteigen … Seegrubenbahn …', ms: 3400, keep: true });
     passTime(20);
-    await sleep(1500);
     enterMap('seegrube', 'entry');
     await UI.fadeIn();
     achieve('seegrube');
@@ -1114,7 +1108,7 @@ const Story = {
       enterMap('ibk', 'hbb_out'); await UI.fadeIn();
       return;
     }
-    await UI.fadeOut('Talfahrt …'); passTime(20); await sleep(1000);
+    await Scene.play('cable', { text: 'Talfahrt …', ms: 2600, down: true, keep: true }); passTime(20);
     enterMap('ibk', 'hbb_out'); await UI.fadeIn();
   },
   async telescope() { await Mini.panorama('seegrube'); mood(4); },
@@ -1185,11 +1179,8 @@ const Story = {
       if (loc) G.S.flags.group = { loc, ids: group, until: G.S.time + 150 };
     }
     const driver = pick(['Der Fahrer erzählt von seinem Cousin in Zürich.', 'Im Radio läuft Schlager, der Fahrer singt mit.', 'Der Fahrer fährt, als wäre er im Ski-Weltcup.', 'Der Fahrer schimpft über die Baustellen am Südring.']);
-    await UI.fadeOut(`🚕 ${group.length ? `${cars > 1 ? 'Zwei Taxis' : 'Taxi'} mit ${group.map(fname).join(', ')}` : 'Taxi'} → ${d.n}`);
-    await sleep(900);
-    UI.els.fadeText.textContent = driver;
+    await Scene.play('taxi', { text: `🚕 ${group.length ? `${cars > 1 ? 'Zwei Taxis' : 'Taxi'} mit ${group.map(fname).join(', ')}` : 'Taxi'} → ${d.n}. ${driver}`, ms: 3000, keep: true });
     passTime(Math.round(6 + d.dist * 0.15));
-    await sleep(1300);
     const st = G.S.st;
     let spew = false;
     if (st.nau > 82 && Math.random() < 0.75) { spew = true; }
