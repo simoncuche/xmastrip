@@ -28,7 +28,7 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
     <div class="plate board-strip"><span class="gl" id="boardGl">ZIEL</span><span id="boardText"></span></div>
   </div>
   <div id="touch" hidden>
-    <div id="stickHint">Ziehen</div>
+    <div id="stickHint" aria-hidden="true"><i class="u">▲</i><i class="d">▼</i><i class="l">◀</i><i class="r">▶</i></div>
     <div id="stick"><div id="knob"></div></div>
     <div id="actLabel" hidden></div>
     <button id="btnA" aria-label="Aktion">A</button>

@@ -116,6 +116,16 @@ const Snd = {
         if (i % 2 === 1) self.noise(0.03, 0.05, 6000, dt, 'highpass', g);
         if (i === 0 || i === 3 || i === 6) self.tone(root * 2, 0.25, 'sine', 0.04, dt, 0, g);
       } },
+      lounge: { bpm: 92, steps: 16, play(i, t) {
+        const g = self.musicGain, bar = Math.floor(st.step / 16) % 4, dt = t - self.ctx.currentTime;
+        if (i % 8 === 0) self.tone(55, 0.3, 'sine', 0.45, dt, -40, g);
+        if (i % 8 === 4) self.noise(0.1, 0.1, 1500, dt, 'bandpass', g);
+        if (i % 2 === 0) self.noise(0.03, 0.05, 8000, dt, 'highpass', g);
+        const bass = [41.2, 41.2, 49, 36.7][bar];
+        if (i % 4 === 2) self.tone(bass * 2, 0.25, 'triangle', 0.14, dt, 0, g);
+        const mel = [[0, 0, 0, 0, 330, 0, 392, 0, 0, 0, 440, 0, 0, 392, 0, 0], [0, 0, 0, 0, 294, 0, 330, 0, 0, 0, 392, 0, 0, 0, 0, 0], [0, 0, 0, 0, 262, 0, 330, 0, 0, 0, 392, 0, 440, 0, 0, 0], [0, 0, 0, 0, 247, 0, 294, 0, 0, 0, 330, 0, 0, 0, 0, 0]][bar];
+        if (mel[i]) self.tone(mel[i], 0.3, 'sine', 0.05, dt, 0, g);
+      } },
       stube: { bpm: 168, steps: 6, play(i, t) {
         const g = self.musicGain, ph = Math.floor(st.step / 6) % 4, dt = t - self.ctx.currentTime;
         if (i % 3 === 0) self.tone([110, 147, 110, 165][ph], 0.2, 'triangle', 0.16, dt, 0, g);

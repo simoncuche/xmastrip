@@ -465,7 +465,10 @@ MAP_BUILDERS.ibk = () => {
   viad.anim = (c, t, px, py) => { const ph = (t / 24) % 1; if (ph < 0.25) { const x = px - 120 + ph / 0.25 * (38 * 16 + 240); c.drawImage(TRAIN_SPRITE(), x, py + 1); } };
   m.fill(57, 64, W - 57, 2, T.PAVE);
   m.warp(71, 63, 'club', 'entry', { label: 'Club Lawine', guard: () => Story.bouncer() });
-  m.trig(65, 63, 1, 1, { label: 'Bogen-Bar', act: () => Story.say(null, 'Ein Schild an der Tür: „Heute geschlossene Gesellschaft“.') });
+  /* Rouge – Tabledance im Bogen 65 */
+  m.warp(65, 63, 'rouge', 'entry', { label: 'Rouge Tabledance', guard: () => Story.rougeDoor() });
+  m.add(mkObj(64, 63, 3, 1, 14, (c, Wd, Hd) => { R(c, 2, 0, Wd - 4, 11, '#1a0a10'); R(c, 3, 1, Wd - 6, 9, '#2a0e18'); pxText(c, 'ROUGE', 10, 2, '#ff5aa0'); R(c, 4, 3, 2, 2, '#ff2a6a'); R(c, Wd - 6, 3, 2, 2, '#ff2a6a'); for (let k = 3; k < Wd - 3; k += 4) P(c, k, 10, '#ff8ac0'); }, { solid: false, light: { dx: 24, dy: 6, r: 28, c: '#ff5aa0' } }));
+  m.spawn('rouge_out', 65, 64, 0);
   m.trig(77, 63, 1, 1, { label: 'Kebap im Bogen', act: () => Story.shop('kebap') });
   m.trig(61, 64, 32, 2, { here: true, label: 'Foto: Viaduktbögen', act: () => Story.photo('bogen'), cond: () => !G.S.photos.bogen });
   m.fill(57, 66, W - 57, 3, T.ASPH); m.fill(57, 67, W - 57, 1, T.ASPH, 1); m.fill(74, 66, 3, 3, T.ZEBRA);
@@ -764,6 +767,33 @@ MAP_BUILDERS.stueberl = () => {
   doorBottom(m, 7, 2, 'ibk', 'stueberl_out', 'Ausgang');
   m.spawn('entry', 7, 10, 3);
   m.light(13 * 16 + 16, 4 * 16 + 4, 50, '#ff9a40');
+  return m;
+};
+/* ----------- Rouge: Tabledance-Lokal in den Bögen ----------- */
+MAP_BUILDERS.rouge = () => {
+  const m = new GMap('rouge', 16, 12, { name: 'Rouge · Tabledance', indoor: true, wallStyle: { cap: '#2a0a10' }, music: 'lounge', bg: '#0c0408' });
+  roomShell(m, 3, { floor: T.DARK });
+  m.decal((c) => { pxText(c, 'ROUGE', 6 * 16 + 4, 16 + 6, '#ff5aa0'); pxText(c, 'ROUGE', 6 * 16 + 3, 16 + 5, '#ffd0e8'); DECAL.shelf(c, 11 * 16, 16 + 6, 64); });
+  /* Bühne mit Stange und Lichtern */
+  m.add(mkObj(5, 3, 6, 2, 6, (c, W, H) => {
+    R(c, 0, 6, W, H - 6, '#3a1020'); R(c, 0, 6, W, 2, '#6a2040'); for (let k = 2; k < W; k += 8) R(c, k, H - 3, 3, 2, '#ff5aa0');
+    R(c, W / 2 - 1, -0, 2, H - 2, '#c9ccd2'); R(c, W / 2, 0, 1, H - 2, '#f4f4f4');
+  }, { solid: true, light: { dx: 48, dy: 10, r: 46, c: '#ff5aa0' } }));
+  m.npcDefs.push({ id: 'dancer', name: 'Chantal', x: 7 * 16 + 8, y: 4 * 16 + 8, dir: 0, look: npcLook(961, { hair: 10, hairCol: 6, beard: 0, top: 5, topCol: 12, pants: 3, pantsCol: 2, shoes: 3, shoesCol: 4, jewel: 4, glasses: 0, hat: 0, print: 0, acc: 0 }), talk: () => Story.dancer(), keepDir: true, danceIdle: true, solid: true });
+  m.npcDefs.push({ id: 'dancer2', name: 'Vanessa', x: 9 * 16 + 8, y: 4 * 16 + 8, dir: 0, look: npcLook(962, { hair: 7, hairCol: 0, beard: 0, top: 5, topCol: 4, pants: 3, pantsCol: 2, shoes: 3, shoesCol: 1, jewel: 3, glasses: 0, hat: 0, print: 0, acc: 0 }), talk: () => Story.dancer(), keepDir: true, danceIdle: true, solid: true });
+  /* Bar rechts */
+  m.add(objCounter(11, 5, 4, 1, { top: '#2a0e18', front: '#1a0810', glasses: 3 }));
+  m.trig(11, 5, 4, 1, { label: 'Bar: Bestellen', act: () => Story.shop('rouge') });
+  m.npcDefs.push({ id: 'rougebar', name: 'Jacky', x: 13 * 16 + 8, y: 4 * 16 + 10, dir: 0, look: npcLook(963, { hair: 16, hairCol: 7, beard: 0, top: 1, topCol: 16, jewel: 4, glasses: 0, hat: 0 }), talk: () => Story.shop('rouge'), keepDir: true });
+  for (const x of [11, 13]) m.add(objStool(x, 6, '#ff5aa0'));
+  /* Sofas und Tischchen */
+  m.add(objSofa(1, 6, 3, '#6a1a30')); m.add(objSofa(1, 9, 3, '#6a1a30')); m.add(objSofa(11, 9, 3, '#6a1a30'));
+  m.add(objTable(2, 7, 1, 1, { col: '#2a1a20', round: true })); m.add(objTable(12, 10, 1, 1, { col: '#2a1a20', round: true }));
+  m.add(objPlant(14, 1)); m.add(objPlant(1, 1));
+  m.trig(5, 5, 6, 1, { label: 'An die Bühne', act: () => Story.stageFront() });
+  doorBottom(m, 7, 2, 'ibk', 'rouge_out', 'Ausgang');
+  m.spawn('entry', 7, 10, 3);
+  m.light(2 * 16 + 8, 7 * 16, 30, '#ff8ac0'); m.light(12 * 16 + 8, 9 * 16, 30, '#ff8ac0');
   return m;
 };
 /* ----------- Club Lawine ----------- */

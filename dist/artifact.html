@@ -73,10 +73,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 /* ---------- Steuerung ---------- */
 #touch { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
-#stick { position: absolute; width: 112px; height: 112px; margin: -56px 0 0 -56px; border-radius: 50%; border: 2px solid rgba(242,238,228,.35); background: rgba(15,26,43,.35); display: none; }
+/* Joystick: sichtbare Basis unten links (stickHint), beim Ziehen erscheint der aktive Stick an der Berührungsstelle */
+#stick { position: absolute; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 3px solid rgba(255,255,255,.75); background: rgba(15,26,43,.6); box-shadow: 0 6px 16px rgba(0,0,0,.5); display: none; }
 #stick.on { display: block; }
-#knob { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(242,238,228,.85); box-shadow: 0 2px 0 rgba(0,0,0,.4); }
-#stickHint { position: absolute; left: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 30px); width: 92px; height: 92px; border-radius: 50%; border: 2px dashed rgba(242,238,228,.25); display: grid; place-items: center; font-family: var(--f-sign); font-size: 11px; letter-spacing: .1em; color: rgba(242,238,228,.45); text-transform: uppercase; }
+#knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: var(--amber); border: 3px solid #fff4dc; box-shadow: 0 3px 0 rgba(0,0,0,.45); }
+#stickHint { position: absolute; left: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 30px); width: 108px; height: 108px; border-radius: 50%; border: 3px solid rgba(255,255,255,.6); background: radial-gradient(circle, rgba(15,26,43,.75) 0 42%, rgba(15,26,43,.5) 100%); box-shadow: 0 5px 14px rgba(0,0,0,.5); transition: opacity .2s; }
+#stickHint::before { content: ''; position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(242,238,228,.9); border: 3px solid rgba(255,181,61,.9); box-shadow: 0 3px 0 rgba(0,0,0,.45); }
+#stickHint i { position: absolute; font-style: normal; font-size: 13px; line-height: 1; color: rgba(255,255,255,.85); text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+#stickHint i.u { left: 50%; top: 7px; transform: translateX(-50%); } #stickHint i.d { left: 50%; bottom: 7px; transform: translateX(-50%); }
+#stickHint i.l { top: 50%; left: 8px; transform: translateY(-50%); } #stickHint i.r { top: 50%; right: 8px; transform: translateY(-50%); }
+body.stick-on #stickHint { opacity: .2; }
 #btnA { pointer-events: auto; position: absolute; right: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 34px); width: 76px; height: 76px; border-radius: 50%; border: 3px solid #ffd27a; background: var(--amber); color: var(--board); font-family: var(--f-pixel); font-size: 28px; font-weight: 700; box-shadow: 0 4px 0 #a86a10; }
 #btnA:active { transform: translateY(3px); box-shadow: 0 1px 0 #a86a10; }
 #btnA.idle { opacity: .45; }
@@ -340,7 +346,7 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
     <div class="plate board-strip"><span class="gl" id="boardGl">ZIEL</span><span id="boardText"></span></div>
   </div>
   <div id="touch" hidden>
-    <div id="stickHint">Ziehen</div>
+    <div id="stickHint" aria-hidden="true"><i class="u">▲</i><i class="d">▼</i><i class="l">◀</i><i class="r">▶</i></div>
     <div id="stick"><div id="knob"></div></div>
     <div id="actLabel" hidden></div>
     <button id="btnA" aria-label="Aktion">A</button>
@@ -354,9 +360,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.7.2";
+const APP_VERSION = "1.8.0";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -609,6 +615,16 @@ const Snd = {
         if (i % 4 === 2) self.tone(root * 0.75, 0.3, 'triangle', 0.12, dt, 0, g);
         if (i % 2 === 1) self.noise(0.03, 0.05, 6000, dt, 'highpass', g);
         if (i === 0 || i === 3 || i === 6) self.tone(root * 2, 0.25, 'sine', 0.04, dt, 0, g);
+      } },
+      lounge: { bpm: 92, steps: 16, play(i, t) {
+        const g = self.musicGain, bar = Math.floor(st.step / 16) % 4, dt = t - self.ctx.currentTime;
+        if (i % 8 === 0) self.tone(55, 0.3, 'sine', 0.45, dt, -40, g);
+        if (i % 8 === 4) self.noise(0.1, 0.1, 1500, dt, 'bandpass', g);
+        if (i % 2 === 0) self.noise(0.03, 0.05, 8000, dt, 'highpass', g);
+        const bass = [41.2, 41.2, 49, 36.7][bar];
+        if (i % 4 === 2) self.tone(bass * 2, 0.25, 'triangle', 0.14, dt, 0, g);
+        const mel = [[0, 0, 0, 0, 330, 0, 392, 0, 0, 0, 440, 0, 0, 392, 0, 0], [0, 0, 0, 0, 294, 0, 330, 0, 0, 0, 392, 0, 0, 0, 0, 0], [0, 0, 0, 0, 262, 0, 330, 0, 0, 0, 392, 0, 440, 0, 0, 0], [0, 0, 0, 0, 247, 0, 294, 0, 0, 0, 330, 0, 0, 0, 0, 0]][bar];
+        if (mel[i]) self.tone(mel[i], 0.3, 'sine', 0.05, dt, 0, g);
       } },
       stube: { bpm: 168, steps: 6, play(i, t) {
         const g = self.musicGain, ph = Math.floor(st.step / 6) % 4, dt = t - self.ctx.currentTime;
@@ -1771,6 +1787,8 @@ const ACH = {
   jodel: ['Juchizer', 'Auf der Seegrube gejodelt'],
   frisur: ['Neuer Look', 'Beim Barbier gewesen'],
   dusche: ['Frisch gemacht', 'Im Hotel geduscht'],
+  rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
+  champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
 };
 
 function newState(look, name) {
@@ -3187,7 +3205,10 @@ MAP_BUILDERS.ibk = () => {
   viad.anim = (c, t, px, py) => { const ph = (t / 24) % 1; if (ph < 0.25) { const x = px - 120 + ph / 0.25 * (38 * 16 + 240); c.drawImage(TRAIN_SPRITE(), x, py + 1); } };
   m.fill(57, 64, W - 57, 2, T.PAVE);
   m.warp(71, 63, 'club', 'entry', { label: 'Club Lawine', guard: () => Story.bouncer() });
-  m.trig(65, 63, 1, 1, { label: 'Bogen-Bar', act: () => Story.say(null, 'Ein Schild an der Tür: „Heute geschlossene Gesellschaft“.') });
+  /* Rouge – Tabledance im Bogen 65 */
+  m.warp(65, 63, 'rouge', 'entry', { label: 'Rouge Tabledance', guard: () => Story.rougeDoor() });
+  m.add(mkObj(64, 63, 3, 1, 14, (c, Wd, Hd) => { R(c, 2, 0, Wd - 4, 11, '#1a0a10'); R(c, 3, 1, Wd - 6, 9, '#2a0e18'); pxText(c, 'ROUGE', 10, 2, '#ff5aa0'); R(c, 4, 3, 2, 2, '#ff2a6a'); R(c, Wd - 6, 3, 2, 2, '#ff2a6a'); for (let k = 3; k < Wd - 3; k += 4) P(c, k, 10, '#ff8ac0'); }, { solid: false, light: { dx: 24, dy: 6, r: 28, c: '#ff5aa0' } }));
+  m.spawn('rouge_out', 65, 64, 0);
   m.trig(77, 63, 1, 1, { label: 'Kebap im Bogen', act: () => Story.shop('kebap') });
   m.trig(61, 64, 32, 2, { here: true, label: 'Foto: Viaduktbögen', act: () => Story.photo('bogen'), cond: () => !G.S.photos.bogen });
   m.fill(57, 66, W - 57, 3, T.ASPH); m.fill(57, 67, W - 57, 1, T.ASPH, 1); m.fill(74, 66, 3, 3, T.ZEBRA);
@@ -3486,6 +3507,33 @@ MAP_BUILDERS.stueberl = () => {
   doorBottom(m, 7, 2, 'ibk', 'stueberl_out', 'Ausgang');
   m.spawn('entry', 7, 10, 3);
   m.light(13 * 16 + 16, 4 * 16 + 4, 50, '#ff9a40');
+  return m;
+};
+/* ----------- Rouge: Tabledance-Lokal in den Bögen ----------- */
+MAP_BUILDERS.rouge = () => {
+  const m = new GMap('rouge', 16, 12, { name: 'Rouge · Tabledance', indoor: true, wallStyle: { cap: '#2a0a10' }, music: 'lounge', bg: '#0c0408' });
+  roomShell(m, 3, { floor: T.DARK });
+  m.decal((c) => { pxText(c, 'ROUGE', 6 * 16 + 4, 16 + 6, '#ff5aa0'); pxText(c, 'ROUGE', 6 * 16 + 3, 16 + 5, '#ffd0e8'); DECAL.shelf(c, 11 * 16, 16 + 6, 64); });
+  /* Bühne mit Stange und Lichtern */
+  m.add(mkObj(5, 3, 6, 2, 6, (c, W, H) => {
+    R(c, 0, 6, W, H - 6, '#3a1020'); R(c, 0, 6, W, 2, '#6a2040'); for (let k = 2; k < W; k += 8) R(c, k, H - 3, 3, 2, '#ff5aa0');
+    R(c, W / 2 - 1, -0, 2, H - 2, '#c9ccd2'); R(c, W / 2, 0, 1, H - 2, '#f4f4f4');
+  }, { solid: true, light: { dx: 48, dy: 10, r: 46, c: '#ff5aa0' } }));
+  m.npcDefs.push({ id: 'dancer', name: 'Chantal', x: 7 * 16 + 8, y: 4 * 16 + 8, dir: 0, look: npcLook(961, { hair: 10, hairCol: 6, beard: 0, top: 5, topCol: 12, pants: 3, pantsCol: 2, shoes: 3, shoesCol: 4, jewel: 4, glasses: 0, hat: 0, print: 0, acc: 0 }), talk: () => Story.dancer(), keepDir: true, danceIdle: true, solid: true });
+  m.npcDefs.push({ id: 'dancer2', name: 'Vanessa', x: 9 * 16 + 8, y: 4 * 16 + 8, dir: 0, look: npcLook(962, { hair: 7, hairCol: 0, beard: 0, top: 5, topCol: 4, pants: 3, pantsCol: 2, shoes: 3, shoesCol: 1, jewel: 3, glasses: 0, hat: 0, print: 0, acc: 0 }), talk: () => Story.dancer(), keepDir: true, danceIdle: true, solid: true });
+  /* Bar rechts */
+  m.add(objCounter(11, 5, 4, 1, { top: '#2a0e18', front: '#1a0810', glasses: 3 }));
+  m.trig(11, 5, 4, 1, { label: 'Bar: Bestellen', act: () => Story.shop('rouge') });
+  m.npcDefs.push({ id: 'rougebar', name: 'Jacky', x: 13 * 16 + 8, y: 4 * 16 + 10, dir: 0, look: npcLook(963, { hair: 16, hairCol: 7, beard: 0, top: 1, topCol: 16, jewel: 4, glasses: 0, hat: 0 }), talk: () => Story.shop('rouge'), keepDir: true });
+  for (const x of [11, 13]) m.add(objStool(x, 6, '#ff5aa0'));
+  /* Sofas und Tischchen */
+  m.add(objSofa(1, 6, 3, '#6a1a30')); m.add(objSofa(1, 9, 3, '#6a1a30')); m.add(objSofa(11, 9, 3, '#6a1a30'));
+  m.add(objTable(2, 7, 1, 1, { col: '#2a1a20', round: true })); m.add(objTable(12, 10, 1, 1, { col: '#2a1a20', round: true }));
+  m.add(objPlant(14, 1)); m.add(objPlant(1, 1));
+  m.trig(5, 5, 6, 1, { label: 'An die Bühne', act: () => Story.stageFront() });
+  doorBottom(m, 7, 2, 'ibk', 'rouge_out', 'Ausgang');
+  m.spawn('entry', 7, 10, 3);
+  m.light(2 * 16 + 8, 7 * 16, 30, '#ff8ac0'); m.light(12 * 16 + 8, 9 * 16, 30, '#ff8ac0');
   return m;
 };
 /* ----------- Club Lawine ----------- */
@@ -4675,7 +4723,7 @@ function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; retu
 const STAGES = ['meet', 'board', 'ride', 'arrived', 'findHotel', 'checkin', 'room', 'bar', 'free'];
 const stageAt = (s) => STAGES.indexOf(G.S.stage) >= STAGES.indexOf(s);
 const OPEN = {
-  bar: [11, 26], stueberl: [10, 24], club: [22, 29], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
+  bar: [11, 26], stueberl: [10, 24], club: [22, 29], rouge: [21, 29], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
 };
 function isOpen(k) {
   const o = OPEN[k]; if (!o) return true;
@@ -4710,6 +4758,11 @@ const SHOPS = {
     { t: 'Drinks', items: [it('flaschenbier', 5.5), it('wodkaE', 9.5), it('gintonic', 10.5), it('shot', 4.5)] },
     { t: 'Alkoholfrei', items: [it('cola', 4.0), it('wasser', 4.0), it('energy', 4.5)] },
     { t: 'Für die Jungs', items: [it('runde', 27, { n: 'Shot-Runde für die Jungs', d: 'Kräuter-Shots für alle hier', icon: 'shot', special: 'roundShots' })] },
+  ] },
+  rouge: { title: 'Rouge · Bar', mode: 'eat', venue: 'rouge', intro: 'Jacky lächelt. „Ein Drink für dich – oder einer für die Bühne?“ Die Preise haben es in sich.', sections: [
+    { t: 'Drinks', items: [it('bier', 9), it('gintonic', 16), it('shot', 8), it('wein', 12)] },
+    { t: 'Alkoholfrei', items: [it('cola', 7), it('wasser', 6)] },
+    { t: 'Für die Bühne', items: [it('piccolo', 45, { n: 'Piccolo für die Tänzerin', d: 'Chantal prostet dir zu', icon: 'wine', special: 'tip' }), it('flasche', 180, { n: 'Flasche Champagner für die Bühne', d: 'Mit Wunderkerze. Alle schauen.', icon: 'wine', special: 'bottle' })] },
   ] },
   huette: { title: 'Restaurant Seegrube', mode: 'eat', intro: 'Auf 1.905 Metern schmeckt alles doppelt so gut.', sections: [{ t: 'Getränke', items: [it('radler', 4.9), it('bier', 5.2), it('jagertee', 5.9), it('kaffee', 3.5), it('wasser', 3.2)] }, { t: 'Hüttenküche', items: [it('kaiserschmarrn', 13.9), it('germknoedel', 9.9), it('gulasch', 7.9), it('strudel', 6.5)] }] },
   minibar: { title: 'Minibar', mode: 'eat', intro: 'Hotelpreise. Natürlich.', sections: [{ t: 'Inhalt', items: [it('dosenbier', 6.5), it('zirben', 7.0), it('cola', 4.5), it('wasser', 4.0), it('schoko', 4.5), it('erdnuesse', 5.0)] }] },
@@ -4767,7 +4820,7 @@ const Story = {
         if (G.S.st.energy < 25) tips.push('Du bist müde – leg dich im Zimmer 307 hin');
         else if (G.S.st.food < 25) tips.push('Hunger! Burger in der Gamsbock Bar?');
         else if (G.S.st.nau > 70) tips.push('Dir ist übel – Wasser, Essen oder Schlaf');
-        else if (h >= 22 || h < 4) tips.push('Nachtleben: Club Lawine in den Viaduktbögen');
+        else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
         else if (h < 17 && !G.S.ach.seegrube) tips.push('Nordkettenbahn zur Seegrube (bis 17:30)');
         else tips.push('Die Jungs sind in der Gamsbock Bar');
         return `${tips[0]} · Fotos ${Object.keys(G.S.photos).length}/${Object.keys(SIGHTS).length}`;
@@ -4793,7 +4846,7 @@ const Story = {
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
     return [
       { x: 19, y: 46, n: 'Hotel Zirbe', c: A }, { x: 43, y: 64, n: 'Gamsbock Bar', c: A }, { x: 25, y: 46, n: 'Stüberl', c: A }, { x: 71, y: 63, n: 'Club Lawine', c: N },
-      { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
+      { x: 65, y: 63, n: 'Rouge', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
       { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
@@ -4819,6 +4872,7 @@ const Story = {
     if (h >= 9 && h < 11) return ['kassier', 'gourmet', 'anwalt', 'muskel'].includes(FRIENDS[id].fn) ? 'breakfast' : 'hotel';
     if (h >= 14 && h < 17 && FRIENDS[id].fn === 'pilot') return 'city';
     if (h >= 22 || h < 2.5) {
+      if (FRIENDS[id].fn === 'charmeur' && h >= 0.5 && h < 2.5) return 'rouge';
       if (['party', 'taenzer', 'charmeur', 'raucher'].includes(FRIENDS[id].fn)) return 'club';
       if (['saeufer', 'kanadier'].includes(FRIENDS[id].fn) && h >= 22 && h < 24) return 'stueberl';
       if (h < 2) return 'bar';
@@ -4911,6 +4965,7 @@ const Story = {
       return;
     }
     if (m.id === 'stueberl') { let k = 0; for (const id of here) { add(id, 7 + k, 8, 3, 'sit', { drinkIdle: true, bubbleRand: ['beer'] }); k++; } return; }
+    if (m.id === 'rouge') { let k = 0; for (const id of here) { add(id, 1 + k, 6, 0, 'sit', { drinkIdle: true, bubbleRand: ['heart', 'beer'] }); k++; } return; }
     if (m.id === 'hotel_lobby') { const b = ids.filter((id) => this.schedule(id) === 'breakfast'); b.slice(0, 4).forEach((id, k) => add(id, 2 + (k % 2), k < 2 ? 9 : 11, 3, 'sit', { bubbleRand: ['dots'] })); }
   },
   friendsHere() { return G.npcs.filter((n) => n.friend && !n.hidden).map((n) => n.id); },
@@ -4929,7 +4984,7 @@ const Story = {
     if (h !== this._lastHour) {
       const prev = this._lastHour;
       this._lastHour = h;
-      if (prev >= 0 && ['bar', 'club', 'stueberl', 'hotel_lobby', 'ibk'].includes(m.id) && !G.busy) {
+      if (prev >= 0 && ['bar', 'club', 'stueberl', 'rouge', 'hotel_lobby', 'ibk'].includes(m.id) && !G.busy) {
         const before = this.friendsHere().sort().join();
         G.npcs = G.npcs.filter((n) => !n.friend);
         this.populate(m);
@@ -4939,16 +4994,16 @@ const Story = {
           if (left.length) UI.toast(`${left.map(fname).join(', ')} ${left.length > 1 ? 'ziehen' : 'zieht'} weiter.`);
         }
       }
-      const closing = { bar: 'bar', club: 'club', stueberl: 'stueberl' }[m.id];
+      const closing = { bar: 'bar', club: 'club', stueberl: 'stueberl', rouge: 'rouge' }[m.id];
       if (closing && !isOpen(closing) && !G.busy) this.closingTime(closing);
     }
   },
   async closingTime(v) {
     G.busy++;
-    const who2 = { bar: 'Sepp', club: 'Türsteher', stueberl: 'Wirtin Resi' }[v];
-    await this.say(who2, v === 'bar' ? 'Sperrstund is! Austrinken, Burschen, ab ins Bett!' : v === 'club' ? 'Licht an, Party aus. Wir machen zu!' : 'So, Feierabend. Gute Nacht miteinand!');
+    const who2 = { bar: 'Sepp', club: 'Türsteher', stueberl: 'Wirtin Resi', rouge: 'Rocky' }[v];
+    await this.say(who2, v === 'bar' ? 'Sperrstund is! Austrinken, Burschen, ab ins Bett!' : v === 'club' ? 'Licht an, Party aus. Wir machen zu!' : v === 'rouge' ? 'Sperrstund, die Damen gehen heim. Du auch.' : 'So, Feierabend. Gute Nacht miteinand!');
     G.busy--;
-    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out' }[v]);
+    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out', rouge: 'rouge_out' }[v]);
   },
   async openGuard(v) {
     if (v === 'bar' && G.S.stage === 'bar') return true;
@@ -4968,6 +5023,8 @@ const Story = {
     if (st.smell > 30 && f.fn !== 'raucher') p.push('Du riechst wie ein Aschenbecher.');
     if (tracht()) p.push(pick(['Schau dir den an! Fehlt nur noch das Alphorn.', 'Steht dir, die Lederhose! Echt jetzt.', 'Bist du jetzt Tiroler? Muesch no jodle lerne!']));
     if (st.hang > 0) p.push('Na, Brummschädel? Ein Gröstl oder eine Knödelsuppe hilft.');
+    if (fl.rougeAt && G.S.time - fl.rougeAt < 240 && m !== 'rouge') p.push(pick(['Du warst im Rouge?! Erzähl. Alles.', 'Rouge, hm? Wie viel hat der Piccolo gekostet? 45? Ha!', 'Im Rouge gewesen und jetzt pleite. Klassiker.']));
+    if (m === 'rouge') p.push(pick(['Ich bin nur wegen der Musik hier. Ehrlich.', 'Schau nicht so, ich schau auch nicht. Wir schauen alle nicht.', 'Chantal hat mir zugezwinkert. Ganz sicher. Ganz sicher mir.']));
     if (st.energy < 22) p.push('Du gähnst ununterbrochen. Leg dich doch kurz ins Hotel.');
     if (st.food < 20) p.push('Dein Magen knurrt lauter als die Musik. Iss was!');
     if (st.prom > 2) p.push('Du schwankst wie die Seegrubenbahn bei Föhn. Mal ein Wasser?');
@@ -5377,7 +5434,7 @@ const Story = {
     const c = await this.ask(null, 'Auf dem Schreibtisch: Hotelmappe, Fernbedienung, ein Kugelschreiber mit Hotellogo.', opts);
     const k = opts[c];
     if (k === 'Fernsehen') { const prog = pick(['eine Wiederholung vom „Bergdoktor“', 'die Ski-Weltcup-Vorschau', 'eine Kochsendung über Tiroler Knödel', 'die Wetterkarte: Föhn über dem Inntal', 'eine Doku über den Bau des Arlbergtunnels']); await UI.card(`Du schaust ${prog}.`, 1400); passTime(30); mood(3); energy(4); }
-    if (k === 'Hotelmappe lesen') await this.say(null, 'Gamsbock Bar 11–2 Uhr · Tiroler Stüberl 10–24 Uhr · Club Lawine 22–5 Uhr · Nordkettenbahn 8:30–17:30 · Stadtturm 10–17 Uhr · Frühstück 7–10:30. Taxi: einfach an der Rezeption fragen oder per Handy rufen.');
+    if (k === 'Hotelmappe lesen') await this.say(null, 'Gamsbock Bar 11–2 Uhr · Tiroler Stüberl 10–24 Uhr · Club Lawine 22–5 Uhr · Rouge (Bögen) 21–5 Uhr · Nordkettenbahn 8:30–17:30 · Stadtturm 10–17 Uhr · Frühstück 7–10:30. Taxi: einfach an der Rezeption fragen oder per Handy rufen.');
     if (k === 'Postkarte schreiben') { takeInv('postkarte'); await this.say('me', `„Liebe Grüsse aus Innsbruck! Wetter super, Bier besser. Bis bald – ${G.S.name}“`); mood(5); }
   },
   async window() { await this.say(null, isNight() ? 'Über den dunklen Dächern blinken oben auf der Nordkette die Lichter der Seegrube.' : 'Über den Dächern der Altstadt steht die Nordkette. Ganz oben siehst du die Station der Seegrube.'); mood(1); },
@@ -5583,6 +5640,46 @@ const Story = {
     G.S.flags.clubPaid = dayOf(G.S.time - 300);
     achieve('club');
     return true;
+  },
+  /* ---------- Rouge ---------- */
+  async rougeDoor() {
+    const st = G.S.st;
+    const rocky = { name: 'Rocky', look: npcLook(964, { build: 3, hair: 1, beard: 5, beardCol: 0, top: 9, topCol: 16, glasses: 0, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1 }) };
+    if (G.S.flags.rougePaid === dayOf(G.S.time - 300)) return true;
+    if (G.S.flags.rougePaid === -1) { await this.say(rocky, 'Du schon wieder? Nein. Heute nicht mehr.'); return false; }
+    if (!isOpen('rouge')) { await this.say(rocky, 'Ab 21 Uhr. Rot leuchtet\'s dann, du siehst es schon.'); return false; }
+    if (st.wet > 0) { await this.say(rocky, 'Tropfnass auf meinen Samt? Vergiss es.'); return false; }
+    if (st.prom > 2.3) { await this.say(rocky, 'Du stehst ja kaum. Komm morgen nüchterner. Oder gar nicht.'); return false; }
+    const c = await this.ask(rocky, 'Rouge. Tabledance. Ab 18, Eintritt 20 Euro, inklusive einem Getränk. Kein Anfassen, kein Fotografieren.', [{ t: 'Zahlen', r: '20,00 €' }, { t: 'Nur schauen, ob die Jungs drin sind' }, { t: 'Lieber nicht' }]);
+    if (c === 1) { const here = Object.keys(FRIENDS).filter((id) => this.schedule(id) === 'rouge'); await this.say(rocky, here.length ? `${fname(here[0])}? Ja, der sitzt drin. Seit einer Stunde. Rein nur mit Eintritt.` : 'Von deinen Leuten ist keiner drin. Noch nicht.'); return false; }
+    if (c !== 0) return false;
+    if (!pay('eur', 20)) { await this.say(rocky, 'Kein Geld, kein Rouge. Der Bankomat ist beim Bahnhof.'); return false; }
+    G.S.flags.rougePaid = dayOf(G.S.time - 300);
+    G.S.flags.rougeAt = G.S.time;
+    consume('bier');
+    achieve('rouge');
+    UI.toast('Dein Willkommensdrink: ein Bier. Die Preise an der Bar liest du besser zweimal.');
+    return true;
+  },
+  async dancer() {
+    const n = G.npcs.find((x) => x.id === 'dancer');
+    const d = { name: 'Chantal', look: n ? n.look : null };
+    const c = await this.ask(d, pick(['Hallo, Süsser. Aus der Schweiz? Das hört man.', 'Na, gefällt dir die Show?', 'Du schaust so, als hättest du Durst. Oder Heimweh.']), [{ t: 'Privattanz', r: '50,00 €' }, { t: 'Nur plaudern' }, { t: 'Zurück zu den Jungs' }]);
+    if (c === 0) {
+      if (!pay('eur', 50)) { await this.say(d, 'Ohne Bares kein Tanz, Schatz. Der Bankomat ist beim Bahnhof.'); return; }
+      G.S.flags.rougeAt = G.S.time;
+      await UI.card('Ein Lied lang … du schaust brav auf die Hände. Meistens.', 2200);
+      passTime(5); mood(14); energy(-4);
+      await this.say(d, pick(['Das war\'s schon. Für den nächsten bitte wieder bei mir melden.', 'Süss, wie du rot wirst. Nächstes Lied?', 'Erzähl das deiner Freundin aber selbst.']));
+      const lawyer = this.friendsHere().find((x) => FRIENDS[x].fn === 'anwalt');
+      if (lawyer) await this.say(lawyer, 'Rechtlich gesehen: nichts passiert. Finanziell gesehen: 50 Euro.');
+    }
+    if (c === 1) { mood(4); await this.say(d, pick(['Ich studiere eigentlich Jus. Nein, Scherz. Doch, wirklich.', 'Innsbruck ist klein, aber die Bögen sind gross. Heute ist viel los.', 'Dein Kollege da hinten gibt seit einer Stunde an, er sei Pilot. Stimmt das?'])); }
+  },
+  async stageFront() {
+    const c = await this.ask(null, 'Direkt vor der Bühne. Pinkes Licht, Bass, Glitzer.', ['Einen Schein hinlegen (10 €)', 'Nur schauen', 'Zurück']);
+    if (c === 0) { if (!pay('eur', 10)) { UI.toast('Kein Geld.', 'warn'); return; } Snd.sfx('coin'); mood(6); for (const n of G.npcs) if (n.id === 'dancer' || n.id === 'dancer2') { n.bubble = 'heart'; n.bubbleT = 3; } UI.toast('Chantal zwinkert. Vanessa auch. Zehn Euro gut angelegt. Oder so.'); }
+    if (c === 1) { mood(3); passTime(5); await this.say('me', pick(['Ich bin nur wegen der Musik hier.', 'Beeindruckende … Choreografie.', 'Daheim erzähl ich: Kulturprogramm.'])); }
   },
   async bouncerTalk() { await this.say('Türsteher', isOpen('club') ? 'Eintritt 12 Euro, keine Jogginghosen, keine Sandalen, nicht besoffen. Klar?' : 'Ab 22 Uhr geht\'s los.'); },
   async dj() {
@@ -5790,6 +5887,7 @@ const Story = {
     { k: 'bar', n: 'Gamsbock Bar', to: ['ibk', 'bar_out'], x: 43, y: 65 },
     { k: 'stueberl', n: 'Tiroler Stüberl', to: ['ibk', 'stueberl_out'], x: 25, y: 47 },
     { k: 'club', n: 'Club Lawine (Viaduktbögen)', to: ['ibk', 'club_out'], x: 70, y: 65 },
+    { k: 'rouge', n: 'Rouge Tabledance (Viaduktbögen)', to: ['ibk', 'rouge_out'], x: 65, y: 65 },
     { k: 'hbf', n: 'Hauptbahnhof', to: ['ibk', 'hbf'], x: 74, y: 75 },
     { k: 'bahn', n: 'Nordkettenbahn (Congress)', to: ['ibk', 'hbb_out'], x: 77, y: 33 },
   ],
@@ -5820,7 +5918,7 @@ const Story = {
     if (!pay('eur', share)) { await this.say(null, 'Du hast nicht genug Geld fürs Taxi.'); return; }
     if (group.length) {
       for (const id of group) G.S.aff[id] = clamp(G.S.aff[id] + 2, 0, 100);
-      const loc = { hotel: 'hotel', bar: 'bar', stueberl: 'stueberl', club: 'club' }[d.k];
+      const loc = { hotel: 'hotel', bar: 'bar', stueberl: 'stueberl', club: 'club', rouge: 'rouge' }[d.k];
       if (loc) G.S.flags.group = { loc, ids: group, until: G.S.time + 150 };
     }
     const driver = pick(['Der Fahrer erzählt von seinem Cousin in Zürich.', 'Im Radio läuft Schlager, der Fahrer singt mit.', 'Der Fahrer fährt, als wäre er im Ski-Weltcup.', 'Der Fahrer schimpft über die Baustellen am Südring.']);
@@ -5872,6 +5970,16 @@ const Story = {
       if (tracht()) achieve('tracht');
       return;
     }
+    if (item.special === 'tip' || item.special === 'bottle') {
+      if (!pay(cur, item.price)) return;
+      Snd.sfx('clink');
+      for (const n of G.npcs) if (n.id === 'dancer' || n.id === 'dancer2') { n.bubble = 'heart'; n.bubbleT = 4; }
+      for (const n of G.npcs) if (n.friend) { n.bubble = '!'; n.bubbleT = 3; }
+      if (item.special === 'bottle') { achieve('champagner'); mood(16); consume('wein'); consume('wein'); for (let i = 0; i < 24; i++) addPart({ x: G.player.x + rnd(-24, 24), y: G.player.y - rnd(10, 40), vx: rnd(-20, 20), vy: rnd(-30, 10), g: 40, life: 1.2, kind: 'spark' }); UI.toast('Wunderkerze, Applaus von der Bühne – und 180 Euro weniger. Chantal: „Du bist mein Held.“'); }
+      else { mood(8); UI.toast('Chantal prostet dir von der Bühne zu. Jacky schenkt dir ein Glas mit ein.'); consume('wein'); }
+      G.S.aff[who('charmeur')] = clamp((G.S.aff[who('charmeur')] || 50) + 3, 0, 100);
+      return;
+    }
     if (item.special === 'round' || item.special === 'roundShots') {
       const here = this.friendsHere();
       if (!here.length) { UI.toast('Die Jungs sind gerade nicht hier.', 'warn'); return; }
@@ -5919,6 +6027,7 @@ const Story = {
     p.pose = 'stand';
     const near = this.friendsHere();
     if (G.map.id === 'club') { await this.say('Türsteher', 'Raus! Sofort! Du gehst jetzt an die frische Luft.'); G.busy--; await warpTo('ibk', 'club_out'); G.S.flags.clubPaid = -1; return; }
+    if (G.map.id === 'rouge') { await this.say('Rocky', 'Auf meinen Samtteppich?! Raus, und komm heute nicht wieder.'); G.busy--; await warpTo('ibk', 'rouge_out'); G.S.flags.rougePaid = -1; return; }
     if (G.map.id === 'bar') await this.say('Sepp', 'Oida! Des putzt jetzt aber wer anderer. Trink a Wasser und iss was!');
     else if (near.length) await this.say(near[0], pick(['Ui, ui, ui. Geht\'s? Komm, setz dich mal.', 'Zu viel und zu wenig gegessen. Klassiker.', 'Ich hab nichts gesehen. Wirklich nicht.']));
     else await this.say(null, 'Das war zu viel ohne Essen und ohne Schlaf. Iss etwas, trink Wasser oder leg dich hin.');
@@ -6880,11 +6989,6 @@ function showTitle() {
     <div class="lights" aria-hidden="true"></div>
     <p class="title-kicker">❄ Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026 ❄</p>
     <h1 class="title-name">🎄 Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
-    <div class="dep" aria-label="Abfahrt">
-      <div class="dep-head"><span>Abfahrt · Luzern · Fr 11.12.2026</span><span>Gleis</span></div>
-      <div class="dep-row"><span class="tm">09:10</span><span class="ds">IR 70 Zürich HB<small>weiter mit Railjet nach Innsbruck Hbf, an 13:20</small></span><span class="gl">4</span></div>
-      <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
-    </div>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
       ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
@@ -6971,7 +7075,7 @@ function wireInput() {
     Input.touch = true; document.body.classList.add('touch');
     if (S.on) return;
     S.on = true; S.id = e.pointerId; S.ox = e.clientX; S.oy = e.clientY; S.x = 0; S.y = 0;
-    stick.style.left = e.clientX + 'px'; stick.style.top = e.clientY + 'px'; stick.classList.add('on');
+    stick.style.left = e.clientX + 'px'; stick.style.top = e.clientY + 'px'; stick.classList.add('on'); document.body.classList.add('stick-on');
     knob.style.transform = 'translate(0,0)';
     e.preventDefault();
   };
@@ -6984,7 +7088,7 @@ function wireInput() {
     if (d > 70) { S.x *= 1.2; S.y *= 1.2; }
     knob.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
   };
-  const end = (e) => { if (e.pointerId !== S.id) return; S.on = false; S.x = 0; S.y = 0; stick.classList.remove('on'); };
+  const end = (e) => { if (e.pointerId !== S.id) return; S.on = false; S.x = 0; S.y = 0; stick.classList.remove('on'); document.body.classList.remove('stick-on'); };
   scr.addEventListener('pointerdown', start);
   window.addEventListener('pointermove', move);
   window.addEventListener('pointerup', end);

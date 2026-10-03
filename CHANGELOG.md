@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.8.0 – 03.10.2026
+
+- Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.
+- Startbildschirm ohne Abfahrtstafel.
+- Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf.
+
 ## 1.7.2 – 03.10.2026
 
 - Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.

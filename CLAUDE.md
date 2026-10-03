@@ -27,7 +27,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
 | `04_state.js` | Spielzustand `G`, `newState`, Gegenstände `ITEMS`, Sehenswürdigkeiten `SIGHTS`, Erlebnisse `ACH`, Werte-Logik, Speichern |
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
-| `06_maps.js` | Alle Karten als Builder-Funktionen: `luzern`, `luzern_halle`, `zug`, `ibk`, `hotel_lobby`, `hotel_floor`, `hotel_room`, `bar`, `stueberl`, `club`, `seegrube`. Zug-Fahrplan, Tram, Autos |
+| `06_maps.js` | Alle Karten als Builder-Funktionen: `luzern`, `luzern_halle`, `zug`, `ibk`, `hotel_lobby`, `hotel_floor`, `hotel_room`, `bar`, `stueberl`, `club`, `rouge` (Tabledance in den Bögen), `seegrube`. Zug-Fahrplan, Tram, Autos |
 | `07_engine.js` | `GMap`, Akteure, Kollision, Kamera, Licht/Nacht, Rendern, Interaktion, Zeitfluss |
 | `08_ui.js` | HUD, Dialoge (`UI.say`, `UI.ask`), Läden, Overlays, Handy (`Phone`) |
 | `09_story.js` | Reisegruppe `CREW` (12 Namen mit Rollen), Läden `SHOPS`, Öffnungszeiten, **gesamte Story & alle Interaktionen** (`Story.*`), Taxi, Ereignisse (Übergeben, Filmriss, Einschlafen) |

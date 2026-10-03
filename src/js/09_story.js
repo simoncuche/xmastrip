@@ -90,7 +90,7 @@ function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; retu
 const STAGES = ['meet', 'board', 'ride', 'arrived', 'findHotel', 'checkin', 'room', 'bar', 'free'];
 const stageAt = (s) => STAGES.indexOf(G.S.stage) >= STAGES.indexOf(s);
 const OPEN = {
-  bar: [11, 26], stueberl: [10, 24], club: [22, 29], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
+  bar: [11, 26], stueberl: [10, 24], club: [22, 29], rouge: [21, 29], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
 };
 function isOpen(k) {
   const o = OPEN[k]; if (!o) return true;
@@ -125,6 +125,11 @@ const SHOPS = {
     { t: 'Drinks', items: [it('flaschenbier', 5.5), it('wodkaE', 9.5), it('gintonic', 10.5), it('shot', 4.5)] },
     { t: 'Alkoholfrei', items: [it('cola', 4.0), it('wasser', 4.0), it('energy', 4.5)] },
     { t: 'Für die Jungs', items: [it('runde', 27, { n: 'Shot-Runde für die Jungs', d: 'Kräuter-Shots für alle hier', icon: 'shot', special: 'roundShots' })] },
+  ] },
+  rouge: { title: 'Rouge · Bar', mode: 'eat', venue: 'rouge', intro: 'Jacky lächelt. „Ein Drink für dich – oder einer für die Bühne?“ Die Preise haben es in sich.', sections: [
+    { t: 'Drinks', items: [it('bier', 9), it('gintonic', 16), it('shot', 8), it('wein', 12)] },
+    { t: 'Alkoholfrei', items: [it('cola', 7), it('wasser', 6)] },
+    { t: 'Für die Bühne', items: [it('piccolo', 45, { n: 'Piccolo für die Tänzerin', d: 'Chantal prostet dir zu', icon: 'wine', special: 'tip' }), it('flasche', 180, { n: 'Flasche Champagner für die Bühne', d: 'Mit Wunderkerze. Alle schauen.', icon: 'wine', special: 'bottle' })] },
   ] },
   huette: { title: 'Restaurant Seegrube', mode: 'eat', intro: 'Auf 1.905 Metern schmeckt alles doppelt so gut.', sections: [{ t: 'Getränke', items: [it('radler', 4.9), it('bier', 5.2), it('jagertee', 5.9), it('kaffee', 3.5), it('wasser', 3.2)] }, { t: 'Hüttenküche', items: [it('kaiserschmarrn', 13.9), it('germknoedel', 9.9), it('gulasch', 7.9), it('strudel', 6.5)] }] },
   minibar: { title: 'Minibar', mode: 'eat', intro: 'Hotelpreise. Natürlich.', sections: [{ t: 'Inhalt', items: [it('dosenbier', 6.5), it('zirben', 7.0), it('cola', 4.5), it('wasser', 4.0), it('schoko', 4.5), it('erdnuesse', 5.0)] }] },
@@ -182,7 +187,7 @@ const Story = {
         if (G.S.st.energy < 25) tips.push('Du bist müde – leg dich im Zimmer 307 hin');
         else if (G.S.st.food < 25) tips.push('Hunger! Burger in der Gamsbock Bar?');
         else if (G.S.st.nau > 70) tips.push('Dir ist übel – Wasser, Essen oder Schlaf');
-        else if (h >= 22 || h < 4) tips.push('Nachtleben: Club Lawine in den Viaduktbögen');
+        else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
         else if (h < 17 && !G.S.ach.seegrube) tips.push('Nordkettenbahn zur Seegrube (bis 17:30)');
         else tips.push('Die Jungs sind in der Gamsbock Bar');
         return `${tips[0]} · Fotos ${Object.keys(G.S.photos).length}/${Object.keys(SIGHTS).length}`;
@@ -208,7 +213,7 @@ const Story = {
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
     return [
       { x: 19, y: 46, n: 'Hotel Zirbe', c: A }, { x: 43, y: 64, n: 'Gamsbock Bar', c: A }, { x: 25, y: 46, n: 'Stüberl', c: A }, { x: 71, y: 63, n: 'Club Lawine', c: N },
-      { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
+      { x: 65, y: 63, n: 'Rouge', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
       { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
@@ -234,6 +239,7 @@ const Story = {
     if (h >= 9 && h < 11) return ['kassier', 'gourmet', 'anwalt', 'muskel'].includes(FRIENDS[id].fn) ? 'breakfast' : 'hotel';
     if (h >= 14 && h < 17 && FRIENDS[id].fn === 'pilot') return 'city';
     if (h >= 22 || h < 2.5) {
+      if (FRIENDS[id].fn === 'charmeur' && h >= 0.5 && h < 2.5) return 'rouge';
       if (['party', 'taenzer', 'charmeur', 'raucher'].includes(FRIENDS[id].fn)) return 'club';
       if (['saeufer', 'kanadier'].includes(FRIENDS[id].fn) && h >= 22 && h < 24) return 'stueberl';
       if (h < 2) return 'bar';
@@ -326,6 +332,7 @@ const Story = {
       return;
     }
     if (m.id === 'stueberl') { let k = 0; for (const id of here) { add(id, 7 + k, 8, 3, 'sit', { drinkIdle: true, bubbleRand: ['beer'] }); k++; } return; }
+    if (m.id === 'rouge') { let k = 0; for (const id of here) { add(id, 1 + k, 6, 0, 'sit', { drinkIdle: true, bubbleRand: ['heart', 'beer'] }); k++; } return; }
     if (m.id === 'hotel_lobby') { const b = ids.filter((id) => this.schedule(id) === 'breakfast'); b.slice(0, 4).forEach((id, k) => add(id, 2 + (k % 2), k < 2 ? 9 : 11, 3, 'sit', { bubbleRand: ['dots'] })); }
   },
   friendsHere() { return G.npcs.filter((n) => n.friend && !n.hidden).map((n) => n.id); },
@@ -344,7 +351,7 @@ const Story = {
     if (h !== this._lastHour) {
       const prev = this._lastHour;
       this._lastHour = h;
-      if (prev >= 0 && ['bar', 'club', 'stueberl', 'hotel_lobby', 'ibk'].includes(m.id) && !G.busy) {
+      if (prev >= 0 && ['bar', 'club', 'stueberl', 'rouge', 'hotel_lobby', 'ibk'].includes(m.id) && !G.busy) {
         const before = this.friendsHere().sort().join();
         G.npcs = G.npcs.filter((n) => !n.friend);
         this.populate(m);
@@ -354,16 +361,16 @@ const Story = {
           if (left.length) UI.toast(`${left.map(fname).join(', ')} ${left.length > 1 ? 'ziehen' : 'zieht'} weiter.`);
         }
       }
-      const closing = { bar: 'bar', club: 'club', stueberl: 'stueberl' }[m.id];
+      const closing = { bar: 'bar', club: 'club', stueberl: 'stueberl', rouge: 'rouge' }[m.id];
       if (closing && !isOpen(closing) && !G.busy) this.closingTime(closing);
     }
   },
   async closingTime(v) {
     G.busy++;
-    const who2 = { bar: 'Sepp', club: 'Türsteher', stueberl: 'Wirtin Resi' }[v];
-    await this.say(who2, v === 'bar' ? 'Sperrstund is! Austrinken, Burschen, ab ins Bett!' : v === 'club' ? 'Licht an, Party aus. Wir machen zu!' : 'So, Feierabend. Gute Nacht miteinand!');
+    const who2 = { bar: 'Sepp', club: 'Türsteher', stueberl: 'Wirtin Resi', rouge: 'Rocky' }[v];
+    await this.say(who2, v === 'bar' ? 'Sperrstund is! Austrinken, Burschen, ab ins Bett!' : v === 'club' ? 'Licht an, Party aus. Wir machen zu!' : v === 'rouge' ? 'Sperrstund, die Damen gehen heim. Du auch.' : 'So, Feierabend. Gute Nacht miteinand!');
     G.busy--;
-    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out' }[v]);
+    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out', rouge: 'rouge_out' }[v]);
   },
   async openGuard(v) {
     if (v === 'bar' && G.S.stage === 'bar') return true;
@@ -383,6 +390,8 @@ const Story = {
     if (st.smell > 30 && f.fn !== 'raucher') p.push('Du riechst wie ein Aschenbecher.');
     if (tracht()) p.push(pick(['Schau dir den an! Fehlt nur noch das Alphorn.', 'Steht dir, die Lederhose! Echt jetzt.', 'Bist du jetzt Tiroler? Muesch no jodle lerne!']));
     if (st.hang > 0) p.push('Na, Brummschädel? Ein Gröstl oder eine Knödelsuppe hilft.');
+    if (fl.rougeAt && G.S.time - fl.rougeAt < 240 && m !== 'rouge') p.push(pick(['Du warst im Rouge?! Erzähl. Alles.', 'Rouge, hm? Wie viel hat der Piccolo gekostet? 45? Ha!', 'Im Rouge gewesen und jetzt pleite. Klassiker.']));
+    if (m === 'rouge') p.push(pick(['Ich bin nur wegen der Musik hier. Ehrlich.', 'Schau nicht so, ich schau auch nicht. Wir schauen alle nicht.', 'Chantal hat mir zugezwinkert. Ganz sicher. Ganz sicher mir.']));
     if (st.energy < 22) p.push('Du gähnst ununterbrochen. Leg dich doch kurz ins Hotel.');
     if (st.food < 20) p.push('Dein Magen knurrt lauter als die Musik. Iss was!');
     if (st.prom > 2) p.push('Du schwankst wie die Seegrubenbahn bei Föhn. Mal ein Wasser?');
@@ -792,7 +801,7 @@ const Story = {
     const c = await this.ask(null, 'Auf dem Schreibtisch: Hotelmappe, Fernbedienung, ein Kugelschreiber mit Hotellogo.', opts);
     const k = opts[c];
     if (k === 'Fernsehen') { const prog = pick(['eine Wiederholung vom „Bergdoktor“', 'die Ski-Weltcup-Vorschau', 'eine Kochsendung über Tiroler Knödel', 'die Wetterkarte: Föhn über dem Inntal', 'eine Doku über den Bau des Arlbergtunnels']); await UI.card(`Du schaust ${prog}.`, 1400); passTime(30); mood(3); energy(4); }
-    if (k === 'Hotelmappe lesen') await this.say(null, 'Gamsbock Bar 11–2 Uhr · Tiroler Stüberl 10–24 Uhr · Club Lawine 22–5 Uhr · Nordkettenbahn 8:30–17:30 · Stadtturm 10–17 Uhr · Frühstück 7–10:30. Taxi: einfach an der Rezeption fragen oder per Handy rufen.');
+    if (k === 'Hotelmappe lesen') await this.say(null, 'Gamsbock Bar 11–2 Uhr · Tiroler Stüberl 10–24 Uhr · Club Lawine 22–5 Uhr · Rouge (Bögen) 21–5 Uhr · Nordkettenbahn 8:30–17:30 · Stadtturm 10–17 Uhr · Frühstück 7–10:30. Taxi: einfach an der Rezeption fragen oder per Handy rufen.');
     if (k === 'Postkarte schreiben') { takeInv('postkarte'); await this.say('me', `„Liebe Grüsse aus Innsbruck! Wetter super, Bier besser. Bis bald – ${G.S.name}“`); mood(5); }
   },
   async window() { await this.say(null, isNight() ? 'Über den dunklen Dächern blinken oben auf der Nordkette die Lichter der Seegrube.' : 'Über den Dächern der Altstadt steht die Nordkette. Ganz oben siehst du die Station der Seegrube.'); mood(1); },
@@ -998,6 +1007,46 @@ const Story = {
     G.S.flags.clubPaid = dayOf(G.S.time - 300);
     achieve('club');
     return true;
+  },
+  /* ---------- Rouge ---------- */
+  async rougeDoor() {
+    const st = G.S.st;
+    const rocky = { name: 'Rocky', look: npcLook(964, { build: 3, hair: 1, beard: 5, beardCol: 0, top: 9, topCol: 16, glasses: 0, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1 }) };
+    if (G.S.flags.rougePaid === dayOf(G.S.time - 300)) return true;
+    if (G.S.flags.rougePaid === -1) { await this.say(rocky, 'Du schon wieder? Nein. Heute nicht mehr.'); return false; }
+    if (!isOpen('rouge')) { await this.say(rocky, 'Ab 21 Uhr. Rot leuchtet\'s dann, du siehst es schon.'); return false; }
+    if (st.wet > 0) { await this.say(rocky, 'Tropfnass auf meinen Samt? Vergiss es.'); return false; }
+    if (st.prom > 2.3) { await this.say(rocky, 'Du stehst ja kaum. Komm morgen nüchterner. Oder gar nicht.'); return false; }
+    const c = await this.ask(rocky, 'Rouge. Tabledance. Ab 18, Eintritt 20 Euro, inklusive einem Getränk. Kein Anfassen, kein Fotografieren.', [{ t: 'Zahlen', r: '20,00 €' }, { t: 'Nur schauen, ob die Jungs drin sind' }, { t: 'Lieber nicht' }]);
+    if (c === 1) { const here = Object.keys(FRIENDS).filter((id) => this.schedule(id) === 'rouge'); await this.say(rocky, here.length ? `${fname(here[0])}? Ja, der sitzt drin. Seit einer Stunde. Rein nur mit Eintritt.` : 'Von deinen Leuten ist keiner drin. Noch nicht.'); return false; }
+    if (c !== 0) return false;
+    if (!pay('eur', 20)) { await this.say(rocky, 'Kein Geld, kein Rouge. Der Bankomat ist beim Bahnhof.'); return false; }
+    G.S.flags.rougePaid = dayOf(G.S.time - 300);
+    G.S.flags.rougeAt = G.S.time;
+    consume('bier');
+    achieve('rouge');
+    UI.toast('Dein Willkommensdrink: ein Bier. Die Preise an der Bar liest du besser zweimal.');
+    return true;
+  },
+  async dancer() {
+    const n = G.npcs.find((x) => x.id === 'dancer');
+    const d = { name: 'Chantal', look: n ? n.look : null };
+    const c = await this.ask(d, pick(['Hallo, Süsser. Aus der Schweiz? Das hört man.', 'Na, gefällt dir die Show?', 'Du schaust so, als hättest du Durst. Oder Heimweh.']), [{ t: 'Privattanz', r: '50,00 €' }, { t: 'Nur plaudern' }, { t: 'Zurück zu den Jungs' }]);
+    if (c === 0) {
+      if (!pay('eur', 50)) { await this.say(d, 'Ohne Bares kein Tanz, Schatz. Der Bankomat ist beim Bahnhof.'); return; }
+      G.S.flags.rougeAt = G.S.time;
+      await UI.card('Ein Lied lang … du schaust brav auf die Hände. Meistens.', 2200);
+      passTime(5); mood(14); energy(-4);
+      await this.say(d, pick(['Das war\'s schon. Für den nächsten bitte wieder bei mir melden.', 'Süss, wie du rot wirst. Nächstes Lied?', 'Erzähl das deiner Freundin aber selbst.']));
+      const lawyer = this.friendsHere().find((x) => FRIENDS[x].fn === 'anwalt');
+      if (lawyer) await this.say(lawyer, 'Rechtlich gesehen: nichts passiert. Finanziell gesehen: 50 Euro.');
+    }
+    if (c === 1) { mood(4); await this.say(d, pick(['Ich studiere eigentlich Jus. Nein, Scherz. Doch, wirklich.', 'Innsbruck ist klein, aber die Bögen sind gross. Heute ist viel los.', 'Dein Kollege da hinten gibt seit einer Stunde an, er sei Pilot. Stimmt das?'])); }
+  },
+  async stageFront() {
+    const c = await this.ask(null, 'Direkt vor der Bühne. Pinkes Licht, Bass, Glitzer.', ['Einen Schein hinlegen (10 €)', 'Nur schauen', 'Zurück']);
+    if (c === 0) { if (!pay('eur', 10)) { UI.toast('Kein Geld.', 'warn'); return; } Snd.sfx('coin'); mood(6); for (const n of G.npcs) if (n.id === 'dancer' || n.id === 'dancer2') { n.bubble = 'heart'; n.bubbleT = 3; } UI.toast('Chantal zwinkert. Vanessa auch. Zehn Euro gut angelegt. Oder so.'); }
+    if (c === 1) { mood(3); passTime(5); await this.say('me', pick(['Ich bin nur wegen der Musik hier.', 'Beeindruckende … Choreografie.', 'Daheim erzähl ich: Kulturprogramm.'])); }
   },
   async bouncerTalk() { await this.say('Türsteher', isOpen('club') ? 'Eintritt 12 Euro, keine Jogginghosen, keine Sandalen, nicht besoffen. Klar?' : 'Ab 22 Uhr geht\'s los.'); },
   async dj() {
@@ -1205,6 +1254,7 @@ const Story = {
     { k: 'bar', n: 'Gamsbock Bar', to: ['ibk', 'bar_out'], x: 43, y: 65 },
     { k: 'stueberl', n: 'Tiroler Stüberl', to: ['ibk', 'stueberl_out'], x: 25, y: 47 },
     { k: 'club', n: 'Club Lawine (Viaduktbögen)', to: ['ibk', 'club_out'], x: 70, y: 65 },
+    { k: 'rouge', n: 'Rouge Tabledance (Viaduktbögen)', to: ['ibk', 'rouge_out'], x: 65, y: 65 },
     { k: 'hbf', n: 'Hauptbahnhof', to: ['ibk', 'hbf'], x: 74, y: 75 },
     { k: 'bahn', n: 'Nordkettenbahn (Congress)', to: ['ibk', 'hbb_out'], x: 77, y: 33 },
   ],
@@ -1235,7 +1285,7 @@ const Story = {
     if (!pay('eur', share)) { await this.say(null, 'Du hast nicht genug Geld fürs Taxi.'); return; }
     if (group.length) {
       for (const id of group) G.S.aff[id] = clamp(G.S.aff[id] + 2, 0, 100);
-      const loc = { hotel: 'hotel', bar: 'bar', stueberl: 'stueberl', club: 'club' }[d.k];
+      const loc = { hotel: 'hotel', bar: 'bar', stueberl: 'stueberl', club: 'club', rouge: 'rouge' }[d.k];
       if (loc) G.S.flags.group = { loc, ids: group, until: G.S.time + 150 };
     }
     const driver = pick(['Der Fahrer erzählt von seinem Cousin in Zürich.', 'Im Radio läuft Schlager, der Fahrer singt mit.', 'Der Fahrer fährt, als wäre er im Ski-Weltcup.', 'Der Fahrer schimpft über die Baustellen am Südring.']);
@@ -1287,6 +1337,16 @@ const Story = {
       if (tracht()) achieve('tracht');
       return;
     }
+    if (item.special === 'tip' || item.special === 'bottle') {
+      if (!pay(cur, item.price)) return;
+      Snd.sfx('clink');
+      for (const n of G.npcs) if (n.id === 'dancer' || n.id === 'dancer2') { n.bubble = 'heart'; n.bubbleT = 4; }
+      for (const n of G.npcs) if (n.friend) { n.bubble = '!'; n.bubbleT = 3; }
+      if (item.special === 'bottle') { achieve('champagner'); mood(16); consume('wein'); consume('wein'); for (let i = 0; i < 24; i++) addPart({ x: G.player.x + rnd(-24, 24), y: G.player.y - rnd(10, 40), vx: rnd(-20, 20), vy: rnd(-30, 10), g: 40, life: 1.2, kind: 'spark' }); UI.toast('Wunderkerze, Applaus von der Bühne – und 180 Euro weniger. Chantal: „Du bist mein Held.“'); }
+      else { mood(8); UI.toast('Chantal prostet dir von der Bühne zu. Jacky schenkt dir ein Glas mit ein.'); consume('wein'); }
+      G.S.aff[who('charmeur')] = clamp((G.S.aff[who('charmeur')] || 50) + 3, 0, 100);
+      return;
+    }
     if (item.special === 'round' || item.special === 'roundShots') {
       const here = this.friendsHere();
       if (!here.length) { UI.toast('Die Jungs sind gerade nicht hier.', 'warn'); return; }
@@ -1334,6 +1394,7 @@ const Story = {
     p.pose = 'stand';
     const near = this.friendsHere();
     if (G.map.id === 'club') { await this.say('Türsteher', 'Raus! Sofort! Du gehst jetzt an die frische Luft.'); G.busy--; await warpTo('ibk', 'club_out'); G.S.flags.clubPaid = -1; return; }
+    if (G.map.id === 'rouge') { await this.say('Rocky', 'Auf meinen Samtteppich?! Raus, und komm heute nicht wieder.'); G.busy--; await warpTo('ibk', 'rouge_out'); G.S.flags.rougePaid = -1; return; }
     if (G.map.id === 'bar') await this.say('Sepp', 'Oida! Des putzt jetzt aber wer anderer. Trink a Wasser und iss was!');
     else if (near.length) await this.say(near[0], pick(['Ui, ui, ui. Geht\'s? Komm, setz dich mal.', 'Zu viel und zu wenig gegessen. Klassiker.', 'Ich hab nichts gesehen. Wirklich nicht.']));
     else await this.say(null, 'Das war zu viel ohne Essen und ohne Schlaf. Iss etwas, trink Wasser oder leg dich hin.');
