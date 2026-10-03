@@ -38,14 +38,15 @@ function showTitle() {
   t.hidden = false;
   t.innerHTML = `<div class="title-card">
     <div class="dep" aria-label="Abfahrt">
-      <div class="dep-head"><span>Abfahrt · Luzern</span><span>Gleis</span></div>
+      <div class="dep-head"><span>Abfahrt · Luzern · Fr 11.12.2026</span><span>Gleis</span></div>
       <div class="dep-row"><span class="tm">09:10</span><span class="ds">IR 70 Zürich HB<small>weiter mit Railjet nach Innsbruck Hbf, an 13:20</small></span><span class="gl">4</span></div>
       <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
     </div>
-    <h1 class="title-name">Gleis 4 nach <span>Innsbruck</span></h1>
+    <p class="title-kicker">Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026</p>
+    <h1 class="title-name">Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
-      ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${DAYS[Math.floor(save.time / 1440) % 7]} ${pad2(Math.floor((save.time % 1440) / 60))}:${pad2(Math.floor(save.time % 60))}</button>` : ''}
+      ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
       <button class="btn ${save ? '' : 'primary'}" id="tNew">Neues Spiel</button>
     </div>
     <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
@@ -87,7 +88,7 @@ async function startGame(state, fresh) {
   UI.hud();
   if (fresh) {
     G.busy++;
-    await UI.card('Samstag, 8:38 Uhr · Bahnhofplatz Luzern', 1500);
+    await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
     await Story.say(null, playerIsKassier()
       ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
       : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);

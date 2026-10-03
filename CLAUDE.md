@@ -1,4 +1,4 @@
-# Gleis 4 nach Innsbruck – Hinweise für Claude Code
+# Wiehnachtsreisli 2026 nach Innsbruck (Gleis 4 nach Innsbruck) – Hinweise für Claude Code
 
 Browser-Rollenspiel (Pixel-Art, Top-down) über einen Jungs-Ausflug von Luzern nach Innsbruck.
 Läuft komplett im Browser ohne Server, ohne Bibliotheken, ohne Build-Tools ausser Python.
@@ -53,6 +53,9 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   Sprecher-Rollen über `voice(fn)` wählen, damit nie der Nachzügler selbst spricht.
 - Spielstand: `localStorage` Schlüssel `gleis4-innsbruck-v4` (Fotos separat unter `…-img`). Bei Änderungen an der
   Struktur von `newState` die Versionsnummer `v` und `SAVE_KEY` erhöhen.
+- Datum: Tag 0 ist Freitag, 11. Dezember 2026 (`START_DATE`, `DAYS`, `dateStr`, `dateLong`). Öffnungszeiten prüfen per `dayStr()`.
+- Läden: `mode: 'take'` legt alles ins Inventar, `mode: 'eat'` konsumiert sofort oder legt per 🎒-Knopf ins Inventar (`Story.buy(def, item, cur, { take })`).
+  Alles in der Tasche (Inventar) mit Typ `drink`/`food`/`med` ist jederzeit im Handy konsumierbar.
 - Texte auf Deutsch mit Schweizer/Tiroler Färbung. Fakten zu Sehenswürdigkeiten sind recherchiert – bei neuen Fakten bitte prüfen.
 
 ## Ideen für Erweiterungen

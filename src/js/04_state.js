@@ -1,5 +1,8 @@
 /* ============ Spielzustand, Werte, Gegenstände ============ */
-const DAYS = ['Sa', 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr'];
+const DAYS = ['Fr', 'Sa', 'So', 'Mo', 'Di', 'Mi', 'Do']; /* Tag 0 = Freitag, 11. Dezember 2026 */
+const START_DATE = { d: 11, m: 12, y: 2026 };
+const DAY_NAMES = { Sa: 'Samstag', So: 'Sonntag', Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag' };
+const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const G = {
   S: null, map: null, player: null, npcs: [], peds: [], parts: [], birds: [],
   cam: { x: 0, y: 0 }, t: 0, busy: 0, fx: { shake: 0, flash: 0, tint: null }, warned: {}, lastMinute: 0,
@@ -147,6 +150,9 @@ const dayOf = (t) => Math.floor(t / 1440);
 const hourOf = (t) => (t % 1440) / 60;
 function clockStr(t = G.S.time) { const m = Math.floor(t) % 1440; return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); }
 function dayStr(t = G.S.time) { return DAYS[dayOf(t) % 7]; }
+function calDate(t = G.S.time) { const dt = new Date(START_DATE.y, START_DATE.m - 1, START_DATE.d + dayOf(t)); return { d: dt.getDate(), m: dt.getMonth() + 1, y: dt.getFullYear() }; }
+function dateStr(t = G.S.time) { const c = calDate(t); return `${dayStr(t)} ${c.d}.${c.m}.${c.y}`; }
+function dateLong(t = G.S.time) { const c = calDate(t); return `${DAY_NAMES[dayStr(t)]}, ${c.d}. ${MONTH_NAMES[c.m - 1]} ${c.y}`; }
 function isNight(t = G.S.time) { const h = hourOf(t); return h >= 20 || h < 6.5; }
 
 function addMoney(cur, v) { G.S.money[cur] = Math.round((G.S.money[cur] + v) * 100) / 100; UI.hud(); }

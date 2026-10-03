@@ -73,8 +73,8 @@ const UI = {
     if (!G.S) return;
     const e = this.els, st = G.S.st;
     e.hClock.textContent = clockStr();
-    const dayNames = { Sa: 'Samstag', So: 'Sonntag', Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag' };
-    e.hDay.textContent = dayNames[dayStr()] + (dayOf(G.S.time) ? ' · Tag ' + (dayOf(G.S.time) + 1) : '');
+    const cd = calDate();
+    e.hDay.textContent = `${dayStr()} ${cd.d}.${cd.m}.` + (dayOf(G.S.time) ? ' · Tag ' + (dayOf(G.S.time) + 1) : '');
     e.hPlace.textContent = G.map ? G.map.name : '';
     e.hEur.textContent = fmtEur(G.S.money.eur);
     e.hChf.textContent = fmtChf(G.S.money.chf);
@@ -266,19 +266,26 @@ const UI = {
             const item = ITEMS[it.id] || {};
             const price = it.price;
             const ok = canPay(cur, price) && (!it.cond || it.cond());
-            body += `<button class="shop-item" data-i="${it.key}" ${ok ? '' : 'disabled'}><img alt="" src="${itemIconURL(it.icon || item.icon)}"><span><span class="nm">${it.n || item.n}</span><br><span class="ds">${it.d || itemDesc(it.id)}</span></span><span class="pr">${cur === 'eur' ? fmtEur(price) : fmtChf(price)}</span></button>`;
+            const priceTxt = cur === 'eur' ? fmtEur(price) : fmtChf(price);
+            const consumable = ['drink', 'food', 'med'].includes(item.t) && !it.special && def.mode === 'eat';
+            const have = G.S.inv[it.id] ? `<span class="have">🎒 ${G.S.inv[it.id]}</span>` : '';
+            const btns = consumable
+              ? `<button class="btn buy" data-i="${it.key}" ${ok ? '' : 'disabled'} title="Jetzt ${item.t === 'food' ? 'essen' : 'trinken'}">${priceTxt}</button><button class="btn take" data-i="${it.key}" ${ok ? '' : 'disabled'} title="Mitnehmen (in die Tasche)">🎒</button>`
+              : `<button class="btn buy" data-i="${it.key}" ${ok ? '' : 'disabled'}>${priceTxt}</button>`;
+            body += `<div class="shop-item ${ok ? '' : 'off'}"><img alt="" src="${itemIconURL(it.icon || item.icon)}"><span><span class="nm">${it.n || item.n}${have}</span><br><span class="ds">${it.d || itemDesc(it.id)}</span></span><span class="pr">${btns}</span></div>`;
           }
         }
-        return `<div class="panel"><div class="panel-head"><h2>${def.title}</h2><span class="sub">${money}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body">${def.intro ? `<p class="note">${def.intro}</p>` : ''}${body}</div><div class="panel-foot"><span>${def.foot || 'Tippen zum Kaufen'}</span><button class="btn" data-close>Fertig</button></div></div>`;
+        const foot = def.foot || (def.mode === 'eat' ? 'Preis = jetzt konsumieren · 🎒 = mitnehmen' : def.mode === 'take' ? 'Gekauftes landet in der Tasche (Handy)' : 'Tippen zum Kaufen');
+        return `<div class="panel"><div class="panel-head"><h2>${def.title}</h2><span class="sub">${money}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body">${def.intro ? `<p class="note">${def.intro}</p>` : ''}${body}</div><div class="panel-foot"><span>${foot}</span><button class="btn" data-close>Fertig</button></div></div>`;
       };
       const flat = {};
       let k = 0;
       for (const sec of def.sections) for (const it of sec.items) { it.key = k; flat[k++] = it; }
       const o = this.overlay(render(), resolve);
       const wire = () => {
-        o.querySelectorAll('.shop-item').forEach((b) => b.addEventListener('click', async () => {
+        o.querySelectorAll('.shop-item .buy, .shop-item .take').forEach((b) => b.addEventListener('click', async () => {
           const it = flat[b.dataset.i];
-          const done = await Story.buy(def, it, cur);
+          const done = await Story.buy(def, it, cur, { take: b.classList.contains('take') });
           if (done === 'close') { this.closeOverlay(); return; }
           const scroll = o.querySelector('.panel-body').scrollTop;
           o.innerHTML = render(); o.querySelector('.panel-body').scrollTop = scroll;
@@ -310,7 +317,7 @@ const Phone = {
   tab: 'ziele',
   open(tab) {
     if (tab) this.tab = tab;
-    const o = UI.overlay(`<div class="panel" style="height:min(720px,100%)"><div class="panel-head"><h2>${G.S.name}s Handy</h2><span class="sub">${clockStr()} · ${dayStr()}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div>
+    const o = UI.overlay(`<div class="panel" style="height:min(720px,100%)"><div class="panel-head"><h2>${G.S.name}s Handy</h2><span class="sub">${clockStr()} · ${dateStr()}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div>
       <div class="tabs" role="tablist">${[['ziele', 'Ziele'], ['karte', 'Karte'], ['inv', 'Tasche'], ['fotos', 'Fotos'], ['status', 'Status'], ['opt', 'Optionen']].map(([k, n]) => `<button class="tab ${k === this.tab ? 'on' : ''}" data-tab="${k}" role="tab">${n}</button>`).join('')}</div>
       <div class="panel-body" id="phoneBody"></div></div>`);
     o.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { this.tab = b.dataset.tab; o.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === b)); this.render(); }));
@@ -358,7 +365,7 @@ const Phone = {
     const ids = Object.keys(G.S.inv).filter((k) => G.S.inv[k] > 0);
     const L = G.S.look;
     b.innerHTML = `<div class="note">Du trägst: ${optName('top', L.top)} (${optName('topCol', L.topCol)}), ${optName('pants', L.pants)}, ${optName('shoes', L.shoes)}${L.hat ? ', ' + optName('hat', L.hat) : ''}.</div>`;
-    if (!ids.length) { b.innerHTML += '<p class="note">Deine Taschen sind leer. Im Supermarkt, am Kiosk oder im Souvenirladen findest du Nachschub.</p>'; return; }
+    if (!ids.length) { b.innerHTML += '<p class="note">Deine Taschen sind leer. Was du im Laden kaufst oder in der Bar mit 🎒 mitnimmst, landet hier – und kannst du jederzeit konsumieren.</p>'; return; }
     for (const id of ids) {
       const it = ITEMS[id];
       const usable = ['drink', 'food', 'med', 'pack', 'smoke', 'read', 'souv', 'ticket'].includes(it.t);

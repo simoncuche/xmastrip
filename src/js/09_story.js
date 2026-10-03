@@ -1199,7 +1199,7 @@ const Story = {
     if (m.id === 'bar' && G.S.stage === 'bar') setTimeout(() => this.barArrive(), 650);
     if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; }
   },
-  async buy(def, item, cur) {
+  async buy(def, item, cur, opts = {}) {
     if (item.special === 'hair' || item.special === 'beard') {
       if (!pay(cur, item.price)) return;
       UI.closeOverlay();
@@ -1227,7 +1227,7 @@ const Story = {
     }
     if (!pay(cur, item.price)) { UI.toast('Nicht genug Geld.', 'warn'); return; }
     const I = ITEMS[item.id];
-    if (def.mode === 'take' && I.inv) { addInv(item.id); UI.toast(`${I.n} eingepackt.`); return; }
+    if (def.mode === 'take' || opts.take) { addInv(item.id); Snd.sfx('ok'); UI.toast(`${I.n} eingepackt (${G.S.inv[item.id]} in der Tasche). Konsumieren: Handy → Tasche.`); return; }
     consume(item.id);
     const p = G.player;
     if (I.t === 'drink') { p.pose = 'drink'; setTimeout(() => { if (p.pose === 'drink') p.pose = 'stand'; }, 1600); }

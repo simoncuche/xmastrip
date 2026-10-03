@@ -1,4 +1,6 @@
-# Gleis 4 nach Innsbruck
+# Wiehnachtsreisli 2026 nach Innsbruck
+
+*Gleis 4 nach Innsbruck · Abfahrt Freitag, 11. Dezember 2026*
 
 Ein Pixel-Rollenspiel für den Browser: Zwölf Jungs treffen sich am Bahnhof Luzern, fahren mit dem Zug nach Innsbruck,
 checken im Hotel Zirbe ein und treffen sich danach in der Gamsbock Bar. Ab dann gehört dir die Stadt.

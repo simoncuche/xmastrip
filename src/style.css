@@ -111,7 +111,12 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .shop-item .nm { font-size: 15px; }
 .shop-item .ds { font-size: 12px; color: var(--ink-dim); font-family: var(--f-sign); }
 .shop-item .pr { font-family: var(--f-sign); font-weight: 700; font-size: 16px; color: var(--amber); font-variant-numeric: tabular-nums; }
-.shop-item[disabled] { opacity: .5; }
+.shop-item.off { opacity: .55; }
+.shop-item .pr { display: flex; gap: 6px; align-items: center; }
+.shop-item .pr .btn { padding: 7px 10px; font-size: 14px; color: var(--amber); white-space: nowrap; }
+.shop-item .pr .btn.take { padding: 7px 8px; font-size: 15px; }
+.shop-item .pr .btn:not([disabled]):hover { border-color: var(--amber); }
+.shop-item .nm .have { margin-left: 6px; font-family: var(--f-sign); font-size: 12px; color: var(--ink-dim); }
 .btn { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--board-line); background: var(--board-2); font-family: var(--f-sign); font-weight: 600; font-size: 15px; }
 .btn.primary { background: var(--amber); color: var(--board); border-color: #ffd27a; }
 .btn.red { background: var(--red); border-color: #ff7a6a; }
@@ -236,7 +241,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .dep-row .ds { font-size: 22px; font-weight: 600; }
 .dep-row .ds small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-dim); letter-spacing: .02em; }
 .dep-row .gl { justify-self: end; background: var(--ink); color: var(--board); font-weight: 700; border-radius: 4px; padding: 0 7px; font-size: 18px; }
-.title-name { font-family: var(--f-pixel); font-size: clamp(30px, 8vw, 46px); line-height: 1.02; margin: 0; text-wrap: balance; }
+.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin: 0 0 -8px; }
+.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.04; margin: 0; text-wrap: balance; }
 .title-name span { color: var(--amber); }
 .title-sub { margin: 0; color: var(--ink-dim); max-width: 46ch; line-height: 1.5; }
 .title-btns { display: grid; gap: 8px; }

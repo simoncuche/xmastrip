@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#0f1a2b">
-<title>Gleis 4 nach Innsbruck</title>
+<title>Wiehnachtsreisli 2026 nach Innsbruck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -125,7 +125,12 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .shop-item .nm { font-size: 15px; }
 .shop-item .ds { font-size: 12px; color: var(--ink-dim); font-family: var(--f-sign); }
 .shop-item .pr { font-family: var(--f-sign); font-weight: 700; font-size: 16px; color: var(--amber); font-variant-numeric: tabular-nums; }
-.shop-item[disabled] { opacity: .5; }
+.shop-item.off { opacity: .55; }
+.shop-item .pr { display: flex; gap: 6px; align-items: center; }
+.shop-item .pr .btn { padding: 7px 10px; font-size: 14px; color: var(--amber); white-space: nowrap; }
+.shop-item .pr .btn.take { padding: 7px 8px; font-size: 15px; }
+.shop-item .pr .btn:not([disabled]):hover { border-color: var(--amber); }
+.shop-item .nm .have { margin-left: 6px; font-family: var(--f-sign); font-size: 12px; color: var(--ink-dim); }
 .btn { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--board-line); background: var(--board-2); font-family: var(--f-sign); font-weight: 600; font-size: 15px; }
 .btn.primary { background: var(--amber); color: var(--board); border-color: #ffd27a; }
 .btn.red { background: var(--red); border-color: #ff7a6a; }
@@ -250,7 +255,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .dep-row .ds { font-size: 22px; font-weight: 600; }
 .dep-row .ds small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-dim); letter-spacing: .02em; }
 .dep-row .gl { justify-self: end; background: var(--ink); color: var(--board); font-weight: 700; border-radius: 4px; padding: 0 7px; font-size: 18px; }
-.title-name { font-family: var(--f-pixel); font-size: clamp(30px, 8vw, 46px); line-height: 1.02; margin: 0; text-wrap: balance; }
+.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin: 0 0 -8px; }
+.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.04; margin: 0; text-wrap: balance; }
 .title-name span { color: var(--amber); }
 .title-sub { margin: 0; color: var(--ink-dim); max-width: 46ch; line-height: 1.5; }
 .title-btns { display: grid; gap: 8px; }
@@ -1585,7 +1591,10 @@ const Editor = {
 
 /* ---- 04_state.js ---- */
 /* ============ Spielzustand, Werte, Gegenstände ============ */
-const DAYS = ['Sa', 'So', 'Mo', 'Di', 'Mi', 'Do', 'Fr'];
+const DAYS = ['Fr', 'Sa', 'So', 'Mo', 'Di', 'Mi', 'Do']; /* Tag 0 = Freitag, 11. Dezember 2026 */
+const START_DATE = { d: 11, m: 12, y: 2026 };
+const DAY_NAMES = { Sa: 'Samstag', So: 'Sonntag', Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag' };
+const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const G = {
   S: null, map: null, player: null, npcs: [], peds: [], parts: [], birds: [],
   cam: { x: 0, y: 0 }, t: 0, busy: 0, fx: { shake: 0, flash: 0, tint: null }, warned: {}, lastMinute: 0,
@@ -1733,6 +1742,9 @@ const dayOf = (t) => Math.floor(t / 1440);
 const hourOf = (t) => (t % 1440) / 60;
 function clockStr(t = G.S.time) { const m = Math.floor(t) % 1440; return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); }
 function dayStr(t = G.S.time) { return DAYS[dayOf(t) % 7]; }
+function calDate(t = G.S.time) { const dt = new Date(START_DATE.y, START_DATE.m - 1, START_DATE.d + dayOf(t)); return { d: dt.getDate(), m: dt.getMonth() + 1, y: dt.getFullYear() }; }
+function dateStr(t = G.S.time) { const c = calDate(t); return `${dayStr(t)} ${c.d}.${c.m}.${c.y}`; }
+function dateLong(t = G.S.time) { const c = calDate(t); return `${DAY_NAMES[dayStr(t)]}, ${c.d}. ${MONTH_NAMES[c.m - 1]} ${c.y}`; }
 function isNight(t = G.S.time) { const h = hourOf(t); return h >= 20 || h < 6.5; }
 
 function addMoney(cur, v) { G.S.money[cur] = Math.round((G.S.money[cur] + v) * 100) / 100; UI.hud(); }
@@ -4152,8 +4164,8 @@ const UI = {
     if (!G.S) return;
     const e = this.els, st = G.S.st;
     e.hClock.textContent = clockStr();
-    const dayNames = { Sa: 'Samstag', So: 'Sonntag', Mo: 'Montag', Di: 'Dienstag', Mi: 'Mittwoch', Do: 'Donnerstag', Fr: 'Freitag' };
-    e.hDay.textContent = dayNames[dayStr()] + (dayOf(G.S.time) ? ' · Tag ' + (dayOf(G.S.time) + 1) : '');
+    const cd = calDate();
+    e.hDay.textContent = `${dayStr()} ${cd.d}.${cd.m}.` + (dayOf(G.S.time) ? ' · Tag ' + (dayOf(G.S.time) + 1) : '');
     e.hPlace.textContent = G.map ? G.map.name : '';
     e.hEur.textContent = fmtEur(G.S.money.eur);
     e.hChf.textContent = fmtChf(G.S.money.chf);
@@ -4345,19 +4357,26 @@ const UI = {
             const item = ITEMS[it.id] || {};
             const price = it.price;
             const ok = canPay(cur, price) && (!it.cond || it.cond());
-            body += `<button class="shop-item" data-i="${it.key}" ${ok ? '' : 'disabled'}><img alt="" src="${itemIconURL(it.icon || item.icon)}"><span><span class="nm">${it.n || item.n}</span><br><span class="ds">${it.d || itemDesc(it.id)}</span></span><span class="pr">${cur === 'eur' ? fmtEur(price) : fmtChf(price)}</span></button>`;
+            const priceTxt = cur === 'eur' ? fmtEur(price) : fmtChf(price);
+            const consumable = ['drink', 'food', 'med'].includes(item.t) && !it.special && def.mode === 'eat';
+            const have = G.S.inv[it.id] ? `<span class="have">🎒 ${G.S.inv[it.id]}</span>` : '';
+            const btns = consumable
+              ? `<button class="btn buy" data-i="${it.key}" ${ok ? '' : 'disabled'} title="Jetzt ${item.t === 'food' ? 'essen' : 'trinken'}">${priceTxt}</button><button class="btn take" data-i="${it.key}" ${ok ? '' : 'disabled'} title="Mitnehmen (in die Tasche)">🎒</button>`
+              : `<button class="btn buy" data-i="${it.key}" ${ok ? '' : 'disabled'}>${priceTxt}</button>`;
+            body += `<div class="shop-item ${ok ? '' : 'off'}"><img alt="" src="${itemIconURL(it.icon || item.icon)}"><span><span class="nm">${it.n || item.n}${have}</span><br><span class="ds">${it.d || itemDesc(it.id)}</span></span><span class="pr">${btns}</span></div>`;
           }
         }
-        return `<div class="panel"><div class="panel-head"><h2>${def.title}</h2><span class="sub">${money}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body">${def.intro ? `<p class="note">${def.intro}</p>` : ''}${body}</div><div class="panel-foot"><span>${def.foot || 'Tippen zum Kaufen'}</span><button class="btn" data-close>Fertig</button></div></div>`;
+        const foot = def.foot || (def.mode === 'eat' ? 'Preis = jetzt konsumieren · 🎒 = mitnehmen' : def.mode === 'take' ? 'Gekauftes landet in der Tasche (Handy)' : 'Tippen zum Kaufen');
+        return `<div class="panel"><div class="panel-head"><h2>${def.title}</h2><span class="sub">${money}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body">${def.intro ? `<p class="note">${def.intro}</p>` : ''}${body}</div><div class="panel-foot"><span>${foot}</span><button class="btn" data-close>Fertig</button></div></div>`;
       };
       const flat = {};
       let k = 0;
       for (const sec of def.sections) for (const it of sec.items) { it.key = k; flat[k++] = it; }
       const o = this.overlay(render(), resolve);
       const wire = () => {
-        o.querySelectorAll('.shop-item').forEach((b) => b.addEventListener('click', async () => {
+        o.querySelectorAll('.shop-item .buy, .shop-item .take').forEach((b) => b.addEventListener('click', async () => {
           const it = flat[b.dataset.i];
-          const done = await Story.buy(def, it, cur);
+          const done = await Story.buy(def, it, cur, { take: b.classList.contains('take') });
           if (done === 'close') { this.closeOverlay(); return; }
           const scroll = o.querySelector('.panel-body').scrollTop;
           o.innerHTML = render(); o.querySelector('.panel-body').scrollTop = scroll;
@@ -4389,7 +4408,7 @@ const Phone = {
   tab: 'ziele',
   open(tab) {
     if (tab) this.tab = tab;
-    const o = UI.overlay(`<div class="panel" style="height:min(720px,100%)"><div class="panel-head"><h2>${G.S.name}s Handy</h2><span class="sub">${clockStr()} · ${dayStr()}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div>
+    const o = UI.overlay(`<div class="panel" style="height:min(720px,100%)"><div class="panel-head"><h2>${G.S.name}s Handy</h2><span class="sub">${clockStr()} · ${dateStr()}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div>
       <div class="tabs" role="tablist">${[['ziele', 'Ziele'], ['karte', 'Karte'], ['inv', 'Tasche'], ['fotos', 'Fotos'], ['status', 'Status'], ['opt', 'Optionen']].map(([k, n]) => `<button class="tab ${k === this.tab ? 'on' : ''}" data-tab="${k}" role="tab">${n}</button>`).join('')}</div>
       <div class="panel-body" id="phoneBody"></div></div>`);
     o.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { this.tab = b.dataset.tab; o.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === b)); this.render(); }));
@@ -4437,7 +4456,7 @@ const Phone = {
     const ids = Object.keys(G.S.inv).filter((k) => G.S.inv[k] > 0);
     const L = G.S.look;
     b.innerHTML = `<div class="note">Du trägst: ${optName('top', L.top)} (${optName('topCol', L.topCol)}), ${optName('pants', L.pants)}, ${optName('shoes', L.shoes)}${L.hat ? ', ' + optName('hat', L.hat) : ''}.</div>`;
-    if (!ids.length) { b.innerHTML += '<p class="note">Deine Taschen sind leer. Im Supermarkt, am Kiosk oder im Souvenirladen findest du Nachschub.</p>'; return; }
+    if (!ids.length) { b.innerHTML += '<p class="note">Deine Taschen sind leer. Was du im Laden kaufst oder in der Bar mit 🎒 mitnimmst, landet hier – und kannst du jederzeit konsumieren.</p>'; return; }
     for (const id of ids) {
       const it = ITEMS[id];
       const usable = ['drink', 'food', 'med', 'pack', 'smoke', 'read', 'souv', 'ticket'].includes(it.t);
@@ -5701,7 +5720,7 @@ const Story = {
     if (m.id === 'bar' && G.S.stage === 'bar') setTimeout(() => this.barArrive(), 650);
     if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; }
   },
-  async buy(def, item, cur) {
+  async buy(def, item, cur, opts = {}) {
     if (item.special === 'hair' || item.special === 'beard') {
       if (!pay(cur, item.price)) return;
       UI.closeOverlay();
@@ -5729,7 +5748,7 @@ const Story = {
     }
     if (!pay(cur, item.price)) { UI.toast('Nicht genug Geld.', 'warn'); return; }
     const I = ITEMS[item.id];
-    if (def.mode === 'take' && I.inv) { addInv(item.id); UI.toast(`${I.n} eingepackt.`); return; }
+    if (def.mode === 'take' || opts.take) { addInv(item.id); Snd.sfx('ok'); UI.toast(`${I.n} eingepackt (${G.S.inv[item.id]} in der Tasche). Konsumieren: Handy → Tasche.`); return; }
     consume(item.id);
     const p = G.player;
     if (I.t === 'drink') { p.pose = 'drink'; setTimeout(() => { if (p.pose === 'drink') p.pose = 'stand'; }, 1600); }
@@ -6493,14 +6512,15 @@ function showTitle() {
   t.hidden = false;
   t.innerHTML = `<div class="title-card">
     <div class="dep" aria-label="Abfahrt">
-      <div class="dep-head"><span>Abfahrt · Luzern</span><span>Gleis</span></div>
+      <div class="dep-head"><span>Abfahrt · Luzern · Fr 11.12.2026</span><span>Gleis</span></div>
       <div class="dep-row"><span class="tm">09:10</span><span class="ds">IR 70 Zürich HB<small>weiter mit Railjet nach Innsbruck Hbf, an 13:20</small></span><span class="gl">4</span></div>
       <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
     </div>
-    <h1 class="title-name">Gleis 4 nach <span>Innsbruck</span></h1>
+    <p class="title-kicker">Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026</p>
+    <h1 class="title-name">Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
-      ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${DAYS[Math.floor(save.time / 1440) % 7]} ${pad2(Math.floor((save.time % 1440) / 60))}:${pad2(Math.floor(save.time % 60))}</button>` : ''}
+      ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
       <button class="btn ${save ? '' : 'primary'}" id="tNew">Neues Spiel</button>
     </div>
     <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
@@ -6542,7 +6562,7 @@ async function startGame(state, fresh) {
   UI.hud();
   if (fresh) {
     G.busy++;
-    await UI.card('Samstag, 8:38 Uhr · Bahnhofplatz Luzern', 1500);
+    await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
     await Story.say(null, playerIsKassier()
       ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
       : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
