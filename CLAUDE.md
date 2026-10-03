@@ -61,7 +61,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   Struktur von `newState` die Versionsnummer `v` und `SAVE_KEY` erhöhen.
 - Datum: Tag 0 ist Freitag, 11. Dezember 2026 (`START_DATE`, `DAYS`, `dateStr`, `dateLong`). Öffnungszeiten prüfen per `dayStr()`.
 - Bergisel: `Story.bergiselTram/bergiselBack` (Tram-Szene), `bergiselTicket` (Tagesticket `flags.bergiselTicket`), `bergiselTower` (Lift-Szene, Panorama, `SHOPS.turmcafe`), `skijump` (Trainer, Bedingungen, Auswertung, Rekord `G.S.rec.jump`).
-- Easter Egg: `Shake` (12_main.js) erkennt 3 s Schütteln über `devicemotion` (`Shake.feed(m, now)` testbar), ruft `Story.shakeEvent()`; iOS-Erlaubnis über `Shake.ask()` (Optionen, Darts-Neigung).
+- Easter Egg: `Shake` (12_main.js) erkennt 3 s Schütteln über `devicemotion` (`Shake.feed(m, now)` testbar), ruft `Story.shakeEvent()` (feste Reihenfolge `Story.SHAKE_ORDER`, Zeiger `flags.shakeIdx`, Godzilla am Schluss); iOS-Erlaubnis über `Shake.ask()` (Optionen, Darts-Neigung).
 - Stüberl: `Story.ferdl` → `Story.brawl` (Minispiel, danach Hausverbot `flags.stueberlBan`, geprüft in `openGuard`).
 - Ereignisse starten über `Story.announce(id)` (Sequenz mit `#cine`, Titel in `Story.EV_TITLES`), danach `Story.ev_<id>`.
 - Kleider: `SHOPS.mode/boutique` (Sets via `wear`), `SHOPS.kostuem` (`wear: { costume: n }`, Freischaltung `unlock`, `LOCKED.costume`); Querformat-Layout per `@media (orientation: landscape) and (max-height: 600px)`.

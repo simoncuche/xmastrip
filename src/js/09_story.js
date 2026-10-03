@@ -480,12 +480,17 @@ const Story = {
     this.announce(e.id).then(() => this['ev_' + e.id]());
   },
   /* Easter Egg: geschütteltes Handy beschwört ein zufälliges Ereignis herauf (zählt nicht zum Tagesplan) */
+  /* Feste Reihenfolge für das Schüttel-Easter-Egg: jedes Ereignis genau einmal, Godzilla als Finale, dann von vorne */
+  SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'monster'],
   shakeEvent() {
     if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
-    const pool = this.EVENTS.filter((e) => { try { return e.cond(); } catch (err) { return false; } });
-    const id = Math.random() < 0.12 || !pool.length ? 'monster' : pick(pool).id;
+    const fl = G.S.flags, n = this.SHAKE_ORDER.length;
+    const i = (fl.shakeIdx || 0) % n;
+    const id = this.SHAKE_ORDER[i];
+    fl.shakeIdx = i + 1;
+    if (fl.shakeIdx >= n) { fl.shakeIdx = 0; fl.shakeRounds = (fl.shakeRounds || 0) + 1; }
     achieve('schuettler');
-    UI.toast('📳 Easter Egg! Irgendetwas hat dein Schütteln gespürt …', 'ach');
+    UI.toast(`📳 Easter Egg ${i + 1}/${n}! Irgendetwas hat dein Schütteln gespürt …`, 'ach');
     this.announce(id).then(() => this['ev_' + id]());
   },
   /* Jedes Ereignis beginnt mit einer kurzen Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich

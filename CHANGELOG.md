@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.17.0 – 03.10.2026
+
+- Schüttel-Easter-Egg in fester Reihenfolge: Taschendieb, Hund gegen Katze, Taube, Krampus, Fundsache, Trump, Polizei, UFO, Überfall – und als Finale Godzilla. Jedes Ereignis kommt genau einmal dran, erst danach beginnt die Liste von vorne. Der Hinweis zeigt, wo du stehst (z. B. „Easter Egg 3/10“). Der Fortschritt wird mit dem Spielstand gespeichert.
+
 ## 2.16.0 – 03.10.2026
 
 - Freie Fotos: Der neue blaue Kamera-Knopf oben neben dem Handy (am Computer Taste P) knipst jederzeit die aktuelle Szene – auch mitten in Ereignissen wie Godzilla oder dem UFO. Blitz, Auslöser-Klick, und das Bild bekommt einen Polaroid-Rand mit Ort, Datum und Uhrzeit.
