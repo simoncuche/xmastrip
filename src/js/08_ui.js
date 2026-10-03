@@ -68,6 +68,7 @@ const UI = {
     for (const id of ['hud', 'hClock', 'hDay', 'hPlace', 'hEur', 'hChf', 'hProm', 'boardText', 'boardGl', 'toasts', 'dialog', 'dlgPort', 'dlgName', 'dlgText', 'dlgChoices', 'overlay', 'fade', 'fadeText', 'fadeCv', 'touch', 'btnA', 'actLabel', 'coaster', 'btnPhone']) this.els[id] = document.getElementById(id);
     this.els.dialog.addEventListener('pointerdown', (e) => { if (e.target.closest('.choice')) return; e.preventDefault(); this.dlgAdvance(); });
     this.els.btnPhone.addEventListener('click', () => { if (!G.busy && !this.ovOpen) Phone.open(); });
+    document.getElementById('btnCam').addEventListener('click', (e) => { e.stopPropagation(); Snap.shoot(); });
   },
   /* ---- HUD ---- */
   hud() {
@@ -389,6 +390,14 @@ const Phone = {
     }
   },
   fotos(b) {
+    const snaps = Snap.list();
+    const sb = document.createElement('div');
+    sb.innerHTML = `<div class="shop-sec">Schnappschüsse (${snaps.length})</div>` + (snaps.length ? '' : '<p class="note">Mit dem blauen Kamera-Knopf oben (oder Taste P) machst du jederzeit ein Foto der aktuellen Szene. Hier kannst du es ansehen und per WhatsApp & Co. teilen.</p>');
+    const sg = document.createElement('div'); sg.className = 'snaps';
+    for (const sn of snaps.slice().reverse()) { const bt = document.createElement('button'); bt.className = 'snap'; bt.setAttribute('aria-label', `Foto ${sn.place} ${sn.when}`); bt.innerHTML = `<img alt="" src="${sn.data}">`; bt.onclick = () => { UI.closeOverlay(); Snap.view(sn.id, true); }; sg.appendChild(bt); }
+    sb.appendChild(sg);
+    b.innerHTML = '';
+    b.appendChild(sb);
     const grid = document.createElement('div');
     grid.className = 'photos';
     for (const [id, s] of Object.entries(SIGHTS)) {
@@ -397,12 +406,14 @@ const Phone = {
         d.className = 'photo';
         d.style.setProperty('--r', ((hash(id.length, id.charCodeAt(0)) - 0.5) * 4).toFixed(1) + 'deg');
         const src = (G.photoImg || {})[id];
-        d.innerHTML = `${src ? `<img alt="" src="${src}" style="width:100%;image-rendering:pixelated;display:block">` : '<canvas width="64" height="40"></canvas>'}<b>${s.n}</b><p>${s.f}</p>`;
+        d.innerHTML = `${src ? `<img alt="" src="${src}" style="width:100%;image-rendering:pixelated;display:block">` : '<canvas width="64" height="40"></canvas>'}<b>${s.n}</b><p>${s.f}</p>${src ? '<button class="btn share">📤 Teilen</button>' : ''}`;
+        if (src) { const bt = d.querySelector('.share'); Snap.prepare(src, s.n).then((f) => { bt._file = f; }); bt.onclick = () => Snap.share(bt._file, s.n); }
         if (!src) { const cv = d.querySelector('canvas').getContext('2d'); R(cv, 0, 0, 64, 40, '#8ec3e6'); R(cv, 0, 26, 64, 14, '#7a9a5a'); R(cv, 20, 10, 24, 18, '#e8c9a0'); R(cv, 18, 6, 28, 5, '#8a3b2a'); }
       } else { d.className = 'photo missing'; d.innerHTML = `<span>${s.n}<br><small>noch kein Foto</small></span>`; }
       grid.appendChild(d);
     }
-    b.innerHTML = `<div class="note">${Object.keys(G.S.photos).length} von ${Object.keys(SIGHTS).length} Sehenswürdigkeiten fotografiert. Stell dich davor und tippe auf „Foto“.</div>`;
+    const nt = document.createElement('div'); nt.innerHTML = `<div class="shop-sec">Sehenswürdigkeiten</div><div class="note">${Object.keys(G.S.photos).length} von ${Object.keys(SIGHTS).length} fotografiert. Stell dich davor und tippe auf „Foto“.</div>`;
+    b.appendChild(nt);
     b.appendChild(grid);
   },
   status(b) {
@@ -440,5 +451,91 @@ const Phone = {
     b.querySelector('#oSave').onclick = () => saveGame();
     const nb = b.querySelector('#oNew');
     nb.onclick = () => { if (nb.dataset.sure) { clearSave(); location.reload(); } else { nb.dataset.sure = 1; nb.textContent = 'Wirklich? Nochmal tippen'; } };
+  },
+};
+
+/* ============ Schnappschüsse: freie Fotos von jeder Szene, Galerie im Handy, Teilen per Web Share (WhatsApp & Co.) ============
+   Gespeichert wird klein (Spielauflösung, PNG) unter SAVE_KEY + '-snaps'; zum Teilen wird pixelgenau hochskaliert. */
+const Snap = {
+  MAX: 40,
+  _list: null,
+  key() { return SAVE_KEY + '-snaps'; },
+  list() {
+    if (!this._list) { try { this._list = JSON.parse(localStorage.getItem(this.key()) || '[]'); } catch (e) { this._list = []; } }
+    return this._list;
+  },
+  store() {
+    const l = this.list();
+    while (l.length > this.MAX) l.shift();
+    for (;;) { try { localStorage.setItem(this.key(), JSON.stringify(l)); return true; } catch (e) { if (l.length <= 1) return false; l.shift(); } }
+  },
+  /* Polaroid: Bild, weisser Rand, Bildunterschrift in Pixelschrift */
+  compose(src, title, sub) {
+    const pad = 4, bar = 22, w = src.width + pad * 2, h = src.height + pad + bar;
+    const [c, x] = canvas(w, h);
+    R(x, 0, 0, w, h, '#f4f0e6'); x.drawImage(src, pad, pad);
+    R(x, pad, pad + src.height, src.width, 1, '#d8d2c4');
+    const t1 = title.toUpperCase(); pxText(x, t1.length > 34 ? t1.slice(0, 34) : t1, pad + 2, pad + src.height + 4, '#2a2622');
+    pxText(x, sub.toUpperCase(), pad + 2, pad + src.height + 12, '#8a6a4a');
+    /* kleiner Bierkrug als Signet */
+    const bx = w - pad - 10, by = h - 18; R(x, bx, by + 3, 6, 9, '#e8b33a'); R(x, bx, by + 1, 6, 3, '#fbf6e8'); R(x, bx + 6, by + 5, 2, 4, '#c88020');
+    return c;
+  },
+  caption() { return { title: `Wiehnachtsreisli - ${G.map ? G.map.name.replace(/ · /g, ' - ') : ''}`, sub: `${dateStr()} - ${clockStr()}` }; },
+  /* Foto der aktuellen Szene (oder eines Minispiel-Canvas) */
+  shoot(source) {
+    if (G.mode !== 'play' || !G.map) return;
+    const src = source || View.cv;
+    if (!src || !src.width) return;
+    const { title, sub } = this.caption();
+    const comp = this.compose(src, title, sub);
+    let data; try { data = comp.toDataURL('image/png'); } catch (e) { UI.toast('Foto konnte nicht gespeichert werden.', 'warn'); return; }
+    const sn = { id: Date.now().toString(36), place: G.map.name, when: `${dateStr()} ${clockStr()}`, data };
+    this.list().push(sn);
+    const ok = this.store();
+    Snd.sfx('shutter');
+    const fl = document.createElement('div'); fl.className = 'cam-flash'; document.getElementById('app').appendChild(fl); setTimeout(() => fl.remove(), 500);
+    achieve('knipser');
+    if (!ok) UI.toast('Speicher voll – ältere Schnappschüsse wurden entfernt.', 'warn');
+    /* Ohne laufende Szene gleich die Vorschau zum Teilen; sonst nur speichern, damit nichts unterbrochen wird */
+    if (!G.busy && !UI.ovOpen && !source) setTimeout(() => this.view(sn.id, false), 420);
+    else UI.toast('📷 Foto gespeichert – im Handy unter „Fotos“ teilen.');
+  },
+  /* Bild zum Teilen vorbereiten: hochskalieren (scharfe Pixel), als PNG-Datei */
+  prepare(dataUrl, name) {
+    return new Promise((res) => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.max(2, Math.min(6, Math.floor(1400 / Math.max(img.width, img.height)) || 2));
+        const [c, x] = canvas(img.width * k, img.height * k); x.imageSmoothingEnabled = false; x.drawImage(img, 0, 0, img.width * k, img.height * k);
+        c.toBlob((blob) => { if (!blob) return res(null); const fn = `wiehnachtsreisli-${(name || 'foto').toLowerCase().replace(/[^a-z0-9äöü]+/g, '-').replace(/^-|-$/g, '')}.png`; try { res(new File([blob], fn, { type: 'image/png' })); } catch (e) { blob.name = fn; res(blob); } }, 'image/png');
+      };
+      img.onerror = () => res(null);
+      img.src = dataUrl;
+    });
+  },
+  canShare(file) { try { return !!(file && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) { return false; } },
+  async share(file, name) {
+    if (!file) { UI.toast('Einen Moment – das Bild wird noch vorbereitet.'); return; }
+    const text = `Wiehnachtsreisli 2026 nach Innsbruck – ${name || ''} 🍺 https://simoncuche.github.io/xmastrip/`;
+    if (this.canShare(file)) {
+      try { await navigator.share({ files: [file], title: 'Wiehnachtsreisli 2026', text }); achieve('influencer'); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    this.download(file);
+    UI.toast('Bild gespeichert. In WhatsApp über 📎 → Galerie anhängen.');
+  },
+  download(file) {
+    const url = URL.createObjectURL(file); const a = document.createElement('a'); a.href = url; a.download = file.name || 'wiehnachtsreisli.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+  },
+  /* Vorschau mit Teilen / Speichern / Löschen */
+  view(id, backToPhone) {
+    const sn = this.list().find((s) => s.id === id); if (!sn) return;
+    const o = UI.overlay(`<div class="panel snap-panel"><div class="panel-head"><h2>Schnappschuss</h2><span class="sub">${sn.place} · ${sn.when}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body"><div class="snap-view"><img alt="Schnappschuss" src="${sn.data}"></div><div class="snap-btns"><button class="btn primary" id="snShare">📤 Teilen (WhatsApp …)</button><button class="btn" id="snSave">💾 Speichern</button><button class="btn red" id="snDel">🗑 Löschen</button><button class="btn" data-close>Fertig</button></div></div></div>`, backToPhone ? () => setTimeout(() => { if (!G.busy) Phone.open('fotos'); }, 50) : null);
+    let file = null; this.prepare(sn.data, sn.place).then((f) => { file = f; });
+    o.querySelector('#snShare').onclick = () => this.share(file, sn.place);
+    o.querySelector('#snSave').onclick = () => { if (file) this.download(file); };
+    const del = o.querySelector('#snDel');
+    del.onclick = () => { if (!del.dataset.sure) { del.dataset.sure = 1; del.textContent = 'Wirklich löschen?'; return; } this._list = this.list().filter((s) => s.id !== id); this.store(); UI.closeOverlay(); };
   },
 };

@@ -29,7 +29,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
 | `06_maps.js` | Alle Karten als Builder-Funktionen: `luzern`, `luzern_halle`, `zug`, `ibk`, `hotel_lobby`, `hotel_floor`, `hotel_room`, `bar`, `stueberl`, `club`, `rouge` (Tabledance in den Bögen), `casino` (Roulette, Blackjack), `bergisel` (Schanze `objSchanze`, Tribünen, Kassa, Turm, Hofer-Denkmal, Tirol Panorama; Tram ab `ibk`-Spawn `bergisel_stop`), `shop_<id>` (individuelle Laden-Innenräume via `shopInterior(id, { build(m, h) })` mit Helfern `h.counter/keeper/shelf/door`, Rückweg über `flags.shopBack`), `seegrube`. Zug-Fahrplan, Tram, Autos |
 | `07_engine.js` | `GMap`, Akteure, Kollision, Kamera, Licht/Nacht, Rendern, Interaktion, Zeitfluss |
-| `08_ui.js` | HUD, Dialoge (`UI.say`, `UI.ask`), Läden, Overlays, Handy (`Phone`) |
+| `08_ui.js` | HUD, Dialoge (`UI.say`, `UI.ask`), Läden, Overlays, Handy (`Phone`), Schnappschüsse `Snap` (Kamera-Knopf, Galerie unter `SAVE_KEY-snaps`, Teilen über Web Share) |
 | `09_story.js` | Reisegruppe `CREW` (12 Namen mit Rollen), Läden `SHOPS`, Öffnungszeiten, **gesamte Story & alle Interaktionen** (`Story.*`), Taxi, Ereignisse (Übergeben, Filmriss, Einschlafen) |
 | `10_jass.js` | Schieber-Jass mit Regeln (`JassRules`) und KI |
 | `11_minigames.js` | Wirtshausrauferei (`brawl`, Testhilfe `Mini._brawl`), Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama (`turm`, `seegrube`, `bergisel`), Bierpong (`beerpong`), Roulette (`rouletteSpin`), Blackjack, Skispringen (`skijump`: Anlauf, Absprung-Timing, Haltung, Telemark; Hilfsobjekt `Mini._sj` für Tests) |

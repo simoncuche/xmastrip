@@ -122,6 +122,8 @@ const ACH = {
   kpunkt: ['K-Punkt', 'Am Bergisel über 120 Meter gesprungen'],
   rekord: ['Schanzenrekord', 'Am Bergisel weiter als 138 Meter geflogen'],
   kostuem: ['Maskerade', 'Im Kostüm durch Innsbruck'],
+  knipser: ['Knipser', 'Einen Schnappschuss gemacht'],
+  influencer: ['Influencer', 'Ein Foto aus dem Spiel geteilt'],
   schuettler: ['Schüttelfrost', 'Das Handy geschüttelt und ein Ereignis heraufbeschworen'],
   rauferei: ['Wirtshausrauferei', 'Im Stüberl Holzknecht Ferdl umgehauen'],
   veilchen: ['Veilchen', 'Eine Wirtshausrauferei verloren'],

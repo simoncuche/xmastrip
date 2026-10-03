@@ -109,6 +109,7 @@ function wireInput() {
     if (!document.getElementById('editor').hidden) return;
     const code = e.code;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(code)) e.preventDefault();
+    if (code === 'KeyP' && !UI.ovOpen) { Snap.shoot(); return; } /* Foto geht auch während Gesprächen */
     if (UI.dlgOpen) { UI.dlgKey(code); return; }
     if (UI.ovOpen) {
       if (Mini.key) { Mini.key(code); return; }

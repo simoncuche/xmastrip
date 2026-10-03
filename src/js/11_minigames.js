@@ -2,7 +2,7 @@
 const Mini = {
   key: null,
   frame(title, sub, inner) {
-    return `<div class="panel mini"><div class="panel-head"><h2>${title}</h2><span class="sub" id="miniSub">${sub || ''}</span><button class="x-btn" id="miniX" aria-label="Abbrechen">×</button></div><div class="panel-body">${inner}</div></div>`;
+    return `<div class="panel mini"><div class="panel-head"><h2>${title}</h2><span class="sub" id="miniSub">${sub || ''}</span><button class="x-btn" id="miniCam" aria-label="Foto machen" title="Foto machen">📷</button><button class="x-btn" id="miniX" aria-label="Abbrechen">×</button></div><div class="panel-body">${inner}</div></div>`;
   },
   run(title, sub, inner, W, H, setup) {
     return new Promise((resolve) => {
@@ -11,6 +11,7 @@ const Mini = {
       const o = UI.overlay(Mini.frame(title, sub, inner), () => { if (!done) { done = true; cancelAnimationFrame(raf); Mini.key = null; resolve(null); } });
       o.querySelector('#miniX').onclick = () => finish(null);
       const cv = o.querySelector('canvas');
+      const camB = o.querySelector('#miniCam'); if (camB) { if (!cv) camB.remove(); else camB.onclick = () => Snap.shoot(cv); }
       const ctx = cv ? cv.getContext('2d') : null;
       if (cv) { cv.width = W; cv.height = H; ctx.imageSmoothingEnabled = false; }
       const api = { o, cv, ctx, finish, sub: (t) => { o.querySelector('#miniSub').innerHTML = t; }, t0: performance.now() };

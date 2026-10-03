@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.16.0 – 03.10.2026
+
+- Freie Fotos: Der neue blaue Kamera-Knopf oben neben dem Handy (am Computer Taste P) knipst jederzeit die aktuelle Szene – auch mitten in Ereignissen wie Godzilla oder dem UFO. Blitz, Auslöser-Klick, und das Bild bekommt einen Polaroid-Rand mit Ort, Datum und Uhrzeit.
+- Direkt teilen: In der Vorschau öffnet „Teilen“ das Teilen-Menü des Handys – WhatsApp, Signal, Instagram, Mail und alles andere. Das Bild wird dafür pixelscharf vergrössert. Wo Teilen nicht geht (z. B. am Computer), wird das Bild heruntergeladen.
+- Galerie im Handy unter „Fotos“: alle Schnappschüsse ansehen, teilen, speichern oder löschen; auch die Fotos der Sehenswürdigkeiten haben einen Teilen-Knopf. In Minispielen (Darts, Skispringen, Rauferei …) gibt es oben ein 📷 für ein Foto des Spielfelds.
+- Erlebnisse „Knipser“ und „Influencer“.
+
 ## 2.15.0 – 03.10.2026
 
 - Türszenen: Beim Durchgehen ragt die Figur nicht mehr über den Türrahmen. Sie läuft bis zur Schwelle, ist dort klein genug für die Öffnung und verschwindet darin; beim Hinausgehen tritt sie zuerst in der Türöffnung hervor. Gilt für Haustüren, Zimmer 307 und die Zugtür in Innsbruck.
