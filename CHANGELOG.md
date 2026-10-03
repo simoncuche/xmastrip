@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.12.0 – 03.10.2026
+
+- Ereignisse wiederholen sich: Sind alle einmal gelaufen, beginnt eine neue Runde in neu gemischter Reihenfolge – so gehen sie auch auf einer langen Reise nie aus. Weiterhin zwei pro Tag, Godzilla bleibt einmalig an Tag 5.
+- Treppen im Hotel: Kein Türbild mehr beim Treppensteigen, nur ein kurzes Abblenden mit Schritten. Die Türszene zeigt jetzt den Namen des Ortes über der Tür.
+
 ## 2.11.0 – 03.10.2026
 
 - Easter Egg: Wer das Handy in Innsbruck drei Sekunden lang kräftig schüttelt, beschwört ein zufälliges Ereignis herauf – mit Vibration, Ankündigung und manchmal sogar Godzilla. Danach braucht das Handy eine Dreiviertelminute Pause. Erlebnis „Schüttelfrost“. Auf dem iPhone braucht es dafür einmal die Erlaubnis für Bewegungssensoren (Handy → Optionen oder beim Darts mit Neigung).

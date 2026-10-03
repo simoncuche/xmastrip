@@ -451,13 +451,16 @@ const Story = {
        (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
     const day = dayOf(G.S.time);
     fl.evPlan = fl.evPlan || {};
+    /* Sind alle Ereignisse gleich oft gelaufen, beginnt eine neue Runde mit neu gemischter Reihenfolge */
+    const minCount = Math.min(...this.EVENTS.map((e) => this.evCount(e.id)));
+    if (fl.evOrder && minCount > 0 && fl.evCycle !== minCount) { fl.evCycle = minCount; fl.evOrder = null; }
     if (!fl.evOrder) { const ids = this.EVENTS.map((e) => e.id); for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; } fl.evOrder = ids; }
     /* Zwei Ereignisse pro Tag: eines tagsüber (10–16 Uhr) und eines abends (17–23:30 Uhr), Startzeit jeweils zufällig.
        Alte Spielstände hatten eine einzelne Zahl; null (Tests) heisst: an diesem Tag keine Ereignisse. */
     if (fl.evPlan[day] === undefined) {
       let eve = Math.round((17 + Math.random() * 6.5) * 2) / 2;
       /* Ist als Nächstes ein Nacht-Ereignis dran (UFO, Überfall), wird der Abendtermin entsprechend spät gelegt */
-      const nextUp = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter((e) => e && this.evCount(e.id) < e.max).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)).slice(0, 2).find((e) => e.night);
+      const nextUp = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter(Boolean).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)).slice(0, 2).find((e) => e.night);
       if (nextUp) eve = Math.min(23.5, Math.max(eve, nextUp.night + Math.round(Math.random() * 2) / 2));
       fl.evPlan[day] = [Math.round((10 + Math.random() * 6) * 2) / 2, eve];
     }
@@ -470,7 +473,7 @@ const Story = {
     if (n >= plan.length || hourOf(G.S.time) < plan[n]) return;
     if (fl.lastEv != null && G.S.time - fl.lastEv < 150) return; /* mindestens 2½ Stunden Abstand */
     const byOrder = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter(Boolean);
-    const pool = byOrder.filter((e) => this.evCount(e.id) < e.max && e.cond()).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)); /* Wiederholungen erst, wenn alles einmal dran war */
+    const pool = byOrder.filter((e) => e.cond()).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)); /* Runde um Runde: erst wenn alle dran waren, wiederholen sie sich */
     if (!pool.length) return;
     const e = pool[0];
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time); fl.evN[day] = n + 1;

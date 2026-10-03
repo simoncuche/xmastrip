@@ -802,7 +802,7 @@ MAP_BUILDERS.hotel_lobby = () => {
   m.npcDefs.push({ id: 'rezeption', name: 'Frau Hofer', x: 4 * 16 + 8, y: 3 * 16 + 12, dir: 0, look: npcLook(911, { hair: 9, beard: 0, top: 9, topCol: 7, glasses: 0, hairCol: 2, mouth: 0, jewel: 1 }), talk: () => Story.reception(), keepDir: true, solid: true });
   m.trig(13, 2, 2, 1, { label: 'Lift: 3. Stock', act: () => Story.lift('up') });
   m.fill(16, 3, 1, 2, T.STAIRS, 1);
-  m.warp(16, 3, 'hotel_floor', 'stairs', { h: 2, label: 'Treppe', guard: () => Story.needKey() });
+  m.warp(16, 3, 'hotel_floor', 'stairs', { h: 2, label: 'Treppe', plain: true, guard: () => Story.needKey() });
   m.add(objSofa(12, 7, 3, '#3f5e4c')); m.add(objTable(12, 9, 2, 1, { col: '#6a4428' }));
   for (const [x, y] of [[1, 6], [16, 7], [1, 11], [16, 11]]) m.add(objPlant(x, y));
   m.add(objLuggage(8, 4));
@@ -822,7 +822,7 @@ MAP_BUILDERS.hotel_floor = () => {
   m.decal((c) => { DECAL.lift(c, 1 * 16 - 8, 16 + 3); DECAL.picture(c, 7 * 16 + 4, 16 + 4, '#c89a6a'); DECAL.picture(c, 13 * 16 + 4, 16 + 4, '#6a8ab0'); DECAL.picture(c, 19 * 16 + 4, 16 + 4, '#8aa86a'); });
   m.trig(0, 2, 2, 1, { label: 'Lift: Lobby', act: () => Story.lift('down') });
   m.fill(22, 3, 1, 4, T.STAIRS, 1); m.set(22, 3, T.STAIRS, 1);
-  m.warp(22, 4, 'hotel_lobby', 'stairs', { h: 2, label: 'Treppe' });
+  m.warp(22, 4, 'hotel_lobby', 'stairs', { h: 2, label: 'Treppe', plain: true });
   m.add(objPlant(10, 6)); m.add(objPlant(17, 6));
   m.spawn('lift', 1, 3, 0); m.spawn('stairs', 21, 4, 1); m.spawn('room', 21, 3, 0);
   return m;

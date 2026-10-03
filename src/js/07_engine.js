@@ -147,7 +147,7 @@ async function warpTo(id, spawn, opts = {}) {
   const to = getMap(id);
   /* Kleine Türszene statt nur Schwarzbild: hinein (Rückenansicht, Tür geht auf) oder hinaus (Tür zu, Gesicht zum Spieler) */
   const exit = !!(G.map && G.map.indoor && !to.indoor);
-  if (opts.plain || typeof Scene === 'undefined') { Snd.sfx('door'); await UI.fadeOut(); }
+  if (opts.plain || typeof Scene === 'undefined') { if (opts.plain) { for (let k = 0; k < 4; k++) setTimeout(() => Snd.sfx('step'), k * 110); } else Snd.sfx('door'); await UI.fadeOut(); }
   else await Scene.play('door', { ms: 820, keep: true, exit, label: opts.label || '' });
   enterMap(id, spawn, opts);
   await sleep(100);
@@ -510,7 +510,7 @@ async function runAuto(t) {
   G.busy++;
   try {
     if (t.guard) { const ok = await t.guard(t); if (!ok) { G.busy--; pushBack(); return; } }
-    if (t.warp) { G.busy--; await warpTo(t.warp[0], typeof t.warp[1] === 'function' ? t.warp[1]() : t.warp[1], t.opts || {}); return; }
+    if (t.warp) { G.busy--; await warpTo(t.warp[0], typeof t.warp[1] === 'function' ? t.warp[1]() : t.warp[1], Object.assign({ label: t.label || '' }, t.opts || {}, t.plain ? { plain: true } : {})); return; }
     if (t.act) await t.act(t);
   } catch (e) { console.error(e); }
   G.busy--;
