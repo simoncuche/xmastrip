@@ -154,7 +154,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .mini .panel-body { padding: 10px; }
 .mini-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--f-sign); font-size: 15px; }
 .mini-bar b { color: var(--amber); font-variant-numeric: tabular-nums; }
-.lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 4px; }
+.lanes button { border-radius: 0; }
+.lanes button:first-child { border-radius: 10px 0 0 10px; }
+.lanes button:last-child { border-radius: 0 10px 10px 0; }
 .lanes button { height: 58px; border-radius: 10px; border: 2px solid var(--board-line); background: var(--board-2); font-size: 24px; font-family: var(--f-pixel); }
 .lanes button:active, .lanes button.hit { background: var(--amber); color: var(--board); }
 

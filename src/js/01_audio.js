@@ -2,7 +2,8 @@
 const Snd = {
   ctx: null, master: null, musicGain: null, on: true, musicOn: true,
   init() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    this.unlock();
+    if (this.ctx) { if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {}); return; }
     try {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       this.master = this.ctx.createGain();
@@ -13,6 +14,16 @@ const Snd = {
       this.musicGain.connect(this.master);
     } catch (e) { this.ctx = null; }
   },
+  /* iOS: Ein kurzes stilles HTML-Audio bei der ersten Berührung schaltet die Audio-Session frei –
+     sonst bleibt WebAudio bei aktivem Stummschalter lautlos. Danach bei jeder Geste nur noch resume(). */
+  _unlocked: false,
+  unlock() {
+    if (this._unlocked) return;
+    this._unlocked = true;
+    try { const a = new Audio('data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='); a.volume = 0.01; const pr = a.play(); if (pr && pr.catch) pr.catch(() => { this._unlocked = false; }); } catch (e) { this._unlocked = false; }
+  },
+  /* Zustand für die Optionen-Anzeige */
+  state() { if (!this.ctx) return 'noch nicht gestartet'; return this.ctx.state === 'running' ? 'bereit' : 'angehalten (' + this.ctx.state + ')'; },
   tone(freq, dur, type = 'square', vol = 0.12, when = 0, slide = 0, dest) {
     if (!this.ctx || !this.on) return;
     const t = this.ctx.currentTime + when;

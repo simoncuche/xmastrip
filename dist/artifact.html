@@ -159,7 +159,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .mini .panel-body { padding: 10px; }
 .mini-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--f-sign); font-size: 15px; }
 .mini-bar b { color: var(--amber); font-variant-numeric: tabular-nums; }
-.lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 4px; }
+.lanes button { border-radius: 0; }
+.lanes button:first-child { border-radius: 10px 0 0 10px; }
+.lanes button:last-child { border-radius: 0 10px 10px 0; }
 .lanes button { height: 58px; border-radius: 10px; border: 2px solid var(--board-line); background: var(--board-2); font-size: 24px; font-family: var(--f-pixel); }
 .lanes button:active, .lanes button.hit { background: var(--amber); color: var(--board); }
 
@@ -349,9 +352,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.6.5";
+const APP_VERSION = "1.6.6";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -491,7 +494,8 @@ const pxTextW = (str, scale = 1) => String(str).length * 4 * scale - scale;
 const Snd = {
   ctx: null, master: null, musicGain: null, on: true, musicOn: true,
   init() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    this.unlock();
+    if (this.ctx) { if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {}); return; }
     try {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       this.master = this.ctx.createGain();
@@ -502,6 +506,16 @@ const Snd = {
       this.musicGain.connect(this.master);
     } catch (e) { this.ctx = null; }
   },
+  /* iOS: Ein kurzes stilles HTML-Audio bei der ersten Berührung schaltet die Audio-Session frei –
+     sonst bleibt WebAudio bei aktivem Stummschalter lautlos. Danach bei jeder Geste nur noch resume(). */
+  _unlocked: false,
+  unlock() {
+    if (this._unlocked) return;
+    this._unlocked = true;
+    try { const a = new Audio('data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='); a.volume = 0.01; const pr = a.play(); if (pr && pr.catch) pr.catch(() => { this._unlocked = false; }); } catch (e) { this._unlocked = false; }
+  },
+  /* Zustand für die Optionen-Anzeige */
+  state() { if (!this.ctx) return 'noch nicht gestartet'; return this.ctx.state === 'running' ? 'bereit' : 'angehalten (' + this.ctx.state + ')'; },
   tone(freq, dur, type = 'square', vol = 0.12, when = 0, slide = 0, dest) {
     if (!this.ctx || !this.on) return;
     const t = this.ctx.currentTime + when;
@@ -4550,6 +4564,7 @@ const Phone = {
   opt(b) {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
       <div class="opt-row"><span>Musik</span><button class="btn" id="oMus">${Snd.musicOn ? 'An' : 'Aus'}</button></div>
+      <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
       <div class="opt-row"><span>Spielstand</span><button class="btn primary" id="oSave">Speichern</button></div>
       <div class="opt-row"><span>Neues Spiel beginnen</span><button class="btn red" id="oNew">Neu starten</button></div>
@@ -6351,6 +6366,9 @@ const Mini = {
       Mini.key = (k) => { const m = { ArrowLeft: 0, KeyA: 0, ArrowDown: 1, KeyS: 1, ArrowUp: 2, KeyW: 2, ArrowRight: 3, KeyD: 3 }; if (k in m) hit(m[k]); };
       const sheet = getSheet(G.S.look);
       Mini._dance = { notes, now: () => t }; /* für Tests */
+      const LW = 40, ly = 112; /* vier Spuren à 40 px über die volle Breite – die Knöpfe darunter liegen genau darunter */
+      const arrow = (c, ax, ay, d, col) => { for (let k = 0; k < 4; k++) { if (d === 0) R(c, ax + k, ay + 3 - k, 1, k * 2 + 1, col); if (d === 3) R(c, ax + 6 - k, ay + 3 - k, 1, k * 2 + 1, col); if (d === 1) R(c, ax + 3 - k, ay + 6 - k, k * 2 + 1, 1, col); if (d === 2) R(c, ax + 3 - k, ay + k, k * 2 + 1, 1, col); } };
+      const LANE_COL = ['#ff3ad0', '#3ae0ff', '#ffe03a', '#7aff6a'];
       return (dt) => {
         t += dt; jt -= dt;
         const c = api.ctx;
@@ -6358,32 +6376,29 @@ const Mini = {
         /* Metronom: Klick auf jedem Schlag, Akzent auf der Eins – so hört man den Takt */
         if (bt !== lastBeat && t >= 0) { lastBeat = bt; Snd.tone(bt % 4 === 0 ? 1400 : 900, 0.025, 'square', bt % 4 === 0 ? 0.05 : 0.03); }
         R(c, 0, 0, 160, 140, '#120f1a');
-        for (let i = 0; i < 4; i++) { R(c, 8 + i * 22, 0, 20, 140, i % 2 ? '#1a1626' : '#171322'); }
-        const ly = 116;
-        R(c, 6, ly, 92, 2, '#f2eee4');
-        /* Pfeile unter der Linie: links, unten, oben, rechts */
-        const arrow = (ax, ay, d, col) => { for (let k = 0; k < 4; k++) { const w = k; if (d === 0) R(c, ax + k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 3) R(c, ax + 6 - k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 1) R(c, ax + 3 - w, ay + 6 - k, w * 2 + 1, 1, col); if (d === 2) R(c, ax + 3 - w, ay + k, w * 2 + 1, 1, col); } };
-        for (let i = 0; i < 4; i++) arrow(14 + i * 22, ly + 5, i, '#7a6a9a');
+        for (let i = 0; i < 4; i++) R(c, i * LW, 0, LW, 140, i % 2 ? '#1a1626' : '#171322');
+        if (bt % 4 === 0 && t >= 0) R(c, 0, 0, 160, 140, 'rgba(255,58,208,0.05)');
+        /* Tänzer halbtransparent im Hintergrund, mittig */
+        c.globalAlpha = 0.4;
+        c.drawImage(sheet, (bt % 2 ? 5 : 6) * SPR_W, 0, SPR_W, SPR_H, 62, 26, SPR_W * 2, SPR_H * 2);
+        c.globalAlpha = 1;
+        /* Ziellinie und Pfeile je Spur */
+        R(c, 0, ly, 160, 2, '#f2eee4');
+        for (let i = 0; i < 4; i++) { R(c, i * LW + 4, ly - 1, LW - 8, 4, 'rgba(255,255,255,0.12)'); arrow(c, i * LW + LW / 2 - 3, ly + 6, i, LANE_COL[i]); }
         const jitter = p > 1.4 ? (p - 1.4) * 3 : 0;
-        let missed = 0;
         for (const n of notes) {
           if (n.done) continue;
           const dtn = n.t - t;
           if (dtn < -good) { n.done = true; n.miss = true; combo = 0; judge = 'Verpasst'; jt = 0.4; continue; }
           if (dtn > travel) continue;
           const y = ly - (dtn / travel) * ly;
-          const x = 10 + n.l * 22 + Math.sin(t * 5 + n.t) * jitter;
-          const col = ['#ff3ad0', '#3ae0ff', '#ffe03a', '#7aff6a'][n.l];
-          R(c, x, y - 3, 16, 6, col); R(c, x + 2, y - 2, 12, 1, '#ffffff');
+          const x = n.l * LW + 6 + Math.sin(t * 5 + n.t) * jitter;
+          R(c, x, y - 3, LW - 12, 6, LANE_COL[n.l]); R(c, x + 2, y - 2, LW - 16, 1, '#ffffff');
+          arrow(c, n.l * LW + LW / 2 - 3, y - 3, n.l, '#120f1a');
         }
-        for (const n of notes) if (n.miss) missed++;
-        const frame = bt % 2 ? 5 : 6;
-        c.drawImage(sheet, frame * SPR_W, 0, SPR_W, SPR_H, 110, 52, SPR_W * 2, SPR_H * 2);
-        for (let k = 0; k < 6; k++) R(c, 104 + k * 9, 120 + ((bt + k) % 2) * 2, 6, 14, ['#3a2a5a', '#2a3a5a', '#5a2a4a'][k % 3]);
-        if (bt % 4 === 0) R(c, 100, 0, 60, 140, 'rgba(255,58,208,0.06)');
-        if (jt > 0) pxText(c, judge.toUpperCase(), 104, 20, judge === 'Daneben' || judge === 'Verpasst' ? '#e2554a' : '#ffb53d');
-        if (t < 0) pxText(c, 'BEREIT…', 24, 50, '#ffb53d', 2);
-        if (combo > 3) pxText(c, combo + 'X', 112, 30, '#7af0e0');
+        if (jt > 0) { const w = pxTextW(judge.toUpperCase()); pxText(c, judge.toUpperCase(), 80 - w / 2, 8, judge === 'Daneben' || judge === 'Verpasst' ? '#e2554a' : '#ffb53d'); }
+        if (combo > 3) pxText(c, combo + 'X', 72, 18, '#7af0e0');
+        if (t < 0) pxText(c, 'BEREIT…', 36, 50, '#ffb53d', 2);
         const pct = Math.round((pts / (notes.length * 100)) * 100);
         api.o.querySelector('#nScore').textContent = pct + ' %';
         if (t > notes[notes.length - 1].t + 1) { api.finish(pct); UI.toast(`Tanzwertung: ${pct} %`, pct >= 80 ? 'ach' : ''); }
@@ -6702,7 +6717,10 @@ function wireInput() {
   document.getElementById('touch').addEventListener('pointerdown', (e) => { if (e.target.id === 'touch' || e.target.id === 'stickHint') start(e); });
   document.getElementById('btnA').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); Snd.init(); if (UI.dlgOpen) { UI.dlgAdvance(); return; } doInteract(); });
   document.addEventListener('contextmenu', (e) => { if (G.mode === 'play') e.preventDefault(); });
-  document.addEventListener('pointerdown', () => Snd.init(), { once: true });
+  /* Audio bei jeder Geste wieder freigeben (Handy-Browser halten den Kontext nach Sperren/Hintergrund an) */
+  document.addEventListener('pointerdown', () => Snd.init());
+  document.addEventListener('keydown', () => Snd.init());
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) Snd.init(); });
 }
 window.addEventListener('load', boot);
 

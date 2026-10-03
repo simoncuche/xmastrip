@@ -163,6 +163,9 @@ const Mini = {
       Mini.key = (k) => { const m = { ArrowLeft: 0, KeyA: 0, ArrowDown: 1, KeyS: 1, ArrowUp: 2, KeyW: 2, ArrowRight: 3, KeyD: 3 }; if (k in m) hit(m[k]); };
       const sheet = getSheet(G.S.look);
       Mini._dance = { notes, now: () => t }; /* für Tests */
+      const LW = 40, ly = 112; /* vier Spuren à 40 px über die volle Breite – die Knöpfe darunter liegen genau darunter */
+      const arrow = (c, ax, ay, d, col) => { for (let k = 0; k < 4; k++) { if (d === 0) R(c, ax + k, ay + 3 - k, 1, k * 2 + 1, col); if (d === 3) R(c, ax + 6 - k, ay + 3 - k, 1, k * 2 + 1, col); if (d === 1) R(c, ax + 3 - k, ay + 6 - k, k * 2 + 1, 1, col); if (d === 2) R(c, ax + 3 - k, ay + k, k * 2 + 1, 1, col); } };
+      const LANE_COL = ['#ff3ad0', '#3ae0ff', '#ffe03a', '#7aff6a'];
       return (dt) => {
         t += dt; jt -= dt;
         const c = api.ctx;
@@ -170,32 +173,29 @@ const Mini = {
         /* Metronom: Klick auf jedem Schlag, Akzent auf der Eins – so hört man den Takt */
         if (bt !== lastBeat && t >= 0) { lastBeat = bt; Snd.tone(bt % 4 === 0 ? 1400 : 900, 0.025, 'square', bt % 4 === 0 ? 0.05 : 0.03); }
         R(c, 0, 0, 160, 140, '#120f1a');
-        for (let i = 0; i < 4; i++) { R(c, 8 + i * 22, 0, 20, 140, i % 2 ? '#1a1626' : '#171322'); }
-        const ly = 116;
-        R(c, 6, ly, 92, 2, '#f2eee4');
-        /* Pfeile unter der Linie: links, unten, oben, rechts */
-        const arrow = (ax, ay, d, col) => { for (let k = 0; k < 4; k++) { const w = k; if (d === 0) R(c, ax + k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 3) R(c, ax + 6 - k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 1) R(c, ax + 3 - w, ay + 6 - k, w * 2 + 1, 1, col); if (d === 2) R(c, ax + 3 - w, ay + k, w * 2 + 1, 1, col); } };
-        for (let i = 0; i < 4; i++) arrow(14 + i * 22, ly + 5, i, '#7a6a9a');
+        for (let i = 0; i < 4; i++) R(c, i * LW, 0, LW, 140, i % 2 ? '#1a1626' : '#171322');
+        if (bt % 4 === 0 && t >= 0) R(c, 0, 0, 160, 140, 'rgba(255,58,208,0.05)');
+        /* Tänzer halbtransparent im Hintergrund, mittig */
+        c.globalAlpha = 0.4;
+        c.drawImage(sheet, (bt % 2 ? 5 : 6) * SPR_W, 0, SPR_W, SPR_H, 62, 26, SPR_W * 2, SPR_H * 2);
+        c.globalAlpha = 1;
+        /* Ziellinie und Pfeile je Spur */
+        R(c, 0, ly, 160, 2, '#f2eee4');
+        for (let i = 0; i < 4; i++) { R(c, i * LW + 4, ly - 1, LW - 8, 4, 'rgba(255,255,255,0.12)'); arrow(c, i * LW + LW / 2 - 3, ly + 6, i, LANE_COL[i]); }
         const jitter = p > 1.4 ? (p - 1.4) * 3 : 0;
-        let missed = 0;
         for (const n of notes) {
           if (n.done) continue;
           const dtn = n.t - t;
           if (dtn < -good) { n.done = true; n.miss = true; combo = 0; judge = 'Verpasst'; jt = 0.4; continue; }
           if (dtn > travel) continue;
           const y = ly - (dtn / travel) * ly;
-          const x = 10 + n.l * 22 + Math.sin(t * 5 + n.t) * jitter;
-          const col = ['#ff3ad0', '#3ae0ff', '#ffe03a', '#7aff6a'][n.l];
-          R(c, x, y - 3, 16, 6, col); R(c, x + 2, y - 2, 12, 1, '#ffffff');
+          const x = n.l * LW + 6 + Math.sin(t * 5 + n.t) * jitter;
+          R(c, x, y - 3, LW - 12, 6, LANE_COL[n.l]); R(c, x + 2, y - 2, LW - 16, 1, '#ffffff');
+          arrow(c, n.l * LW + LW / 2 - 3, y - 3, n.l, '#120f1a');
         }
-        for (const n of notes) if (n.miss) missed++;
-        const frame = bt % 2 ? 5 : 6;
-        c.drawImage(sheet, frame * SPR_W, 0, SPR_W, SPR_H, 110, 52, SPR_W * 2, SPR_H * 2);
-        for (let k = 0; k < 6; k++) R(c, 104 + k * 9, 120 + ((bt + k) % 2) * 2, 6, 14, ['#3a2a5a', '#2a3a5a', '#5a2a4a'][k % 3]);
-        if (bt % 4 === 0) R(c, 100, 0, 60, 140, 'rgba(255,58,208,0.06)');
-        if (jt > 0) pxText(c, judge.toUpperCase(), 104, 20, judge === 'Daneben' || judge === 'Verpasst' ? '#e2554a' : '#ffb53d');
-        if (t < 0) pxText(c, 'BEREIT…', 24, 50, '#ffb53d', 2);
-        if (combo > 3) pxText(c, combo + 'X', 112, 30, '#7af0e0');
+        if (jt > 0) { const w = pxTextW(judge.toUpperCase()); pxText(c, judge.toUpperCase(), 80 - w / 2, 8, judge === 'Daneben' || judge === 'Verpasst' ? '#e2554a' : '#ffb53d'); }
+        if (combo > 3) pxText(c, combo + 'X', 72, 18, '#7af0e0');
+        if (t < 0) pxText(c, 'BEREIT…', 36, 50, '#ffb53d', 2);
         const pct = Math.round((pts / (notes.length * 100)) * 100);
         api.o.querySelector('#nScore').textContent = pct + ' %';
         if (t > notes[notes.length - 1].t + 1) { api.finish(pct); UI.toast(`Tanzwertung: ${pct} %`, pct >= 80 ? 'ach' : ''); }

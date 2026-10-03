@@ -414,6 +414,7 @@ const Phone = {
   opt(b) {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
       <div class="opt-row"><span>Musik</span><button class="btn" id="oMus">${Snd.musicOn ? 'An' : 'Aus'}</button></div>
+      <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
       <div class="opt-row"><span>Spielstand</span><button class="btn primary" id="oSave">Speichern</button></div>
       <div class="opt-row"><span>Neues Spiel beginnen</span><button class="btn red" id="oNew">Neu starten</button></div>

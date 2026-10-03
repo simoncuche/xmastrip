@@ -155,6 +155,9 @@ function wireInput() {
   document.getElementById('touch').addEventListener('pointerdown', (e) => { if (e.target.id === 'touch' || e.target.id === 'stickHint') start(e); });
   document.getElementById('btnA').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); Snd.init(); if (UI.dlgOpen) { UI.dlgAdvance(); return; } doInteract(); });
   document.addEventListener('contextmenu', (e) => { if (G.mode === 'play') e.preventDefault(); });
-  document.addEventListener('pointerdown', () => Snd.init(), { once: true });
+  /* Audio bei jeder Geste wieder freigeben (Handy-Browser halten den Kontext nach Sperren/Hintergrund an) */
+  document.addEventListener('pointerdown', () => Snd.init());
+  document.addEventListener('keydown', () => Snd.init());
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) Snd.init(); });
 }
 window.addEventListener('load', boot);
