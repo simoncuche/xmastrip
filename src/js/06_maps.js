@@ -922,6 +922,7 @@ MAP_BUILDERS.stueberl = () => {
   m.trig(5, 9, 1, 1, { label: 'Nageln', act: () => Story.nageln() });
   m.npcDefs.push(
     { id: 'hias', name: 'Hias', x: 6 * 16 + 8, y: 7 * 16 + 12, dir: 2, pose: 'sit', look: npcLook(932, { hair: 12, hairCol: 9, beard: 7, beardCol: 10, top: 11, topCol: 6, pants: 7, hat: 9, hatCol: 8, build: 3 }), talk: () => Story.hias(), keepDir: true, drinkIdle: true, sitIdle: true },
+    { id: 'ferdl', name: 'Holzknecht Ferdl', x: 13 * 16 + 8, y: 9 * 16 + 12, dir: 1, pose: 'sit', look: npcLook(934, { hair: 1, hairCol: 1, beard: 12, beardCol: 1, top: 7, topCol: 0, pants: 7, hat: 9, hatCol: 8, build: 3, height: 2, brows: 5, mark: 2, glasses: 0 }), talk: () => Story.ferdl(), keepDir: true, drinkIdle: true, sitIdle: true, bubbleRand: ['!', 'dots'] },
     { id: 'loisl', name: 'Loisl', x: 10 * 16 + 8, y: 6 * 16 + 12, dir: 1, pose: 'sit', look: npcLook(933, { hair: 0, beard: 10, beardCol: 10, top: 4, topCol: 7, glasses: 7, build: 1 }), talk: () => Story.loisl(), keepDir: true, drinkIdle: true, sitIdle: true },
   );
   doorBottom(m, 7, 2, 'ibk', 'stueberl_out', 'Ausgang');

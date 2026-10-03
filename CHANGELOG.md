@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.9.0 – 03.10.2026
+
+- Godzilla allein, dafür richtig: King Kong ist gestrichen. Godzilla ist jetzt rund 90 Pixel hoch und detailliert animiert – Schritte mit angehobenem Fuss und Krallen, pendelnder Schwanz mit Platten, drei Reihen Rückenplatten, Bauchplatten und Schuppen, Arme mit Krallen, Augen, die blinzeln, Brauenwulst, Nüstern und ein Maul, das zum Brüllen aufreisst und die Zahnreihen zeigt.
+- Neuer Angriff: der Atomstrahl. Alle paar Sekunden glühen die Rückenplatten von hinten nach vorn blau auf, Funken sprühen, zwei gestrichelte Linien zeigen den Bereich – dann fegt der blau-weisse Strahl über den Boden, hinterlässt Brandspuren mit Glut und Feuer und leuchtet nachts die Gasse aus. Raus aus der Linie!
+- Stampfer mit Druckwelle: Nach jedem Tritt läuft ein Ring über den Boden, Trümmer und Staub fliegen, der Fussabdruck zeigt Krallen. Godzilla stapft beim Gehen hörbar, der Boden bebt.
+- Wirtshausrauferei im Tiroler Stüberl: Holzknecht Ferdl sitzt neu am Ecktisch. Wer sein Bier umstösst, über Knödel lästert oder das Watten verspottet, bekommt eine Schlägerei als Minispiel. Ferdl holt aus – hoch heisst ducken, tief heisst blocken; verfehlt er, wankt er und ein Schlag sitzt doppelt. Arcade-Lebensbalken, „WATSCHN!“, „WUMMS!“, fliegender Tirolerhut, Schweisstropfen und Sterne. Die Jungs und die Stammgäste feuern an, ein Kumpel wirft einmal pro Kampf einen Bierkrug. Leicht angetrunken schlägst du härter, betrunken triffst du daneben. Danach wirft Resi dich raus: Hausverbot bis zum nächsten Morgen. Erlebnisse „Wirtshausrauferei“ und „Veilchen“.
+
 ## 2.8.0 – 03.10.2026
 
 - Türen statt Schwarzbild: Beim Betreten eines Gebäudes geht der Spieler zur Haustür, sie schwingt auf, warmes Licht fällt heraus und er verschwindet darin; beim Verlassen kommt er aus der offenen Tür, die hinter ihm zufällt. Mit Schritten, Türgeräusch und dem Namen des Ortes über der Tür.

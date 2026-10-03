@@ -330,6 +330,8 @@ function drawPart(c, p, cx, cy) {
     case 'note': R(c, x, y - 4, 1, 4, `rgba(80,40,160,${a})`); R(c, x - 2, y, 3, 2, `rgba(80,40,160,${a})`); break;
     case 'crumb': P(c, x, y, `rgba(220,190,120,${a})`); break;
     case 'spark': P(c, x, y, p.col || `rgba(255,230,140,${a})`); break;
+    case 'fire': R(c, x - 1, y - 2, 3, 4, `rgba(255,${Math.round(90 + a * 140)},30,${a})`); if (a > 0.5) P(c, x, y - 1, `rgba(255,250,200,${a})`); break;
+    case 'ember': P(c, x, y, `rgba(255,${Math.round(120 + a * 100)},60,${a * 0.9})`); break;
     case 'zzz': pxText(c, 'Z', x, y, `rgba(60,90,180,${a})`); break;
     case 'heart': R(c, x - 1, y, 3, 2, `rgba(224,74,106,${a})`); P(c, x, y + 2, `rgba(224,74,106,${a})`); break;
     case 'beer': R(c, x, y, 3, 4, `rgba(232,179,58,${a})`); R(c, x, y - 1, 3, 1, `rgba(255,255,255,${a})`); break;

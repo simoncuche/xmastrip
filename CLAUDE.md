@@ -32,7 +32,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `08_ui.js` | HUD, Dialoge (`UI.say`, `UI.ask`), Läden, Overlays, Handy (`Phone`) |
 | `09_story.js` | Reisegruppe `CREW` (12 Namen mit Rollen), Läden `SHOPS`, Öffnungszeiten, **gesamte Story & alle Interaktionen** (`Story.*`), Taxi, Ereignisse (Übergeben, Filmriss, Einschlafen) |
 | `10_jass.js` | Schieber-Jass mit Regeln (`JassRules`) und KI |
-| `11_minigames.js` | Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama (`turm`, `seegrube`, `bergisel`), Bierpong (`beerpong`), Roulette (`rouletteSpin`), Blackjack, Skispringen (`skijump`: Anlauf, Absprung-Timing, Haltung, Telemark; Hilfsobjekt `Mini._sj` für Tests) |
+| `11_minigames.js` | Wirtshausrauferei (`brawl`, Testhilfe `Mini._brawl`), Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama (`turm`, `seegrube`, `bergisel`), Bierpong (`beerpong`), Roulette (`rouletteSpin`), Blackjack, Skispringen (`skijump`: Anlauf, Absprung-Timing, Haltung, Telemark; Hilfsobjekt `Mini._sj` für Tests) |
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug, Tram, Panoramalift, Haustür `door` bei jedem `warpTo`, Jessy `jessy` mit `kind` 0–2) |
 | `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
 
@@ -48,7 +48,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 - Freunde: `FRIENDS` wird aus `CREW` gebaut (ohne den Spieler). Funktionale Rollen per `who('jass' | 'arm' | 'party' …)`
   mit Fallbacks in `FN_FALLBACK`, damit jede Rolle besetzt ist, egal wen man spielt.
 - Wo die Jungs sind, entscheidet `Story.schedule(id)` (Uhrzeit, Story-Stufe, gemeinsame Taxifahrt in `G.S.flags.group`, Krankenlager `flags.sick`); `Story.whereIs(id)` liefert Text und Kartenpunkt dazu.
-- Zufallsereignisse: `Story.EVENTS` (Bedingung, Maximum), `Story.maybeEvent()` pro Spielminute in `ibk` ab Stufe `free`, Handler `Story.ev_<id>`; Tagesplan `flags.evPlan[tag]` (Startstunde, jeden Tag), Reihenfolge pro Spiel gemischt in `flags.evOrder`, genau eines pro Tag (`flags.evDay`), Godzilla/Kong fix an Tag 5 (`ev_monster`); Live-Ereignisse in der Welt über `G.live = { update, draw, lights, onLeave, runWhileBusy }` (Engine-Hook, wird bei Kartenwechsel gelöscht); Hilfen `tempActor`, `walk`, `dropActor`; Polizeiwache über `flags.jail`.
+- Zufallsereignisse: `Story.EVENTS` (Bedingung, Maximum), `Story.maybeEvent()` pro Spielminute in `ibk` ab Stufe `free`, Handler `Story.ev_<id>`; Tagesplan `flags.evPlan[tag]` (Startstunde, jeden Tag), Reihenfolge pro Spiel gemischt in `flags.evOrder`, genau eines pro Tag (`flags.evDay`), Godzilla fix an Tag 5 (`ev_monster`: Stampfer-Schatten, Atomstrahl mit Aufladen der Rückenplatten, `god`-Zustand, `dbg()`); Live-Ereignisse in der Welt über `G.live = { update, draw, lights, onLeave, runWhileBusy }` (Engine-Hook, wird bei Kartenwechsel gelöscht); Hilfen `tempActor`, `walk`, `dropActor`; Polizeiwache über `flags.jail`.
 - Pegel der Kollegen: `G.S.fprom[id]`, steigt über `Story.friendDrink`, Übergeben ab 2,6 ‰ (`Story.friendVomit`).
 - Spielende: `Story.goHome()` (Heimreise am Hauptbahnhof) setzt `G.S.finished`, zeigt `Ending.show()` ohne Weiterspielen; der Titel bietet dann nur „Neues Spiel“.
 - Story-Stufen: `meet → board → ride → arrived → findHotel → checkin → room → bar → free`.
@@ -61,6 +61,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   Struktur von `newState` die Versionsnummer `v` und `SAVE_KEY` erhöhen.
 - Datum: Tag 0 ist Freitag, 11. Dezember 2026 (`START_DATE`, `DAYS`, `dateStr`, `dateLong`). Öffnungszeiten prüfen per `dayStr()`.
 - Bergisel: `Story.bergiselTram/bergiselBack` (Tram-Szene), `bergiselTicket` (Tagesticket `flags.bergiselTicket`), `bergiselTower` (Lift-Szene, Panorama, `SHOPS.turmcafe`), `skijump` (Trainer, Bedingungen, Auswertung, Rekord `G.S.rec.jump`).
+- Stüberl: `Story.ferdl` → `Story.brawl` (Minispiel, danach Hausverbot `flags.stueberlBan`, geprüft in `openGuard`).
 - Ereignisse starten über `Story.announce(id)` (Sequenz mit `#cine`, Titel in `Story.EV_TITLES`), danach `Story.ev_<id>`.
 - Kleider: `SHOPS.mode/boutique` (Sets via `wear`), `SHOPS.kostuem` (`wear: { costume: n }`, Freischaltung `unlock`, `LOCKED.costume`); Querformat-Layout per `@media (orientation: landscape) and (max-height: 600px)`.
 - Barbier: `SHOPS.barbier` hat `special: 'hair' | 'beard'` (Editor) und `'glatze' | 'rasur'` (setzt `look.hair`/`look.beard` auf 0); Animation `Story.barberAnim(kind, shave)` auf dem nächsten der drei Sessel.
