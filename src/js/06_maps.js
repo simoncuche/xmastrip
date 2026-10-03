@@ -189,14 +189,22 @@ MAP_BUILDERS.zug = () => {
   m.trig(26, 5, 8, 1, { label: 'Speisewagen: Bestellen', act: () => Story.shop('speisewagen') });
   for (const x of [25, 29, 33, 37]) { m.add(objTable(x, 2, 2, 1, { col: '#e8e4dc', items: x === 29 ? 2 : 0 })); m.wins.push({ x: x * 16 + 4, w: 24 }); }
   for (const x of [35, 37]) m.add(objPlant(x + 1, 6));
-  m.wins.push({ x: 20 * 16 + 2, w: 12, door: true }, { x: 41 * 16 + 2, w: 12, door: true });
+  /* Ausstiegstür im Vorraum (Kacheln 20–22): zwei Glasflügel mit Aussicht, Mittelgriff, grüne Öffner */
+  m.wins.push({ x: 20 * 16 + 4, w: 10, door: true }, { x: 22 * 16 + 2, w: 10, door: true }, { x: 41 * 16 + 2, w: 12 });
   m.decal((c) => {
-    for (const w of m.wins) { R(c, w.x - 1, 16 + 1, w.w + 2, 13, '#8a9096'); }
+    for (const w of m.wins) { if (!w.door) R(c, w.x - 1, 16 + 1, w.w + 2, 13, '#8a9096'); }
+    const dx = 20 * 16;
+    R(c, dx, 16, 48, 16, '#2a2c30'); R(c, dx + 2, 17, 44, 14, '#5a5e64');
+    R(c, dx + 3, 18, 12, 12, '#1a1b1e'); R(c, dx + 33, 18, 12, 12, '#1a1b1e');
+    R(c, dx + 22, 17, 4, 14, '#2a2c30'); R(c, dx + 23, 17, 2, 14, '#8a8e94');
+    R(c, dx + 17, 20, 4, 2, '#4ad04a'); R(c, dx + 27, 20, 4, 2, '#4ad04a');
+    R(c, dx + 17, 25, 4, 1, '#c9ccd2'); R(c, dx + 27, 25, 4, 1, '#c9ccd2');
+    R(c, dx, 30, 48, 2, '#c8a020');
     pxText(c, 'WC', 42 * 16 + 3, 16 + 4, '#2f5fb8');
     R(c, 26 * 16, 6 * 16, 8 * 16, 16, '#3a3c40');
   });
   m.trig(42, 1, 1, 1, { label: 'WC', act: () => Story.toilet('zug') });
-  for (const x of [20, 21, 22]) m.trig(x, 1, 1, 1, { label: 'Tür', act: () => Story.trainDoor() });
+  for (const x of [20, 21, 22]) m.trig(x, 1, 1, 1, { label: 'Zugtür: Aussteigen', act: () => Story.trainDoor() });
   m.trig(48, 3, 1, 1, { label: 'Hinsetzen', act: () => Story.trainSeat() });
   m.spawn('start', 21, 4, 2);
   m.groundAnim = (c, cx, cy, t) => {

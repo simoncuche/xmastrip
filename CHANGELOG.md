@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.6.3 – 03.10.2026
+
+- Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor.
+
 ## 1.6.2 – 03.10.2026
 
 - Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden.

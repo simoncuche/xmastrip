@@ -153,7 +153,7 @@ const Story = {
       case 'meet': return playerIsKassier() ? 'Triff die Jungs beim Torbogen – du kaufst das Gruppenbillett. Abfahrt 9:10!' : `Triff die Jungs beim Torbogen – ${org} gibt dir das Geld fürs Billett. Abfahrt 9:10!`;
       case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
-      case 'arrived': return 'Innsbruck Hbf! Aussteigen (Tür im Vorraum)';
+      case 'arrived': return 'Innsbruck Hbf! Aussteigen – Zugtür im Vorraum links vom Speisewagen';
       case 'findHotel': return 'Finde das Hotel Zirbe (Altstadt, Gasse beim Goldenen Dachl)';
       case 'checkin': return 'Check an der Rezeption ein';
       case 'room': return 'Bezieh Zimmer 307 im 3. Stock';
@@ -254,7 +254,7 @@ const Story = {
       return;
     }
     if (m.id === 'zug' && (s === 'ride' || s === 'arrived')) {
-      if (s === 'arrived') { let k = 0; for (const id of ids) { add(id, 41 + (k % 3), 2 + Math.floor(k / 3), 3, 'stand'); k++; } return; }
+      if (s === 'arrived') { let k = 0; for (const id of ids) { add(id, 20 + (k % 3), 3 + Math.floor(k / 3), 3, 'stand', { bubbleRand: ['!'] }); k++; } return; }
       const tm = trainState().tm;
       const seats = [[46, 3, 2], [46, 2, 2], [48, 2, 1], [46, 5, 2], [48, 5, 1], [46, 6, 2], [48, 6, 1], [50, 2, 2], [52, 2, 1], [50, 3, 2], [52, 3, 1]];
       const jassP = who('jass');
@@ -478,7 +478,7 @@ const Story = {
   },
   async trainTalk(id) {
     const s = G.S.stage;
-    if (s === 'arrived') { await this.say(id, 'Innsbruck! Raus hier, die Tür ist im Vorraum!'); return; }
+    if (s === 'arrived') { await this.say(id, 'Innsbruck! Raus hier – die Tür ist gleich da vorne!'); return; }
     const opts = [{ t: 'Plaudern', k: 'chat' }];
     if (id === who('jass')) opts.push({ t: 'Jassen', k: 'jass' });
     if (hasInv('dosenbier')) opts.push({ t: `${FRIENDS[id].name} ein Dosenbier geben`, k: 'give' });
