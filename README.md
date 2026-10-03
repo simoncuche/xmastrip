@@ -11,7 +11,8 @@ Kein Server, keine Installation. Funktioniert am Handy und am Computer.
 - **Charakter-Editor** mit 27 Merkmalen und 247 Varianten (Kopf, Gesicht, Haare, Bart, Brille, Kleidung …).
   Du wählst, wer du bist: Cuche, Didu, Dous, Coel, Kusi, Römu, Flöru, Hoshy, Ölu, Yännu, Lexx oder Hännsu.
   Die anderen elf fahren mit, jeder mit seiner Rolle.
-- **Luzern:** Treffpunkt Torbogen, Kiosk, Kapellbrücke, Gleis 4.
+- **Luzern:** Treffpunkt Torbogen, Kiosk, Kapellbrücke, Gleis 4. Du bist für die Fahrkarten zuständig: Gruppenbillett am Automaten kaufen
+  und die ganze Truppe bis 9:10 in den Zug bringen – sonst ist der Ausflug vorbei und es geht von vorne los. Yännu raucht noch eine und verpasst den Zug.
 - **Zug:** IR nach Zürich, Railjet nach Innsbruck mit Speisewagen, Fahrkartenkontrolle, Arlbergtunnel und **Jass** (Schieber) am Vierertisch.
 - **Innsbruck:** Altstadt mit Goldenem Dachl, Stadtturm, Dom, Hofburg, Leopoldsbrunnen, Annasäule, Triumphpforte, Inn mit bunten Häusern,
   Hofgarten, Viaduktbögen, Hauptbahnhof, Tram, Autos, Tauben, Enten, Strassenmusiker, Fiaker. Tag und Nacht.
@@ -20,7 +21,7 @@ Kein Server, keine Installation. Funktioniert am Handy und am Computer.
   Club Lawine (Türsteher, Tanzen, Raucherhof, Garderobe).
 - **Shopping:** Sportgeschäft, Trachtenladen (Lederhose, Tirolerhut …), Souvenirs, Supermarkt, Apotheke, Trafik, Barbier, Konditorei, Würstelstand, Kebap.
 - **Ausflüge:** Nordkettenbahn zur Seegrube (1.905 m), Stadtturm (133 Stufen), Fernrohr-Panorama.
-- **Taxi:** allein oder gemeinsam mit den Jungs zum Hotel, in die Bar, ins Stüberl oder in den Club.
+- **Taxi:** allein oder gemeinsam mit den Jungs zum Hotel, in die Bar, ins Stüberl oder in den Club. Yännu kommt damit aus Luzern nach.
 - **Körper:** Energie, Hunger, Laune, Promille, Übelkeit. Wer trinkt, ohne zu essen und zu schlafen, muss sich übergeben.
   Zu viel → Filmriss. Müde → im Hotelzimmer hinlegen. Am nächsten Morgen vielleicht ein Kater.
 - **Interaktiv:** Im Leopoldsbrunnen baden (Vorsicht, Polizei), Steine flitschen am Inn, Tauben und Enten füttern, Fotos sammeln.

@@ -84,6 +84,7 @@ MAP_BUILDERS.luzern = () => {
   m.spawn('start', 9, 18, 3);
   m.spawn('from_halle', 14, 9, 0);
   m.groundAnim = waterAnim;
+  m.timeScale = 0.2; /* bis zur Abfahrt um 9:10 zählt jede Minute – deshalb läuft die Uhr hier langsamer */
   return m;
 };
 function waterAnim(c, cx, cy, t) {
@@ -119,13 +120,11 @@ MAP_BUILDERS.luzern_halle = () => {
   m.warp(15, 21, 'luzern', 'from_halle', { w: 4, label: 'Zum Bahnhofplatz' });
   m.decal((c) => R(c, 16, 13 * 16, 32 * 16, 3, 'rgba(0,0,0,0.18)'));
   /* Züge */
-  m.add(objTrainExterior(1, 0, 32, { col: '#2f5fb8', label: 'S-BAHN' }));
-  const train = objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB' });
+  m.add(objTrainExterior(1, 0, 32, { col: '#2f5fb8', label: 'S-BAHN', doors: [9, 23] }));
+  const TRAIN_DOORS = [6, 14, 22];
+  const train = objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB', doors: TRAIN_DOORS.map((x) => x - 1) });
   m.add(train);
-  for (const x of [6, 14, 22]) {
-    m.decal((c) => { R(c, x * 16 + 2, 7 * 16 + 2, 12, 12, '#3a3c40'); R(c, x * 16 + 3, 7 * 16 + 3, 4, 10, '#7a96ac'); R(c, x * 16 + 9, 7 * 16 + 3, 4, 10, '#7a96ac'); });
-    m.trig(x, 7, 1, 1, { label: 'Einsteigen', act: () => Story.boardTrain() });
-  }
+  for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: 'Zugtür: Einsteigen', act: () => Story.boardTrain() });
   /* Abfahrtstafel, Uhr, Schilder */
   m.decal((c) => {
     const px = 8 * 16, py = 12 * 16 + 1;
@@ -140,12 +139,13 @@ MAP_BUILDERS.luzern_halle = () => {
   m.add(objCounter(9, 14, 4, 1, { top: '#c8a070', front: '#8a6a44', coffee: true }));
   m.trig(9, 14, 4, 1, { label: 'Bäckerei', act: () => Story.shop('baeckerei_lu') });
   for (const x of [22, 24]) m.add(mkObj(x, 14, 1, 1, 12, (c, W, H) => { R(c, 2, 0, 12, H - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }));
-  m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.say(null, 'Reto hat das Gruppenbillett für alle. Hier musst du nichts kaufen.') });
+  m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.ticketMachine() });
   for (const [x, y] of [[8, 17], [20, 17], [27, 17]]) m.add(objBench(x, y, 0, '#6a6e74'));
   for (const [x, y] of [[1, 18], [32, 18]]) m.add(objPlant(x, y));
   for (const [x, y] of [[3, 10], [12, 10], [24, 10], [31, 10]]) m.add(objBench(x, y, 0, '#6a6e74'));
   m.pedZones.push({ x: 1, y: 15, w: 32, h: 4, n: 7 }, { x: 0, y: 9, w: 34, h: 2, n: 4 }, { x: 0, y: 3, w: 34, h: 2, n: 3 });
   m.spawn('entry', 16, 19, 3);
+  m.timeScale = 0.2;
   return m;
 };
 

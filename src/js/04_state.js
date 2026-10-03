@@ -70,6 +70,7 @@ const ITEMS = {
   postkarte: { n: 'Postkarte Nordkette', t: 'souv', icon: 'card', inv: true },
   edelweiss: { n: 'Edelweiss-Anstecker', t: 'souv', icon: 'flower', inv: true },
   muenze: { n: 'Glücksmünze', t: 'souv', icon: 'coin', inv: true },
+  billett: { n: 'Gruppenbillett Luzern–Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
 };
 
 /* ---- Sehenswürdigkeiten (echte Fakten) ---- */
@@ -93,6 +94,8 @@ const SIGHTS = {
 /* ---- Erlebnisse ---- */
 const ACH = {
   zug: ['Pünktlich', 'Den Zug in Luzern erwischt'],
+  billett: ['Reiseleiter', 'Das Gruppenbillett rechtzeitig gekauft'],
+  nachzuegler: ['Nachzügler', 'Einer kam mit dem Taxi nach Innsbruck'],
   jass: ['Jass-König', 'Eine Jass-Runde gewonnen'],
   match: ['Match!', 'Alle neun Stiche in einer Runde geholt'],
   checkin: ['Eingecheckt', 'Im Hotel Zirbe eingecheckt'],
@@ -126,7 +129,7 @@ const ACH = {
 
 function newState(look, name) {
   return {
-    v: 3, name: name || 'Simon', look, unlocked: {},
+    v: 4, name: name || 'Simon', look, unlocked: {},
     time: 8 * 60 + 38, map: 'luzern', x: 0, y: 0, dir: 3,
     stage: 'meet', flags: { met: {} },
     st: { energy: 88, food: 62, mood: 72, prom: 0, nau: 0, wet: 0, smell: 0, hang: 0 },
@@ -247,7 +250,7 @@ function checkThresholds() {
 function promStr(v = G.S.st.prom) { return v.toFixed(2).replace('.', ',') + ' ‰'; }
 
 /* ---- Speichern ---- */
-const SAVE_KEY = 'gleis4-innsbruck-v3';
+const SAVE_KEY = 'gleis4-innsbruck-v4';
 function saveGame(silent) {
   if (!G.S || !G.player) return;
   G.S.map = G.map.id; G.S.x = Math.round(G.player.x); G.S.y = Math.round(G.player.y); G.S.dir = G.player.dir;
@@ -255,6 +258,6 @@ function saveGame(silent) {
   catch (e) { if (!silent) UI.toast('Speichern ist in diesem Browser nicht möglich.', 'warn'); return false; }
 }
 function loadSave() {
-  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); return o && o.v === 3 ? o : null; } catch (e) { return null; }
+  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); return o && o.v === 4 ? o : null; } catch (e) { return null; }
 }
 function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }

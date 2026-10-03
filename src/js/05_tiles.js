@@ -789,8 +789,18 @@ function objTrainExterior(x, y, w, o = {}) {
   return mkObj(x, y, w, 2, 6, (c, W, H) => {
     const red = o.col || '#c8302a';
     R(c, 0, 2, W, H - 4, '#f2f0ea'); R(c, 0, 2, W, 3, '#c9ccd2'); R(c, 0, H - 10, W, 6, red); R(c, 0, H - 4, W, 2, '#2a2a2e');
-    for (let k = 0; k < W; k += 16) { if (k % 128 === 120) continue; R(c, k + 3, 8, 10, 8, '#4a6478'); P(c, k + 4, 9, '#8ab0c8'); }
+    const doors = o.doors || [];
+    for (let k = 0; k < W; k += 16) { if (k % 128 === 120 || doors.includes(k / 16)) continue; R(c, k + 3, 8, 10, 8, '#4a6478'); P(c, k + 4, 9, '#8ab0c8'); }
     for (let k = 0; k < W; k += 128) { R(c, k + 124, 2, 4, H - 6, '#3a3c40'); }
     if (o.label) pxText(c, o.label, 8, H - 9, '#ffffff');
+    /* Einstiegstüren: dunkler Rahmen, zwei Scheiben, Trittstufe, grüner Öffner */
+    for (const dx of doors) {
+      const px = dx * 16;
+      R(c, px + 1, 5, 14, H - 7, '#2a2c30'); R(c, px + 2, 6, 12, H - 9, '#3a3d42');
+      R(c, px + 3, 8, 4, 9, '#7a96ac'); R(c, px + 9, 8, 4, 9, '#7a96ac'); P(c, px + 3, 8, '#b8d0e0'); P(c, px + 9, 8, '#b8d0e0');
+      R(c, px + 7, 20, 1, H - 24, '#1a1a1e');
+      R(c, px + 8, H - 12, 2, 2, '#4ad04a');
+      R(c, px + 1, H - 3, 14, 2, '#8a8e94'); R(c, px + 1, H - 3, 14, 1, '#c9ccd2');
+    }
   });
 }

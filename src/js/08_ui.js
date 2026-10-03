@@ -212,6 +212,16 @@ const UI = {
   fadeOut(text = '') { this.els.fadeText.textContent = text; this.els.fade.classList.add('on'); return sleep(380); },
   fadeIn() { this.els.fade.classList.remove('on'); return sleep(300); },
   async card(text, ms = 1600) { await this.fadeOut(text); await sleep(ms); await this.fadeIn(); },
+  /* Spiel verloren: Es gibt nur den Neustart. */
+  gameOver(title, text) {
+    const html = `<div class="panel"><div class="panel-head"><h2>${title}</h2></div><div class="panel-body">
+      <p class="note">${text}</p>
+      <p class="note">Der Ausflug ist vorbei, bevor er angefangen hat. Der Spielstand wird gelöscht – versuch es nochmal.</p>
+      </div><div class="panel-foot"><span>Game Over</span><button class="btn primary" id="goRestart">Von vorne anfangen</button></div></div>`;
+    const o = this.overlay(html, null);
+    o.querySelector('#goRestart').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });
+    G.mode = 'over';
+  },
   /* ---- Overlay ---- */
   overlay(html, onClose) {
     const o = this.els.overlay;
@@ -284,6 +294,7 @@ const UI = {
 function itemDesc(id) {
   const it = ITEMS[id]; if (!it) return '';
   const p = [];
+  if (it.t === 'ticket') p.push('12 Personen, 2. Klasse, gültig heute');
   if (it.alc) p.push('Alkohol');
   if (it.food) p.push(it.food >= 50 ? 'macht richtig satt' : it.food >= 25 ? 'macht satt' : 'Snack');
   if (it.en > 10) p.push('weckt auf');
@@ -350,11 +361,11 @@ const Phone = {
     if (!ids.length) { b.innerHTML += '<p class="note">Deine Taschen sind leer. Im Supermarkt, am Kiosk oder im Souvenirladen findest du Nachschub.</p>'; return; }
     for (const id of ids) {
       const it = ITEMS[id];
-      const usable = ['drink', 'food', 'med', 'pack', 'smoke', 'read', 'souv'].includes(it.t);
+      const usable = ['drink', 'food', 'med', 'pack', 'smoke', 'read', 'souv', 'ticket'].includes(it.t);
       const uses = G.S.uses[id];
       const row = document.createElement('div');
       row.className = 'shop-item';
-      row.innerHTML = `<img alt="" src="${itemIconURL(it.icon)}"><span><span class="nm">${it.n}${G.S.inv[id] > 1 ? ' ×' + G.S.inv[id] : ''}</span><br><span class="ds">${uses ? uses + ' übrig · ' : ''}${itemDesc(id)}</span></span>${usable ? `<button class="btn">${{ drink: 'Trinken', food: 'Essen', med: 'Nehmen', pack: 'Öffnen', smoke: 'Rauchen', read: 'Lesen', souv: 'Ansehen' }[it.t]}</button>` : '<span></span>'}`;
+      row.innerHTML = `<img alt="" src="${itemIconURL(it.icon)}"><span><span class="nm">${it.n}${G.S.inv[id] > 1 ? ' ×' + G.S.inv[id] : ''}</span><br><span class="ds">${uses ? uses + ' übrig · ' : ''}${itemDesc(id)}</span></span>${usable ? `<button class="btn">${{ drink: 'Trinken', food: 'Essen', med: 'Nehmen', pack: 'Öffnen', smoke: 'Rauchen', read: 'Lesen', souv: 'Ansehen', ticket: 'Ansehen' }[it.t]}</button>` : '<span></span>'}`;
       const btn = row.querySelector('button');
       if (btn) btn.addEventListener('click', async () => { UI.closeOverlay(); G.busy++; await Story.useItem(id); G.busy--; UI.hud(); });
       b.appendChild(row);

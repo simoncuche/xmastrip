@@ -43,7 +43,7 @@ function showTitle() {
       <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
     </div>
     <h1 class="title-name">Gleis 4 nach <span>Innsbruck</span></h1>
-    <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
+    <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
       ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${DAYS[Math.floor(save.time / 1440) % 7]} ${pad2(Math.floor((save.time % 1440) / 60))}:${pad2(Math.floor(save.time % 60))}</button>` : ''}
       <button class="btn ${save ? '' : 'primary'}" id="tNew">Neues Spiel</button>
@@ -62,7 +62,7 @@ function showTitle() {
     S2.pid = res.pid;
     S2.flags.crewSeed = res.crewSeed;
     S2.flags.deck = 'de';
-    if (res.pid === 'cuche') { S2.money.eur += 150; }
+    if (res.pid === 'cuche') { S2.money.eur += 150; S2.money.chf += TICKET_CASH; }
     clearSave();
     try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {}
     startGame(S2, true);
@@ -89,8 +89,8 @@ async function startGame(state, fresh) {
     G.busy++;
     await UI.card('Samstag, 8:38 Uhr · Bahnhofplatz Luzern', 1500);
     await Story.say(null, playerIsKassier()
-      ? `Du bist ${G.S.name}, der Kassier. Das Gruppenbillett und die Gruppenkasse sind bei dir. Die Jungs warten beim Torbogen – um 9:10 fährt der Zug auf Gleis 4.`
-      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen, ${fname(who('kassier'))} hat das Gruppenbillett. Der Zug fährt um 9:10 auf Gleis 4.`);
+      ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
+      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
     if (Input.touch) await Story.say(null, 'Zieh mit dem Daumen links auf dem Bildschirm, um zu gehen. Weit ziehen heisst rennen. Mit A sprichst du mit Leuten und benutzt Dinge. Oben rechts ist dein Handy.');
     else await Story.say(null, 'WASD oder Pfeiltasten zum Gehen, Shift zum Rennen, E für Aktionen, M für dein Handy.');
     G.busy--;

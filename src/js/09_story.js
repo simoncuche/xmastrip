@@ -48,6 +48,13 @@ function who(fn) { for (const id of FN_FALLBACK[fn] || []) if (FRIENDS[id]) retu
 const fname = (id) => (FRIENDS[id] ? FRIENDS[id].name : G.S.name);
 const playerIsKassier = () => G.S.pid === 'cuche';
 const T2P = (tx, ty) => ({ x: tx * 16 + 8, y: ty * 16 + 12 });
+/* Abfahrt in Luzern: Der Spieler kauft das Gruppenbillett, alle müssen um 9:10 im Zug sein. */
+const DEP_TIME = 9 * 60 + 10;
+const TICKET_PRICE = 468; /* 12 × 39.00 CHF */
+const TICKET_CASH = 500;  /* was der Kassier für das Billett herausrückt */
+const latecomer = () => who('smoke'); /* der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat */
+/* Jemand aus der Gruppe, der eine Rolle spricht – aber nie der Nachzügler selbst. */
+function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; return Object.keys(FRIENDS).find((x) => x !== id) || id; }
 
 /* ============ Ablauf ============ */
 const STAGES = ['meet', 'board', 'ride', 'arrived', 'findHotel', 'checkin', 'room', 'bar', 'free'];
@@ -124,8 +131,8 @@ const Story = {
   objective() {
     const s = G.S.stage, org = playerIsKassier() ? null : fname(who('kassier'));
     switch (s) {
-      case 'meet': return playerIsKassier() ? 'Die Jungs warten beim Torbogen – du hast das Gruppenbillett!' : `Triff die Jungs beim Torbogen (${org} hat die Billette)`;
-      case 'board': return 'Gleis 4: Steig in den IR nach Zürich';
+      case 'meet': return playerIsKassier() ? 'Triff die Jungs beim Torbogen – du kaufst das Gruppenbillett. Abfahrt 9:10!' : `Triff die Jungs beim Torbogen – ${org} gibt dir das Geld fürs Billett. Abfahrt 9:10!`;
+      case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
       case 'arrived': return 'Innsbruck Hbf! Aussteigen (Tür im Vorraum)';
       case 'findHotel': return 'Finde das Hotel Zirbe (Altstadt, Gasse beim Goldenen Dachl)';
@@ -149,7 +156,8 @@ const Story = {
   steps() {
     return [
       { t: 'Die Jungs beim Torbogen treffen', d: 'Bahnhofplatz Luzern', done: stageAt('board') },
-      { t: 'IR nach Zürich, Railjet nach Innsbruck', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
+      { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
+      { t: 'Pünktlich um 9:10 in den IR nach Zürich', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
       { t: 'Hotel Zirbe finden', d: 'Gasse südlich vom Goldenen Dachl', done: stageAt('checkin') },
       { t: 'Einchecken', d: 'Rezeption bei Frau Hofer', done: stageAt('room') },
       { t: 'Zimmer 307 beziehen', d: '3. Stock, Rucksack auspacken', done: stageAt('bar') },
@@ -172,7 +180,14 @@ const Story = {
   },
 
   /* ---------- Freunde platzieren ---------- */
+  /* Der Nachzügler ist nicht dabei: vor der Abfahrt raucht er vor dem Bahnhof, danach sitzt er im Taxi. */
+  away(id) {
+    if (id !== latecomer()) return false;
+    if (G.S.stage === 'board') return true;
+    return !!(G.S.flags.late && !G.S.flags.lateArrived);
+  },
   schedule(id) {
+    if (this.away(id)) return null;
     const h = hourOf(G.S.time);
     const o = G.S.flags.group;
     if (o && G.S.time < o.until && o.ids.includes(id)) return o.loc;
@@ -194,9 +209,14 @@ const Story = {
     return new Actor(Object.assign({ id, friend: true, name: f.name, look: f.look, x: p.x, y: p.y, dir, pose, solid: true, talk: () => Story.talkFriend(id), keepDir: pose === 'sit', label: 'Reden: ' + f.name, sitIdle: pose === 'sit' }, extra));
   },
   populate(m) {
-    const ids = Object.keys(FRIENDS);
+    const ids = Object.keys(FRIENDS).filter((id) => !this.away(id));
     const add = (id, tx, ty, dir, pose, extra) => { if (FRIENDS[id]) G.npcs.push(this.friendActor(id, tx, ty, dir, pose, extra)); };
     const s = G.S.stage;
+    if (m.id === 'luzern' && s === 'board') {
+      /* Der Raucher steht noch vor dem Bahnhof – und wird den Zug verpassen */
+      add(latecomer(), 17, 9, 0, 'stand', { bubbleRand: ['dots'] });
+      return;
+    }
     if (m.id === 'luzern' && s === 'meet') {
       const spots = [[14, 15, 0], [16, 15, 0], [18, 15, 0], [20, 15, 1], [13, 14, 2], [21, 14, 1], [15, 16, 3], [19, 16, 3], [17, 16, 3]];
       const org = who('kassier'), party = who('party'), foto = who('foto');
@@ -269,6 +289,14 @@ const Story = {
   minute() {
     const h = Math.floor(hourOf(G.S.time));
     const m = G.map;
+    if (!stageAt('ride')) {
+      if (G.S.time >= DEP_TIME) { this.missedTrain(); return; }
+      const left = DEP_TIME - Math.floor(G.S.time);
+      if ([10, 5, 2].includes(left) && !G.S.flags['dep' + left]) {
+        G.S.flags['dep' + left] = 1; Snd.sfx('ding');
+        UI.toast(`🔊 Noch ${left} Minuten bis zur Abfahrt des IR 70 auf Gleis 4${hasInv('billett') ? '' : ' – und du hast noch kein Billett'}!`, 'warn');
+      }
+    }
     if (h !== this._lastHour) {
       const prev = this._lastHour;
       this._lastHour = h;
@@ -329,7 +357,7 @@ const Story = {
       anwalt: ['Rechtlich gesehen ist Baden im Leopoldsbrunnen... sagen wir mal: eine Grauzone. Eher grau.', 'Beim Jassen gilt: Angeben ist Pflicht! Ausser beim Puur. Steht so im Reglement.', 'Falls du ein Organmandat kriegst: Ich vertrete dich. Mein Honorar: ein Bier.'],
       charmeur: ['Die Bardame hat mir vorhin zugelächelt. Ganz sicher.', 'Ich hab heute schon drei Telefonnummern bekommen. Okay, eine davon war vom Hotel.', 'Frisur sitzt. Hemd sitzt. Heute Abend sitzt alles.'],
     };
-    if (m === 'zug') p.push(pick(['Gleich kommt der Arlbergtunnel, über zehn Kilometer!', 'Am Vierertisch ist noch ein Platz frei. Jassen?', 'Im Speisewagen gibt\'s Gulaschsuppe. Und Bier.']));
+    if (m === 'zug') p.push(pick(['Gleich kommt der Arlbergtunnel, über zehn Kilometer!', 'Am Vierertisch ist noch ein Platz frei. Jassen?', 'Im Speisewagen gibt\'s Gulaschsuppe. Und Bier.', `${fname(latecomer())} sitzt jetzt sechs Stunden im Taxi. Für eine Zigarette.`]));
     if (m === 'luzern' || m === 'luzern_halle') p.push(pick(['Endlich Innsbruck! Ich freu mich schon seit Wochen.', 'Hast du deinen Ausweis dabei? Ohne kommst du im Hotel nicht rein.', 'Ich hoffe, im Zug ist ein Vierertisch frei.']));
     const pool = p.length && Math.random() < 0.65 ? p : R[f.fn];
     return pick(pool);
@@ -338,6 +366,7 @@ const Story = {
     const f = FRIENDS[id];
     const s = G.S.stage;
     if (G.map.id === 'luzern' && s === 'meet') return this.meetTalk(id);
+    if (G.map.id === 'luzern' && s === 'board') return this.lateTalk(id);
     if (G.map.id === 'zug') return this.trainTalk(id);
     const opts = [{ t: 'Plaudern', k: 'chat' }];
     const venue = ['bar', 'stueberl', 'club'].includes(G.map.id);
@@ -403,21 +432,30 @@ const Story = {
     } else if (id === foto) {
       await this.say(id, 'Schau dir das Licht über dem See an! Mach doch auch ein Foto – von der Kapellbrücke und vom Torbogen. Stell dich einfach davor.');
     } else if (id === org && !playerIsKassier()) {
-      await this.say(id, `Hoi ${G.S.name}! Ich hab das Gruppenbillett und die Hotelreservation. Hotel Zirbe in der Altstadt.`);
+      await this.say(id, `Hoi ${G.S.name}! Die Hotelreservation hab ich: Hotel Zirbe in der Altstadt. Aber das Gruppenbillett kaufst du – du bist heute für die Fahrkarten zuständig.`);
+      if (!fl.gotCash) { fl.gotCash = 1; addMoney('chf', TICKET_CASH); Snd.sfx('coin'); await this.say(id, `Hier, ${TICKET_CASH} Franken aus der Gruppenkasse. Der Automat ist in der Bahnhofshalle. Und bitte: vor 9:10!`); UI.toast(`+${TICKET_CASH} CHF aus der Gruppenkasse`); }
     } else await this.say(id, this.line(id));
     const need = [party, foto].concat(playerIsKassier() ? [] : [org]);
     const metCount = Object.keys(fl.met).length;
     if (need.every((x) => fl.met[x]) && metCount >= 4) {
       const lead = playerIsKassier() ? party : org;
-      await this.say(lead, playerIsKassier() ? `Alle da! ${G.S.name}, du hast das Billett – ab auf Gleis 4, der IR nach Zürich fährt um 9:10!` : 'Alle da! Ab auf Gleis 4, der IR nach Zürich fährt um 9:10!');
+      const late = latecomer();
+      await this.say(lead, `Alle da! ${G.S.name}, du holst das Gruppenbillett am Automaten in der Halle. Wir gehen schon mal auf Gleis 4 – der IR nach Zürich fährt um 9:10, pünktlich!`);
+      await this.say(late, 'Ich rauch noch schnell eine vor dem Bahnhof. Geht schon vor, ich komm dann nach!');
       for (const n of G.npcs) if (n.friend) n.hidden = true;
       this.setStage('board');
-      UI.toast('Die Jungs gehen zum Gleis. Durch den Bahnhof zu Gleis 4!');
+      G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
+      UI.toast(hasInv('billett') ? 'Die Jungs gehen zum Gleis. Durch den Bahnhof zu Gleis 4!' : 'Die Jungs gehen zum Gleis. Kauf das Billett am Automaten in der Halle – bis 9:10!');
     } else {
       const left = need.filter((x) => !fl.met[x]).map(fname);
       if (left.length) UI.toast(`Noch nicht begrüsst: ${left.join(', ')}`);
       else if (metCount < 4) UI.toast(`Begrüss noch ${4 - metCount} weitere Kollegen.`);
     }
+  },
+  async lateTalk(id) {
+    const c = await this.ask(id, 'Ich rauch noch schnell eine fertig. Geh schon vor, ich komm gleich nach!', [{ t: 'Komm jetzt, der Zug fährt um 9:10!' }, { t: 'Okay, bis gleich' }]);
+    if (c === 0) await this.say(id, pick(['Ja ja, gleich. Ich bin schneller als du denkst.', 'Zwei Züge, eine Zigarette – das geht sich aus.', 'Stress nicht. Ich hab noch mindestens drei Minuten.']));
+    else await this.say(id, 'Bis gleich!');
   },
   async trainTalk(id) {
     const s = G.S.stage;
@@ -433,12 +471,59 @@ const Story = {
   },
 
   /* ---------- Bahnhof Luzern & Zug ---------- */
+  async ticketMachine() {
+    if (hasInv('billett')) { await this.say(null, 'Du hast das Gruppenbillett schon in der Tasche. Ab auf Gleis 4!'); return; }
+    if (stageAt('ride')) { await this.say(null, 'Der Automat zeigt „Ausser Betrieb“.'); return; }
+    const c = await this.ask('Billettautomat', 'SBB Billettautomat. Bitte wählen:', [
+      { t: 'Gruppenbillett Luzern–Innsbruck Hbf, 12 Personen, 2. Klasse', r: fmtChf(TICKET_PRICE) },
+      { t: 'Gruppenbillett 1. Klasse, 12 Personen', r: fmtChf(TICKET_PRICE * 2) },
+      { t: 'Einzelbillett Luzern–Innsbruck Hbf', r: fmtChf(78) },
+      { t: 'Abbrechen' },
+    ]);
+    if (c === 3) return;
+    if (c === 2) { await this.say('me', 'Ein Billett für mich allein? Und die anderen elf? Nein, ich bin für alle zuständig.'); return; }
+    const price = c === 1 ? TICKET_PRICE * 2 : TICKET_PRICE;
+    if (!canPay('chf', price)) { Snd.sfx('error'); await this.say('Billettautomat', `Guthaben nicht ausreichend. Du hast ${fmtChf(G.S.money.chf)}, das Billett kostet ${fmtChf(price)}.`); if (c === 1) await this.say('me', 'Erste Klasse mit der Gruppenkasse? Das hätte der Kassier sowieso nie durchgehen lassen.'); return; }
+    pay('chf', price);
+    addInv('billett');
+    achieve('billett');
+    await this.say(null, `Der Automat rattert, dann rutscht ein langes Papier heraus: Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen${c === 1 ? ', 1. Klasse' : ''}, gültig heute.`);
+    UI.toast(`Gruppenbillett eingepackt. Jetzt zu den Jungs auf Gleis 4 – Abfahrt ${clockStr(DEP_TIME)}!`);
+  },
+  async missedTrain() {
+    if (G.busy || G.mode !== 'play') return;
+    G.busy++;
+    Snd.sfx('lose');
+    await UI.fadeOut(`${clockStr(DEP_TIME)} · Der IR 70 nach Zürich HB fährt ab.`);
+    await sleep(1800);
+    const s = G.S.stage;
+    const late = latecomer();
+    let text;
+    if (s === 'meet') text = `Die Jungs haben beim Torbogen auf dich gewartet, bis es zu spät war. Der IR 70 ist ohne euch abgefahren – und mit ihm der Anschluss an den Railjet nach Innsbruck.`;
+    else if (!hasInv('billett')) text = `Elf Jungs stehen auf Gleis 4 und schauen dem Zug hinterher. Du hattest eine Aufgabe: das Gruppenbillett. Ohne Billett steigt keiner ein – und jetzt ist der Zug weg.`;
+    else text = `Du stehst mit dem Gruppenbillett in der Hand da, während der IR 70 aus dem Bahnhof rollt. ${fname(late)} raucht draussen seelenruhig weiter. Der Ausflug nach Innsbruck fällt ins Wasser.`;
+    await UI.fadeIn();
+    UI.gameOver('Zug verpasst', text);
+  },
   async boardTrain() {
     const s = G.S.stage;
     if (s === 'meet') { await this.say(null, 'Du solltest zuerst die Jungs beim Torbogen treffen.'); return; }
     if (s !== 'board') { await this.say(null, 'Der Zug ist schon weg.'); return; }
-    G.S.time = Math.max(G.S.time, 9 * 60 + 9);
+    if (!hasInv('billett')) {
+      Snd.sfx('error');
+      await this.say(voice('kassier'), `Halt, ${G.S.name}! Hast du das Gruppenbillett? Ohne Billett steigt hier keiner ein. Der Automat ist in der Halle – lauf!`);
+      return;
+    }
+    if (G.S.time >= DEP_TIME) { this.missedTrain(); return; }
+    const late = latecomer();
+    const jass = voice('jass');
+    G.S.time = Math.max(G.S.time, DEP_TIME - 1);
+    G.S.flags.late = 1;
     achieve('zug');
+    await this.say(jass, `Da bist du ja! Alle einsteigen, Wagen 3! Moment … wo ist ${fname(late)}?`);
+    await this.say(voice('party'), 'Der raucht noch vor dem Bahnhof! Ich hab\'s ihm dreimal gesagt.');
+    Snd.sfx('ding');
+    await this.say(null, '🔊 „Bitte zurücktreten, die Türen schliessen.“ Die Türen zischen zu. Der IR 70 rollt an – und draussen auf dem Perron rennt jemand mit einer Zigarette im Mund hinterher. Zu spät.');
     await UI.fadeOut('IR 70 · Luzern → Zürich HB');
     passTime(46);
     await sleep(1400);
@@ -448,7 +533,9 @@ const Story = {
     this.setStage('ride');
     enterMap('zug', 'start');
     await UI.fadeIn();
-    await this.say(who('jass'), `Wagen 3, Vierertisch! ${G.S.name}, setz dich zu uns – wir jassen!`);
+    await this.say(jass, `Wagen 3, Vierertisch! ${G.S.name}, setz dich zu uns – wir jassen!`);
+    Snd.sfx('blip');
+    UI.toast(`📱 ${fname(late)}: „Verpasst 🙈 Nehm ein Taxi nach Innsbruck. Sagt's nicht meiner Freundin.“`);
     saveGame(true);
   },
   _announced: {},
@@ -470,8 +557,11 @@ const Story = {
     G.busy++;
     const cond = { name: 'Zugbegleiterin', look: npcLook(951, { hat: 8, hatCol: 2, top: 9, topCol: 1, hair: 9, beard: 0 }) };
     await this.say(cond, 'Grüß Gott, die Fahrkarten bitte!');
-    if (playerIsKassier()) await this.say('me', 'Hier, das Gruppenbillett für zwölf Personen.');
-    else await this.say(who('kassier'), 'Das Gruppenbillett, für uns zwölf. Bitte sehr!');
+    await this.say('me', 'Hier, das Gruppenbillett für zwölf Personen.');
+    if (G.S.flags.late) {
+      await this.say(cond, 'Zwölf? Ich zähle elf.');
+      await this.say(FRIENDS.lexx && 'lexx' !== latecomer() ? 'lexx' : voice('jass'), `Der Zwölfte sitzt in einem Taxi irgendwo bei Sargans. Lange Geschichte. Rechtlich gesehen ist das Billett trotzdem gültig.`);
+    }
     await this.say(cond, 'Danke, passt. Gute Weiterfahrt nach Innsbruck – und viel Spass!');
     G.busy--;
   },
@@ -701,8 +791,20 @@ const Story = {
     G.S.flags.barMet = 1;
     this.setStage('free');
     await this.say(org, 'Willkommen in Innsbruck! Ab jetzt ist alles erlaubt: Bar, Altstadt, Nordkette, Club. Wir sind meistens hier – schau einfach wieder rein.');
+    if (G.S.flags.late && !G.S.flags.lateArrived) await this.lateArrival();
     G.busy--;
     saveGame(true);
+  },
+  async lateArrival() {
+    const late = latecomer();
+    G.S.flags.lateArrived = 1;
+    Snd.sfx('door');
+    await this.say(null, `Draussen hält ein Taxi mit Luzerner Kennzeichen. Die Tür geht auf, und ${fname(late)} steigt aus – zerknittert, blass und ein paar hundert Franken ärmer.`);
+    G.npcs.push(this.friendActor(late, 11, 12, 3, 'stand', { bubbleRand: ['beer', 'dots'] }));
+    await this.say(late, 'Sechs Stunden Taxi. Der Fahrer heisst Hakan, und ich kenne jetzt seine ganze Familie. Bier. Sofort.');
+    await this.say(voice('kassier'), `Das Taxi hat 640 Franken gekostet. Aus der Gruppenkasse kommt davon nichts, ${fname(late)}. Null.`);
+    achieve('nachzuegler');
+    G.S.aff[late] = clamp((G.S.aff[late] || 50) + 5, 0, 100);
   },
   async round(kind) {
     const here = this.friendsHere();
@@ -1136,6 +1238,7 @@ const Story = {
     const I = ITEMS[id];
     if (I.t === 'pack') { takeInv(id); addInv(I.give, I.count); UI.toast(`${I.count} × ${ITEMS[I.give].n} ausgepackt.`); return; }
     if (I.t === 'smoke') return this.smoke();
+    if (I.t === 'ticket') { await this.say(null, 'Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen, 2. Klasse, gültig heute. Nicht verlieren!'); return; }
     if (I.t === 'read') { await this.say(null, pick(['Schlagzeile: „Föhnsturm am Wochenende erwartet“.', 'Sportteil: Ski-Saison startet bald am Gletscher.', 'Lokales: Neue Tram-Linie bis zum Flughafen geplant?'])); passTime(10); mood(1); return; }
     if (I.t === 'souv') { await this.say(null, { schneekugel: 'Du schüttelst die Schneekugel. Schnee rieselt aufs Goldene Dachl.', magnet: 'Ein Magnet mit dem Goldenen Dachl. Für den Kühlschrank zu Hause.', postkarte: 'Eine Postkarte der Nordkette. Am Schreibtisch im Hotel kannst du sie schreiben.', edelweiss: 'Ein Edelweiss-Anstecker. Du steckst ihn dir an.', muenze: 'Deine Glücksmünze.' }[id] || I.n); return; }
     if (I.uses) { G.S.uses[id] = (G.S.uses[id] || I.uses) - 1; if (G.S.uses[id] <= 0) { takeInv(id); delete G.S.uses[id]; } }

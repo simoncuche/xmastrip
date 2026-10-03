@@ -8,7 +8,7 @@ Läuft komplett im Browser ohne Server, ohne Bibliotheken, ohne Build-Tools auss
 ```bash
 python3 build.py          # erzeugt dist/index.html (offline spielbar) und dist/artifact.html
 open dist/index.html      # oder einfach per Doppelklick im Browser öffnen
-python3 tests/smoke_test.py   # optional: Playwright-Durchlauf der ganzen Story (pip install playwright)
+python3 tests/smoke_test.py   # optional: Playwright-Durchlauf der ganzen Story (pip install playwright; CHROMIUM_PATH=… für einen vorhandenen Chromium)
 ```
 
 `build.py` hängt `src/style.css` und alle `src/js/*.js` **in alphabetischer Reihenfolge** in `src/index.html` ein.
@@ -46,7 +46,12 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   mit Fallbacks in `FN_FALLBACK`, damit jede Rolle besetzt ist, egal wen man spielt.
 - Wo die Jungs sind, entscheidet `Story.schedule(id)` (Uhrzeit, Story-Stufe, gemeinsame Taxifahrt in `G.S.flags.group`).
 - Story-Stufen: `meet → board → ride → arrived → findHotel → checkin → room → bar → free`.
-- Spielstand: `localStorage` Schlüssel `gleis4-innsbruck-v3` (Fotos separat unter `…-img`). Bei Änderungen an der
+- Abfahrt Luzern: Der Spieler kauft das Gruppenbillett (`Story.ticketMachine`, Gegenstand `billett`, Preis `TICKET_PRICE`),
+  Abfahrt ist `DEP_TIME` (9:10). `Story.minute` zählt herunter; ist die Gruppe dann nicht im Zug → `Story.missedTrain` → `UI.gameOver`
+  (Spielstand wird gelöscht). In Luzern läuft die Uhr mit `timeScale = 0.2`. Der Raucher (`latecomer()` = `who('smoke')`, meist Yännu)
+  verpasst den Zug planmässig (`flags.late`), fehlt bis `flags.lateArrived` (`Story.away`) und kommt in der Bar per Taxi nach (`Story.lateArrival`).
+  Sprecher-Rollen über `voice(fn)` wählen, damit nie der Nachzügler selbst spricht.
+- Spielstand: `localStorage` Schlüssel `gleis4-innsbruck-v4` (Fotos separat unter `…-img`). Bei Änderungen an der
   Struktur von `newState` die Versionsnummer `v` und `SAVE_KEY` erhöhen.
 - Texte auf Deutsch mit Schweizer/Tiroler Färbung. Fakten zu Sehenswürdigkeiten sind recherchiert – bei neuen Fakten bitte prüfen.
 
