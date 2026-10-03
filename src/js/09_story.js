@@ -419,9 +419,14 @@ const Story = {
     const fl = G.S.flags;
     /* Tag 5: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
     if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
-    if (fl.evDay === dayOf(G.S.time)) return; /* höchstens ein Ereignis pro Tag */
-    if (G.S.time - (fl.lastEv || 0) < 40) return;
-    if (Math.random() > 0.08) return;
+    /* Tagesplan: Pro Tag wird einmal gewürfelt, ob überhaupt etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit.
+       Passt zur geplanten Zeit kein Ereignis (z. B. UFO nur nachts), wird jede Minute neu geprüft, bis eines passt. */
+    const day = dayOf(G.S.time);
+    fl.evPlan = fl.evPlan || {};
+    if (fl.evPlan[day] === undefined) fl.evPlan[day] = Math.random() < 0.55 ? Math.round((10 + Math.random() * 13) * 2) / 2 : null;
+    if (fl.evPlan[day] === null) return;
+    if (hourOf(G.S.time) < fl.evPlan[day]) return;
+    if (fl.evDay === day) return; /* höchstens ein Ereignis pro Tag */
     const pool = this.EVENTS.filter((e) => this.evCount(e.id) < e.max && e.cond());
     if (!pool.length) return;
     const e = pick(pool);

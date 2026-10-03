@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.1.1 – 03.10.2026
+
+- Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5.
+
 ## 2.1.0 – 03.10.2026
 
 - Die Ereignisse spielen jetzt direkt in der Spielwelt: Das UFO sinkt neben dir herab, der Lichtkegel leuchtet auf den Platz, das grüne Alien steigt aus und kommt zu dir. Trumps Kolonne mit Polizeimotorrad fährt auf der nächsten Strasse vor, er und die Secret-Service-Männer steigen aus und gehen zu dir. Der Taschendieb rennt mit deinem Portemonnaie quer über die Karte und du musst ihn selbst einholen (rennen!). Godzilla und King Kong stapfen als Riesen über die Karte, ihre Fussschatten fallen um dich herum – 30 Sekunden ausweichen in der echten Stadt.
