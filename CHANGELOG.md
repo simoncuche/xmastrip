@@ -3,6 +3,14 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.0.0 – 03.10.2026
+
+- Höchstens ein Zufallsereignis pro Tag.
+- Neue Ereignisse: ein UFO landet nachts auf dem Platz und ein Alien will zum Anführer (Geschenk: leuchtender Stein); Donald Trump trifft mit Wagenkolonne und Secret Service ein; ein Taschendieb klaut das Portemonnaie – Verfolgungsjagd als Minispiel (über Hindernisse springen, einholen).
+- Tag 10: Godzilla und King Kong überfallen Innsbruck. Ausweich-Minispiel gegen die Tritte; wer erwischt wird, wacht im Spital auf (Selbstbehalt, ein Tag weg).
+- Heimreise: Am Hauptbahnhof mit dem Railjet zurück nach Luzern beendet das Spiel endgültig, mit Statistik und Abschluss des Spielstands. Hinweise darauf im Ziel, im Reiseplan und am Bahnhof. Keine Zeitbegrenzung.
+- Casino Innsbruck bei der Triumphpforte (15–3 Uhr, Dresscode): Roulette mit drehendem Kessel (Rot/Schwarz, Gerade/Ungerade, Plein 35:1) und Blackjack gegen die Bank (Karte, Halten, Verdoppeln), Casinobar. Erlebnisse „Spieler“, „Plein!“, „Siebzehn und vier“.
+
 ## 1.10.0 – 03.10.2026
 
 - Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse.

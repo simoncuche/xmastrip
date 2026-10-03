@@ -203,6 +203,169 @@ const Mini = {
     });
   },
 
+
+  /* ---------- Verfolgungsjagd: dem Taschendieb hinterher, Hindernisse überspringen ---------- */
+  chase() {
+    return this.run('Verfolgungsjagd', 'Halt! Dieb!', `<canvas aria-label="Verfolgungsjagd"></canvas><div class="mini-bar"><span id="nInfo">Springen über Hindernisse – hol ihn ein!</span><b id="nScore"></b></div><div class="lanes" style="grid-template-columns:1fr"><button data-l="0" aria-label="Springen">SPRINGEN</button></div>`, 160, 100, (api) => {
+      const me = getSheet(G.S.look), thief = getSheet(npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }));
+      let dist = 78, t = 0, jump = -1, obs = [], next = 1.2, speed = 95, over = false, stumble = 0;
+      const jumpNow = () => { if (jump < 0 && !over) { jump = 0; Snd.sfx('whoosh'); } };
+      api.o.querySelector('[data-l]').addEventListener('pointerdown', (e) => { e.preventDefault(); jumpNow(); });
+      Mini.key = (k) => { if (['Space', 'ArrowUp', 'KeyW', 'Enter', 'KeyE'].includes(k)) jumpNow(); };
+      return (dt) => {
+        t += dt;
+        const c = api.ctx;
+        R(c, 0, 0, 160, 100, '#8fc3e8'); R(c, 0, 40, 160, 60, '#9a9088');
+        for (let i = -1; i < 9; i++) { const bx = Math.round(i * 22 - ((t * speed) % 22)); R(c, bx, 10, 20, 32, ['#e8d2a8', '#d8b890', '#c8c0b0'][((i + Math.floor(t * speed / 22)) % 3 + 3) % 3]); for (let wy = 14; wy < 36; wy += 8) R(c, bx + 4, wy, 4, 5, '#4a5a6a'); R(c, bx + 12, 14, 4, 5, '#4a5a6a'); }
+        for (let i = 0; i < 60; i++) P(c, Math.floor((hash(i, 2) * 200 - t * speed) % 200 + 200) % 200 - 20, 42 + Math.floor(hash(i, 3) * 56), '#8a8078');
+        next -= dt; if (next < 0) { next = rnd(0.9, 1.6); obs.push({ x: 175, k: Math.floor(Math.random() * 3) }); }
+        for (const o of obs) o.x -= speed * dt;
+        obs = obs.filter((o) => o.x > -20);
+        if (jump >= 0) { jump += dt; if (jump > 0.6) jump = -1; }
+        const jy = jump >= 0 ? -Math.sin(jump / 0.6 * Math.PI) * 22 : 0;
+        if (stumble > 0) stumble -= dt; else dist -= 9 * dt;
+        const px = 24, ty = 60, py = 60;
+        for (const o of obs) {
+          if (o.k === 0) { R(c, o.x, ty - 6, 14, 8, '#6a4428'); R(c, o.x, ty - 8, 14, 2, '#8a6a4a'); }
+          else if (o.k === 1) { R(c, o.x + 4, ty - 4, 4, 3, '#8a8e9a'); R(c, o.x + 8, ty - 6, 2, 2, '#6a6e7a'); }
+          else { R(c, o.x + 2, ty - 10, 8, 10, '#c8352d'); R(c, o.x + 1, ty - 11, 10, 2, '#e8e4dc'); }
+          if (!o.hit && o.x < px + 8 && o.x + 12 > px - 4 && jump < 0) { o.hit = true; stumble = 0.7; dist += 16; Snd.sfx('hit'); G.fx.shake = 0.3; }
+        }
+        const tx = px + dist;
+        const tf = Math.floor(t * 9) % 2 ? 1 : 2;
+        c.drawImage(thief, tf * SPR_W, 2 * SPR_H, SPR_W, SPR_H, Math.round(tx), ty - 26 + (Math.floor(t * 4) % 2 ? -1 : 0), SPR_W, SPR_H);
+        R(c, Math.round(tx) + 12, ty - 20, 5, 4, '#6a4428');
+        const pf = stumble > 0 ? 7 : (Math.floor(t * 10) % 2 ? 1 : 2);
+        c.drawImage(me, pf * SPR_W, 2 * SPR_H, SPR_W, SPR_H, px - 9, py - 26 + Math.round(jy), SPR_W, SPR_H);
+        if (stumble > 0) pxText(c, 'AUA!', px - 6, 20, '#e2554a');
+        pxText(c, `${Math.max(0, Math.round(dist / 6))} M`, 6, 4, '#1a1a2e');
+        api.o.querySelector('#nScore').textContent = `${Math.max(0, 22 - Math.floor(t))} s`;
+        if (dist <= 4 && !over) { over = true; Snd.sfx('win'); api.finish(true); }
+        if (t > 22 && !over) { over = true; Snd.sfx('lose'); api.finish(false); }
+      };
+    });
+  },
+  /* ---------- Godzilla & King Kong: den Tritten ausweichen ---------- */
+  dodge() {
+    const lanes = ['←', '↓', '↑', '→'];
+    return this.run('Monster-Alarm', 'Weg von den Füssen!', `<canvas aria-label="Ausweichen"></canvas><div class="mini-bar"><span id="nInfo">Beweg dich aus dem Schatten, bevor der Fuss landet.</span><b id="nScore">0</b></div><div class="lanes">${lanes.map((l, i) => `<button data-l="${i}" aria-label="Richtung ${i + 1}">${l}</button>`).join('')}</div>`, 160, 120, (api) => {
+      const me = getSheet(G.S.look);
+      const CW = 28, CH = 22, OX = 10, OY = 24, COLS = 5, ROWS = 4;
+      let cx = 2, cy = 2, t = 0, stomps = 0, shadows = [], next = 1.0, over = false, shake = 0, debris = [];
+      const move = (d) => { if (over) return; if (d === 0) cx = Math.max(0, cx - 1); if (d === 3) cx = Math.min(COLS - 1, cx + 1); if (d === 2) cy = Math.max(0, cy - 1); if (d === 1) cy = Math.min(ROWS - 1, cy + 1); Snd.sfx('step'); };
+      api.o.querySelectorAll('[data-l]').forEach((b) => b.addEventListener('pointerdown', (e) => { e.preventDefault(); move(+b.dataset.l); }));
+      Mini.key = (k) => { const m = { ArrowLeft: 0, KeyA: 0, ArrowDown: 1, KeyS: 1, ArrowUp: 2, KeyW: 2, ArrowRight: 3, KeyD: 3 }; if (k in m) move(m[k]); };
+      return (dt) => {
+        t += dt; shake = Math.max(0, shake - dt * 3);
+        const c = api.ctx;
+        const sx = Math.round(Math.sin(t * 60) * shake * 3);
+        R(c, 0, 0, 160, 120, '#4a2a2a');
+        for (let y = 0; y < 24; y++) R(c, 0, y, 160, 1, mix('#7a2a2a', '#2a1a2a', y / 24));
+        /* Godzilla links, Kong rechts, als Silhouetten */
+        const bob = Math.sin(t * 2) * 2;
+        R(c, 8 + sx, 2 + bob, 22, 22, '#1f3a2a'); R(c, 12 + sx, -4 + bob, 6, 8, '#1f3a2a'); R(c, 18 + sx, -4 + bob, 6, 8, '#1f3a2a'); for (let k = 0; k < 4; k++) P(c, 10 + k * 5 + sx, 2 + bob - k % 2, '#3a6a3a'); P(c, 14 + sx, 0 + bob, '#ffd23d');
+        R(c, 128 + sx, 4 - bob, 26, 20, '#3a2a1a'); R(c, 124 + sx, 0 - bob, 6, 12, '#3a2a1a'); R(c, 152 + sx, 0 - bob, 6, 12, '#3a2a1a'); R(c, 136 + sx, 8 - bob, 10, 8, '#5a4a3a'); P(c, 139 + sx, 10 - bob, '#ffffff'); P(c, 143 + sx, 10 - bob, '#ffffff');
+        for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) R(c, OX + x * CW + sx, OY + y * CH, CW - 1, CH - 1, (x + y) % 2 ? '#c3bcae' : '#b8b0a2');
+        next -= dt;
+        if (next < 0) { next = Math.max(0.75, 1.4 - stomps * 0.05); const n = stomps > 5 ? 2 : 1; for (let k = 0; k < n; k++) shadows.push({ x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS), t: 0 }); }
+        for (const sh of shadows) {
+          sh.t += dt;
+          const px = OX + sh.x * CW + CW / 2 + sx, py = OY + sh.y * CH + CH / 2;
+          if (sh.t < 0.9) { E(c, px, py, 4 + sh.t * 12, 3 + sh.t * 8, `rgba(0,0,0,${0.2 + sh.t * 0.5})`); }
+          else if (!sh.done) {
+            sh.done = true; stomps++; shake = 1; Snd.sfx('hit'); Snd.tone(60, 0.4, 'sawtooth', 0.15, 0, -30);
+            for (let k = 0; k < 10; k++) debris.push({ x: px + rnd(-8, 8), y: py, vx: rnd(-40, 40), vy: rnd(-60, -20), t: 0 });
+            if (sh.x === cx && sh.y === cy && !over) { over = true; setTimeout(() => api.finish(false), 600); }
+            api.o.querySelector('#nScore').textContent = `${stomps} / 14`;
+            if (stomps >= 14 && !over) { over = true; Snd.sfx('win'); setTimeout(() => api.finish(true), 500); }
+          }
+          if (sh.done && sh.t < 1.4) { R(c, px - 14, py - 8, 28, 14, sh.x < 2 ? '#1f3a2a' : '#3a2a1a'); for (let k = 0; k < 3; k++) R(c, px - 12 + k * 10, py + 4, 6, 4, '#0a0a0a'); }
+        }
+        shadows = shadows.filter((sh) => sh.t < 1.4);
+        for (const d of debris) { d.t += dt; d.x += d.vx * dt; d.y += d.vy * dt; d.vy += 120 * dt; R(c, d.x, d.y, 2, 2, '#8a8078'); }
+        debris = debris.filter((d) => d.t < 0.8);
+        const ppx = OX + cx * CW + CW / 2 + sx, ppy = OY + cy * CH + CH / 2 + 6;
+        c.drawImage(me, (Math.floor(t * 8) % 2 ? 1 : 2) * SPR_W, 0, SPR_W, SPR_H, Math.round(ppx - 9), Math.round(ppy - 26), SPR_W, SPR_H);
+        if (over && stomps < 14) pxText(c, 'ERWISCHT!', 52, 56, '#ff5a4a', 2);
+      };
+    });
+  },
+  /* ---------- Roulette: Kessel dreht, Kugel fällt auf eine Zahl ---------- */
+  rouletteSpin(target) {
+    const ORDER = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+    const RED = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    return this.run('Roulette', 'Rien ne va plus', `<canvas aria-label="Roulette"></canvas><div class="mini-bar"><span id="nInfo">Die Kugel läuft …</span><b id="nScore"></b></div>`, 160, 140, (api) => {
+      const idx = ORDER.indexOf(target);
+      const total = 4.2;
+      let t = 0, done = false;
+      const ease = (u) => 1 - Math.pow(1 - u, 3);
+      return (dt) => {
+        t += dt;
+        const c = api.ctx;
+        R(c, 0, 0, 160, 140, '#1a3a24');
+        const CX = 80, CY = 72, RO = 60;
+        const u = Math.min(1, t / total);
+        const wheelA = t * 1.2;
+        const ballA = -(ease(u) * (6 * Math.PI * 2) + (idx / 37) * Math.PI * 2) + wheelA;
+        E(c, CX, CY, RO + 4, RO + 4, '#5a3a20'); E(c, CX, CY, RO, RO, '#2a1a10');
+        for (let i = 0; i < 37; i++) {
+          const a0 = wheelA + (i / 37) * Math.PI * 2, a1 = wheelA + ((i + 1) / 37) * Math.PI * 2;
+          const n = ORDER[i], col = n === 0 ? '#2f8e4b' : RED.includes(n) ? '#c8302a' : '#1a1a1e';
+          c.fillStyle = col; c.beginPath(); c.moveTo(CX, CY); c.arc(CX, CY, RO - 2, a0, a1); c.closePath(); c.fill();
+        }
+        E(c, CX, CY, 34, 34, '#3a2a1a'); E(c, CX, CY, 30, 30, '#5a3a20'); E(c, CX, CY, 6, 6, '#c9a227');
+        const br = u < 1 ? RO - 8 - ease(u) * 14 : RO - 22;
+        E(c, CX + Math.cos(ballA) * br, CY + Math.sin(ballA) * br, 3, 3, '#f4f4f0');
+        if (u >= 1) { pxText(c, String(target), target < 10 ? 76 : 72, 120, target === 0 ? '#6fe08a' : RED.includes(target) ? '#ff6a5a' : '#ffffff', 2); if (!done) { done = true; Snd.sfx('ding'); setTimeout(() => api.finish(target), 1400); } }
+        else if (Math.floor(t * 12) % 3 === 0 && u < 0.8) Snd.noise(0.01, 0.015, 3000, 0, 'highpass');
+      };
+    });
+  },
+  /* ---------- Blackjack gegen die Bank ---------- */
+  blackjack(bet) {
+    const SUITS = ['♥', '♦', '♠', '♣'], RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const deck = []; for (let s = 0; s < 4; s++) for (let r = 0; r < 13; r++) deck.push({ s, r });
+    for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+    const val = (h) => { let v = 0, aces = 0; for (const c of h) { if (c.r === 0) { aces++; v += 11; } else v += Math.min(10, c.r + 1); } while (v > 21 && aces > 0) { v -= 10; aces--; } return v; };
+    const me = [deck.pop(), deck.pop()], bank = [deck.pop(), deck.pop()];
+    let state = 'play', mult = bet, result = null, reveal = false;
+    return this.run('Blackjack', `Einsatz ${fmtEur(bet)}`, `<canvas aria-label="Blackjack"></canvas><div class="mini-bar"><span id="nInfo">Näher an 21 als die Bank – aber nicht drüber.</span><b id="nScore"></b></div><div class="lanes" style="grid-template-columns:1fr 1fr 1fr"><button data-a="hit">Karte</button><button data-a="stand">Halten</button><button data-a="double">Verdoppeln</button></div>`, 160, 120, (api) => {
+      const btn = (a) => api.o.querySelector(`[data-a="${a}"]`);
+      const end = (res, m) => { state = 'done'; reveal = true; result = res; mult = m; api.sub(res === 'win' ? 'Gewonnen!' : res === 'push' ? 'Unentschieden' : 'Verloren'); Snd.sfx(res === 'win' ? 'win' : res === 'push' ? 'blip' : 'lose'); setTimeout(() => api.finish({ res, mult }), 1800); };
+      const bankPlay = () => { reveal = true; while (val(bank) < 17) bank.push(deck.pop()); const b = val(bank), m = val(me); if (b > 21 || m > b) end('win', mult); else if (m === b) end('push', 0); else end('lose', -mult); };
+      const act = (a) => {
+        if (state !== 'play') return;
+        Snd.sfx('card');
+        if (a === 'hit') { me.push(deck.pop()); if (val(me) > 21) end('lose', -mult); }
+        if (a === 'stand') bankPlay();
+        if (a === 'double') { if (me.length !== 2 || !canPay('eur', bet)) { UI.toast('Verdoppeln geht nur mit zwei Karten und genug Geld.', 'warn'); return; } mult = bet * 2; me.push(deck.pop()); if (val(me) > 21) end('lose', -mult); else bankPlay(); }
+      };
+      ['hit', 'stand', 'double'].forEach((a) => btn(a).addEventListener('pointerdown', (e) => { e.preventDefault(); act(a); }));
+      Mini.key = (k) => { if (k === 'KeyH' || k === 'Space') act('hit'); if (k === 'KeyS' || k === 'Enter') act('stand'); if (k === 'KeyD') act('double'); };
+      if (val(me) === 21) { reveal = true; if (val(bank) === 21) end('push', 0); else end('win', Math.round(bet * 1.5)); api.sub('Blackjack!'); }
+      const card = (c, x, y, k, hidden) => {
+        R(c, x, y, 20, 28, '#1a1a1e'); R(c, x + 1, y + 1, 18, 26, hidden ? '#2f5fb8' : '#f8f6f0');
+        if (hidden) { for (let i = 3; i < 17; i += 4) for (let j = 3; j < 25; j += 4) P(c, x + i, y + j, '#7fb4e2'); return; }
+        const red = k.s < 2, col = red ? '#c8302a' : '#1a1a1e';
+        pxText(c, RANKS[k.r], x + 3, y + 3, col);
+        const sx = x + 10, sy = y + 18;
+        if (k.s === 0) { R(c, sx - 3, sy - 2, 3, 2, col); R(c, sx + 1, sy - 2, 3, 2, col); R(c, sx - 3, sy, 7, 2, col); R(c, sx - 2, sy + 2, 5, 1, col); P(c, sx, sy + 3, col); }
+        else if (k.s === 1) { P(c, sx, sy - 3, col); R(c, sx - 1, sy - 2, 3, 1, col); R(c, sx - 2, sy - 1, 5, 2, col); R(c, sx - 1, sy + 1, 3, 1, col); P(c, sx, sy + 2, col); }
+        else if (k.s === 2) { P(c, sx, sy - 3, col); R(c, sx - 1, sy - 2, 3, 1, col); R(c, sx - 3, sy - 1, 7, 2, col); R(c, sx - 2, sy + 1, 5, 1, col); R(c, sx, sy + 2, 1, 2, col); }
+        else { R(c, sx - 1, sy - 3, 3, 2, col); R(c, sx - 3, sy - 1, 3, 2, col); R(c, sx + 1, sy - 1, 3, 2, col); R(c, sx, sy, 1, 4, col); }
+      };
+      return () => {
+        const c = api.ctx;
+        R(c, 0, 0, 160, 120, '#1f6a3a'); R(c, 0, 0, 160, 120, 'rgba(0,0,0,0.08)');
+        pxText(c, 'BANK', 6, 6, '#f4e8c0'); pxText(c, reveal ? String(val(bank)) : '?', 36, 6, '#ffd23d');
+        bank.forEach((k, i) => card(c, 6 + i * 24, 16, k, i === 1 && !reveal));
+        pxText(c, 'DU', 6, 70, '#f4e8c0'); pxText(c, String(val(me)), 24, 70, val(me) > 21 ? '#ff6a5a' : '#ffd23d');
+        me.forEach((k, i) => card(c, 6 + i * 24, 80, k, false));
+        if (result) pxText(c, result === 'win' ? 'GEWONNEN' : result === 'push' ? 'UNENTSCHIEDEN' : 'VERLOREN', 90, 50, result === 'win' ? '#7af07a' : result === 'push' ? '#ffd23d' : '#ff6a5a');
+        btn('double').disabled = state !== 'play' || me.length !== 2; btn('hit').disabled = state !== 'play'; btn('stand').disabled = state !== 'play';
+      };
+    });
+  },
   /* ---------- Nageln ---------- */
   nageln() {
     return this.run('Nageln', 'gegen Hias', `<canvas aria-label="Nagelstock"></canvas><div class="mini-bar"><span id="gInfo">Schlag zu, wenn der Zeiger im grünen Bereich ist!</span><b id="gS"></b></div><button class="btn primary" id="gHit" style="height:56px">Zuschlagen</button>`, 160, 110, (api) => {

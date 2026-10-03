@@ -74,6 +74,7 @@ const ITEMS = {
   edelweiss: { n: 'Edelweiss-Anstecker', t: 'souv', icon: 'flower', inv: true },
   muenze: { n: 'Glücksmünze', t: 'souv', icon: 'coin', inv: true },
   billett: { n: 'Gruppenbillett Luzern–Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
+  meteorit: { n: 'Leuchtender Stein vom Alien', t: 'souv', icon: 'globe', inv: true },
 };
 
 /* ---- Sehenswürdigkeiten (echte Fakten) ---- */
@@ -137,6 +138,15 @@ const ACH = {
   taube: ['Glücksbringer', 'Von einer Taube getroffen – soll Glück bringen'],
   krampus: ['Krampuslauf', 'Dem Krampus in der Altstadt begegnet'],
   ehrlich: ['Ehrliche Haut', 'Ein gefundenes Portemonnaie abgegeben'],
+  alien: ['Erster Kontakt', 'Ein Alien in Innsbruck getroffen'],
+  trump: ['Tremendous', 'Donald Trump samt Entourage begegnet'],
+  verfolgung: ['Sprinter', 'Den Taschendieb bei der Verfolgungsjagd erwischt'],
+  monster: ['Überlebt', 'Godzilla und King Kong entkommen'],
+  platt: ['Plattgetreten', 'Von Godzilla erwischt und im Spital gelandet'],
+  casino: ['Spieler', 'Im Casino Innsbruck gewesen'],
+  jackpot: ['Plein!', 'Beim Roulette die richtige Zahl getroffen'],
+  blackjack: ['Siebzehn und vier', 'Beim Blackjack gegen die Bank gewonnen'],
+  heimreise: ['Heimreise', 'Mit dem Zug zurück nach Luzern – das Spiel ist beendet'],
 };
 
 function newState(look, name) {

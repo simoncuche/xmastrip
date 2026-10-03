@@ -45,8 +45,9 @@ function showTitle() {
     <h1 class="title-name">🎄 Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
-      ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
-      <button class="btn ${save ? '' : 'primary'}" id="tNew">Neues Spiel</button>
+      ${save && !save.finished ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
+      ${save && save.finished ? `<p class="title-sub">Letzte Reise abgeschlossen: ${save.name}, ${Object.keys(save.ach || {}).length} Erlebnisse in ${Math.floor(save.time / 1440) + 1} Tagen.</p>` : ''}
+      <button class="btn ${save && !save.finished ? '' : 'primary'}" id="tNew">Neues Spiel</button>
     </div>
     <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
     <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>

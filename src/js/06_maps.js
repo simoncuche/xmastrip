@@ -445,7 +445,10 @@ MAP_BUILDERS.ibk = () => {
   m.trig(19, 80, 1, 1, { label: 'Bankomat', act: () => Story.atm() });
   shopHouse(m, 23, 75, 7, 6, 0, { text: 'BARBIER', bg: '#2a2a2e', fg: '#f4f0e6', label: 'Friseur & Barbier' }, 5, 'barbier', { hang: { dx: 6, icon: 'scissors', side: 'r' }, goods: ['#c8352d', '#f4f0e6', '#2f5fb8'] });
   shopHouse(m, 42, 75, 6, 6, 5, { text: 'KONDITOREI', bg: '#7a2a2a', fg: '#f8e8c8', label: 'Café Konditorei' }, 1, 'cafe', { awning: { cols: [0, 2, 3, 4, 5], col: '#7a2a2a' } });
-  house(m, 48, 75, 6, 6, 4);
+  /* Casino Innsbruck */
+  house(m, 48, 75, 6, 6, 4, { wall: '#2a2a34', roof: '#1a1a22', trim: '#c9a227', doors: [{ dx: 2, type: 'glass', lit: true }], sign: { text: 'CASINO', bg: '#1a1a22', fg: '#ffd23d', lit: true }, shutter: null });
+  m.warp(50, 80, 'casino', 'entry', { label: 'Casino Innsbruck', guard: () => Story.casinoDoor() });
+  m.spawn('casino_out', 50, 81, 0);
   for (const [x, y] of [[45, 81], [49, 81]]) m.add(objUmbrellaTable(x, y, '#7a2a2a'));
   m.add(objAnnasaeule(35, 63));
   m.trig(33, 62, 6, 5, { here: true, label: 'Foto: Annasäule', act: () => Story.photo('annasaeule'), cond: () => !G.S.photos.annasaeule });
@@ -769,6 +772,27 @@ MAP_BUILDERS.stueberl = () => {
   doorBottom(m, 7, 2, 'ibk', 'stueberl_out', 'Ausgang');
   m.spawn('entry', 7, 10, 3);
   m.light(13 * 16 + 16, 4 * 16 + 4, 50, '#ff9a40');
+  return m;
+};
+/* ----------- Casino Innsbruck ----------- */
+MAP_BUILDERS.casino = () => {
+  const m = new GMap('casino', 18, 13, { name: 'Casino Innsbruck', indoor: true, wallStyle: { cap: '#1a1a22' }, music: 'lounge', bg: '#0a0a10' });
+  roomShell(m, 3, { floor: T.DARK });
+  m.decal((c) => { pxText(c, 'CASINO', 7 * 16 + 2, 16 + 6, '#ffd23d'); pxText(c, 'CASINO', 7 * 16 + 1, 16 + 5, '#fff4c0'); DECAL.shelf(c, 13 * 16, 16 + 6, 64); for (let x = 16; x < 17 * 16; x += 32) for (let y = 3 * 16; y < 12 * 16; y += 32) R(c, x, y, 16, 16, 'rgba(120,20,40,0.18)'); });
+  /* Roulettetisch links, Blackjack rechts */
+  m.add(mkObj(2, 4, 5, 3, 10, (c, W, H) => { R(c, 0, 8, W, H - 10, '#2a6a3a'); R(c, 0, 8, W, 2, '#3a8a4a'); R(c, 0, H - 2, W, 2, '#5a3a20'); E(c, 20, 24, 14, 10, '#4a3020'); E(c, 20, 24, 12, 8, '#8a2a2a'); for (let k = 0; k < 12; k++) { const a = k / 12 * 6.28; R(c, Math.round(20 + Math.cos(a) * 9), Math.round(24 + Math.sin(a) * 6), 2, 2, k % 2 ? '#1a1a1e' : '#c8302a'); } E(c, 20, 24, 3, 2, '#c9a227'); for (let k = 0; k < 6; k++) R(c, 46 + k * 5, 14 + (k % 2) * 6, 4, 10, k % 2 ? '#c8302a' : '#1a1a1e'); pxText(c, 'ROULETTE', 44, 30, '#f4e8c0'); }, { solid: true, light: { dx: 40, dy: 10, r: 40, c: '#ffd27a' } }));
+  m.trig(2, 4, 5, 3, { label: 'Roulette spielen', act: () => Story.roulette() });
+  m.add(mkObj(11, 4, 5, 3, 10, (c, W, H) => { R(c, 0, 8, W, H - 10, '#2a6a3a'); R(c, 0, 8, W, 2, '#3a8a4a'); R(c, 0, H - 2, W, 2, '#5a3a20'); for (let k = 0; k < 4; k++) { R(c, 8 + k * 18, 16, 12, 16, '#f4f4f0'); R(c, 9 + k * 18, 17, 10, 14, k % 2 ? '#f4f4f0' : '#c8302a'); } pxText(c, 'BLACKJACK', 14, 36, '#f4e8c0'); }, { solid: true, light: { dx: 40, dy: 10, r: 40, c: '#ffd27a' } }));
+  m.trig(11, 4, 5, 3, { label: 'Blackjack spielen', act: () => Story.blackjack() });
+  m.npcDefs.push({ id: 'croupier1', name: 'Croupier Max', x: 4 * 16 + 8, y: 3 * 16 + 10, dir: 0, look: npcLook(981, { hair: 3, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 }), talk: () => Story.roulette(), keepDir: true });
+  m.npcDefs.push({ id: 'croupier2', name: 'Croupière Lisa', x: 13 * 16 + 8, y: 3 * 16 + 10, dir: 0, look: npcLook(982, { hair: 16, hairCol: 1, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 }), talk: () => Story.blackjack(), keepDir: true });
+  m.add(objCounter(7, 9, 4, 1, { top: '#2a2a34', front: '#1a1a22', glasses: 3 }));
+  m.trig(7, 9, 4, 1, { label: 'Casinobar', act: () => Story.shop('casinobar') });
+  for (const x of [7, 9]) m.add(objStool(x, 10, '#c9a227'));
+  m.add(objPlant(1, 1)); m.add(objPlant(16, 1)); m.add(objSofa(1, 9, 3, '#5a1a2a')); m.add(objSofa(14, 9, 3, '#5a1a2a'));
+  doorBottom(m, 8, 2, 'ibk', 'casino_out', 'Ausgang');
+  m.spawn('entry', 8, 11, 3);
+  m.light(4 * 16 + 8, 5 * 16, 36, '#ffd27a'); m.light(13 * 16 + 8, 5 * 16, 36, '#ffd27a');
   return m;
 };
 /* ----------- Rouge: Tabledance-Lokal in den Bögen ----------- */

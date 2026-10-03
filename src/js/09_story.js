@@ -93,7 +93,7 @@ function voice(fn) { const id = who(fn); if (id !== latecomer()) return id; retu
 const STAGES = ['meet', 'board', 'ride', 'arrived', 'findHotel', 'checkin', 'room', 'bar', 'free'];
 const stageAt = (s) => STAGES.indexOf(G.S.stage) >= STAGES.indexOf(s);
 const OPEN = {
-  bar: [11, 26], stueberl: [10, 24], club: [22, 29], rouge: [21, 29], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
+  bar: [11, 26], stueberl: [10, 24], club: [22, 29], rouge: [21, 29], casino: [15, 27], huette: [9, 17], bahn: [8.5, 17.5], turm: [10, 17], shop: [9, 19], souvenir: [9, 20], cafe: [8, 20], apotheke: [8, 18], wurst: [10, 28], kebap: [11, 28], trafik: [6, 22], spar: [8, 19], barbier: [9, 18],
 };
 function isOpen(k) {
   const o = OPEN[k]; if (!o) return true;
@@ -134,6 +134,7 @@ const SHOPS = {
     { t: 'Alkoholfrei', items: [it('cola', 7), it('wasser', 6)] },
     { t: 'Für die Bühne', items: [it('piccolo', 45, { n: 'Piccolo für die Tänzerin', d: 'Chantal prostet dir zu', icon: 'wine', special: 'tip' }), it('flasche', 180, { n: 'Flasche Champagner für die Bühne', d: 'Mit Wunderkerze. Alle schauen.', icon: 'wine', special: 'bottle' })] },
   ] },
+  casinobar: { title: 'Casinobar', mode: 'eat', venue: 'casino', intro: 'Gedämpftes Licht, leises Klackern der Jetons.', sections: [{ t: 'Drinks', items: [it('bier', 6.5), it('gintonic', 12), it('wein', 7.5), it('cola', 4.5), it('wasser', 4)] }] },
   huette: { title: 'Restaurant Seegrube', mode: 'eat', intro: 'Auf 1.905 Metern schmeckt alles doppelt so gut.', sections: [{ t: 'Getränke', items: [it('radler', 4.9), it('bier', 5.2), it('jagertee', 5.9), it('kaffee', 3.5), it('wasser', 3.2)] }, { t: 'Hüttenküche', items: [it('kaiserschmarrn', 13.9), it('germknoedel', 9.9), it('gulasch', 7.9), it('strudel', 6.5)] }] },
   minibar: { title: 'Minibar', mode: 'eat', intro: 'Hotelpreise. Natürlich.', sections: [{ t: 'Inhalt', items: [it('dosenbier', 6.5), it('zirben', 7.0), it('cola', 4.5), it('wasser', 4.0), it('schoko', 4.5), it('erdnuesse', 5.0)] }] },
   kebap: { title: 'Kebap im Bogen', mode: 'eat', venue: 'kebap', sections: [{ t: 'Auf die Hand', items: [it('kebap', 6.5, { n: 'Kebap mit allem', icon: 'kebap', d: 'macht richtig satt · gegen Übelkeit' }), it('pommes', 3.9), it('cola', 3.0), it('dosenbier', 3.5)] }] },
@@ -193,6 +194,7 @@ const Story = {
         else if (G.S.st.nau > 70) tips.push('Dir ist übel – Wasser, Essen oder Schlaf');
         else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
         else if (h < 17 && !G.S.ach.seegrube) tips.push('Nordkettenbahn zur Seegrube (bis 17:30)');
+        else if (dayOf(G.S.time) >= 2 && Math.floor(hourOf(G.S.time)) % 3 === 0) tips.push('Genug gefeiert? Heimreise am Hauptbahnhof – das beendet das Spiel');
         else tips.push('Die Jungs sind in der Gamsbock Bar');
         return `${tips[0]} · Fotos ${Object.keys(G.S.photos).length}/${Object.keys(SIGHTS).length}`;
       }
@@ -208,7 +210,8 @@ const Story = {
       { t: 'Einchecken', d: 'Rezeption bei Frau Hofer', done: stageAt('room') },
       { t: 'Zimmer 307 beziehen', d: '3. Stock, Rucksack auspacken', done: stageAt('bar') },
       { t: 'Die Jungs in der Gamsbock Bar treffen', d: 'Maria-Theresien-Strasse, Ostseite', done: stageAt('free') },
-      { t: 'Innsbruck geniessen', d: 'Bars, Club Lawine, Shopping, Nordkette, Altstadt', done: Object.keys(G.S.ach).length >= 20 },
+      { t: 'Innsbruck geniessen', d: 'Bars, Club Lawine, Casino, Shopping, Nordkette, Altstadt', done: Object.keys(G.S.ach).length >= 20 },
+      { t: 'Heimreise nach Luzern', d: 'Am Hauptbahnhof, wann ihr wollt – damit endet das Spiel', done: !!G.S.finished },
     ];
   },
   setStage(s) { G.S.stage = s; UI.hud(); },
@@ -217,7 +220,7 @@ const Story = {
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
     return [
       { x: 19, y: 46, n: 'Hotel Zirbe', c: A }, { x: 43, y: 64, n: 'Gamsbock Bar', c: A }, { x: 25, y: 46, n: 'Stüberl', c: A }, { x: 71, y: 63, n: 'Club Lawine', c: N },
-      { x: 65, y: 63, n: 'Rouge', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
+      { x: 65, y: 63, n: 'Rouge', c: N }, { x: 50, y: 80, n: 'Casino', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
       { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
@@ -406,18 +409,159 @@ const Story = {
     { id: 'taube', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 7 && h < 19 && G.S.st.wet === 0; } },
     { id: 'krampus', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 17 && h < 22; } },
     { id: 'portemonnaie', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 21; } },
+    { id: 'ufo', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 21 || h < 3; } },
+    { id: 'trump', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 18; } },
+    { id: 'verfolgung', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 23 && G.S.money.eur >= 20; } },
   ],
   victim() { return FRIENDS.oelu && !Story.away('oelu') ? 'oelu' : (FRIENDS.didu ? 'didu' : Object.keys(FRIENDS)[0]); },
   maybeEvent() {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free')) return;
     const fl = G.S.flags;
+    /* Tag 10: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
+    if (dayOf(G.S.time) >= 9 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
+    if (fl.evDay === dayOf(G.S.time)) return; /* höchstens ein Ereignis pro Tag */
     if (G.S.time - (fl.lastEv || 0) < 40) return;
-    if (Math.random() > 0.12) return;
+    if (Math.random() > 0.08) return;
     const pool = this.EVENTS.filter((e) => this.evCount(e.id) < e.max && e.cond());
     if (!pool.length) return;
     const e = pick(pool);
-    fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time;
+    fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
     this['ev_' + e.id]();
+  },
+  async ev_ufo() {
+    G.busy++;
+    UI.toast('Ein Summen am Himmel. Die Strassenlaternen flackern …', 'warn');
+    await Scene.play('ufo', { text: 'Ein Lichtkegel auf dem Platz. Die Luke öffnet sich.', ms: 4200 });
+    const alien = { name: 'Alien', look: npcLook(980, { skin: 0, hair: 0, beard: 0, eyes: 1, eyeCol: 3, top: 5, topCol: 6, glasses: 5, mark: 0, hat: 0, jewel: 0 }) };
+    await this.say(alien, 'Blip. Blop. … Übersetzer an. Grüss dich, Erdling. Bring mich zu eurem Anführer.');
+    const c = await this.ask(alien, 'Das Wesen ist grün, hat riesige Augen und riecht nach Zirbe.', [`Zum Kassier (${fname(who('kassier'))})`, 'In die Gamsbock Bar', 'Ein Bier anbieten', 'Weglaufen']);
+    if (c === 3) { await this.say(alien, 'Blop. Unhöflich. Wir kommen wieder. In 3.000 Jahren.'); mood(-2); }
+    else {
+      if (c === 0) await this.say(alien, `Der ${FRIENDS[who('kassier')] ? 'mit der Bauchtasche' : 'Kassier'}? Er hat … eine Strichliste. Faszinierend. Primitiv, aber faszinierend.`);
+      if (c === 1) await this.say(alien, 'Gams-bock-bar. Dort gibt es „Bier“? Unser Scanner zeigt: 4,8 Prozent Freude.');
+      if (c === 2) { if (hasInv('dosenbier') || hasInv('bier')) { takeInv(hasInv('dosenbier') ? 'dosenbier' : 'bier'); await this.say(alien, '… … … BLOP! Das ist das Beste, was ich je … Wir nehmen zwölf Kisten mit. Hier, ein Geschenk.'); } else await this.say(alien, 'Du hast gar keins dabei. Erdlinge. Trotzdem: ein Geschenk, für die Mühe.'); }
+      addInv('meteorit'); mood(10);
+      await this.say(alien, 'Ein Stein von unserem Mond. Leuchtet im Dunkeln. Erzähl niemandem davon – sie glauben dir eh nicht.');
+      UI.toast('Du hast einen leuchtenden Stein bekommen (Tasche). Das UFO steigt lautlos auf und ist weg.');
+    }
+    achieve('alien');
+    G.busy--;
+  },
+  async ev_trump() {
+    G.busy++;
+    UI.toast('Sirenen! Eine Wagenkolonne mit Fähnchen rollt in die Altstadt.', 'warn');
+    await Scene.play('motorcade', { text: 'Drei schwarze Limousinen, Polizeieskorte, Blaulicht.', ms: 3600 });
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const dt = this.tempActor({ name: 'Donald', look: npcLook(983, { skin: 4, hair: 3, hairCol: 5, beard: 0, top: 9, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, build: 3, height: 2, mouth: 3, brows: 5, glasses: 0, hat: 0, print: 0, acc: 0 }), x: p.x + side * 110, y: p.y, speed: 55 });
+    const g1 = this.tempActor({ name: 'Secret Service', look: npcLook(984, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: p.x + side * 130, y: p.y - 14, speed: 55 });
+    const g2 = this.tempActor({ name: 'Secret Service', look: npcLook(985, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: p.x + side * 130, y: p.y + 14, speed: 55 });
+    await Promise.all([this.walk(dt, p.x + side * 24, p.y), this.walk(g1, p.x + side * 44, p.y - 14), this.walk(g2, p.x + side * 44, p.y + 14)]);
+    dt.dir = dirTo(dt.x, dt.y, p.x, p.y); p.dir = dirTo(p.x, p.y, dt.x, dt.y);
+    await this.say(dt, 'Innsbruck. Tremendous. The best mountains, everybody says so. You – are you from Switzerland? Great cheese. I love cheese.');
+    const c = await this.ask(dt, 'Zwei Männer mit Sonnenbrillen und Knopf im Ohr mustern dich.', ['Selfie machen', 'Ihm ein Bier anbieten', 'Über Zölle diskutieren', 'Nur nicken']);
+    if (c === 0) { Snd.sfx('shutter'); G.fx.flash = 1; mood(8); await this.say(dt, 'Great photo. The best photo. Put it on the internet, it\'ll go viral. Believe me.'); }
+    else if (c === 1) { await this.say(dt, 'I don\'t drink. Never did. Best decision I ever made. But my people will take it. Thank you, Swiss.'); if (hasInv('dosenbier')) { takeInv('dosenbier'); G.S.aff[who('kassier')] = G.S.aff[who('kassier')]; } mood(5); }
+    else if (c === 2) { await this.say(g1, 'Sir, bitte zurücktreten.'); await this.say(dt, 'Tariffs? On cheese? Interesting. We\'ll look into it. Very strongly.'); mood(-3); UI.toast('Die Secret-Service-Männer schieben dich sanft, aber bestimmt zur Seite.'); }
+    else { await this.say(dt, 'Smart guy. Very smart. I like him.'); mood(3); }
+    await this.say(g2, 'Weiter geht\'s, Sir. Der Kaiserschmarrn wartet.');
+    for (const a of [dt, g1, g2]) { a.path = [{ x: a.x - side * 240, y: a.y }]; a.onArrive = () => this.dropActor(a); }
+    achieve('trump');
+    G.busy--;
+  },
+  async ev_verfolgung() {
+    G.busy++;
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const th = this.tempActor({ name: 'Taschendieb', look: npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }), x: p.x + side * 60, y: p.y, speed: 120 });
+    await this.walk(th, p.x + side * 14, p.y);
+    Snd.sfx('whoosh');
+    await this.say(null, 'Ein Rempler, ein „Entschuldigung“ – und dein Portemonnaie ist weg! Der Kerl rennt Richtung Inn.');
+    th.path = [{ x: th.x - side * 200, y: th.y }]; th.onArrive = () => this.dropActor(th);
+    const c = await this.ask(null, 'Hinterher?', ['HINTERHER!', 'Lass ihn laufen']);
+    if (c === 1) { const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60))); addMoney('eur', -loss); mood(-8); await this.say('me', `Nicht mit mir … doch, mit mir. ${fmtEur(loss)} weg.`); G.busy--; return; }
+    const won = await Mini.chase();
+    if (won) { mood(10); energy(-12); achieve('verfolgung'); await this.say('me', 'HAB DICH! Her mit dem Portemonnaie!'); await this.say('Taschendieb', 'Okay, okay! Schweizer sind schneller als sie aussehen.'); UI.toast('Portemonnaie zurück. Alles drin.'); }
+    else if (won === false) { const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60))); addMoney('eur', -loss); mood(-8); energy(-12); await this.say('me', `Weg ist er. Und ${fmtEur(loss)} mit ihm. Immerhin: Der Ausweis liegt im Hotel.`); }
+    G.busy--;
+  },
+  async ev_monster() {
+    G.busy++;
+    UI.toast('Sirenen in der ganzen Stadt. Der Boden bebt …', 'warn');
+    G.fx.shake = 1;
+    await Scene.play('monster', { text: 'Tag 10. Godzilla kommt über die Nordkette, King Kong über den Bergisel. Innsbruck hat Pech.', ms: 5000 });
+    await this.say(voice('pilot'), 'Das ist KEIN Föhn! Alle Mann in Deckung – weg von den Füssen!');
+    const c = await this.ask(null, 'Zwei Schatten fallen auf den Platz.', ['Rennen und ausweichen!', 'Starr vor Schreck stehen bleiben']);
+    let ok = false;
+    if (c === 0) ok = await Mini.dodge();
+    if (ok) {
+      achieve('monster'); mood(15);
+      await this.say(null, 'Godzilla stapft Richtung Zürich, King Kong klettert auf den Stadtturm, überlegt es sich und folgt ihm. Innsbruck atmet auf.');
+      await this.say(who('party'), 'DAS erzählen wir in Luzern niemandem. Glaubt uns eh keiner. Runde?');
+    } else {
+      achieve('platt'); Snd.sfx('hit'); G.fx.shake = 1;
+      await UI.card('Dunkel. … Piepsen. … Ein Spital. Es riecht nach Desinfektionsmittel.', 2200);
+      const bill = Math.min(G.S.money.eur, 200);
+      addMoney('eur', -bill);
+      const t = G.S.time, d = dayOf(t); G.S.time = (d + 1) * 1440 + 9 * 60; G.S.lastSleep = G.S.time;
+      Object.assign(G.S.st, { energy: 45, prom: 0, nau: 0, mood: Math.max(20, G.S.st.mood - 20) });
+      enterMap('hotel_room', 'bed');
+      await this.say('Krankenschwester', `Plattgetreten, aber heil. ${fmtEur(bill)} Selbstbehalt, bitte. Die Monster sind übrigens weitergezogen – Richtung Schweiz.`);
+      UI.toast(`Die Jungs haben dich aus dem Spital ins Hotel gebracht. ${clockStr()}, nächster Tag.`);
+    }
+    G.busy--;
+  },
+
+  /* ---------- Casino ---------- */
+  async casinoDoor() {
+    const st = G.S.st, L = G.S.look;
+    const sec = { name: 'Security', look: npcLook(986, { build: 3, hair: 1, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 }) };
+    if (!isOpen('casino')) { await this.say(sec, 'Das Casino öffnet um 15 Uhr und schliesst um 3.'); return false; }
+    if (L.pants === 4 || L.shoes === 4) { await this.say(sec, 'Jogginghose oder Sandalen? Nicht im Casino. Wir sind nicht in Las Vegas.'); return false; }
+    if (st.prom > 2) { await this.say(sec, 'Spielen in dem Zustand? Nein. Komm nüchterner wieder.'); return false; }
+    if (!G.S.flags.casinoSeen) { G.S.flags.casinoSeen = 1; await this.say(sec, 'Ausweis bitte … Danke. Willkommen im Casino Innsbruck. Eintritt frei, Jetons an den Tischen, Mindesteinsatz 10 Euro.'); }
+    achieve('casino');
+    return true;
+  },
+  async casinoBet(game) {
+    const opts = [10, 20, 50, 100].filter((v) => canPay('eur', v));
+    if (!opts.length) { await this.say(null, 'Mindesteinsatz 10 Euro. Dein Bargeld reicht nicht – Bankomat beim Bahnhof oder an der Maria-Theresien-Strasse.'); return 0; }
+    const c = await this.ask(null, `${game} · Einsatz wählen (Bargeld: ${fmtEur(G.S.money.eur)})`, opts.map((v) => ({ t: `${v} €` })).concat([{ t: 'Doch nicht' }]));
+    if (c >= opts.length) return 0;
+    return opts[c];
+  },
+  async roulette() {
+    const bet = await this.casinoBet('Roulette');
+    if (!bet) return;
+    const RED = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    const c = await this.ask('Croupier Max', 'Faites vos jeux. Worauf setzt du?', [{ t: 'Rot', r: '1:1' }, { t: 'Schwarz', r: '1:1' }, { t: 'Gerade', r: '1:1' }, { t: 'Ungerade', r: '1:1' }, { t: 'Eine Zahl (Plein)', r: '35:1' }, { t: 'Doch nicht' }]);
+    if (c === 5) return;
+    let num = -1;
+    if (c === 4) { const c2 = await this.ask('Croupier Max', 'Welche Zahl?', ['7', '12', '17', '23', '31', '36', 'Eine zufällige']); num = [7, 12, 17, 23, 31, 36][c2] ?? Math.floor(Math.random() * 37); }
+    pay('eur', bet);
+    const target = Math.floor(Math.random() * 37);
+    const res = await Mini.rouletteSpin(target);
+    if (res == null) { addMoney('eur', bet); return; }
+    let win = 0;
+    if (c === 0 && RED.includes(res)) win = bet * 2;
+    if (c === 1 && res !== 0 && !RED.includes(res)) win = bet * 2;
+    if (c === 2 && res !== 0 && res % 2 === 0) win = bet * 2;
+    if (c === 3 && res % 2 === 1) win = bet * 2;
+    if (c === 4 && res === num) { win = bet * 36; achieve('jackpot'); }
+    if (win) { addMoney('eur', win); Snd.sfx('coin'); mood(win > bet * 10 ? 20 : 6); await this.say('Croupier Max', `${res}${res === 0 ? ', grün' : RED.includes(res) ? ', rot' : ', schwarz'}. ${win > bet * 10 ? 'PLEIN! Alle schauen her.' : 'Gewonnen.'} Auszahlung ${fmtEur(win)}.`); }
+    else { mood(-4); await this.say('Croupier Max', `${res}${res === 0 ? ', grün – die Bank dankt' : RED.includes(res) ? ', rot' : ', schwarz'}. Leider verloren. Nächstes Spiel?`); }
+    passTime(5);
+  },
+  async blackjack() {
+    const bet = await this.casinoBet('Blackjack');
+    if (!bet) return;
+    pay('eur', bet);
+    const r = await Mini.blackjack(bet);
+    if (!r) { addMoney('eur', bet); return; }
+    if (r.res === 'win') { addMoney('eur', bet + r.mult); Snd.sfx('coin'); mood(8); achieve('blackjack'); await this.say('Croupière Lisa', `Gewonnen – ${fmtEur(bet + r.mult)} für dich. Die Bank zahlt mit Lächeln.`); }
+    else if (r.res === 'push') { addMoney('eur', bet); await this.say('Croupière Lisa', 'Unentschieden. Einsatz zurück.'); }
+    else { if (r.mult < -bet) pay('eur', Math.min(G.S.money.eur, -r.mult - bet)); mood(-4); await this.say('Croupière Lisa', pick(['Die Bank gewinnt. Wie meistens.', 'Verloren. Noch eine Runde? Die Bar ist auch offen.', 'Siebzehn und vier war früher. Heute heisst es: die Bank.'])); }
+    passTime(6);
   },
   async ev_ueberfall() {
     G.busy++;
@@ -1444,13 +1588,26 @@ const Story = {
     await this.say(null, '… iii … iii … (Das Echo antwortet. Irgendwo pfeift ein Murmeltier.)');
   },
   async station() {
-    const c = await this.ask(null, 'Abfahrtstafel: Railjet nach Zürich HB, nächste Abfahrt in 40 Minuten.', ['Heimreise antreten (Spiel beenden)', 'Taxi am Taxistand nehmen', 'Nur schauen']);
+    const c = await this.ask(null, 'Abfahrtstafel: Railjet nach Zürich HB, nächste Abfahrt in 40 Minuten. Achtung: Die Heimreise beendet das Spiel.', ['Heimreise antreten – beendet das Spiel', 'Taxi am Taxistand nehmen', 'Nur schauen']);
     if (c === 0) {
       if (!stageAt('free')) { await this.say(null, 'Jetzt schon? Ihr seid doch gerade erst angekommen!'); return; }
-      const c2 = await this.ask(null, 'Wirklich nach Hause fahren? Du kannst danach weiterspielen.', ['Ja, Heimreise', 'Doch noch bleiben']);
-      if (c2 === 0) await Ending.show();
+      const c2 = await this.ask(null, `Wirklich nach Hause fahren? Das Spiel ist danach zu Ende, der Spielstand wird abgeschlossen. Ihr wart ${dayOf(G.S.time) + 1} Tage in Innsbruck.`, ['Ja, Heimreise nach Luzern', 'Doch noch bleiben']);
+      if (c2 === 0) await this.goHome();
     }
     if (c === 1) await this.taxi();
+  },
+  async goHome() {
+    G.busy++;
+    const here = Object.keys(FRIENDS);
+    await this.say(voice('kassier'), `Alle da? Zwölf … ${G.S.flags.jail ? 'elf, einer sitzt noch' : 'zwölf'}. Billette hab ich. Luzern, wir kommen.`);
+    await this.say(voice('party'), 'Letzte Runde war gestern. Oder vorgestern. Egal. Es war LEGENDÄR.');
+    achieve('heimreise');
+    G.S.finished = 1;
+    await Scene.play('train', { text: 'Railjet · Innsbruck → Zürich HB → Luzern', ms: 4200, label: 'RAILJET', col: '#a8282a', lake: true, keep: true });
+    saveGame(true);
+    await UI.fadeIn();
+    await Ending.show();
+    G.busy--;
   },
   async atm() {
     const d = dayOf(G.S.time);
@@ -1474,6 +1631,7 @@ const Story = {
     { k: 'stueberl', n: 'Tiroler Stüberl', to: ['ibk', 'stueberl_out'], x: 25, y: 47 },
     { k: 'club', n: 'Club Lawine (Viaduktbögen)', to: ['ibk', 'club_out'], x: 70, y: 65 },
     { k: 'rouge', n: 'Rouge Tabledance (Viaduktbögen)', to: ['ibk', 'rouge_out'], x: 65, y: 65 },
+    { k: 'casino', n: 'Casino Innsbruck', to: ['ibk', 'casino_out'], x: 50, y: 81 },
     { k: 'hbf', n: 'Hauptbahnhof', to: ['ibk', 'hbf'], x: 74, y: 75 },
     { k: 'bahn', n: 'Nordkettenbahn (Congress)', to: ['ibk', 'hbb_out'], x: 77, y: 33 },
   ],
@@ -1670,7 +1828,7 @@ function tracht() { const L = G.S.look; return L.hat === 9 && L.top === 11 && L.
 const Ending = {
   async show() {
     const S2 = G.S;
-    const html = `<div class="panel"><div class="panel-head"><h2>Heimreise nach Luzern</h2><button class="x-btn" data-close aria-label="Schliessen">×</button></div><div class="panel-body">
+    const html = `<div class="panel"><div class="panel-head"><h2>Heimreise nach Luzern</h2><span class="sub">Spiel beendet</span></div><div class="panel-body">
       <p class="note">Der Railjet rollt aus dem Inntal. ${Object.keys(FRIENDS).length} müde Kollegen, ein voller Bierdeckel und viele Geschichten.</p>
       <div class="statgrid">
         <div class="stat"><small>Bier</small><b>${S2.beers}</b></div><div class="stat"><small>Schnäpse</small><b>${S2.shots}</b></div>
@@ -1679,7 +1837,11 @@ const Ending = {
         <div class="stat"><small>Restgeld</small><b>${fmtEur(S2.money.eur)}</b></div><div class="stat"><small>Tage</small><b>${dayOf(S2.time) + 1}</b></div>
       </div>
       <p class="note">${Object.keys(S2.ach).length > 20 ? 'Legendär. Davon werdet ihr noch in zehn Jahren erzählen.' : 'Schöner Ausflug! Aber da geht noch mehr – vielleicht beim nächsten Mal.'}</p>
-      </div><div class="panel-foot"><span>Danke fürs Spielen!</span><button class="btn primary" data-close>Weiterspielen</button></div></div>`;
-    await new Promise((r) => UI.overlay(html, r));
+      <p class="note">Das Spiel ist damit beendet. Ein neues Spiel beginnt wieder in Luzern am Bahnhof.</p>
+      </div><div class="panel-foot"><span>Danke fürs Spielen!</span><button class="btn primary" id="endNew">Neues Spiel</button></div></div>`;
+    const o = UI.overlay(html, null);
+    o.querySelector('#endNew').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });
+    G.mode = 'over';
+    await new Promise(() => {});
   },
 };
