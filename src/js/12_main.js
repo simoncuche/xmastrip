@@ -191,25 +191,31 @@ const Shake = {
   /* Kräftige Ausschläge (über 11 m/s²) zählen als Schütteln; Pausen über 0,35 s lassen den Zähler schnell wieder sinken */
   feed(m, now) {
     const gap = now - (this.last || now); this.last = now;
-    if (gap > 0.5) this.t = 0; /* keine Sensordaten mehr = Schütteln vorbei */
+    if (gap > 0.5) { if (this.armed) { this.armed = false; this.t = 0; this.trigger(); } this.t = 0; } /* keine Sensordaten mehr = Schütteln vorbei */
     const dt = Math.min(0.2, Math.max(0, gap));
     if (m > 9) this.lastPeak = now;
-    if (now - this.lastPeak < 0.35) this.t += dt; else this.t = Math.max(0, this.t - dt * 2);
-    if (this.t > 1 && G.mode === 'play' && !G.busy) G.fx.shake = Math.max(G.fx.shake || 0, Math.min(0.6, (this.t - 1) * 0.3));
-    if (this.t >= 3) { this.t = 0; this.trigger(); }
+    /* Ab 3 Sekunden ist das normale Easter Egg vorgemerkt und kommt, sobald das Schütteln aufhört.
+       Wer bis 7 Sekunden durchschüttelt, löst stattdessen die Apokalypse aus. */
+    if (now - this.lastPeak < 0.35) this.t += dt;
+    else { if (this.armed) { this.armed = false; this.t = 0; this.trigger(); return; } this.t = Math.max(0, this.t - dt * 2); }
+    if (this.t > 1 && G.mode === 'play' && !G.busy) G.fx.shake = Math.max(G.fx.shake || 0, Math.min(1, (this.t - 1) * 0.18));
+    if (this.t >= 3 && !this.armed) this.armed = true;
+    if (this.t >= 4.5 && !this._teased) { this._teased = 1; this.hint('📳 Es rumpelt bedrohlich … weiter schütteln?'); }
+    if (this.t >= 7) { this.armed = false; this._teased = 0; this.t = 0; this.trigger('apokalypse'); }
+    if (this.t < 1) this._teased = 0;
   },
   /* Blockierte Versuche bekommen eine kurze Rückmeldung, damit klar ist, warum nichts passiert */
   hint(txt) { const now = performance.now(); if (now - (this._hintAt || 0) < 4000) return; this._hintAt = now; UI.toast(txt); },
-  trigger() {
+  trigger(kind) {
     const now = performance.now();
     if (!G.S || G.mode !== 'play') return;
     const wait = Math.ceil((30000 - (now - this.fired)) / 1000);
-    if (wait > 0) { this.hint(`📳 Dein Handy ist noch ganz durchgeschüttelt. Noch ${wait} Sekunden …`); return; }
+    if (wait > 0 && kind !== 'apokalypse') { this.hint(`📳 Dein Handy ist noch ganz durchgeschüttelt. Noch ${wait} Sekunden …`); return; }
     if (G.live) { this.hint('📳 Gerade passiert schon etwas – erst mal das hier überstehen!'); return; }
     if (G.busy || !document.getElementById('overlay').hidden) { this.hint('📳 Erst Gespräch oder Handy schliessen, dann schütteln.'); return; }
     this.fired = now;
     try { if (navigator.vibrate) navigator.vibrate([80, 60, 180]); } catch (e) {}
-    Story.shakeEvent();
+    Story.shakeEvent(kind);
   },
 };
 window.addEventListener('load', () => Shake.init());

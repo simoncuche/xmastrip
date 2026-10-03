@@ -3,6 +3,14 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.18.0 – 03.10.2026
+
+- Apokalypse! An Tag 10 (ab 11 Uhr), als letztes Schüttel-Easter-Egg nach Godzilla oder sofort mit 7 Sekunden Schütteln geht Innsbruck unter: Dauerbeben, blutroter Himmel, Asche und Glut, Rauchsäulen, Blitze mit Weissblitz und Donner, Lava-Risse brechen im Boden auf, Lava schiesst als Fontäne aus dem Pflaster, Häuser fangen Feuer und versinken mit Staubwolken und fliegenden Trümmern im Boden.
+- Flucht zum letzten Zug: Ein Countdown läuft (Zielzeile oben und unten im Bild), ein Pfeil zeigt zum Hauptbahnhof. Vier Jungs rennen mit, springen über die Risse und rufen dir zu („LAUF!“, „SPRING!“, „NICHT IN DIE RISSE!“), drei winken schon am Bahnhof. Risse überspringst du automatisch im Rennen oder mit der Aktionstaste; wer hineinstolpert, wird herausgezogen und verliert Zeit. Blitze und Lava-Fontänen werfen dich zurück. Während der Flucht hilft Adrenalin: kein Kollaps, kein Filmriss, Rennen geht immer.
+- Geschafft: Der Railjet flieht über die Brücke aus dem Lavameer, die Nordkette spuckt Feuer – dann sitzen die Jungs im Abteil, draussen zieht die Apokalypse vorbei, und alle stossen an: „PROST! AUF INNSBRUCK!“. Endbildschirm „Last Exit Innsbruck“, Erlebnisse „Last Exit Innsbruck“ und „Trittsicher“ (ohne Sturz).
+- Zu spät: Der Zug rollt ohne dich davon, die Jungs schauen aus dem Fenster, die Lava steigt – Game Over.
+- Schütteln: Nach 3 Sekunden ist das nächste Easter Egg vorgemerkt und kommt, sobald du aufhörst. Wer weiterschüttelt, bekommt einen Hinweis – und bei 7 Sekunden die Apokalypse.
+
 ## 2.17.0 – 03.10.2026
 
 - Schüttel-Easter-Egg in fester Reihenfolge: Taschendieb, Hund gegen Katze, Taube, Krampus, Fundsache, Trump, Polizei, UFO, Überfall – und als Finale Godzilla. Jedes Ereignis kommt genau einmal dran, erst danach beginnt die Liste von vorne. Der Hinweis zeigt, wo du stehst (z. B. „Easter Egg 3/10“). Der Fortschritt wird mit dem Spielstand gespeichert.

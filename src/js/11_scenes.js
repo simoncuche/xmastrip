@@ -370,6 +370,88 @@ const SCENES = {
     if (p > 0.12 && !st._hiss) { st._hiss = 1; Snd.noise(0.5, 0.06, 3000); Snd.tone(880, 0.08, 'square', 0.03); }
     const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if (p > 0.25 && p < 0.9) Snd.sfx('step'); }
   },
+  /* Apokalypse – Endsequenz: Teil 1 der Railjet flieht aus der versinkenden Stadt, Teil 2 im Abteil mit Bier */
+  apocend(c, t, p, st) {
+    const sky = (top, bot) => { for (let y = 0; y < SCENE_H; y++) R(c, 0, y, SCENE_W, 1, mix(top, bot, y / SCENE_H)); };
+    const bolt = (x0, y0, y1, seed) => { let x = x0, y = y0; c.strokeStyle = '#eaf4ff'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, y); for (let k = 1; k <= 7; k++) { x = x0 + Math.sin(seed * 9 + k * 2.3) * 7; y = y0 + (y1 - y0) * k / 7; c.lineTo(x, y); } c.stroke(); c.strokeStyle = 'rgba(150,200,255,0.4)'; c.lineWidth = 4; c.stroke(); };
+    const flash = Math.floor(t * 2.6) % 5 === 0 && (t * 2.6) % 1 < 0.35;
+    if (!st._th && flash) { st._th = 1; Snd.noise(1.2, 0.12, 160); Snd.tone(42, 1, 'sawtooth', 0.1, 0, -10); } if (!flash) st._th = 0;
+    if (p < 0.4) {
+      const q = p / 0.4;
+      sky('#140404', '#a8381a');
+      /* Nordkette als Vulkan */
+      c.fillStyle = '#2a1414'; c.beginPath(); c.moveTo(0, 60); for (let x = 0; x <= SCENE_W; x += 4) c.lineTo(x, 40 - Math.abs(Math.sin(x * 0.05) * 16 + Math.sin(x * 0.13) * 5)); c.lineTo(SCENE_W, 60); c.closePath(); c.fill();
+      for (const [vx, vy] of [[32, 22], [96, 26], [140, 30]]) { for (let k = 0; k < 4; k++) { const sy = vy - k * 6 - ((t * 10) % 6), r = 4 + k * 3; E(c, vx + Math.sin(t + k) * 3, sy, r, r * 0.7, `rgba(40,30,30,${0.7 - k * 0.12})`); } line(c, vx, vy, vx - 6, vy + 18, '#ff6a10'); line(c, vx + 1, vy, vx + 7, vy + 16, '#ff8a20'); if (Math.floor(t * 8 + vx) % 3 === 0) P(c, vx + rnd(-3, 3), vy - rnd(2, 8), '#ffd060'); }
+      /* Stadt: Silhouetten, brennend, versinkend */
+      for (let k = 0; k < 14; k++) { const bx = k * 12 - 4, bh = 14 + ((k * 7) % 12), sink = clamp(q * 1.6 - (k % 5) * 0.12, 0, 1) * bh; R(c, bx, 60 - bh + sink, 10, bh - sink + 2, '#1e1010'); for (let w = 0; w < 3; w++) if ((k + w) % 2) P(c, bx + 2 + w * 3, 64 - bh + sink, '#ffb050'); if (sink < bh) { const fh = 3 + Math.abs(Math.sin(t * 8 + k)) * 4; R(c, bx + 3, 60 - bh + sink - fh, 4, fh, '#ff6a10'); P(c, bx + 4, 60 - bh + sink - fh - 1, '#ffd040'); } }
+      if (q > 0.3 && Math.floor(t * 3) % 4 === 0) { const cx = 70 + Math.sin(t) * 20; R(c, cx - 3, 44, 6, 16, '#e8b830'); }
+      /* Lavameer steigt */
+      const ly = 64 - q * 4;
+      for (let y = ly; y < SCENE_H; y++) R(c, 0, y, SCENE_W, 1, mix('#ff7a20', '#8a1a08', (y - ly) / (SCENE_H - ly)));
+      for (let x = 0; x < SCENE_W; x += 7) { const yy = ly + 2 + Math.sin(t * 3 + x) * 1.5; R(c, (x + t * 20) % SCENE_W, yy, 4, 1, '#ffe070'); }
+      /* Brücke und flüchtender Railjet */
+      R(c, 0, 74, SCENE_W, 3, '#3a2a24'); for (let x = 0; x < SCENE_W; x += 16) R(c, x + 6, 77, 3, 19, '#3a2a24');
+      const tx = -160 + q * q * 330;
+      for (let k = 0; k < 3; k++) { const x = tx + k * 52; R(c, x, 58, 50, 16, '#c8302a'); R(c, x, 58, 50, 3, '#8a1a1a'); R(c, x, 69, 50, 2, '#f4f4f0'); for (let w = 0; w < 4; w++) R(c, x + 4 + w * 12, 61, 8, 6, '#ffe8b0'); E(c, x + 10, 74, 3, 3, '#1e1e22'); E(c, x + 40, 74, 3, 3, '#1e1e22'); }
+      sceneHead(c, st, tx + 2 * 52 + 28, 61, 0.5, 0);
+      R(c, tx + 152, 60, 6, 12, '#a8202a'); E(c, tx + 157, 66, 2, 2, '#fff4c0');
+      if (q > 0.05) for (let k = 0; k < 6; k++) P(c, tx - k * 4 + rnd(-1, 1), 70 + rnd(-2, 2), 'rgba(255,200,120,0.8)');
+      if (flash) { bolt(40 + (Math.floor(t * 2.6) * 37) % 90, 0, 50, Math.floor(t * 2.6)); c.fillStyle = 'rgba(255,255,255,0.25)'; c.fillRect(0, 0, SCENE_W, SCENE_H); }
+      for (let k = 0; k < 24; k++) { const ax = (k * 37 + t * 14) % SCENE_W, ay = (k * 23 + t * 18) % SCENE_H; P(c, ax, ay, k % 4 ? '#5a5250' : '#ff8a30'); }
+      if (q > 0.35) { const tt = 'LAST EXIT INNSBRUCK', w = pxTextW(tt); R(c, 80 - w / 2 - 4, 6, w + 8, 10, 'rgba(0,0,0,0.6)'); pxText(c, tt, 80 - w / 2, 8, '#ffd23d'); }
+      const stp = Math.floor(t * (2 + q * 8)); if (stp !== st._ck) { st._ck = stp; Snd.tone(80, 0.05, 'square', 0.03); }
+      return;
+    }
+    /* Teil 2: im Abteil */
+    const r = (p - 0.4) / 0.6;
+    const jolt = Math.sin(t * 31) * 0.5 + (flash ? Math.sin(t * 60) * 1.5 : 0);
+    c.save(); c.translate(0, Math.round(jolt));
+    R(c, 0, 0, SCENE_W, SCENE_H, '#3a3c44');
+    /* Fenster mit vorbeiziehender Apokalypse */
+    const wx = 8, wy = 6, ww = 144, wh = 40;
+    c.save(); c.beginPath(); c.rect(wx, wy, ww, wh); c.clip();
+    for (let y = wy; y < wy + wh; y++) R(c, wx, y, ww, 1, mix('#1a0505', '#c0441a', (y - wy) / wh));
+    const off1 = t * 12, off2 = t * 70;
+    c.fillStyle = '#2a1414'; c.beginPath(); c.moveTo(wx, wy + 30); for (let x = 0; x <= ww; x += 3) c.lineTo(wx + x, wy + 22 - Math.abs(Math.sin((x + off1) * 0.04) * 12 + Math.sin((x + off1) * 0.11) * 4)); c.lineTo(wx + ww, wy + 30); c.closePath(); c.fill();
+    const vx = wx + ww - ((off1 * 0.6) % (ww + 40)); line(c, vx, wy + 12, vx - 5, wy + 26, '#ff6a10'); line(c, vx + 1, wy + 12, vx + 6, wy + 25, '#ff8a20'); for (let k = 0; k < 3; k++) E(c, vx + Math.sin(t + k) * 2, wy + 8 - k * 4 - ((t * 8) % 4), 3 + k * 2, 2 + k, `rgba(40,30,30,${0.6 - k * 0.15})`);
+    for (let y = wy + 28; y < wy + wh; y++) R(c, wx, y, ww, 1, mix('#ff7a20', '#7a1a08', (y - wy - 28) / 12));
+    for (let k = 0; k < 10; k++) { const x = wx + ww - ((off2 + k * 31) % (ww + 20)); R(c, x, wy + 18, 2, 12, '#1a1010'); const fh = 4 + Math.abs(Math.sin(t * 9 + k)) * 4; R(c, x - 1, wy + 18 - fh, 4, fh, '#ff6a10'); P(c, x, wy + 17 - fh, '#ffd040'); }
+    if (flash) { bolt(wx + 20 + (Math.floor(t * 2.6) * 41) % 100, wy, wy + 30, Math.floor(t * 2.6) + 3); c.fillStyle = 'rgba(255,255,255,0.3)'; c.fillRect(wx, wy, ww, wh); }
+    for (let k = 0; k < 16; k++) P(c, wx + ((k * 29 - off2 * 0.8) % ww + ww) % ww, wy + (k * 13 + t * 20) % wh, '#5a5250');
+    c.restore();
+    R(c, wx - 2, wy - 2, ww + 4, 2, '#8a8e94'); R(c, wx - 2, wy + wh, ww + 4, 3, '#8a8e94'); R(c, 79, wy, 2, wh, '#8a8e94');
+    /* Rotes Flackern im Abteil */
+    c.fillStyle = `rgba(255,80,20,${0.08 + Math.abs(Math.sin(t * 5)) * 0.06 + (flash ? 0.1 : 0)})`; c.fillRect(0, wy + wh, SCENE_W, SCENE_H);
+    /* Tisch mit Bier und die Jungs */
+    R(c, 0, 86, SCENE_W, 10, '#2a2c34');
+    R(c, 54, 66, 52, 5, '#9aa0a8'); R(c, 54, 66, 52, 1, '#c9ccd2'); R(c, 78, 71, 4, 15, '#5a5e64');
+    const fr = st.friends || [];
+    const toast = r > 0.32 && r < 0.5, lift = toast ? 1 : 0;
+    const seat = (sheet, x, dir, back) => { if (!sheet) return; const pose = toast || (Math.floor(t * 0.8 + x) % 4 === 0) ? 'drink' : 'sit'; sceneSprite(c, { sheet }, pose, dir, x, 44 + (back ? -3 : 0), back ? 1.45 : 1.6, back ? 0.85 : 1); };
+    R(c, 8, 50, 30, 36, '#2f4a7a'); R(c, 8, 50, 30, 4, '#3f5a8a'); R(c, 122, 50, 30, 36, '#2f4a7a'); R(c, 122, 50, 30, 4, '#3f5a8a');
+    seat(fr[0], 12, 2, true); seat(fr[1], 120, 1, true);
+    seat(st.sheet, 22, 2, false); seat(fr[2], 110, 1, false);
+    for (let k = 0; k < 4; k++) { const mx = 60 + k * 11, my = 60 - lift * 4 - (toast && (k === 1 || k === 2) ? 2 : 0); R(c, mx, my, 5, 6, '#e8b33a'); R(c, mx, my - 1, 5, 2, '#fbf6e8'); R(c, mx + 5, my + 1, 2, 3, '#d9e2e6'); }
+    if (toast) { const w = pxTextW('PROST!'); R(c, 80 - w / 2 - 3, 50, w + 6, 9, 'rgba(0,0,0,0.55)'); pxText(c, 'PROST!', 80 - w / 2, 52, '#ffd23d'); for (let k = 0; k < 4; k++) P(c, 74 + rnd(0, 12), 56 + rnd(-3, 2), '#ffffff'); if (!st._clink) { st._clink = 1; Snd.sfx('clink'); setTimeout(() => Snd.sfx('cheer'), 300); } }
+    if (r > 0.7) { const tt = 'AUF INNSBRUCK!', w = pxTextW(tt); R(c, 80 - w / 2 - 3, 88, w + 6, 8, 'rgba(0,0,0,0.5)'); pxText(c, tt, 80 - w / 2, 89, '#ffd27a'); }
+    c.restore();
+    const stp = Math.floor(t * 9); if (stp !== st._ck) { st._ck = stp; if (stp % 2) Snd.tone(70, 0.05, 'square', 0.03); }
+  },
+  /* Apokalypse verpasst: der Zug fährt ab, du stehst am Bahnsteig, die Lava steigt */
+  apocfail(c, t, p, st) {
+    for (let y = 0; y < SCENE_H; y++) R(c, 0, y, SCENE_W, 1, mix('#140404', '#a8381a', y / SCENE_H));
+    R(c, 52, 10, 56, 9, '#1a3a7a'); pxText(c, 'INNSBRUCK HBF', 80 - pxTextW('INNSBRUCK HBF') / 2, 12, '#ffffff');
+    const tx = 20 + p * p * 260;
+    for (let k = 0; k < 3; k++) { const x = tx + k * 52; R(c, x, 34, 50, 26, '#c8302a'); R(c, x, 34, 50, 3, '#8a1a1a'); R(c, x, 52, 50, 2, '#f4f4f0'); for (let w = 0; w < 4; w++) { R(c, x + 4 + w * 12, 38, 8, 8, '#ffe8b0'); if (k === 0 && w % 2 === 0) { const fs = st.friends && st.friends[w / 2]; if (fs) sceneHead(c, { sheet: fs }, x + 4 + w * 12, 39, 0.45, 0); } } }
+    R(c, 0, 60, SCENE_W, 4, '#3a3c40'); R(c, 0, 64, SCENE_W, 32, '#8a8e94'); R(c, 0, 64, SCENE_W, 2, '#ffd23d');
+    const ly = 96 - p * 28;
+    for (let y = ly; y < SCENE_H; y++) R(c, 0, y, SCENE_W, 1, mix('#ffb040', '#a81a08', (y - ly) / 30));
+    for (let x = 0; x < SCENE_W; x += 6) R(c, x, ly + Math.sin(t * 4 + x) * 1.5, 3, 1, '#ffe070');
+    sceneSprite(c, st, p > 0.6 ? 'bend' : 'stand', 2, 30, 84 - SPR_H * 1.6 + (p > 0.8 ? (p - 0.8) * 40 : 0), 1.6);
+    if (p > 0.3) { const tt = 'ZU SPÄT …', w = pxTextW(tt); pxText(c, tt, 80 - w / 2, 24, '#ffd23d'); }
+    if (p > 0.85) { c.fillStyle = `rgba(160,20,0,${(p - 0.85) / 0.15})`; c.fillRect(0, 0, SCENE_W, SCENE_H); }
+    if (!st._s) { st._s = 1; Snd.tone(40, 4, 'sawtooth', 0.1, 0, -10); Snd.noise(4, 0.1, 200); }
+  },
   /* Jessy: Händchenhalten am Inn, Kuscheln im Bogen, das volle Programm (Vorhang zu) */
   jessy(c, t, p, st) {
     const js = st.jsheet || st.sheet;

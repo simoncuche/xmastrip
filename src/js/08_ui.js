@@ -84,7 +84,7 @@ const UI = {
     e.hProm.style.color = st.prom > 2 ? 'var(--bad)' : st.prom > 1.2 ? 'var(--warn)' : st.prom > 0.5 ? 'var(--amber)' : 'var(--ink)';
     const setBar = (id, v, inv) => { const el = document.getElementById(id).querySelector('i'); el.style.setProperty('--v', Math.round(v) + '%'); const good = inv ? 100 - v : v; el.style.setProperty('--c', good > 55 ? 'var(--ok)' : good > 25 ? 'var(--warn)' : 'var(--bad)'); };
     setBar('bEnergy', st.energy); setBar('bFood', st.food); setBar('bMood', st.mood);
-    e.boardText.textContent = Story.objective();
+    e.boardText.textContent = G.live && G.live.hudText ? G.live.hudText() : Story.objective();
     e.boardGl.textContent = Story.objectiveTag();
     this.drawCoaster();
   },
@@ -218,10 +218,10 @@ const UI = {
   async fadeIn() { this.els.fade.classList.remove('on'); await sleep(300); this.els.fade.classList.remove('scene'); },
   async card(text, ms = 1600) { await this.fadeOut(text); await sleep(ms); await this.fadeIn(); },
   /* Spiel verloren: Es gibt nur den Neustart. */
-  gameOver(title, text) {
+  gameOver(title, text, note) {
     const html = `<div class="panel"><div class="panel-head"><h2>${title}</h2></div><div class="panel-body">
       <p class="note">${text}</p>
-      <p class="note">Der Ausflug ist vorbei, bevor er angefangen hat. Der Spielstand wird gelöscht – versuch es nochmal.</p>
+      <p class="note">${note || 'Der Ausflug ist vorbei, bevor er angefangen hat. Der Spielstand wird gelöscht – versuch es nochmal.'}</p>
       </div><div class="panel-foot"><span>Game Over</span><button class="btn primary" id="goRestart">Von vorne anfangen</button></div></div>`;
     const o = this.overlay(html, null);
     o.querySelector('#goRestart').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });

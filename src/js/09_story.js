@@ -444,6 +444,8 @@ const Story = {
   maybeEvent() {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
+    /* Tag 10: Apokalypse – einmalig ab 11 Uhr, beendet die Reise */
+    if (dayOf(G.S.time) >= 9 && hourOf(G.S.time) >= 11 && !fl.apocDone) { fl.lastEv = G.S.time; this.announce('apokalypse').then(() => this.ev_apokalypse()); return; }
     /* Tag 5: Godzilla – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
     if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; fl.lastEv = G.S.time; this.announce('monster').then(() => this.ev_monster()); return; }
     /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
@@ -481,15 +483,16 @@ const Story = {
   },
   /* Easter Egg: geschütteltes Handy beschwört ein zufälliges Ereignis herauf (zählt nicht zum Tagesplan) */
   /* Feste Reihenfolge für das Schüttel-Easter-Egg: jedes Ereignis genau einmal, Godzilla als Finale, dann von vorne */
-  SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'monster'],
-  shakeEvent() {
+  SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'monster', 'apokalypse'],
+  shakeEvent(force) {
     if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
     const fl = G.S.flags, n = this.SHAKE_ORDER.length;
+    achieve('schuettler');
+    if (force === 'apokalypse') { UI.toast('📳📳📳 Sieben Sekunden geschüttelt … das war zu viel für Innsbruck.', 'warn'); this.announce('apokalypse').then(() => this.ev_apokalypse()); return; }
     const i = (fl.shakeIdx || 0) % n;
     const id = this.SHAKE_ORDER[i];
     fl.shakeIdx = i + 1;
     if (fl.shakeIdx >= n) { fl.shakeIdx = 0; fl.shakeRounds = (fl.shakeRounds || 0) + 1; }
-    achieve('schuettler');
     UI.toast(`📳 Easter Egg ${i + 1}/${n}! Irgendetwas hat dein Schütteln gespürt …`, 'ach');
     this.announce(id).then(() => this['ev_' + id]());
   },
@@ -506,6 +509,7 @@ const Story = {
     trump: ['Hoher Besuch', 'Motorradeskorte und Sirenen'],
     verfolgung: ['Taschendieb', 'Halt den Dieb!'],
     monster: ['Godzilla', 'Er kommt über die Nordkette'],
+    apokalypse: ['Apokalypse', 'Innsbruck geht unter – der letzte Zug wartet'],
   },
   async announce(id) {
     const el = document.getElementById('cine');
@@ -860,6 +864,254 @@ const Story = {
       else if (k !== 'Noch eine Runde') bet = 0;
     }
     if (rounds) await this.say('Croupière Lisa', won > 0 ? `${rounds} Runden, ${fmtEur(won)} Gewinn. Komm wieder – die Bank hat Geduld.` : won < 0 ? `${rounds} Runden, ${fmtEur(-won)} für die Bank. Danke fürs Spiel.` : 'Plus minus null. Unentschieden gegen die Bank – das schaffen nicht viele.');
+  },
+  /* ---------- Apokalypse: Innsbruck geht unter, Flucht zum letzten Zug ----------
+     Beben, roter Himmel, Asche, Blitze mit Donner, Lava-Risse im Boden (rennend überspringen, sonst Sturz),
+     Lava-Ausbrüche, Häuser brennen und versinken. Die Jungs rennen mit und rufen, drei warten am Bahnhof.
+     Countdown bis zur Abfahrt; am Bahnhof → Endsequenz im Zug, sonst Game Over. */
+  async ev_apokalypse() {
+    if (G.map.id !== 'ibk') return;
+    G.busy++;
+    const p = G.player, m = G.map, fl = G.S.flags, self = this;
+    fl.adrenalin = 1;
+    const DOOR = { x: 74 * TS + 8, y: 75 * TS };
+    G.fx.shake = 1; Snd.tone(40, 1.6, 'sawtooth', 0.16, 0, -15); Snd.noise(1.6, 0.14, 200);
+    UI.toast('Die Erde bebt. Der Himmel färbt sich blutrot. Aus den Gullys quillt Rauch …', 'warn');
+    await sleep(700);
+    /* Die Jungs: vier rennen mit, drei warten am Bahnhof */
+    const ids = Object.keys(FRIENDS).filter((id) => !this.away(id)).sort(() => Math.random() - 0.5);
+    const walkable = (x, y) => !m.isSolid(Math.floor(x / TS), Math.floor((y - 3) / TS));
+    const crew = [], waiters = [];
+    ids.slice(0, 4).forEach((id) => {
+      let sx = p.x, sy = p.y;
+      for (let k = 0; k < 40; k++) { const a = Math.random() * 6.28, r = rnd(40, 80); const x = p.x + Math.cos(a) * r, y = p.y + Math.sin(a) * r; if (walkable(x, y)) { sx = x; sy = y; break; } }
+      const f = new Actor({ id: 'apo_' + id, fid: id, name: fname(id), look: FRIENDS[id].look, x: sx, y: sy, dir: 0, solid: false, ev: true, jumpT: 0, z: 0 });
+      G.npcs.push(f); crew.push(f);
+    });
+    ids.slice(4, 7).forEach((id, i) => {
+      const pt = T2P([72, 76, 74][i], [76, 76, 77][i]);
+      const f = new Actor({ id: 'apo_' + id, fid: id, name: fname(id), look: FRIENDS[id].look, x: pt.x, y: pt.y, dir: 3, solid: false, ev: true, pose: 'danceA' });
+      G.npcs.push(f); waiters.push(f);
+    });
+    const caller = crew[0] ? crew[0].fid : voice('party');
+    await this.say(caller, `${G.S.name.toUpperCase()}! Das ist das ENDE! Lava, Blitze, alles! Der letzte Zug fährt vom Hauptbahnhof – RENN!`);
+    await this.say(null, 'Renn zum Hauptbahnhof (Pfeil am Bildrand). Risse im Boden überspringst du nur im Rennen (Shift bzw. Joystick weit ziehen) – oder mit der Aktionstaste. Weich Blitzen und Lava-Ausbrüchen aus!');
+    /* Zeit bis zur Abfahrt nach Entfernung zum Bahnhof */
+    const manh = Math.abs(p.x - DOOR.x) + Math.abs(p.y - DOOR.y);
+    let timeLeft = clamp(38 + manh / 82 * 1.6, 60, 130);
+    const cracks = [], bolts = [], erupts = [], scorch = [], rubble = [], trail = [];
+    let t = 0, result = null, nextCrack = 0.6, nextBolt = 2.2, nextErupt = 3.5, nextBld = 1.2, nextShout = 1.5, trailT = 0, hintT = 5, falls = 0, lastSafe = { x: p.x, y: p.y };
+    const blds = m.objs.filter((o) => o.bld && o.cv && Math.hypot(o.px + o.cv.width / 2 - DOOR.x, (o.y + o.h) * TS - DOOR.y) > 190 && !(o.x <= 75 && o.x + o.w >= 73 && o.y + o.h >= 74 && o.y <= 75));
+    const VW = () => View.w, VH = () => View.h;
+    /* Riss: gezackte Linie mit Lava, öffnet sich in 0,7 s */
+    const addCrack = (x, y, ang, len, wMax) => { if (!walkable(x, y)) return null; const pts = []; for (let k = 0; k <= 6; k++) pts.push(k === 0 || k === 6 ? 0 : rnd(-3, 3)); const c = { kind: 'line', x, y, ang, len, w: 0, wMax, t: 0, pts }; cracks.push(c); Snd.noise(0.3, 0.05, 300); return c; };
+    const addPool = (x, y, r) => { cracks.push({ kind: 'pool', x, y, r: 0, rMax: r, t: 0 }); };
+    const crackDist = (c, x, y) => {
+      if (c.kind === 'pool') return Math.hypot(x - c.x, y - c.y) - c.r;
+      const dx = Math.cos(c.ang), dy = Math.sin(c.ang), rx = x - c.x, ry = y - c.y;
+      const along = rx * dx + ry * dy, perp = -rx * dy + ry * dx;
+      if (Math.abs(along) > c.len / 2) return 99;
+      const tt = (along / c.len + 0.5), wf = Math.pow(Math.sin(Math.PI * tt), 0.6);
+      return Math.abs(perp) - c.w / 2 * wf;
+    };
+    const hazardAt = (x, y, pad = 0) => cracks.some((c) => (c.kind === 'pool' ? c.r > 4 : c.w > 3) && crackDist(c, x, y - 2) < pad);
+    for (let k = 0; k < 4; k++) { const a = Math.random() * 6.28, r = rnd(40, 90); addCrack(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r, Math.random() * 3.14, rnd(24, 40), rnd(6, 9)); }
+    const jump = (a) => { if ((a.jumpT || 0) > 0 || a.lock) return; a.jumpT = 0.5; if (a === p) Snd.tone(520, 0.08, 'square', 0.04, 0, 200); };
+    const hurt = (src, txt, secs) => {
+      if (p.stunT > 0 || p.z > 3 || result) return;
+      const dx = p.x - src.x, dy = p.y - src.y, d = Math.hypot(dx, dy) || 1;
+      for (let k = 0; k < 12; k++) moveActor(p, dx / d * 2, dy / d * 2);
+      p.stunT = 0.9; p.lock = true; timeLeft -= secs; energy(-6);
+      G.fx.flash = 0.5; G.fx.shake = 1; Snd.sfx('hit');
+      addPart({ x: p.x, y: p.y - 32, vy: -10, life: 1.2, kind: 'txt', txt: txt, col: 'rgba(255,90,70,1)' });
+      addPart({ x: p.x, y: p.y - 22, vy: -14, life: 1.2, kind: 'txt', txt: `-${secs} S`, col: 'rgba(255,210,60,1)' });
+    };
+    const fall = () => {
+      if (p.fallT > 0 || result) return;
+      falls++; p.fallT = 1.5; p.lock = true; timeLeft -= 5; energy(-10);
+      Snd.sfx('splash'); Snd.tone(300, 0.6, 'sawtooth', 0.08, 0, -250); G.fx.shake = 1;
+      for (let k = 0; k < 14; k++) addPart({ x: p.x + rnd(-6, 6), y: p.y - 2, vx: rnd(-40, 40), vy: rnd(-80, -30), g: 200, life: 0.8, kind: 'fire' });
+      addPart({ x: p.x, y: p.y - 34, vy: -10, life: 1.4, kind: 'txt', txt: 'HEISS!', col: 'rgba(255,120,40,1)' });
+      if (falls === 1) UI.toast('In den Riss gestolpert! Im Rennen (Shift bzw. Joystick weit ziehen) springst du automatisch darüber – oder mit der Aktionstaste.', 'warn');
+    };
+    const shout = (f, txt) => { if (!f) return; f.bubble = '!'; f.bubbleT = 1.5; addPart({ x: f.x, y: f.y - 34 - (f.z || 0), vy: -6, life: 1.8, kind: 'txt', txt, col: 'rgba(255,230,120,1)' }); };
+    const nm = G.S.name.toUpperCase();
+    const SHOUTS = [`${nm}! HIER LANG!`, 'LAUF!', 'SPRING!', 'NICHT IN DIE RISSE!', 'DER ZUG WARTET NICHT!', 'SCHNELLER!', 'ZUM BAHNHOF!', 'NICHT UMDREHEN!', 'MEIN BIER!!'];
+    const live = {
+      noTriggers: true,
+      onAction() { jump(p); },
+      hudText() { const secs = Math.max(0, Math.ceil(timeLeft)); return `🔥 FLUCHT! Zug fährt in ${Math.floor(secs / 60)}:${pad2(secs % 60)} – zum Hauptbahnhof!`; },
+      update(dt) {
+        if (result) return;
+        t += dt; timeLeft -= dt;
+        if (G.S.st.energy < 10) G.S.st.energy = 10;
+        /* Dauerbeben mit Stössen */
+        G.fx.shake = Math.max(G.fx.shake, 0.18 + (Math.sin(t * 0.9) > 0.85 ? 0.6 : 0));
+        if (Math.floor(t * 0.8) !== this._rum) { this._rum = Math.floor(t * 0.8); Snd.tone(38, 1.3, 'sawtooth', 0.07, 0, -6); Snd.noise(1, 0.05, 150); }
+        /* Asche und Glut */
+        const cx = G.cam.x, cy = G.cam.y;
+        for (let k = 0; k < 3; k++) if (Math.random() < dt * 10) addPart({ x: cx + rnd(0, VW()), y: cy - 2, vx: rnd(-10, 4), vy: rnd(12, 26), life: 8, kind: 'ash' });
+        if (Math.random() < dt * 6) addPart({ x: cx + rnd(0, VW()), y: cy + VH() + 2, vx: rnd(-6, 6), vy: rnd(-30, -16), life: 6, kind: 'ember' });
+        /* Spieler: Sprung, Betäubung, Sturz in den Riss */
+        if (p.jumpT > 0) { p.jumpT = Math.max(0, p.jumpT - dt); p.z = Math.sin(Math.PI * (1 - p.jumpT / 0.5)) * 11; if (p.jumpT === 0) { p.z = 0; addPart({ x: p.x, y: p.y, vx: 0, vy: -6, life: 0.4, kind: 'smoke' }); } }
+        if (p.stunT > 0) { p.stunT -= dt; if (p.stunT <= 0 && !(p.fallT > 0)) p.lock = false; }
+        if (p.fallT > 0) {
+          p.fallT -= dt; p.sinkY = p.fallT > 0.9 ? Math.min(14, (1.5 - p.fallT) * 30) : Math.max(0, p.fallT * 15);
+          if (p.fallT < 0.9 && !p.pulled) { p.pulled = 1; const f = crew.find((c) => Math.hypot(c.x - p.x, c.y - p.y) < 60) || crew[0]; if (f) shout(f, 'HAB DICH!'); p.x = lastSafe.x; p.y = lastSafe.y; }
+          if (p.fallT <= 0) { p.sinkY = 0; p.lock = false; p.pulled = 0; }
+        } else if (!(p.z > 3)) {
+          const near = cracks.some((c) => (c.kind === 'pool' ? c.r > 4 : c.w > 3) && crackDist(c, p.x, p.y - 2) < 7 + (c.kind === 'pool' ? 2 : 0));
+          if (near && p.running && p.moving) jump(p);
+          else if (hazardAt(p.x, p.y, -1)) fall();
+        }
+        trailT -= dt;
+        if (trailT <= 0) { trailT = 0.08; trail.push({ x: p.x, y: p.y }); if (trail.length > 400) trail.shift(); if (!hazardAt(p.x, p.y, 6) && !(p.fallT > 0)) lastSafe = { x: p.x, y: p.y }; }
+        /* Die Jungs folgen deiner Spur, springen über Risse, rufen dir zu */
+        crew.forEach((f, i) => {
+          const tg = trail[Math.max(0, trail.length - 1 - (i + 1) * 6)] || p;
+          const dx = tg.x - f.x, dy = tg.y - f.y, d = Math.hypot(dx, dy);
+          if (d > 6) { const sp = (d > 60 ? 115 : 88) * dt, ox = f.x, oy = f.y; f.x += dx / d * Math.min(sp, d); f.y += dy / d * Math.min(sp, d); f.moving = true; f.walkT += dt * 1.4; f.dir = dirTo(0, 0, dx, dy); if (!(f.jumpT > 0) && cracks.some((c) => (c.kind === 'pool' ? c.r > 4 : c.w > 3) && crackDist(c, f.x, f.y - 2) < 8)) f.jumpT = 0.5; }
+          else f.moving = false;
+          if (f.jumpT > 0) { f.jumpT = Math.max(0, f.jumpT - dt); f.z = Math.sin(Math.PI * (1 - f.jumpT / 0.5)) * 10; }
+        });
+        for (const w of waiters) { w.pose = Math.floor(t * 3 + w.x) % 2 ? 'danceA' : 'danceB'; w.dir = dirTo(w.x, w.y, p.x, p.y); }
+        nextShout -= dt;
+        if (nextShout <= 0) { nextShout = rnd(1.8, 3.2); const all = crew.concat(Math.hypot(p.x - DOOR.x, p.y - DOOR.y) < 260 ? waiters : []); const f = pick(all); if (f) shout(f, waiters.includes(f) ? pick(['HIER! HIER!', 'SCHNELLER!', 'DER ZUG FÄHRT GLEICH!', `${nm}!`]) : pick(SHOUTS)); }
+        /* Risse öffnen sich vor dir */
+        nextCrack -= dt;
+        if (nextCrack <= 0) {
+          nextCrack = rnd(0.9, 1.5);
+          const toD = Math.atan2(DOOR.y - p.y, DOOR.x - p.x), mv = p.moving ? Math.atan2(DIRV[p.dir][1], DIRV[p.dir][0]) : toD;
+          const a = Math.random() < 0.6 ? mv : toD, dist = rnd(45, 95), side = rnd(-18, 18);
+          const x = p.x + Math.cos(a) * dist - Math.sin(a) * side, y = p.y + Math.sin(a) * dist + Math.cos(a) * side;
+          if (Math.hypot(x - DOOR.x, y - DOOR.y) > 40) addCrack(x, y, a + Math.PI / 2 + rnd(-0.4, 0.4), rnd(26, 46), rnd(6, 10));
+        }
+        for (let i = cracks.length - 1; i >= 0; i--) { const c = cracks[i]; c.t += dt; if (c.kind === 'line') { const ow = c.w; c.w = Math.min(c.wMax, c.t / 0.7 * c.wMax); if (c.w > ow && Math.random() < 0.5) addPart({ x: c.x + rnd(-c.len / 2, c.len / 2) * Math.cos(c.ang), y: c.y + rnd(-c.len / 2, c.len / 2) * Math.sin(c.ang), vx: rnd(-20, 20), vy: rnd(-40, -10), g: 120, life: 0.6, kind: 'rock', s: 2 }); } else c.r = Math.min(c.rMax, c.t / 0.5 * c.rMax); if (Math.random() < dt * 1.5) addPart({ x: c.x + rnd(-6, 6), y: c.y, vx: rnd(-4, 4), vy: rnd(-24, -10), life: 1.2, kind: 'ember' }); if (Math.hypot(c.x - p.x, c.y - p.y) > 520) cracks.splice(i, 1); }
+        /* Blitze */
+        nextBolt -= dt;
+        if (nextBolt <= 0) { nextBolt = rnd(1.6, 3); const near = Math.random() < 0.4; const x = near ? p.x + rnd(-24, 24) : cx + rnd(10, VW() - 10), y = near ? p.y + rnd(-16, 16) : cy + rnd(30, VH() - 10); bolts.push({ x, y, t: 0, segs: null }); }
+        for (let i = bolts.length - 1; i >= 0; i--) {
+          const b = bolts[i]; b.t += dt;
+          if (b.t >= 0.7 && !b.segs) {
+            const top = G.cam.y - 10, n = 9; b.segs = []; let x = b.x + rnd(-30, 30), y = top; for (let k = 1; k <= n; k++) { const nx = k === n ? b.x : b.x + (x - b.x) * 0.3 + rnd(-10, 10), ny = top + (b.y - top) * k / n; b.segs.push([x, y, nx, ny]); if (k === 4) { let bx = nx, by = ny; for (let j = 0; j < 3; j++) { const ex = bx + rnd(-14, 14), ey = by + rnd(8, 14); b.segs.push([bx, by, ex, ey]); bx = ex; by = ey; } } x = nx; y = ny; }
+            G.fx.flash = Math.max(G.fx.flash, 0.6); G.fx.shake = 1; Snd.noise(0.2, 0.12, 4000, 0, 'highpass');
+            setTimeout(() => { Snd.noise(1.6, 0.16, 140); Snd.tone(42, 1.4, 'sawtooth', 0.12, 0, -12); }, 180);
+            scorch.push({ x: b.x, y: b.y, t: 0 });
+            for (let k = 0; k < 10; k++) addPart({ x: b.x, y: b.y - 2, vx: rnd(-50, 50), vy: rnd(-60, -10), g: 140, life: 0.6, kind: 'spark', col: 'rgba(200,230,255,1)' });
+            if (Math.hypot(p.x - b.x, p.y - b.y) < 15) hurt(b, 'BLITZ!', 3);
+          }
+          if (b.t > 1.05) bolts.splice(i, 1);
+        }
+        /* Lava-Ausbrüche */
+        nextErupt -= dt;
+        if (nextErupt <= 0) { nextErupt = rnd(2.4, 4); for (let k = 0; k < 8; k++) { const a = Math.random() * 6.28, r = rnd(30, 90), x = p.x + Math.cos(a) * r, y = p.y + Math.sin(a) * r; if (walkable(x, y) && Math.hypot(x - DOOR.x, y - DOOR.y) > 50) { erupts.push({ x, y, t: 0 }); Snd.tone(60, 1, 'sawtooth', 0.06, 0, -20); break; } } }
+        for (let i = erupts.length - 1; i >= 0; i--) {
+          const e = erupts[i]; e.t += dt;
+          if (e.t < 1) { if (Math.random() < dt * 20) addPart({ x: e.x + rnd(-7, 7), y: e.y + rnd(-3, 3), vx: 0, vy: rnd(-10, -4), life: 0.4, kind: 'ember' }); }
+          else { if (!e.boom) { e.boom = 1; G.fx.shake = 1; Snd.noise(0.8, 0.14, 500); Snd.tone(70, 0.8, 'sawtooth', 0.1, 0, -40); if (Math.hypot(p.x - e.x, p.y - e.y) < 16) hurt(e, 'LAVA!', 3); }
+            for (let k = 0; k < 4; k++) addPart({ x: e.x + rnd(-4, 4), y: e.y - 4, vx: rnd(-40, 40), vy: rnd(-150, -80), g: 230, life: rnd(0.6, 1.1), kind: 'fire' });
+            if (e.t > 2.2) { addPool(e.x, e.y, rnd(8, 11)); erupts.splice(i, 1); } }
+        }
+        /* Häuser brennen und versinken */
+        nextBld -= dt;
+        if (nextBld <= 0) { nextBld = rnd(0.7, 1.3); const cand = blds.filter((o) => !o.apo && Math.hypot(o.px + o.cv.width / 2 - p.x, (o.y + o.h) * TS - p.y) < 300); if (cand.length) { const o = pick(cand); o.apo = { state: 'burn', t: 0, dur: rnd(1.6, 2.8) }; o.dark = true; } }
+        for (const o of blds) {
+          if (!o.apo) continue; const A = o.apo; A.t += dt;
+          const W = o.cv.width, base = (o.y + o.h) * TS;
+          if (A.state === 'burn') { if (Math.random() < dt * 6) addPart({ x: o.px + rnd(4, W - 4), y: o.py + rnd(0, 10), vx: rnd(-4, 4), vy: rnd(-26, -14), life: 2.2, kind: 'smoke' }); if (A.t > A.dur) { A.state = 'fall'; A.t = 0; G.fx.shake = 1; Snd.noise(2.2, 0.14, 220); Snd.tone(34, 2.2, 'sawtooth', 0.12, 0, -8); } }
+          else if (A.state === 'fall') {
+            o.sink = Math.min(1, A.t / 2.4);
+            for (let k = 0; k < 2; k++) addPart({ x: o.px + rnd(0, W), y: base + rnd(-4, 2), vx: rnd(-26, 26), vy: rnd(-22, -6), life: 1.6, kind: 'smoke' });
+            if (Math.random() < dt * 14) addPart({ x: o.px + rnd(0, W), y: base - rnd(10, 40) + o.sink * 20, vx: rnd(-50, 50), vy: rnd(-70, -20), g: 180, life: 0.9, kind: 'rock', s: rnd(2, 4) | 0 });
+            if (o.sink >= 1) { A.state = 'gone'; o.gone = true; rubble.push({ x: o.px, y: base, w: W, d: o.h * TS, seed: Math.random() * 99 }); }
+          }
+        }
+        for (const s of scorch) s.t += dt;
+        /* Ziel und Zeit */
+        if (Math.abs(p.x - DOOR.x) < 30 && p.y < DOOR.y + 22 && p.y > DOOR.y - 30 && !(p.fallT > 0)) result = 'escaped';
+        else if (timeLeft <= 0) result = 'lost';
+        hintT -= dt;
+      },
+      drawGround(c, cx, cy, gt) {
+        for (const s of scorch) { const a = Math.max(0, 1 - s.t / 20); E(c, s.x - cx, s.y - cy, 9, 4, `rgba(20,14,10,${0.6 * a})`); }
+        for (const r of rubble) { const x = r.x - cx, y = r.y - cy; for (let k = 0; k < 18; k++) { const rx = x + ((k * 37 + r.seed * 7) % r.w), ry = y - ((k * 19 + r.seed * 3) % Math.max(8, r.d)); R(c, rx, ry, 4 + (k % 3), 3, k % 3 ? '#4a3a32' : '#2a201c'); } for (let k = 0; k < 4; k++) { const fx = x + ((k * 29 + r.seed * 11) % r.w), fy = y - ((k * 13) % Math.max(8, r.d)) - 2; const fh = 4 + Math.sin(gt * 9 + k) * 2; R(c, fx, fy - fh, 3, fh, '#ff8a20'); P(c, fx + 1, fy - fh - 1, '#ffd060'); } }
+        for (const cr of cracks) {
+          const x0 = cr.x - cx, y0 = cr.y - cy;
+          if (cr.kind === 'pool') { if (cr.r < 1) continue; E(c, x0, y0, cr.r + 2, (cr.r + 2) * 0.55, '#2a1208'); E(c, x0, y0, cr.r, cr.r * 0.55, '#e85a10'); E(c, x0, y0, cr.r * 0.6, cr.r * 0.33, `rgb(255,${Math.round(170 + Math.sin(gt * 6 + cr.x) * 40)},60)`); P(c, x0 + Math.sin(gt * 3 + cr.y) * cr.r * 0.4, y0, '#fff4c0'); continue; }
+          if (cr.w < 0.5) continue;
+          const dx = Math.cos(cr.ang), dy = Math.sin(cr.ang), n = cr.pts.length - 1;
+          const edge = (sgn, extra) => { const ptsL = []; for (let k = 0; k <= n; k++) { const tt = k / n, along = (tt - 0.5) * cr.len, wf = Math.pow(Math.sin(Math.PI * tt), 0.6); const off = cr.pts[k] + sgn * (cr.w / 2 * wf + extra); ptsL.push([x0 + dx * along - dy * off, y0 + dy * along + dx * off]); } return ptsL; };
+          const poly = (a, b, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(a[0][0], a[0][1]); for (const q of a) c.lineTo(q[0], q[1]); for (let k = b.length - 1; k >= 0; k--) c.lineTo(b[k][0], b[k][1]); c.closePath(); c.fill(); };
+          E(c, x0, y0, cr.len * 0.6, cr.len * 0.3, `rgba(255,110,30,${0.08 + Math.sin(gt * 4 + cr.x) * 0.03})`);
+          poly(edge(1, 1.6), edge(-1, 1.6), '#2a1208');
+          poly(edge(1, 0), edge(-1, 0), '#e8540c');
+          poly(edge(1, -cr.w * 0.25), edge(-1, -cr.w * 0.25), `rgb(255,${Math.round(160 + Math.sin(gt * 5 + cr.y) * 50)},50)`);
+          for (let k = 0; k < 3; k++) { const tt = ((gt * 0.3 + k / 3 + cr.x * 0.01) % 1), along = (tt - 0.5) * cr.len * 0.8; P(c, x0 + dx * along, y0 + dy * along, '#fff4c0'); }
+        }
+        for (const e of erupts) { const x = e.x - cx, y = e.y - cy; if (e.t < 1) { const g = e.t; E(c, x, y, 6 + g * 8, 3 + g * 4, `rgba(255,${Math.round(90 + g * 100)},20,${0.25 + g * 0.5})`); for (let k = 0; k < 5; k++) { const a = k * 1.256 + gt; line(c, x, y, x + Math.cos(a) * (6 + g * 10), y + Math.sin(a) * (3 + g * 5), '#2a1208'); } } }
+        for (const b of bolts) if (b.t < 0.7) { const g = b.t / 0.7; E(c, b.x - cx, b.y - cy, 4 + g * 6, 2 + g * 3, `rgba(180,220,255,${0.15 + g * 0.4})`); if (Math.floor(gt * 20) % 2) P(c, b.x - cx + rnd(-6, 6), b.y - cy + rnd(-3, 3), '#e8f4ff'); }
+      },
+      draw(c, cx, cy, gt) {
+        const vw = VW(), vh = VH();
+        /* Flammen auf brennenden Dächern */
+        for (const o of blds) { if (!o.apo || o.apo.state === 'gone') continue; const W = o.cv.width, top = o.py - cy + (o.sink ? o.sink * o.cv.height : 0) + 4, x0 = o.px - cx; if (x0 > vw || x0 + W < 0) continue; for (let k = 2; k < W - 2; k += 5) { const h = 8 + Math.abs(Math.sin(gt * 7 + k * 0.7)) * 9 + (o.apo.state === 'fall' ? 6 : 0); c.fillStyle = '#ff6a10'; c.beginPath(); c.moveTo(x0 + k - 3, top + 6); c.lineTo(x0 + k, top + 6 - h); c.lineTo(x0 + k + 3, top + 6); c.closePath(); c.fill(); c.fillStyle = '#ffd040'; c.beginPath(); c.moveTo(x0 + k - 1.5, top + 6); c.lineTo(x0 + k, top + 6 - h * 0.55); c.lineTo(x0 + k + 1.5, top + 6); c.closePath(); c.fill(); } }
+        /* Lava-Fontänen */
+        for (const e of erupts) if (e.t >= 1) { const x = e.x - cx, y = e.y - cy, h = 26 + Math.sin(gt * 14) * 6 - Math.max(0, e.t - 1.8) * 40; if (h > 0) { c.fillStyle = '#ff6a10'; c.beginPath(); c.moveTo(x - 6, y); c.quadraticCurveTo(x - 2, y - h * 0.6, x, y - h); c.quadraticCurveTo(x + 2, y - h * 0.6, x + 6, y); c.closePath(); c.fill(); c.fillStyle = '#ffe070'; c.beginPath(); c.moveTo(x - 2.5, y); c.lineTo(x, y - h * 0.7); c.lineTo(x + 2.5, y); c.closePath(); c.fill(); } E(c, x, y, 9, 4, '#e8540c'); }
+        /* Blitze */
+        for (const b of bolts) if (b.segs && b.t < 0.95) { const a = 1 - (b.t - 0.7) / 0.25; c.save(); c.lineCap = 'round'; for (const [w, col] of [[5, `rgba(140,190,255,${0.35 * a})`], [2, `rgba(235,245,255,${a})`]]) { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); for (const sg of b.segs) { c.moveTo(sg[0] - cx, sg[1] - cy); c.lineTo(sg[2] - cx, sg[3] - cy); } c.stroke(); } c.restore(); }
+        /* Roter Himmel über allem */
+        const ramp = Math.min(1, t / 4);
+        c.fillStyle = `rgba(140,24,0,${(0.24 + Math.sin(gt * 0.8) * 0.05) * ramp})`; c.fillRect(0, 0, vw, vh);
+        const gr = c.createLinearGradient(0, 0, 0, vh * 0.55); gr.addColorStop(0, `rgba(30,0,0,${0.5 * ramp})`); gr.addColorStop(1, 'rgba(30,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, vw, vh * 0.55);
+        const vg = c.createRadialGradient(vw / 2, vh / 2, Math.min(vw, vh) * 0.3, vw / 2, vh / 2, Math.max(vw, vh) * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, `rgba(20,0,0,${0.45 * ramp})`); c.fillStyle = vg; c.fillRect(0, 0, vw, vh);
+        /* HUD: Abfahrt und Richtung Bahnhof */
+        const secs = Math.max(0, Math.ceil(timeLeft)), lbl = `ZUG FÄHRT IN ${Math.floor(secs / 60)}:${pad2(secs % 60)}`, lw = pxTextW(lbl);
+        const warn = secs <= 20 && Math.floor(gt * 3) % 2;
+        const hy = vh - 30; R(c, vw / 2 - lw / 2 - 4, hy, lw + 8, 11, 'rgba(10,0,0,0.75)'); R(c, vw / 2 - lw / 2 - 4, hy, lw + 8, 1, warn ? '#ff5a4a' : '#ffb53d'); pxText(c, lbl, vw / 2 - lw / 2, hy + 3, warn ? '#ff5a4a' : '#ffd27a');
+        const gx = DOOR.x - cx, gy = DOOR.y - 20 - cy;
+        if (gx < 0 || gx > vw || gy < 0 || gy > vh) { const px = p.x - cx, py = p.y - cy, a = Math.atan2(gy - py, gx - px); const ex = clamp(px + Math.cos(a) * 600, 14, vw - 14), ey = clamp(py + Math.sin(a) * 600, 18, vh - 12); c.save(); c.translate(ex, ey); c.rotate(a); c.fillStyle = Math.floor(gt * 4) % 2 ? '#ffd23d' : '#ffffff'; c.beginPath(); c.moveTo(9, 0); c.lineTo(-5, -7); c.lineTo(-2, 0); c.lineTo(-5, 7); c.closePath(); c.fill(); c.restore(); const bl = 'BAHNHOF', bw = pxTextW(bl), bx = clamp(ex - bw / 2, 2, vw - bw - 2), by = clamp(ey + (ey > vh / 2 ? -17 : 10), 16, vh - 9); R(c, bx - 2, by - 1, bw + 4, 8, 'rgba(0,0,0,0.6)'); pxText(c, bl, bx, by, '#ffd23d'); }
+        else if (Math.floor(gt * 3) % 2) { pxText(c, 'ZUG!', gx - 8, gy - 12, '#ffd23d'); }
+        if (hintT > 0) { const h1 = 'RENNEN = ÜBER RISSE SPRINGEN'; const hw = pxTextW(h1); R(c, vw / 2 - hw / 2 - 3, vh - 16, hw + 6, 10, 'rgba(0,0,0,0.6)'); pxText(c, h1, vw / 2 - hw / 2, vh - 14, '#ffffff'); }
+        /* Rauchsäulen am Bildrand: die ganze Stadt brennt */
+        for (let k = 0; k < 5; k++) { const sx = ((k * 97 + 30) % vw), base = vh * 0.35 + (k % 2) * 20; for (let j = 0; j < 4; j++) { const yy = base - j * 14 - ((gt * 8 + k * 5) % 14), rr = 8 + j * 4; E(c, sx + Math.sin(gt * 0.6 + j + k) * 4, yy, rr, rr * 0.7, `rgba(30,22,20,${0.22 - j * 0.04})`); } }
+      },
+      lights() {
+        const L = [];
+        for (const cr of cracks) if (Math.hypot(cr.x - p.x, cr.y - p.y) < 220) L.push({ x: cr.x, y: cr.y, r: cr.kind === 'pool' ? 34 : 30 + (cr.len || 0) * 0.4, c: '#ff7a20' });
+        for (const e of erupts) L.push({ x: e.x, y: e.y - 10, r: e.t < 1 ? 26 : 60, c: '#ff7a20' });
+        for (const b of bolts) if (b.segs && b.t < 0.95) L.push({ x: b.x, y: b.y - 40, r: 140, c: '#cfe4ff' });
+        for (const o of blds) if (o.apo && o.apo.state !== 'gone' && Math.hypot(o.px - p.x, o.py - p.y) < 300) L.push({ x: o.px + o.cv.width / 2, y: o.py + 10, r: 70, c: '#ff8a30' });
+        return L.slice(0, 40);
+      },
+      onLeave() { if (!result) result = 'lost'; },
+      dbg() { return { t, timeLeft, result, falls, cracks: cracks.map((c) => [Math.round(c.x), Math.round(c.y), c.kind, Math.round((c.kind === 'pool' ? c.r : c.w) * 10) / 10, Math.round((c.ang || 0) * 100) / 100, Math.round(c.len || 0)]), crew: crew.map((f) => [Math.round(f.x), Math.round(f.y), Math.round(f.z || 0)]), door: [DOOR.x, DOOR.y], fallen: blds.filter((o) => o.apo).length }; },
+    };
+    G.live = live;
+    G.busy--;
+    await this.wait(() => !!result, 300000);
+    p.lock = false; p.z = 0; p.sinkY = 0; p.jumpT = 0; p.fallT = 0; p.stunT = 0;
+    G.busy++;
+    const sheets = ids.slice(0, 3).map((id) => getSheet(FRIENDS[id].look));
+    if (result === 'escaped') {
+      /* Alle zum Zug */
+      for (const f of crew.concat(waiters)) { f.x = DOOR.x + rnd(-24, 24); f.y = DOOR.y + rnd(4, 16); f.z = 0; f.moving = false; f.dir = 3; }
+      Snd.sfx('cheer');
+      await this.say(voice('kassier'), 'Alle drin? ALLE DRIN! Türen zu, Lokführer, GAS!');
+      if (G.live === live) G.live = null;
+      fl.adrenalin = 0; fl.apocDone = 1; G.S.finished = 1;
+      achieve('apokalypse'); if (!falls) achieve('trittsicher');
+      await Scene.play('apocend', { ms: 12000, keep: true, friends: sheets, text: 'Last Exit Innsbruck – hinter euch versinkt die Stadt in Lava.' });
+      saveGame(true);
+      await UI.fadeIn();
+      await Ending.show({ apoc: true });
+    } else {
+      if (G.live === live) G.live = null;
+      fl.adrenalin = 0;
+      await Scene.play('apocfail', { ms: 5200, keep: true, friends: sheets, text: 'Der letzte Zug rollt ohne dich davon …' });
+      await UI.fadeIn();
+      UI.gameOver('Innsbruck ist untergegangen', 'Der letzte Zug ist ohne dich abgefahren. Aus dem Fenster winken dir die Jungs zu – mit einem Bier in der Hand. Die Lava war schneller.', 'Die Stadt ist im Feuer versunken. Der Spielstand wird gelöscht – versuch es nochmal und renn schneller.');
+    }
+    G.busy--;
   },
   async ev_ueberfall() {
     G.busy++;
@@ -2382,10 +2634,10 @@ function tracht() { const L = G.S.look; return L.hat === 9 && L.top === 11 && L.
 
 /* ============ Ende / Heimreise ============ */
 const Ending = {
-  async show() {
+  async show(opt = {}) {
     const S2 = G.S;
-    const html = `<div class="panel"><div class="panel-head"><h2>Heimreise nach Luzern</h2><span class="sub">Spiel beendet</span></div><div class="panel-body">
-      <p class="note">Der Railjet rollt aus dem Inntal. ${Object.keys(FRIENDS).length} müde Kollegen, ein voller Bierdeckel und viele Geschichten.</p>
+    const html = `<div class="panel"><div class="panel-head"><h2>${opt.apoc ? 'Last Exit Innsbruck' : 'Heimreise nach Luzern'}</h2><span class="sub">Spiel beendet</span></div><div class="panel-body">
+      <p class="note">${opt.apoc ? 'Hinter euch versinkt Innsbruck in Lava, Blitz und Donner. Die Nordkette spuckt Feuer, das Goldene Dachl schmilzt. Im letzten Railjet stossen zwölf Schweizer an – auf die Stadt, die es nicht mehr gibt. Prost, Innsbruck.' : `Der Railjet rollt aus dem Inntal. ${Object.keys(FRIENDS).length} müde Kollegen, ein voller Bierdeckel und viele Geschichten.`}</p>
       <div class="statgrid">
         <div class="stat"><small>Bier</small><b>${S2.beers}</b></div><div class="stat"><small>Schnäpse</small><b>${S2.shots}</b></div>
         <div class="stat"><small>Burger</small><b>${S2.burgers}</b></div><div class="stat"><small>Fotos</small><b>${Object.keys(S2.photos).length}/${Object.keys(SIGHTS).length}</b></div>

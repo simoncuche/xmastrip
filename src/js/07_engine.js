@@ -291,9 +291,11 @@ function drawActor(c, a, cx, cy) {
   if (a.hidden) return;
   const sheet = getSheet(a.look);
   const fi = frameIndex(a);
-  const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1);
-  if (a.pose !== 'sit') E(c, Math.round(a.x - cx), Math.round(a.y - cy) - 1, 5, 2, 'rgba(0,0,0,0.25)');
-  c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y, SPR_W, SPR_H);
+  const z = Math.round(a.z || 0); /* Sprunghöhe: Figur hebt ab, Schatten bleibt am Boden und wird kleiner */
+  const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1) - z;
+  if (a.pose !== 'sit') E(c, Math.round(a.x - cx), Math.round(a.y - cy) - 1, Math.max(2, 5 - z * 0.2), 2, `rgba(0,0,0,${z > 0 ? 0.18 : 0.25})`);
+  if (a.sinkY) { c.save(); c.beginPath(); c.rect(x - 4, y - 8, SPR_W + 8, SPR_H + 8 - a.sinkY); c.clip(); c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y + a.sinkY, SPR_W, SPR_H); c.restore(); }
+  else c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y, SPR_W, SPR_H);
   if (a.dog) {
     const dx = Math.round(a.x - cx) + (a.dir === 1 ? 10 : a.dir === 2 ? -16 : 8), dy = Math.round(a.y - cy) - 1;
     const step = a.moving && Math.floor(G.t * 8) % 2;
@@ -331,6 +333,8 @@ function drawPart(c, p, cx, cy) {
     case 'spark': P(c, x, y, p.col || `rgba(255,230,140,${a})`); break;
     case 'fire': R(c, x - 1, y - 2, 3, 4, `rgba(255,${Math.round(90 + a * 140)},30,${a})`); if (a > 0.5) P(c, x, y - 1, `rgba(255,250,200,${a})`); break;
     case 'ember': P(c, x, y, `rgba(255,${Math.round(120 + a * 100)},60,${a * 0.9})`); break;
+    case 'ash': R(c, x, y, 2, 1, `rgba(90,86,84,${Math.min(1, a * 1.5) * 0.8})`); break;
+    case 'rock': R(c, x - 1, y - 1, p.s || 3, p.s || 3, p.col || `rgba(70,58,50,${a})`); break;
     case 'zzz': pxText(c, 'Z', x, y, `rgba(60,90,180,${a})`); break;
     case 'heart': R(c, x - 1, y, 3, 2, `rgba(224,74,106,${a})`); P(c, x, y + 2, `rgba(224,74,106,${a})`); break;
     case 'beer': R(c, x, y, 3, 4, `rgba(232,179,58,${a})`); R(c, x, y - 1, 3, 1, `rgba(255,255,255,${a})`); break;
@@ -356,6 +360,7 @@ function renderWorld() {
   if (m.bgDraw) m.bgDraw(c, cx, cy, G.t);
   c.drawImage(m.gcv, -cx, -cy);
   if (m.groundAnim) m.groundAnim(c, cx, cy, G.t);
+  if (G.live && G.live.drawGround) G.live.drawGround(c, cx, cy, G.t);
   for (const v of G.S.vomitSpots) if (v.map === m.id && G.S.time - v.t < 240) { const x = Math.round(v.x - cx), y = Math.round(v.y - cy); E(c, x, y, 11, 5, 'rgba(140,150,50,0.85)'); E(c, x + 4, y - 2, 5, 3, 'rgba(190,190,80,0.9)'); E(c, x - 5, y + 1, 4, 2, 'rgba(150,160,60,0.85)'); for (let k = 0; k < 6; k++) P(c, x - 7 + k * 3, y - 3 + (k % 3), k % 2 ? '#c8a040' : '#9aa050'); P(c, x + 9, y + 1, '#c8a040'); P(c, x - 9, y - 1, '#c8a040'); }
   /* Nachtlicht vorab berechnen: leuchtende Fenster werden mit dem Objekt gezeichnet (hinter Figuren), nicht als Ebene darüber */
   const d = darkness();
@@ -375,9 +380,18 @@ function renderWorld() {
   list.sort((p, q) => p.y - q.y);
   for (const it of list) {
     if (it.o) {
-      c.drawImage(it.o.cv, it.o.px - cx, it.o.py - cy);
-      if (emitA > 0 && it.o.ecv) { c.globalAlpha = emitA; c.drawImage(it.o.ecv, it.o.px - cx, it.o.py - cy); c.globalAlpha = 1; }
-      if (it.o.anim) it.o.anim(c, G.t, it.o.px - cx, it.o.py - cy);
+      const o = it.o;
+      if (o.gone) continue;
+      if (o.sink) {
+        /* Gebäude versinkt im Boden: nur oberhalb der Grundlinie zeichnen, Bild nach unten verschoben, leicht wackelnd */
+        const H = o.cv.height, sh = Math.round(o.sink * H), wob = o.sink < 1 ? Math.round(Math.sin(G.t * 40) * 1.5) : 0;
+        c.save(); c.beginPath(); c.rect(o.px - cx - 4, o.py - cy - 20, o.cv.width + 8, H + 20); c.clip();
+        c.drawImage(o.cv, o.px - cx + wob, o.py - cy + sh); c.restore();
+        continue;
+      }
+      c.drawImage(o.cv, o.px - cx, o.py - cy);
+      if (emitA > 0 && o.ecv && !o.dark) { c.globalAlpha = emitA; c.drawImage(o.ecv, o.px - cx, o.py - cy); c.globalAlpha = 1; }
+      if (o.anim) o.anim(c, G.t, o.px - cx, o.py - cy);
     }
     else if (it.a) drawActor(c, it.a, cx, cy);
     else if (it.v) it.v.draw(c, cx, cy, G.t);
@@ -404,7 +418,7 @@ function renderWorld() {
     }
     if (!m.indoor) { const px = G.player.x - cx, py = G.player.y - cy - 10; const gr = l.createRadialGradient(px, py, 0, px, py, 30); gr.addColorStop(0, 'rgba(0,0,0,0.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); l.fillStyle = gr; l.fillRect(px - 30, py - 30, 60, 60); }
     /* Fensterflächen aus der Dunkelheit ausschneiden, damit sie hell leuchten – wer davor steht, wird vom Fenster angestrahlt */
-    if (emitA > 0) { l.globalAlpha = emitA * 0.9; for (const o of m.objs) if (emitVisible(o)) l.drawImage(o.ecv, o.px - cx, o.py - cy); l.globalAlpha = 1; }
+    if (emitA > 0) { l.globalAlpha = emitA * 0.9; for (const o of m.objs) if (emitVisible(o) && !o.sink && !o.gone && !o.dark) l.drawImage(o.ecv, o.px - cx, o.py - cy); l.globalAlpha = 1; }
     l.globalCompositeOperation = 'source-over';
     c.drawImage(View.lcv, 0, 0);
     if (d.a > 0.2) {
@@ -473,6 +487,7 @@ function findInteraction() {
   return null;
 }
 async function doInteract() {
+  if (G.live && G.live.onAction && !G.busy) { G.live.onAction(); return; }
   if (G.busy) return;
   const it = findInteraction();
   if (!it) return;
@@ -491,6 +506,7 @@ async function doInteract() {
   UI.hud();
 }
 function checkAutoTriggers() {
+  if (G.live && G.live.noTriggers) return;
   const p = G.player, m = G.map;
   const tx = Math.floor(p.x / TS), ty = Math.floor((p.y - 3) / TS);
   const key = tx + ',' + ty;
@@ -528,7 +544,7 @@ function updatePlayer(dt) {
   }
   if (prom > 1.8 && Math.random() < dt * 0.35) { const a = rnd(0, 6.28); p.stumble = { x: Math.cos(a) * 30, y: Math.sin(a) * 20, t: 0.25 }; if (Math.random() < 0.5) Snd.sfx('hicks'); }
   const tired = st.energy < 12 ? 0.7 : 1;
-  const run = ax.run && st.energy > 8;
+  const run = ax.run && (st.energy > 8 || G.S.flags.adrenalin);
   p.running = run && (vx || vy);
   const sp = (run ? 82 : 50) * tired * (prom > 1.8 ? 0.85 : 1);
   let dx = vx * sp * dt, dy = vy * sp * dt;

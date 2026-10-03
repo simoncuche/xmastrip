@@ -122,6 +122,8 @@ const ACH = {
   kpunkt: ['K-Punkt', 'Am Bergisel über 120 Meter gesprungen'],
   rekord: ['Schanzenrekord', 'Am Bergisel weiter als 138 Meter geflogen'],
   kostuem: ['Maskerade', 'Im Kostüm durch Innsbruck'],
+  apokalypse: ['Last Exit Innsbruck', 'Der Apokalypse im letzten Zug entkommen'],
+  trittsicher: ['Trittsicher', 'Bei der Apokalypse nie in einen Riss gestürzt'],
   knipser: ['Knipser', 'Einen Schnappschuss gemacht'],
   influencer: ['Influencer', 'Ein Foto aus dem Spiel geteilt'],
   schuettler: ['Schüttelfrost', 'Das Handy geschüttelt und ein Ereignis heraufbeschworen'],
@@ -282,6 +284,7 @@ function warnOnce(key, cond, msg, reset) {
 }
 function checkThresholds() {
   const st = G.S.st;
+  if (G.S.flags.adrenalin) return; /* Flucht vor der Apokalypse: keine Müdigkeits- oder Übelkeitshinweise */
   warnOnce('hunger', st.food < 18, 'Dein Magen knurrt. Zeit für einen Burger?', st.food > 35);
   warnOnce('tired', st.energy < 22, 'Du bist müde. Leg dich im Hotelzimmer kurz hin.', st.energy > 40);
   warnOnce('nau1', st.nau > 60, 'Dir ist flau im Magen …', st.nau < 40);
@@ -289,7 +292,7 @@ function checkThresholds() {
   warnOnce('prom1', st.prom > 1.2, 'Die Welt fängt an zu schwanken.', st.prom < 0.9);
   warnOnce('prom2', st.prom > 2.0, 'Du siehst doppelt. Vielleicht ein Wasser?', st.prom < 1.7);
   if (st.energy > 40) G.warned.tiredCrit = 0;
-  if (!G.busy && Story.ready) {
+  if (!G.busy && Story.ready && !G.S.flags.adrenalin) { /* während der Flucht vor der Apokalypse: Adrenalin, kein Kollaps */
     if (st.nau >= 100) Story.vomit();
     else if (st.prom >= 2.6) Story.blackout();
     else if (st.energy <= 7 && !G.warned.tiredCrit) Story.tiredWarning();
