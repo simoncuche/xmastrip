@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.9.1 – 03.10.2026
+
+- Joystick ohne Pfeile: nur noch Ring und Knopf.
+
 ## 1.9.0 – 03.10.2026
 
 - Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.
