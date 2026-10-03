@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.5.2 – 03.10.2026
+
+- Kusi ist glatt rasiert, Römu trägt keine Brille mehr.
+
 ## 1.5.1 – 03.10.2026
 
 - Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.

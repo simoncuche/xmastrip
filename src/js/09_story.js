@@ -25,10 +25,10 @@ const CREW_LOOKS = {
   dous: { head: 5, ears: 0, eyes: 4, brows: 3, nose: 2, mouth: 0, mark: 0, build: 3, height: 1, jewel: 0, hair: 0, hairCol: 1, beard: 2, beardCol: 1, top: 0, topCol: 15, print: 0, pants: 1, pantsCol: 9, shoes: 3, shoesCol: 2, hat: 10, hatCol: 0, glasses: 0 },
   /* Coel: schwarze Haare, Stoppelbart, runde braune Brille, Hemd */
   coel: { head: 3, ears: 1, eyes: 3, brows: 4, nose: 3, mouth: 2, mark: 0, build: 2, height: 2, jewel: 0, hair: 3, hairCol: 0, beard: 1, beardCol: 0, glasses: 8, top: 1, topCol: 8, print: 0, pants: 1, pantsCol: 5, shoes: 3, shoesCol: 2, hat: 0 },
-  /* Kusi: schwarze Scheitelhaare, weisser Pullover, Jeans, weisse Schuhe */
-  kusi: { head: 4, ears: 0, eyes: 6, brows: 2, nose: 6, mouth: 2, mark: 1, build: 0, height: 0, jewel: 0, hair: 3, hairCol: 0, top: 4, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, glasses: 0, hat: 0 },
-  /* Römu: Piloten-Outfit – Navy-Sakko mit Abzeichen, Anzughose, Pilotenbrille, Mütze */
-  roemu: { head: 2, ears: 0, eyes: 2, brows: 3, nose: 1, mouth: 1, mark: 0, build: 2, height: 2, jewel: 0, hair: 2, hairCol: 2, beard: 0, glasses: 3, top: 9, topCol: 10, print: 5, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, hat: 8, hatCol: 2 },
+  /* Kusi: schwarze Scheitelhaare, glatt rasiert, weisser Pullover, Jeans, weisse Schuhe */
+  kusi: { head: 4, ears: 0, eyes: 6, brows: 2, nose: 6, mouth: 2, mark: 1, build: 0, height: 0, jewel: 0, hair: 3, hairCol: 0, beard: 0, top: 4, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, glasses: 0, hat: 0 },
+  /* Römu: Piloten-Outfit – Navy-Sakko mit Abzeichen, Anzughose, Mütze, keine Brille */
+  roemu: { head: 2, ears: 0, eyes: 2, brows: 3, nose: 1, mouth: 1, mark: 0, build: 2, height: 2, jewel: 0, hair: 2, hairCol: 2, beard: 0, glasses: 0, top: 9, topCol: 10, print: 5, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, hat: 8, hatCol: 2 },
   /* Flöru: brauner Mantel, braune Haare, Stoppeln */
   floeru: { head: 0, ears: 3, eyes: 0, brows: 0, nose: 0, mouth: 4, mark: 4, build: 0, height: 1, jewel: 0, hair: 2, hairCol: 2, beard: 1, beardCol: 2, top: 9, topCol: 17, print: 0, pants: 1, pantsCol: 9, shoes: 1, shoesCol: 2, acc: 0, hat: 0, glasses: 0 },
   /* Hoshy: Halbglatze, blond, muskulös, T-Shirt, blaue Jeans */
