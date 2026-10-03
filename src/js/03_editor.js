@@ -46,12 +46,14 @@ const Editor = {
           for (const c of CREW) {
             const b = document.createElement('button');
             b.className = 'choice' + (pid === c.id ? ' sel' : '');
-            b.style.cssText = 'flex-direction:column;align-items:flex-start;gap:2px';
-            b.innerHTML = `<span style="font-family:var(--f-pixel);font-size:17px">${c.name}</span><small>${c.role}</small>`;
+            b.style.cssText = 'display:grid;grid-template-columns:40px 1fr;align-items:center;column-gap:8px;text-align:left';
+            const look = crewLook(c.id);
+            b.innerHTML = `<canvas width="64" height="64" style="width:40px;height:40px;image-rendering:pixelated;border-radius:6px;grid-row:1/3" aria-hidden="true"></canvas><span style="font-family:var(--f-pixel);font-size:17px">${c.name}</span><small>${c.role}</small>`;
+            b.querySelector('canvas').getContext('2d').drawImage(portraitCanvas(look, '#2a3a52'), 0, 0);
             b.onclick = () => {
               pid = c.id;
               /* Der gewohnte Look des Gewählten als Ausgangspunkt – lässt sich danach frei ändern */
-              Object.assign(L, CREW_COMMON, CREW_LOOKS[c.id] || {});
+              Object.assign(L, look);
               el.querySelector('#edWho').textContent = c.name;
               el.querySelector('#edHint').textContent = `${c.name}, ${c.role}. Jetzt Aussehen gestalten – oder direkt losfahren.`;
               renderList(); draw(); Snd.sfx('blip');

@@ -18,29 +18,29 @@ const CREW = [
 const CREW_COMMON = { skin: 1, eyeCol: 0 };
 const CREW_LOOKS = {
   /* Cuche: schwarzes Cap mit kurzem Schirm, blaue Jeans, weisses T-Shirt, braune Augen */
-  cuche: { hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 11, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
+  cuche: { head: 0, ears: 0, eyes: 0, brows: 0, nose: 1, mouth: 0, mark: 0, build: 1, height: 1, jewel: 0, hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 11, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
   /* Didu: kurze, orange-rote Haare (Kupfer), farbige Kleider */
-  didu: { build: 3, hair: 2, hairCol: 8, beard: 7, beardCol: 8, nose: 4, mark: 5, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
+  didu: { head: 1, ears: 2, eyes: 1, brows: 1, nose: 4, mouth: 2, mark: 5, build: 3, height: 1, jewel: 0, hair: 2, hairCol: 8, beard: 7, beardCol: 8, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
   /* Dous: Glatze, T-Shirt, braune Hose, braune Schuhe, französische Baskenmütze */
-  dous: { build: 3, hair: 0, hairCol: 1, beard: 2, beardCol: 1, mouth: 0, top: 0, topCol: 15, print: 0, pants: 1, pantsCol: 9, shoes: 3, shoesCol: 2, hat: 10, hatCol: 0, glasses: 0 },
+  dous: { head: 5, ears: 0, eyes: 4, brows: 3, nose: 2, mouth: 0, mark: 0, build: 3, height: 1, jewel: 0, hair: 0, hairCol: 1, beard: 2, beardCol: 1, top: 0, topCol: 15, print: 0, pants: 1, pantsCol: 9, shoes: 3, shoesCol: 2, hat: 10, hatCol: 0, glasses: 0 },
   /* Coel: schwarze Haare, Stoppelbart, runde braune Brille, Hemd */
-  coel: { hair: 3, hairCol: 0, beard: 1, beardCol: 0, glasses: 8, top: 1, topCol: 8, print: 0, pants: 1, pantsCol: 5, shoes: 3, shoesCol: 2, jewel: 0, hat: 0 },
+  coel: { head: 3, ears: 1, eyes: 3, brows: 4, nose: 3, mouth: 2, mark: 0, build: 2, height: 2, jewel: 0, hair: 3, hairCol: 0, beard: 1, beardCol: 0, glasses: 8, top: 1, topCol: 8, print: 0, pants: 1, pantsCol: 5, shoes: 3, shoesCol: 2, hat: 0 },
   /* Kusi: schwarze Scheitelhaare, weisser Pullover, Jeans, weisse Schuhe */
-  kusi: { height: 0, build: 0, hair: 3, hairCol: 0, mouth: 2, top: 4, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, glasses: 0, hat: 0 },
+  kusi: { head: 4, ears: 0, eyes: 6, brows: 2, nose: 6, mouth: 2, mark: 1, build: 0, height: 0, jewel: 0, hair: 3, hairCol: 0, top: 4, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, glasses: 0, hat: 0 },
   /* Römu: Piloten-Outfit – Navy-Sakko mit Abzeichen, Anzughose, Pilotenbrille, Mütze */
-  roemu: { height: 2, hair: 2, hairCol: 2, beard: 0, glasses: 3, top: 9, topCol: 10, print: 5, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, hat: 8, hatCol: 2 },
+  roemu: { head: 2, ears: 0, eyes: 2, brows: 3, nose: 1, mouth: 1, mark: 0, build: 2, height: 2, jewel: 0, hair: 2, hairCol: 2, beard: 0, glasses: 3, top: 9, topCol: 10, print: 5, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, hat: 8, hatCol: 2 },
   /* Flöru: brauner Mantel, braune Haare, Stoppeln */
-  floeru: { build: 0, hair: 2, hairCol: 2, beard: 1, beardCol: 2, top: 9, topCol: 17, print: 0, pants: 1, pantsCol: 9, shoes: 1, shoesCol: 2, acc: 0, hat: 0, glasses: 0 },
+  floeru: { head: 0, ears: 3, eyes: 0, brows: 0, nose: 0, mouth: 4, mark: 4, build: 0, height: 1, jewel: 0, hair: 2, hairCol: 2, beard: 1, beardCol: 2, top: 9, topCol: 17, print: 0, pants: 1, pantsCol: 9, shoes: 1, shoesCol: 2, acc: 0, hat: 0, glasses: 0 },
   /* Hoshy: Halbglatze, blond, muskulös, T-Shirt, blaue Jeans */
-  hoshy: { build: 3, hair: 12, hairCol: 5, beard: 1, beardCol: 5, top: 0, topCol: 9, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, hat: 0, glasses: 0, acc: 0 },
+  hoshy: { head: 5, ears: 0, eyes: 2, brows: 1, nose: 2, mouth: 2, mark: 2, build: 3, height: 2, jewel: 0, hair: 12, hairCol: 5, beard: 1, beardCol: 5, top: 0, topCol: 9, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, hat: 0, glasses: 0, acc: 0 },
   /* Ölu: der Kanadier – Holzfällerhemd und Beanie (nicht vorgegeben) */
-  oelu: { hair: 10, hairCol: 3, beard: 8, beardCol: 3, top: 7, topCol: 0, hat: 3, hatCol: 1, pants: 0, shoes: 1 },
+  oelu: { head: 1, ears: 0, eyes: 5, brows: 1, nose: 1, mouth: 0, mark: 0, build: 2, height: 1, jewel: 0, hair: 10, hairCol: 3, beard: 8, beardCol: 3, top: 7, topCol: 0, hat: 3, hatCol: 1, pants: 0, shoes: 1 },
   /* Yännu: blondes, aufgestelltes Haar, grimmiger Blick, grosse Nase, Hemd, schwarze Hose, schwarze Schuhe */
-  yaennu: { hair: 13, hairCol: 5, beard: 1, beardCol: 5, brows: 5, eyes: 2, mouth: 3, nose: 4, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
+  yaennu: { head: 2, ears: 0, eyes: 2, brows: 5, nose: 4, mouth: 3, mark: 7, build: 1, height: 1, jewel: 0, hair: 13, hairCol: 5, beard: 1, beardCol: 5, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
   /* Lexx: lange blonde Haare, komplett weisse Kleider */
-  lexx: { hair: 10, hairCol: 5, beard: 0, glasses: 0, top: 1, topCol: 13, print: 0, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0 },
+  lexx: { head: 3, ears: 0, eyes: 3, brows: 4, nose: 3, mouth: 1, mark: 0, build: 0, height: 2, jewel: 0, hair: 10, hairCol: 5, beard: 0, glasses: 0, top: 1, topCol: 13, print: 0, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0 },
   /* Hännsu: volles, kurzes schwarzes Haar, schwarze Brille, schwarze Kleider */
-  haennsu: { hair: 2, hairCol: 0, beard: 1, beardCol: 0, glasses: 2, top: 4, topCol: 16, print: 0, pants: 0, pantsCol: 2, shoes: 0, shoesCol: 1, jewel: 0, acc: 0, hat: 0, mouth: 0, eyes: 6 },
+  haennsu: { head: 0, ears: 1, eyes: 6, brows: 0, nose: 1, mouth: 0, mark: 0, build: 1, height: 1, jewel: 0, hair: 2, hairCol: 0, beard: 1, beardCol: 0, glasses: 2, top: 4, topCol: 16, print: 0, pants: 0, pantsCol: 2, shoes: 0, shoesCol: 1, acc: 0, hat: 0 },
 };
 const FN_FALLBACK = {
   kassier: ['cuche', 'lexx'], jass: ['lexx', 'didu', 'dous'], arm: ['hoshy', 'coel', 'didu'], darts: ['didu', 'kusi', 'hoshy'],
@@ -48,13 +48,17 @@ const FN_FALLBACK = {
   foto: ['roemu', 'lexx', 'oelu'], music: ['oelu', 'floeru', 'kusi'], party: ['coel', 'haennsu', 'floeru'], schnaps: ['didu', 'oelu', 'dous'],
 };
 let FRIENDS = {};
+/* Der komplette Look eines Kollegen: Zufall nur für Merkmale, die CREW_LOOKS nicht vorgibt (z. B. Muster, Accessoire) */
+function crewLook(id, seed = 0) {
+  const c = CREW.find((x) => x.id === id);
+  return Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_COMMON, CREW_LOOKS[id]);
+}
 function buildFriends() {
   FRIENDS = {};
   const seed = G.S.flags.crewSeed || 0;
   for (const c of CREW) {
     if (c.id === G.S.pid) continue;
-    /* Zufall nur für Merkmale, die CREW_LOOKS nicht vorgibt */
-    const L = Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_COMMON, CREW_LOOKS[c.id]);
+    const L = crewLook(c.id, seed);
     FRIENDS[c.id] = { id: c.id, name: c.name, role: c.role, fn: c.fn, look: L, bg: c.bg };
   }
   for (const k of Object.keys(FRIENDS)) if (G.S.aff[k] == null) G.S.aff[k] = 50;
