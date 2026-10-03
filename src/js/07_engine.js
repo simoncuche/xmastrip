@@ -333,6 +333,10 @@ function renderWorld() {
   c.drawImage(m.gcv, -cx, -cy);
   if (m.groundAnim) m.groundAnim(c, cx, cy, G.t);
   for (const v of G.S.vomitSpots) if (v.map === m.id && G.S.time - v.t < 240) { const x = Math.round(v.x - cx), y = Math.round(v.y - cy); E(c, x, y, 7, 3, 'rgba(140,150,50,0.85)'); E(c, x + 3, y - 1, 3, 2, 'rgba(190,190,80,0.9)'); P(c, x - 4, y, '#c8a040'); P(c, x + 5, y + 1, '#c8a040'); }
+  /* Nachtlicht vorab berechnen: leuchtende Fenster werden mit dem Objekt gezeichnet (hinter Figuren), nicht als Ebene darüber */
+  const d = darkness();
+  const emitA = d.a > 0.2 ? clamp((d.a - 0.2) / 0.3, 0, 1) : 0;
+  const emitVisible = (o) => o.ecv && !(o.px - cx > vw || o.px + o.cv.width - cx < 0 || o.py - cy > vh || o.py + o.cv.height - cy < 0);
   /* sortierte Ebene */
   const list = [];
   for (const o of m.objs) {
@@ -346,7 +350,11 @@ function renderWorld() {
   for (const b of G.birds) list.push({ y: b.y, b });
   list.sort((p, q) => p.y - q.y);
   for (const it of list) {
-    if (it.o) { c.drawImage(it.o.cv, it.o.px - cx, it.o.py - cy); if (it.o.anim) it.o.anim(c, G.t, it.o.px - cx, it.o.py - cy); }
+    if (it.o) {
+      c.drawImage(it.o.cv, it.o.px - cx, it.o.py - cy);
+      if (emitA > 0 && it.o.ecv) { c.globalAlpha = emitA; c.drawImage(it.o.ecv, it.o.px - cx, it.o.py - cy); c.globalAlpha = 1; }
+      if (it.o.anim) it.o.anim(c, G.t, it.o.px - cx, it.o.py - cy);
+    }
     else if (it.a) drawActor(c, it.a, cx, cy);
     else if (it.v) it.v.draw(c, cx, cy, G.t);
     else if (it.b) drawBird(c, it.b, cx, cy);
@@ -354,7 +362,6 @@ function renderWorld() {
   for (const p of G.parts) drawPart(c, p, cx, cy);
   if (m.overlay) m.overlay(c, cx, cy, G.t);
   /* Licht */
-  const d = darkness();
   if (d.a > 0.01) {
     const l = View.lctx;
     l.globalCompositeOperation = 'source-over';
@@ -371,13 +378,11 @@ function renderWorld() {
       l.fillStyle = gr; l.fillRect(x - L.r, y - L.r, L.r * 2, L.r * 2);
     }
     if (!m.indoor) { const px = G.player.x - cx, py = G.player.y - cy - 10; const gr = l.createRadialGradient(px, py, 0, px, py, 30); gr.addColorStop(0, 'rgba(0,0,0,0.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); l.fillStyle = gr; l.fillRect(px - 30, py - 30, 60, 60); }
+    /* Fensterflächen aus der Dunkelheit ausschneiden, damit sie hell leuchten – wer davor steht, wird vom Fenster angestrahlt */
+    if (emitA > 0) { l.globalAlpha = emitA * 0.9; for (const o of m.objs) if (emitVisible(o)) l.drawImage(o.ecv, o.px - cx, o.py - cy); l.globalAlpha = 1; }
     l.globalCompositeOperation = 'source-over';
     c.drawImage(View.lcv, 0, 0);
-    /* leuchtende Fenster */
     if (d.a > 0.2) {
-      c.globalAlpha = clamp((d.a - 0.2) / 0.3, 0, 1);
-      for (const o of m.objs) if (o.ecv) { if (o.px - cx > vw || o.px + o.cv.width - cx < 0 || o.py - cy > vh || o.py + o.cv.height - cy < 0) continue; c.drawImage(o.ecv, o.px - cx, o.py - cy); }
-      c.globalAlpha = 1;
       c.globalCompositeOperation = 'lighter';
       for (const L of lights) {
         const x = L.x - cx, y = L.y - cy;

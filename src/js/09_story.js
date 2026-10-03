@@ -184,7 +184,8 @@ const Story = {
       default: {
         const tips = [];
         const h = hourOf(G.S.time);
-        if (G.S.st.energy < 25) tips.push('Du bist müde – leg dich im Zimmer 307 hin');
+        if (G.S.money.eur < 15) tips.push('Fast pleite – Bankomat am Hauptbahnhof oder bei der BANK an der Maria-Theresien-Strasse');
+        else if (G.S.st.energy < 25) tips.push('Du bist müde – leg dich im Zimmer 307 hin');
         else if (G.S.st.food < 25) tips.push('Hunger! Burger in der Gamsbock Bar?');
         else if (G.S.st.nau > 70) tips.push('Dir ist übel – Wasser, Essen oder Schlaf');
         else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
@@ -217,7 +218,7 @@ const Story = {
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
       { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
-      { x: 43, y: 72, n: 'Souvenir', c: S }, { x: 49, y: 72, n: 'Trafik', c: S }, { x: 28, y: 80, n: 'Barbier', c: S }, { x: 43, y: 80, n: 'Konditorei', c: S }, { x: 61, y: 77, n: 'Würstel', c: S }, { x: 87, y: 77, n: 'Taxi', c: A },
+      { x: 43, y: 72, n: 'Souvenir', c: S }, { x: 49, y: 72, n: 'Trafik', c: S }, { x: 19, y: 80, n: 'Bankomat', c: A }, { x: 60, y: 74, n: 'Bankomat', c: A }, { x: 28, y: 80, n: 'Barbier', c: S }, { x: 43, y: 80, n: 'Konditorei', c: S }, { x: 61, y: 77, n: 'Würstel', c: S }, { x: 87, y: 77, n: 'Taxi', c: A },
     ];
   },
 
@@ -1239,11 +1240,11 @@ const Story = {
   async atm() {
     const d = dayOf(G.S.time);
     if (G.S.cashDay !== d) { G.S.cashDay = d; G.S.cashToday = 0; }
-    const left = 400 - G.S.cashToday;
-    if (left <= 0) { await this.say(null, 'Tageslimit von 400 € erreicht.'); return; }
-    const c = await this.ask(null, `Bankomat · Noch ${left} € heute möglich.`, ['50 €', '100 €', '200 €', 'Abbrechen']);
-    if (c === 3) return;
-    const v = Math.min(left, [50, 100, 200][c]);
+    const left = 1000 - G.S.cashToday;
+    if (left <= 0) { await this.say(null, 'Tageslimit von 1.000 € erreicht. Morgen geht wieder was.'); return; }
+    const c = await this.ask(null, `Bankomat · Konto: unbegrenzt (fast). Heute noch ${left} € möglich.`, ['50 €', '100 €', '200 €', '500 €', 'Abbrechen']);
+    if (c === 4) return;
+    const v = Math.min(left, [50, 100, 200, 500][c]);
     G.S.cashToday += v; addMoney('eur', v); Snd.sfx('coin');
     UI.toast(`${v} € abgehoben.`);
   },

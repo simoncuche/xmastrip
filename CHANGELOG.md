@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.8.1 – 03.10.2026
+
+- Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.
+- Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird.
+
 ## 1.8.0 – 03.10.2026
 
 - Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.

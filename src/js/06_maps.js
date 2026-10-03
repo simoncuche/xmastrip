@@ -440,7 +440,9 @@ MAP_BUILDERS.ibk = () => {
   shopHouse(m, 42, 67, 6, 6, 2, { text: 'SOUVENIRS', bg: '#c8352d', fg: '#ffffff', label: 'Souvenirs Dachl' }, 1, 'souvenir', { goods: ['#e8b830', '#c8352d', '#f4f0e6'] });
   shopHouse(m, 48, 67, 6, 6, 9, { text: 'TRAFIK', bg: '#c8352d', fg: '#ffffff', label: 'Trafik' }, 1, 'trafik');
   house(m, 1, 75, 7, 6, 6); house(m, 8, 75, 8, 6, 2);
-  house(m, 16, 75, 7, 6, 3);
+  house(m, 16, 75, 7, 6, 3, { sign: { text: 'BANK', bg: '#1a3a7a', fg: '#ffffff' } });
+  m.add(mkObj(19, 80, 1, 1, 12, (c, Wd, Hd) => { R(c, 2, 0, 12, Hd - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); pxText(c, '€', 6, 5, '#ffffff'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }, { solid: true, light: { dx: 8, dy: 4, r: 18, c: '#7ad0f0' } }));
+  m.trig(19, 80, 1, 1, { label: 'Bankomat', act: () => Story.atm() });
   shopHouse(m, 23, 75, 7, 6, 0, { text: 'BARBIER', bg: '#2a2a2e', fg: '#f4f0e6', label: 'Friseur & Barbier' }, 5, 'barbier', { hang: { dx: 6, icon: 'scissors', side: 'r' }, goods: ['#c8352d', '#f4f0e6', '#2f5fb8'] });
   shopHouse(m, 42, 75, 6, 6, 5, { text: 'KONDITOREI', bg: '#7a2a2a', fg: '#f8e8c8', label: 'Café Konditorei' }, 1, 'cafe', { awning: { cols: [0, 2, 3, 4, 5], col: '#7a2a2a' } });
   house(m, 48, 75, 6, 6, 4);
