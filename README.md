@@ -3,7 +3,8 @@
 Ein Pixel-Rollenspiel für den Browser: Zwölf Jungs treffen sich am Bahnhof Luzern, fahren mit dem Zug nach Innsbruck,
 checken im Hotel Zirbe ein und treffen sich danach in der Gamsbock Bar. Ab dann gehört dir die Stadt.
 
-**Spielen:** `dist/index.html` im Browser öffnen. Kein Server, keine Installation. Funktioniert am Handy und am Computer.
+**Spielen:** online unter https://simoncuche.github.io/xmastrip/ oder `dist/index.html` lokal im Browser öffnen.
+Kein Server, keine Installation. Funktioniert am Handy und am Computer.
 
 ## Was drin ist
 
@@ -35,5 +36,8 @@ checken im Hotel Zirbe ein und treffen sich danach in der Gamsbock Bar. Ab dann 
 python3 build.py              # src/ → dist/index.html
 python3 tests/smoke_test.py   # automatischer Durchlauf (benötigt: pip install playwright && playwright install chromium)
 ```
+
+Bei jedem Push auf `main` baut der Workflow `.github/workflows/pages.yml` das Spiel und veröffentlicht `dist/` auf GitHub Pages
+(Repo-Einstellungen → Pages → Source: *GitHub Actions*).
 
 Mehr zur Struktur in `CLAUDE.md`.
