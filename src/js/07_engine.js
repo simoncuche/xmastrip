@@ -144,11 +144,10 @@ function enterMap(id, spawn, opts = {}) {
 }
 async function warpTo(id, spawn, opts = {}) {
   G.busy++;
-  const to = getMap(id);
-  /* Kleine Türszene statt nur Schwarzbild: hinein (Rückenansicht, Tür geht auf) oder hinaus (Tür zu, Gesicht zum Spieler) */
-  const exit = !!(G.map && G.map.indoor && !to.indoor);
-  if (opts.plain || typeof Scene === 'undefined') { if (opts.plain) { for (let k = 0; k < 4; k++) setTimeout(() => Snd.sfx('step'), k * 110); } else Snd.sfx('door'); await UI.fadeOut(); }
-  else await Scene.play('door', { ms: 820, keep: true, exit, label: opts.label || '' });
+  /* Übergangsszene passend zum Ort: Fassade des Lokals/Ladens, Treppenhaus, Lift, Hotelzimmertür, Zugtür, Rauswurf … */
+  const tr = !opts.plain && G.map && typeof transitionFor === 'function' ? transitionFor(G.map.id, id, spawn, opts) : null;
+  if (!tr || typeof Scene === 'undefined') { Snd.sfx('door'); await UI.fadeOut(); }
+  else await Scene.play(tr.kind, Object.assign({ keep: true, label: opts.label || '' }, tr));
   enterMap(id, spawn, opts);
   await sleep(100);
   await UI.fadeIn();

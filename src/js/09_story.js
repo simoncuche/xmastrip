@@ -984,7 +984,7 @@ const Story = {
     const who2 = { bar: 'Sepp', club: 'Türsteher', stueberl: 'Wirtin Resi', rouge: 'Rocky' }[v];
     await this.say(who2, v === 'bar' ? 'Sperrstund is! Austrinken, Burschen, ab ins Bett!' : v === 'club' ? 'Licht an, Party aus. Wir machen zu!' : v === 'rouge' ? 'Sperrstund, die Damen gehen heim. Du auch.' : 'So, Feierabend. Gute Nacht miteinand!');
     G.busy--;
-    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out', rouge: 'rouge_out' }[v]);
+    await warpTo('ibk', { bar: 'bar_out', club: 'club_out', stueberl: 'stueberl_out', rouge: 'rouge_out' }[v], { kind: 'closing' });
   },
   async openGuard(v) {
     if (v === 'bar' && G.S.stage === 'bar') return true;
@@ -1707,7 +1707,7 @@ const Story = {
     }
     await this.say('Wirtin Resi', 'SCHLUSS JETZ! Raus, olle zwoa – und du, Schweizer, kimmsch heit nimmer eina!');
     G.S.flags.stueberlBan = dayOf(G.S.time - 300);
-    await warpTo('ibk', 'stueberl_out', { label: 'Rausgeworfen!' });
+    await warpTo('ibk', 'stueberl_out', { kind: 'thrown' });
     UI.toast('Hausverbot im Stüberl bis morgen früh.', 'warn');
   },
   async loisl() { await this.say('Loisl', pick(['Der Föhn kimmt. Do werd jeder narrisch.', 'Friahr hot\'s do no Rauchen derfen. Is lang her.', 'Beim Watten bin i unschlagbar. Jassen kenn i net.', 'Hosch scho a Gröstl gessn? Des Beste in ganz Tirol.'])); },
@@ -2298,8 +2298,8 @@ const Story = {
     achieve('kotzen');
     p.pose = 'stand';
     const near = this.friendsHere();
-    if (G.map.id === 'club') { await this.say('Türsteher', 'Raus! Sofort! Du gehst jetzt an die frische Luft.'); G.busy--; await warpTo('ibk', 'club_out'); G.S.flags.clubPaid = -1; return; }
-    if (G.map.id === 'rouge') { await this.say('Rocky', 'Auf meinen Samtteppich?! Raus, und komm heute nicht wieder.'); G.busy--; await warpTo('ibk', 'rouge_out'); G.S.flags.rougePaid = -1; return; }
+    if (G.map.id === 'club') { await this.say('Türsteher', 'Raus! Sofort! Du gehst jetzt an die frische Luft.'); G.busy--; await warpTo('ibk', 'club_out', { kind: 'thrown' }); G.S.flags.clubPaid = -1; return; }
+    if (G.map.id === 'rouge') { await this.say('Rocky', 'Auf meinen Samtteppich?! Raus, und komm heute nicht wieder.'); G.busy--; await warpTo('ibk', 'rouge_out', { kind: 'thrown' }); G.S.flags.rougePaid = -1; return; }
     if (G.map.id === 'bar') await this.say('Sepp', 'Oida! Des putzt jetzt aber wer anderer. Trink a Wasser und iss was!');
     else if (near.length) await this.say(near[0], pick(['Ui, ui, ui. Geht\'s? Komm, setz dich mal.', 'Zu viel und zu wenig gegessen. Klassiker.', 'Ich hab nichts gesehen. Wirklich nicht.']));
     else await this.say(null, 'Das war zu viel ohne Essen und ohne Schlaf. Iss etwas, trink Wasser oder leg dich hin.');

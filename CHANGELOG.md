@@ -3,6 +3,15 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.13.0 – 03.10.2026
+
+- Jeder Raumwechsel hat seine eigene Szene, passend zum Ort:
+- Lokale mit eigener Fassade: Hotel Zirbe mit Sternen, Fahnen und Glastür; Tiroler Stüberl mit Laterne und Blumenkistchen; Gamsbock Bar mit Geweih und flackerndem Neon-Bierkrug; Casino mit Lauflichtern, goldenen Säulen und rotem Teppich; Club Lawine im Viaduktbogen mit Stahltür, Absperrkordel, Türsteher, Strobo und Bass; Rouge im Bogen mit rotem Samtvorhang und Rotlicht.
+- Läden mit ihrem Schild, ihrer Wandfarbe und Waren im Schaufenster, Türglocke beim Eintreten; Barbier mit drehendem Pole, Apotheke mit grünem Kreuz, Markisen bei Konditorei und Boutique.
+- Bahnhof Luzern mit Bahnhofsuhr, hohen Fenstern und Reisenden; Ankunft in Innsbruck: der Railjet steht am Bahnsteig, die Tür zischt auf, du steigst aus.
+- Hotel: Treppenhaus mit Stufen hinauf oder hinunter; Lift mit schliessenden Türen, Stockwerksanzeige und Ding; Zimmer 307 mit Kartenleser, der grün aufleuchtet – beim Hinausgehen hängt „Bitte nicht stören“ an der Klinke.
+- Rauswurf aus Club, Rouge oder Stüberl: eine Pranke wirft dich im hohen Bogen auf die Strasse, die Tür knallt zu, Sterne kreisen. Sperrstunde: die Lichter gehen aus, „Zu“ hängt an der Tür.
+
 ## 2.12.0 – 03.10.2026
 
 - Ereignisse wiederholen sich: Sind alle einmal gelaufen, beginnt eine neue Runde in neu gemischter Reihenfolge – so gehen sie auch auf einer langen Reise nie aus. Weiterhin zwei pro Tag, Godzilla bleibt einmalig an Tag 5.
