@@ -4,12 +4,12 @@ const Editor = {
     const mode = o.mode || 'new';
     return new Promise((resolve) => {
       const el = document.getElementById('editor');
-      const L = Object.assign({}, o.look || (G.S ? G.S.look : defaultLook()));
+      const L = Object.assign({ costume: 0 }, o.look || (G.S ? G.S.look : defaultLook()));
       const unlocked = (G.S && G.S.unlocked) || {};
       let pid = o.pid || (mode === 'new' ? pick(CREW).id : null);
       if (mode === 'new' && pid) Object.assign(L, crewLook(pid));
       let crewSeed = o.crewSeed || 0;
-      const keysFor = { clothes: ['hat', 'hatCol', 'top', 'topCol', 'print', 'pants', 'pantsCol', 'shoes', 'shoesCol', 'acc', 'glasses'], hair: ['hair', 'hairCol'], beard: ['beard', 'beardCol'] }[mode];
+      const keysFor = { clothes: ['costume', 'hat', 'hatCol', 'top', 'topCol', 'print', 'pants', 'pantsCol', 'shoes', 'shoesCol', 'acc', 'glasses'], hair: ['hair', 'hairCol'], beard: ['beard', 'beardCol'] }[mode];
       const groups = mode === 'new' ? ['Wer bist du?', ...LOOK_GROUPS] : ['Auswahl'];
       let tab = groups[0];
       let dir = 0, walk = 0;
@@ -68,7 +68,7 @@ const Editor = {
           list.appendChild(n);
           return;
         }
-        const opts = LOOK_OPTS.filter((op) => (keysFor ? keysFor.includes(op.k) : op.g === tab));
+        const opts = keysFor ? keysFor.map((k) => LOOK_BY_KEY[k]).filter(Boolean) : LOOK_OPTS.filter((op) => op.g === tab);
         for (const op of opts) {
           const row = document.createElement('div');
           row.className = 'feat';
@@ -99,7 +99,7 @@ const Editor = {
             stp.append(a, out, b);
             row.appendChild(stp);
             const locks = Object.keys(LOCKED[op.k] || {});
-            if (locks.some((i) => isLocked(op.k, +i, unlocked))) { const hint = document.createElement('small'); hint.style.cssText = 'grid-column:1/-1;color:var(--ink-dim);font-family:var(--f-sign)'; hint.textContent = `🔒 ${op.v[locks[0]]}: im Trachtenladen in Innsbruck erhältlich`; row.appendChild(hint); }
+            if (locks.some((i) => isLocked(op.k, +i, unlocked))) { const hint = document.createElement('small'); hint.style.cssText = 'grid-column:1/-1;color:var(--ink-dim);font-family:var(--f-sign)'; hint.textContent = op.k === 'costume' ? '🔒 Kostüme gibt es im Kostümverleih Maskerade in Innsbruck' : `🔒 ${op.v[locks[0]]}: im Trachtenladen in Innsbruck erhältlich`; row.appendChild(hint); }
           }
           list.appendChild(row);
         }

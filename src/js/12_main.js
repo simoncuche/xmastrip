@@ -157,3 +157,16 @@ function wireInput() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) Snd.init(); });
 }
 window.addEventListener('load', boot);
+/* Homescreen-Apps und Browser halten gern eine alte Version im Cache: version.json ohne Cache lesen und zum Neuladen auffordern */
+async function checkUpdate() {
+  if (!/^https?:/.test(location.protocol)) return;
+  try {
+    const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j.v || j.v === APP_VERSION) return;
+    const el = UI.toast(`Neue Version ${j.v} verfügbar – hier tippen zum Neuladen.`, 'ach');
+    if (el) { el.addEventListener('pointerdown', () => location.reload(), { once: true }); setTimeout(() => el.classList.remove('out'), 400); }
+  } catch (e) { /* offline */ }
+}
+window.addEventListener('load', () => setTimeout(checkUpdate, 2500));

@@ -275,6 +275,22 @@ body.stick-on #stickHint { opacity: .2; }
 .cl-entry li + li { margin-top: 3px; }
 .keys kbd { font-family: var(--f-pixel); background: var(--board-2); border: 1px solid var(--board-line); border-radius: 3px; padding: 0 5px; color: var(--ink); }
 
+/* ---------- Ereignis-Ankündigung: Kinobalken, Titel in Pixelschrift ---------- */
+#cine { position: absolute; inset: 0; pointer-events: none; z-index: 34; overflow: hidden; }
+#cine .cbar { position: absolute; left: 0; right: 0; height: 18%; background: #05070b; transform: translateY(-101%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+#cine .cbar.bot { top: auto; bottom: 0; transform: translateY(101%); }
+#cine.on .cbar { transform: none; }
+#cine .ctext { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; opacity: 0; transition: opacity .3s; padding: 0 16px; }
+#cine.on .ctext { opacity: 1; }
+#cine .ckick { font-family: var(--f-sign); font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--amber); background: rgba(5,7,11,.75); display: inline-block; padding: 3px 10px; border-radius: 3px; animation: ckick .6s steps(2) infinite; }
+@keyframes ckick { 50% { opacity: .35; } }
+#cine .ctitle { font-family: var(--f-pixel); font-size: clamp(26px, 6.5vw, 44px); color: #fff4dc; text-shadow: 0 3px 0 #7a2420, 0 0 18px rgba(255,180,60,.5); margin: 10px 0 4px; line-height: 1.1; min-height: 1.1em; }
+#cine .csub { font-family: var(--f-sign); font-size: 15px; color: var(--ink); background: rgba(5,7,11,.7); display: inline-block; padding: 2px 10px; border-radius: 3px; }
+#cine .cflash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+#cine.flash .cflash { animation: cflash .5s ease-out; }
+@keyframes cflash { from { opacity: .7; } to { opacity: 0; } }
+@media (orientation: landscape) and (max-height: 600px) { #cine .ctitle { font-size: clamp(22px, 5vh, 34px); } #cine .cbar { height: 14%; } }
+
 #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; z-index: 35; display: grid; place-items: center; }
 #fade.on { opacity: 1; pointer-events: auto; }
 #fade canvas { display: none; width: min(92vw, 520px); image-rendering: pixelated; border: 2px solid #2b3e5c; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); margin-bottom: 14px; }
@@ -314,3 +330,36 @@ body.stick-on #stickHint { opacity: .2; }
 }
 
 body.ov #toasts { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+
+/* ---------- Querformat (Handy quer): HUD klein in die rechte obere Ecke, Meldungen schmal links ---------- */
+@media (orientation: landscape) and (max-height: 600px) {
+  #hud { left: auto; right: 0; width: 300px; max-width: 46vw; padding: calc(env(safe-area-inset-top, 0px) + 4px) calc(env(safe-area-inset-right, 0px) + 6px) 0 0; gap: 3px; }
+  .hud-row { gap: 3px; }
+  .plate { border-radius: 4px; box-shadow: none; }
+  .clock { min-width: 0; padding: 1px 6px; }
+  .clock b { font-size: 14px; }
+  .clock span { font-size: 8px; letter-spacing: .06em; }
+  .place { padding: 1px 6px; }
+  .place small { display: none; }
+  .place b { font-size: 11.5px; }
+  .money { padding: 1px 6px; }
+  .money b { font-size: 11.5px; }
+  .money span { font-size: 9px; }
+  .hud-btn { width: 30px; }
+  .hud-btn svg { width: 15px; height: 15px; }
+  .stats { padding: 2px 6px; gap: 5px; }
+  .coaster { width: 24px; height: 24px; border-width: 2px; box-shadow: inset 0 0 0 1px #fff; }
+  .bars { gap: 1px 6px; }
+  .bar { grid-template-columns: 30px 1fr; font-size: 7.5px; letter-spacing: .02em; gap: 3px; }
+  .bar i { height: 4px; }
+  .bar.prom { grid-template-columns: auto 1fr; }
+  .bar.prom b { font-size: 10px; }
+  .board-strip { font-size: 10px; padding: 1px 6px; gap: 4px; }
+  .board-strip .gl { font-size: 8px; padding: 0 4px; }
+  #toasts { left: calc(env(safe-area-inset-left, 0px) + 10px); right: auto; transform: none; top: calc(env(safe-area-inset-top, 0px) + 10px); width: min(320px, 40vw); gap: 4px; }
+  .toast { font-size: 12.5px; padding: 6px 8px 6px 10px; }
+  body.ov #toasts { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+}
+@media (min-width: 900px) {
+  #toasts { width: min(400px, 36vw); }
+}

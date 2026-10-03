@@ -153,6 +153,30 @@ const SHOPS = {
     it('o_jacke', 79, { n: 'Trainerjacke', icon: 'shirt', wear: { top: 10, topCol: 9 }, d: 'Blau mit Streifen' }),
     it('o_lauf', 119, { n: 'Laufschuhe Neon', icon: 'shoe', wear: { shoes: 5, shoesCol: 9 }, d: 'Leuchten im Dunkeln (fast)' }),
   ] }] },
+  mode: { title: 'Mode Alpin', mode: 'wear', venue: 'shop', intro: 'Daunenjacken, Beanies und alles, was nach Après-Ski riecht.', sections: [{ t: 'Outfits', items: [
+    it('m_apres', 149, { n: 'Après-Ski-Set', icon: 'shirt', wear: { top: 3, topCol: 2, hat: 3, hatCol: 7, pants: 2, pantsCol: 3, shoes: 1, shoesCol: 2, print: 0, costume: 0 }, d: 'Oranger Hoodie, Beanie, Cargohose, Boots' }),
+    it('m_winter', 189, { n: 'Winter-Set', icon: 'shirt', wear: { top: 10, topCol: 9, hat: 3, hatCol: 2, pants: 0, pantsCol: 0, shoes: 2, shoesCol: 2, print: 0, costume: 0 }, d: 'Trainerjacke blau, Beanie, Jeans, Wanderschuhe' }),
+    it('m_sport', 99, { n: 'Sport-Set', icon: 'shirt', wear: { top: 6, topCol: 0, print: 3, hat: 5, hatCol: 6, pants: 4, pantsCol: 2, shoes: 5, shoesCol: 9, costume: 0 }, d: 'Trikot Nummer 10, Trucker-Cap, Jogginghose, Laufschuhe' }),
+    it('m_fan', 59, { n: 'Fan-Set', icon: 'hat', wear: { acc: 4, hat: 1, hatCol: 1, top: 0, topCol: 13, print: 2, costume: 0 }, d: 'Fan-Schal, rote Cap, Shirt mit Schweizerkreuz' }),
+  ] }] },
+  boutique: { title: 'Boutique Maximilian', mode: 'wear', venue: 'shop', intro: 'Leise Musik, grosse Spiegel – und ein Verkäufer, der deine Schuhe mustert.', sections: [{ t: 'Fein gemacht', items: [
+    it('b_sakko', 299, { n: 'Sakko-Set', icon: 'shirt', wear: { top: 9, topCol: 10, pants: 5, pantsCol: 3, shoes: 3, shoesCol: 1, hat: 0, print: 0, acc: 3, costume: 0 }, d: 'Navy-Sakko, Anzughose, Halbschuhe, Uhr' }),
+    it('b_hemd', 129, { n: 'Hemd-Set', icon: 'shirt', wear: { top: 1, topCol: 13, pants: 1, pantsCol: 5, shoes: 3, shoesCol: 2, hat: 0, print: 0, costume: 0 }, d: 'Weisses Hemd, Chino beige, braune Halbschuhe' }),
+    it('b_leder', 349, { n: 'Rocker-Set', icon: 'shirt', wear: { top: 8, topCol: 16, pants: 0, pantsCol: 2, shoes: 1, shoesCol: 1, hat: 0, print: 0, costume: 0 }, d: 'Lederjacke, schwarze Jeans, Boots' }),
+    it('b_polo', 89, { n: 'Polo-Set', icon: 'shirt', wear: { top: 2, topCol: 7, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0, print: 0, costume: 0 }, d: 'Petrol-Polo, weisse Chino, Sneaker' }),
+  ] }] },
+  kostuem: { title: 'Maskerade Kostümverleih', mode: 'wear', venue: 'shop', intro: 'Perücken, Masken, Plüsch. „Fasching ist, wann du willst“, sagt der Verkäufer.', sections: [{ t: 'Kostüme (einmal kaufen, immer tragen)', items: [
+    it('k_pirat', 39, { n: 'Pirat', icon: 'hat', wear: { costume: 1 }, unlock: 'k_pirat', d: 'Dreispitz, Augenklappe, Streifenhemd' }),
+    it('k_cowboy', 39, { n: 'Cowboy', icon: 'hat', wear: { costume: 2 }, unlock: 'k_cowboy', d: 'Hut, Weste, rotes Halstuch' }),
+    it('k_baer', 49, { n: 'Bär', icon: 'shirt', wear: { costume: 3 }, unlock: 'k_baer', d: 'Plüsch-Overall mit Ohren' }),
+    it('k_kuh', 49, { n: 'Kuh', icon: 'shirt', wear: { costume: 4 }, unlock: 'k_kuh', d: 'Overall mit Flecken und Hörnern' }),
+    it('k_pinguin', 49, { n: 'Pinguin', icon: 'shirt', wear: { costume: 5 }, unlock: 'k_pinguin', d: 'Frack von Natur aus, oranger Schnabel' }),
+    it('k_dino', 59, { n: 'Dino', icon: 'shirt', wear: { costume: 6 }, unlock: 'k_dino', d: 'Grün, mit Zacken auf dem Rücken' }),
+    it('k_ritter', 59, { n: 'Ritter', icon: 'hat', wear: { costume: 7 }, unlock: 'k_ritter', d: 'Rüstung, Helm mit Federbusch' }),
+    it('k_held', 49, { n: 'Superheld', icon: 'shirt', wear: { costume: 8 }, unlock: 'k_held', d: 'Blauer Anzug, roter Umhang, Maske' }),
+    it('k_santa', 39, { n: 'Weihnachtsmann', icon: 'hat', wear: { costume: 9 }, unlock: 'k_santa', d: 'Rot, weisser Rauschebart, Zipfelmütze' }),
+    it('k_elch', 49, { n: 'Elch', icon: 'shirt', wear: { costume: 10 }, unlock: 'k_elch', d: 'Geweih und rote Nase' }),
+  ] }, { t: 'Zurück zu dir', items: [it('k_none', 0, { n: 'Kostüm ablegen', icon: 'shirt', wear: { costume: 0 }, d: 'Wieder in deinen eigenen Kleidern' })] }] },
   tracht: { title: 'Trachten Holzer', mode: 'wear', venue: 'shop', intro: 'Es riecht nach Leder und Loden. Die Verkäuferin lächelt wissend.', sections: [{ t: 'Echte Tracht', items: [
     it('o_hut', 69, { n: 'Tirolerhut mit Feder', icon: 'hat', wear: { hat: 9, hatCol: 8 }, unlock: 'tirolerhut', d: 'Loden, mit Spielhahnfeder' }),
     it('o_hemd', 79, { n: 'Trachtenhemd kariert', icon: 'shirt', wear: { top: 11, topCol: 0 }, unlock: 'trachtenhemd', d: 'Rot-weiss kariert' }),
@@ -225,7 +249,7 @@ const Story = {
       { x: 65, y: 63, n: 'Rouge', c: N }, { x: 50, y: 80, n: 'Casino', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V }, { x: 79, y: 82, n: 'Tram Bergisel', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
-      { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
+      { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 4, y: 64, n: 'Mode', c: S }, { x: 11, y: 64, n: 'Boutique', c: S }, { x: 19, y: 64, n: 'Kostüme', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
       { x: 43, y: 72, n: 'Souvenir', c: S }, { x: 49, y: 72, n: 'Trafik', c: S }, { x: 19, y: 80, n: 'Bankomat', c: A }, { x: 60, y: 74, n: 'Bankomat', c: A }, { x: 28, y: 80, n: 'Barbier', c: S }, { x: 43, y: 80, n: 'Konditorei', c: S }, { x: 61, y: 77, n: 'Würstel', c: S }, { x: 87, y: 77, n: 'Taxi', c: A },
     ];
   },
@@ -421,7 +445,7 @@ const Story = {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
     /* Tag 5: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
-    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
+    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.announce('monster').then(() => this.ev_monster()); return; }
     /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
        einmal gemischt (flags.evOrder), damit jede Reise anders verläuft. Passt das nächste geplante Ereignis zur Zeit nicht
        (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
@@ -436,7 +460,40 @@ const Story = {
     if (!pool.length) return;
     const e = pool[0];
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
-    this['ev_' + e.id]();
+    this.announce(e.id).then(() => this['ev_' + e.id]());
+  },
+  /* Jedes Ereignis beginnt mit einer kurzen Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich
+     Buchstabe für Buchstabe hin, Fanfare, Blitz – dann geht es in der Spielwelt los. Die Welt steht derweil (G.busy). */
+  EV_TITLES: {
+    ueberfall: ['Nachtschatten', 'Schritte hinter dir in der Gasse …'],
+    polizei: ['Blaulicht', 'Die Polizei hat jemanden im Visier'],
+    hundkatze: ['Hund gegen Katze', 'Showdown auf dem Platz'],
+    taube: ['Die Taube', 'Von oben droht Gefahr'],
+    krampus: ['Krampuslauf', 'Es rasselt und klirrt in den Gassen'],
+    portemonnaie: ['Fundsache', 'Da liegt etwas auf dem Pflaster'],
+    ufo: ['Unbekanntes Flugobjekt', 'Lichter über der Maria-Theresien-Strasse'],
+    trump: ['Hoher Besuch', 'Motorradeskorte und Sirenen'],
+    verfolgung: ['Taschendieb', 'Halt den Dieb!'],
+    monster: ['Godzilla & King Kong', 'Die Stadt bebt'],
+  },
+  async announce(id) {
+    const el = document.getElementById('cine');
+    const [title, sub] = this.EV_TITLES[id] || ['Ereignis', ''];
+    if (!el) return;
+    G.busy++;
+    const kick = el.querySelector('.ckick'), tt = el.querySelector('.ctitle'), ss = el.querySelector('.csub');
+    kick.textContent = `Ereignis · Tag ${dayOf(G.S.time) + 1}`; tt.textContent = ''; ss.textContent = '';
+    el.classList.add('on');
+    Snd.tone(392, 0.12, 'square', 0.06); setTimeout(() => Snd.tone(523, 0.12, 'square', 0.06), 140); setTimeout(() => Snd.tone(659, 0.25, 'square', 0.07), 280);
+    G.fx.shake = Math.max(G.fx.shake || 0, 0.35);
+    await sleep(520);
+    for (const ch of title) { tt.textContent += ch; if (ch !== ' ') Snd.tone(1200 + Math.random() * 400, 0.03, 'square', 0.025); await sleep(45); }
+    ss.textContent = sub;
+    el.classList.add('flash'); Snd.sfx('ding');
+    await sleep(1500);
+    el.classList.remove('on'); el.classList.remove('flash');
+    await sleep(450);
+    G.busy--;
   },
   /* Helfer für Ereignisse in der Spielwelt */
   wait(cond, max = 15000) { return new Promise((res) => { const t0 = performance.now(); const iv = setInterval(() => { if (cond() || performance.now() - t0 > max) { clearInterval(iv); res(); } }, 50); }); },
@@ -2005,8 +2062,9 @@ const Story = {
       if (item.unlock) G.S.unlocked[item.unlock] = 1;
       Object.assign(G.S.look, item.wear);
       G.player.look = G.S.look;
-      UI.toast(`${item.n} gekauft und angezogen.`);
+      UI.toast(item.price ? `${item.n} gekauft und angezogen.` : `${item.n}.`);
       if (tracht()) achieve('tracht');
+      if (item.wear.costume) achieve('kostuem');
       return;
     }
     if (item.special === 'tip' || item.special === 'bottle') {

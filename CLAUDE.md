@@ -6,7 +6,7 @@ Läuft komplett im Browser ohne Server, ohne Bibliotheken, ohne Build-Tools auss
 ## Bauen und Starten
 
 ```bash
-python3 build.py          # erzeugt dist/index.html (offline spielbar) und dist/artifact.html
+python3 build.py          # erzeugt dist/index.html (offline spielbar), dist/artifact.html, Icons, manifest.webmanifest, version.json
 open dist/index.html      # oder einfach per Doppelklick im Browser öffnen
 python3 tests/smoke_test.py   # optional: Playwright-Durchlauf der ganzen Story (pip install playwright; CHROMIUM_PATH=… für einen vorhandenen Chromium)
 ```
@@ -23,7 +23,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 |---|---|
 | `00_util.js` | Hilfsfunktionen, Pixel-Zeichnen (`R`, `P`, `E`, `line`), Pixelschrift `pxText`, `MAP_BUILDERS` |
 | `01_audio.js` | `Snd`: synthetische Soundeffekte und Musik-Loops (WebAudio) |
-| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (27 Merkmale, 251 Varianten), Porträt 64×64, Sprite-Sheets 18×26 |
+| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (28 Merkmale inkl. `costume`), Kostüme `COSTUMES` + `effLook` (ersetzen Kleidung, Extras via `drawCostumeSprite`/`drawCostumeP`), Porträt 64×64, Sprite-Sheets 18×26 |
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
 | `04_state.js` | Spielzustand `G`, `newState`, Gegenstände `ITEMS`, Sehenswürdigkeiten `SIGHTS`, Erlebnisse `ACH`, Werte-Logik, Speichern |
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
@@ -61,6 +61,8 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   Struktur von `newState` die Versionsnummer `v` und `SAVE_KEY` erhöhen.
 - Datum: Tag 0 ist Freitag, 11. Dezember 2026 (`START_DATE`, `DAYS`, `dateStr`, `dateLong`). Öffnungszeiten prüfen per `dayStr()`.
 - Bergisel: `Story.bergiselTram/bergiselBack` (Tram-Szene), `bergiselTicket` (Tagesticket `flags.bergiselTicket`), `bergiselTower` (Lift-Szene, Panorama, `SHOPS.turmcafe`), `skijump` (Trainer, Bedingungen, Auswertung, Rekord `G.S.rec.jump`).
+- Ereignisse starten über `Story.announce(id)` (Sequenz mit `#cine`, Titel in `Story.EV_TITLES`), danach `Story.ev_<id>`.
+- Kleider: `SHOPS.mode/boutique` (Sets via `wear`), `SHOPS.kostuem` (`wear: { costume: n }`, Freischaltung `unlock`, `LOCKED.costume`); Querformat-Layout per `@media (orientation: landscape) and (max-height: 600px)`.
 - Barbier: `SHOPS.barbier` hat `special: 'hair' | 'beard'` (Editor) und `'glatze' | 'rasur'` (setzt `look.hair`/`look.beard` auf 0); Animation `Story.barberAnim(kind, shave)` auf dem nächsten der drei Sessel.
 - Läden: `mode: 'take'` legt alles ins Inventar, `mode: 'eat'` konsumiert sofort oder legt per 🎒-Knopf ins Inventar (`Story.buy(def, item, cur, { take })`).
   Alles in der Tasche (Inventar) mit Typ `drink`/`food`/`med` ist jederzeit im Handy konsumierbar.

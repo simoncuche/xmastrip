@@ -121,6 +121,7 @@ const ACH = {
   springer: ['Adlerflug', 'Von der Bergiselschanze gesprungen'],
   kpunkt: ['K-Punkt', 'Am Bergisel über 120 Meter gesprungen'],
   rekord: ['Schanzenrekord', 'Am Bergisel weiter als 138 Meter geflogen'],
+  kostuem: ['Maskerade', 'Im Kostüm durch Innsbruck'],
   museum: ['Kulturbanause', 'Im Tirol Panorama das Riesenrundgemälde gesehen'],
   sturz: ['Bauchlandung', 'Beim Skispringen gestürzt – und überlebt'],
   turm: ['Turmblick', 'Auf den Stadtturm gestiegen'],
@@ -301,6 +302,6 @@ function saveGame(silent) {
   catch (e) { if (!silent) UI.toast('Speichern ist in diesem Browser nicht möglich.', 'warn'); return false; }
 }
 function loadSave() {
-  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); return o && o.v === 4 ? o : null; } catch (e) { return null; }
+  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); if (o && o.look && o.look.costume == null) o.look.costume = 0; return o && o.v === 4 ? o : null; } catch (e) { return null; }
 }
 function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }

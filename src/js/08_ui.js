@@ -111,6 +111,7 @@ const UI = {
     const close = () => { if (d.classList.contains('out')) return; d.classList.add('out'); setTimeout(() => d.remove(), 350); };
     d.addEventListener('pointerdown', (e) => { e.stopPropagation(); close(); });
     setTimeout(close, type === 'ach' ? 9000 : 8000);
+    return d;
   },
   /* ---- Sprecher ---- */
   speaker(sp) {

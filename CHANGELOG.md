@@ -3,6 +3,15 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.7.0 – 03.10.2026
+
+- Homescreen-Icon: Wer das Spiel auf den Startbildschirm legt, bekommt jetzt einen Pixel-Bierkrug statt des Buchstabens „W“ (Web-Manifest, Apple-Touch-Icon). Dazu prüft das Spiel beim Start, ob eine neue Version online ist, und bietet das Neuladen an – so bleibt keine alte Version im Cache hängen.
+- Ereignisse beginnen mit einer Ankündigungs-Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich hin, Fanfare, Blitz – dann geht es in der Welt los (auch bei Godzilla & King Kong).
+- Drei neue Läden in der Maria-Theresien-Strasse, alle betretbar: Mode Alpin (Après-Ski-, Winter-, Sport- und Fan-Set), Boutique Maximilian (Sakko-, Hemd-, Rocker- und Polo-Set) und der Kostümverleih Maskerade.
+- Kostüme für den Avatar: Pirat, Cowboy, Bär, Kuh, Pinguin, Dino, Ritter, Superheld, Weihnachtsmann und Elch – mit Haube, Ohren, Hörnern, Geweih, Zacken, Umhang, Maske, Augenklappe und Zipfelmütze auf Spielfigur und Porträt. Einmal gekauft, lassen sie sich im Kleiderschrank jederzeit an- und ablegen. Erlebnis „Maskerade“.
+- Querformat: Die Anzeigen (Uhr, Ort, Geld, Werte, Ziel) stehen klein in der rechten oberen Ecke, Meldungen sind schmal und links oben statt über die ganze Breite.
+- Casino: Die Konditorei-Schirme stehen seit 2.6.0 nicht mehr vor der Tür; wer sie noch sieht, spielt eine alte Version – der neue Update-Hinweis hilft beim Neuladen.
+
 ## 2.6.0 – 03.10.2026
 
 - Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.

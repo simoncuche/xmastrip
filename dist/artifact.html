@@ -280,6 +280,22 @@ body.stick-on #stickHint { opacity: .2; }
 .cl-entry li + li { margin-top: 3px; }
 .keys kbd { font-family: var(--f-pixel); background: var(--board-2); border: 1px solid var(--board-line); border-radius: 3px; padding: 0 5px; color: var(--ink); }
 
+/* ---------- Ereignis-Ankündigung: Kinobalken, Titel in Pixelschrift ---------- */
+#cine { position: absolute; inset: 0; pointer-events: none; z-index: 34; overflow: hidden; }
+#cine .cbar { position: absolute; left: 0; right: 0; height: 18%; background: #05070b; transform: translateY(-101%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+#cine .cbar.bot { top: auto; bottom: 0; transform: translateY(101%); }
+#cine.on .cbar { transform: none; }
+#cine .ctext { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; opacity: 0; transition: opacity .3s; padding: 0 16px; }
+#cine.on .ctext { opacity: 1; }
+#cine .ckick { font-family: var(--f-sign); font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--amber); background: rgba(5,7,11,.75); display: inline-block; padding: 3px 10px; border-radius: 3px; animation: ckick .6s steps(2) infinite; }
+@keyframes ckick { 50% { opacity: .35; } }
+#cine .ctitle { font-family: var(--f-pixel); font-size: clamp(26px, 6.5vw, 44px); color: #fff4dc; text-shadow: 0 3px 0 #7a2420, 0 0 18px rgba(255,180,60,.5); margin: 10px 0 4px; line-height: 1.1; min-height: 1.1em; }
+#cine .csub { font-family: var(--f-sign); font-size: 15px; color: var(--ink); background: rgba(5,7,11,.7); display: inline-block; padding: 2px 10px; border-radius: 3px; }
+#cine .cflash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+#cine.flash .cflash { animation: cflash .5s ease-out; }
+@keyframes cflash { from { opacity: .7; } to { opacity: 0; } }
+@media (orientation: landscape) and (max-height: 600px) { #cine .ctitle { font-size: clamp(22px, 5vh, 34px); } #cine .cbar { height: 14%; } }
+
 #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; z-index: 35; display: grid; place-items: center; }
 #fade.on { opacity: 1; pointer-events: auto; }
 #fade canvas { display: none; width: min(92vw, 520px); image-rendering: pixelated; border: 2px solid #2b3e5c; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); margin-bottom: 14px; }
@@ -320,6 +336,39 @@ body.stick-on #stickHint { opacity: .2; }
 
 body.ov #toasts { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
 
+/* ---------- Querformat (Handy quer): HUD klein in die rechte obere Ecke, Meldungen schmal links ---------- */
+@media (orientation: landscape) and (max-height: 600px) {
+  #hud { left: auto; right: 0; width: 300px; max-width: 46vw; padding: calc(env(safe-area-inset-top, 0px) + 4px) calc(env(safe-area-inset-right, 0px) + 6px) 0 0; gap: 3px; }
+  .hud-row { gap: 3px; }
+  .plate { border-radius: 4px; box-shadow: none; }
+  .clock { min-width: 0; padding: 1px 6px; }
+  .clock b { font-size: 14px; }
+  .clock span { font-size: 8px; letter-spacing: .06em; }
+  .place { padding: 1px 6px; }
+  .place small { display: none; }
+  .place b { font-size: 11.5px; }
+  .money { padding: 1px 6px; }
+  .money b { font-size: 11.5px; }
+  .money span { font-size: 9px; }
+  .hud-btn { width: 30px; }
+  .hud-btn svg { width: 15px; height: 15px; }
+  .stats { padding: 2px 6px; gap: 5px; }
+  .coaster { width: 24px; height: 24px; border-width: 2px; box-shadow: inset 0 0 0 1px #fff; }
+  .bars { gap: 1px 6px; }
+  .bar { grid-template-columns: 30px 1fr; font-size: 7.5px; letter-spacing: .02em; gap: 3px; }
+  .bar i { height: 4px; }
+  .bar.prom { grid-template-columns: auto 1fr; }
+  .bar.prom b { font-size: 10px; }
+  .board-strip { font-size: 10px; padding: 1px 6px; gap: 4px; }
+  .board-strip .gl { font-size: 8px; padding: 0 4px; }
+  #toasts { left: calc(env(safe-area-inset-left, 0px) + 10px); right: auto; transform: none; top: calc(env(safe-area-inset-top, 0px) + 10px); width: min(320px, 40vw); gap: 4px; }
+  .toast { font-size: 12.5px; padding: 6px 8px 6px 10px; }
+  body.ov #toasts { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+}
+@media (min-width: 900px) {
+  #toasts { width: min(400px, 36vw); }
+}
+
 body:not(.touch) #btnA, body:not(.touch) #stickHint { display: none; }
 body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); }
 </style>
@@ -349,6 +398,7 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
     <div id="actLabel" hidden></div>
     <button id="btnA" aria-label="Aktion">A</button>
   </div>
+  <div id="cine" aria-hidden="true"><div class="cflash"></div><div class="cbar"></div><div class="cbar bot"></div><div class="ctext"><span class="ckick"></span><div class="ctitle"></div><span class="csub"></span></div></div>
   <div id="toasts" aria-live="polite"></div>
   <div id="dialog" hidden><canvas id="dlgPort" width="64" height="64"></canvas><div><div class="dlg-name" id="dlgName"></div><div class="dlg-text" id="dlgText"></div><div class="dlg-choices" id="dlgChoices"></div></div></div>
   <div id="overlay" hidden></div>
@@ -358,9 +408,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "2.6.0";
+const APP_VERSION = "2.7.0";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "2.6.0", "date": "03.10.2026", "items": ["Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.", "Skisprung-Minispiel „Gästespringen“ bei Trainer Sepp (25 € Leihgebühr, Tageslicht, nüchtern): Start antippen, Anlauf mit Tempoanzeige, am Schanzentisch im richtigen Moment abspringen, im Flug die Haltung mit ◀ ▶ im grünen Bereich halten (Wind, Böen und Alkohol machen es wackelig), kurz vor dem Boden Telemark drücken. Weite, Haltungsnoten von fünf Punktrichtern und Gesamtpunkte; Sturz bei zu viel Schräglage. Erlebnisse „Bergisel“, „Adlerflug“, „K-Punkt“ (120 m), „Schanzenrekord“ (über 138 m), „Bauchlandung“ und „Kulturbanause“; weitester Sprung im Handy-Status.", "Casino: Die Sonnenschirme der Konditorei standen vor dem Casino-Eingang und blockierten die Tür. Jetzt stehen sie vor der Konditorei."]}, {"v": "2.5.0", "date": "03.10.2026", "items": ["Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.", "Die Verfolgungsjagd mit dem Taschendieb ist härter: Er rennt so schnell wie du, schlägt im Zickzack neun Haken, spurtet kurz, wenn du ihm auf die Pelle rückst, und lässt sich nicht mehr gleich beim Rempler fassen. Erst nach 15 Sekunden geht ihm die Luft aus – dann heisst es Haken abschneiden.", "Jeder Laden hat jetzt einen eigenen Innenraum: Skiständer und Turnschuhwand im Sportgeschäft, Schaufensterpuppen, Hutwand und Umkleide beim Trachtenhändler, Postkartenständer im Souvenirladen, weisse Apotheke mit grünem Kreuz und Wartebank, drei Regalgänge und Kühlschrank im Supermarkt, Vitrine und runde Tischchen in der Konditorei.", "Der Coiffeur hat drei Barbiersessel mit Spiegeln; du setzt dich in den nächsten freien.", "Beim Barbier gibt es neu „Glatze rasieren“ (15 €) und „Bart abrasieren“ (12 €): Maschine bzw. Messer, Haare fliegen, und der Avatar ist danach sofort kahl oder glatt rasiert. Erlebnis „Blank“."]}, {"v": "2.4.0", "date": "03.10.2026", "items": ["Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.", "Coiffeur: Barbierstuhl, Spiegel, drehender Barber-Pole. Beim Haarschnitt oder Bart setzt du dich in den Stuhl, Mehmet kommt mit der Schere, es schnippt und die Haare fliegen – dann darfst du den neuen Look wählen.", "Apotheke, Trafik und Supermarkt verkaufen Kondome (3er-Pack, in der Tasche mit Zähler). Apothekenartikel landen wie bisher in der Tasche.", "Jessy steht nachts (22–4 Uhr) in den Viaduktbögen und bietet Händchenhalten, Kuscheln oder das volle Programm an – aber nur mit Gummi, auch beim Händchenhalten. Erlebnis „Safer Sex“, die Jungs reden danach darüber."]}, {"v": "2.3.0", "date": "03.10.2026", "items": ["Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.", "Hinweise bleiben länger stehen (8 Sekunden) und lassen sich antippen, um sie zu schliessen."]}, {"v": "2.2.0", "date": "03.10.2026", "items": ["Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.", "Bevor man vor Müdigkeit im Stehen einschläft, gibt es eine letzte Chance: Tasche öffnen und etwas essen oder trinken, Kaffee an der Theke, Taxi ins Hotel oder im Zimmer gleich ins Bett."]}, {"v": "2.1.2", "date": "03.10.2026", "items": ["Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft."]}, {"v": "2.1.1", "date": "03.10.2026", "items": ["Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5."]}, {"v": "2.1.0", "date": "03.10.2026", "items": ["Die Ereignisse spielen jetzt direkt in der Spielwelt: Das UFO sinkt neben dir herab, der Lichtkegel leuchtet auf den Platz, das grüne Alien steigt aus und kommt zu dir. Trumps Kolonne mit Polizeimotorrad fährt auf der nächsten Strasse vor, er und die Secret-Service-Männer steigen aus und gehen zu dir. Der Taschendieb rennt mit deinem Portemonnaie quer über die Karte und du musst ihn selbst einholen (rennen!). Godzilla und King Kong stapfen als Riesen über die Karte, ihre Fussschatten fallen um dich herum – 30 Sekunden ausweichen in der echten Stadt.", "Godzilla und King Kong kommen jetzt an Tag 5.", "Neue Hautfarbe „Alien-Grün“ im Editor."]}, {"v": "2.0.0", "date": "03.10.2026", "items": ["Höchstens ein Zufallsereignis pro Tag.", "Neue Ereignisse: ein UFO landet nachts auf dem Platz und ein Alien will zum Anführer (Geschenk: leuchtender Stein); Donald Trump trifft mit Wagenkolonne und Secret Service ein; ein Taschendieb klaut das Portemonnaie – Verfolgungsjagd als Minispiel (über Hindernisse springen, einholen).", "Tag 10: Godzilla und King Kong überfallen Innsbruck. Ausweich-Minispiel gegen die Tritte; wer erwischt wird, wacht im Spital auf (Selbstbehalt, ein Tag weg).", "Heimreise: Am Hauptbahnhof mit dem Railjet zurück nach Luzern beendet das Spiel endgültig, mit Statistik und Abschluss des Spielstands. Hinweise darauf im Ziel, im Reiseplan und am Bahnhof. Keine Zeitbegrenzung.", "Casino Innsbruck bei der Triumphpforte (15–3 Uhr, Dresscode): Roulette mit drehendem Kessel (Rot/Schwarz, Gerade/Ungerade, Plein 35:1) und Blackjack gegen die Bank (Karte, Halten, Verdoppeln), Casinobar. Erlebnisse „Spieler“, „Plein!“, „Siebzehn und vier“."]}, {"v": "1.10.0", "date": "03.10.2026", "items": ["Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse."]}, {"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "2.7.0", "date": "03.10.2026", "items": ["Homescreen-Icon: Wer das Spiel auf den Startbildschirm legt, bekommt jetzt einen Pixel-Bierkrug statt des Buchstabens „W“ (Web-Manifest, Apple-Touch-Icon). Dazu prüft das Spiel beim Start, ob eine neue Version online ist, und bietet das Neuladen an – so bleibt keine alte Version im Cache hängen.", "Ereignisse beginnen mit einer Ankündigungs-Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich hin, Fanfare, Blitz – dann geht es in der Welt los (auch bei Godzilla & King Kong).", "Drei neue Läden in der Maria-Theresien-Strasse, alle betretbar: Mode Alpin (Après-Ski-, Winter-, Sport- und Fan-Set), Boutique Maximilian (Sakko-, Hemd-, Rocker- und Polo-Set) und der Kostümverleih Maskerade.", "Kostüme für den Avatar: Pirat, Cowboy, Bär, Kuh, Pinguin, Dino, Ritter, Superheld, Weihnachtsmann und Elch – mit Haube, Ohren, Hörnern, Geweih, Zacken, Umhang, Maske, Augenklappe und Zipfelmütze auf Spielfigur und Porträt. Einmal gekauft, lassen sie sich im Kleiderschrank jederzeit an- und ablegen. Erlebnis „Maskerade“.", "Querformat: Die Anzeigen (Uhr, Ort, Geld, Werte, Ziel) stehen klein in der rechten oberen Ecke, Meldungen sind schmal und links oben statt über die ganze Breite.", "Casino: Die Konditorei-Schirme stehen seit 2.6.0 nicht mehr vor der Tür; wer sie noch sieht, spielt eine alte Version – der neue Update-Hinweis hilft beim Neuladen."]}, {"v": "2.6.0", "date": "03.10.2026", "items": ["Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.", "Skisprung-Minispiel „Gästespringen“ bei Trainer Sepp (25 € Leihgebühr, Tageslicht, nüchtern): Start antippen, Anlauf mit Tempoanzeige, am Schanzentisch im richtigen Moment abspringen, im Flug die Haltung mit ◀ ▶ im grünen Bereich halten (Wind, Böen und Alkohol machen es wackelig), kurz vor dem Boden Telemark drücken. Weite, Haltungsnoten von fünf Punktrichtern und Gesamtpunkte; Sturz bei zu viel Schräglage. Erlebnisse „Bergisel“, „Adlerflug“, „K-Punkt“ (120 m), „Schanzenrekord“ (über 138 m), „Bauchlandung“ und „Kulturbanause“; weitester Sprung im Handy-Status.", "Casino: Die Sonnenschirme der Konditorei standen vor dem Casino-Eingang und blockierten die Tür. Jetzt stehen sie vor der Konditorei."]}, {"v": "2.5.0", "date": "03.10.2026", "items": ["Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.", "Die Verfolgungsjagd mit dem Taschendieb ist härter: Er rennt so schnell wie du, schlägt im Zickzack neun Haken, spurtet kurz, wenn du ihm auf die Pelle rückst, und lässt sich nicht mehr gleich beim Rempler fassen. Erst nach 15 Sekunden geht ihm die Luft aus – dann heisst es Haken abschneiden.", "Jeder Laden hat jetzt einen eigenen Innenraum: Skiständer und Turnschuhwand im Sportgeschäft, Schaufensterpuppen, Hutwand und Umkleide beim Trachtenhändler, Postkartenständer im Souvenirladen, weisse Apotheke mit grünem Kreuz und Wartebank, drei Regalgänge und Kühlschrank im Supermarkt, Vitrine und runde Tischchen in der Konditorei.", "Der Coiffeur hat drei Barbiersessel mit Spiegeln; du setzt dich in den nächsten freien.", "Beim Barbier gibt es neu „Glatze rasieren“ (15 €) und „Bart abrasieren“ (12 €): Maschine bzw. Messer, Haare fliegen, und der Avatar ist danach sofort kahl oder glatt rasiert. Erlebnis „Blank“."]}, {"v": "2.4.0", "date": "03.10.2026", "items": ["Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.", "Coiffeur: Barbierstuhl, Spiegel, drehender Barber-Pole. Beim Haarschnitt oder Bart setzt du dich in den Stuhl, Mehmet kommt mit der Schere, es schnippt und die Haare fliegen – dann darfst du den neuen Look wählen.", "Apotheke, Trafik und Supermarkt verkaufen Kondome (3er-Pack, in der Tasche mit Zähler). Apothekenartikel landen wie bisher in der Tasche.", "Jessy steht nachts (22–4 Uhr) in den Viaduktbögen und bietet Händchenhalten, Kuscheln oder das volle Programm an – aber nur mit Gummi, auch beim Händchenhalten. Erlebnis „Safer Sex“, die Jungs reden danach darüber."]}, {"v": "2.3.0", "date": "03.10.2026", "items": ["Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.", "Hinweise bleiben länger stehen (8 Sekunden) und lassen sich antippen, um sie zu schliessen."]}, {"v": "2.2.0", "date": "03.10.2026", "items": ["Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.", "Bevor man vor Müdigkeit im Stehen einschläft, gibt es eine letzte Chance: Tasche öffnen und etwas essen oder trinken, Kaffee an der Theke, Taxi ins Hotel oder im Zimmer gleich ins Bett."]}, {"v": "2.1.2", "date": "03.10.2026", "items": ["Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft."]}, {"v": "2.1.1", "date": "03.10.2026", "items": ["Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5."]}, {"v": "2.1.0", "date": "03.10.2026", "items": ["Die Ereignisse spielen jetzt direkt in der Spielwelt: Das UFO sinkt neben dir herab, der Lichtkegel leuchtet auf den Platz, das grüne Alien steigt aus und kommt zu dir. Trumps Kolonne mit Polizeimotorrad fährt auf der nächsten Strasse vor, er und die Secret-Service-Männer steigen aus und gehen zu dir. Der Taschendieb rennt mit deinem Portemonnaie quer über die Karte und du musst ihn selbst einholen (rennen!). Godzilla und King Kong stapfen als Riesen über die Karte, ihre Fussschatten fallen um dich herum – 30 Sekunden ausweichen in der echten Stadt.", "Godzilla und King Kong kommen jetzt an Tag 5.", "Neue Hautfarbe „Alien-Grün“ im Editor."]}, {"v": "2.0.0", "date": "03.10.2026", "items": ["Höchstens ein Zufallsereignis pro Tag.", "Neue Ereignisse: ein UFO landet nachts auf dem Platz und ein Alien will zum Anführer (Geschenk: leuchtender Stein); Donald Trump trifft mit Wagenkolonne und Secret Service ein; ein Taschendieb klaut das Portemonnaie – Verfolgungsjagd als Minispiel (über Hindernisse springen, einholen).", "Tag 10: Godzilla und King Kong überfallen Innsbruck. Ausweich-Minispiel gegen die Tritte; wer erwischt wird, wacht im Spital auf (Selbstbehalt, ein Tag weg).", "Heimreise: Am Hauptbahnhof mit dem Railjet zurück nach Luzern beendet das Spiel endgültig, mit Statistik und Abschluss des Spielstands. Hinweise darauf im Ziel, im Reiseplan und am Bahnhof. Keine Zeitbegrenzung.", "Casino Innsbruck bei der Triumphpforte (15–3 Uhr, Dresscode): Roulette mit drehendem Kessel (Rot/Schwarz, Gerade/Ungerade, Plein 35:1) und Blackjack gegen die Bank (Karte, Halten, Verdoppeln), Casinobar. Erlebnisse „Spieler“, „Plein!“, „Siebzehn und vier“."]}, {"v": "1.10.0", "date": "03.10.2026", "items": ["Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse."]}, {"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -677,19 +727,42 @@ const LOOK_OPTS = [
   { g: 'Kleidung', k: 'shoes', n: 'Schuhe', v: ['Sneaker', 'Boots', 'Wanderschuhe', 'Halbschuhe', 'Sandalen', 'Laufschuhe', 'Haferlschuhe'] },
   { g: 'Kleidung', k: 'shoesCol', n: 'Farbe Schuhe', col: [['Weiss', '#efede8'], ['Schwarz', '#1f1f23'], ['Braun', '#6e4527'], ['Grau', '#85878c'], ['Rot', '#c3352c'], ['Blau', '#2f5fb8'], ['Grün', '#3f8e4b'], ['Beige', '#cbb58f'], ['Orange', '#e3762a'], ['Neon', '#c8f03a']] },
   { g: 'Kleidung', k: 'acc', n: 'Accessoire', v: ['Keines', 'Rucksack', 'Halskette', 'Armbanduhr', 'Fan-Schal', 'Bauchtasche'] },
+  { g: 'Kleidung', k: 'costume', n: 'Kostüm', v: ['Keines', 'Pirat', 'Cowboy', 'Bär', 'Kuh', 'Pinguin', 'Dino', 'Ritter', 'Superheld', 'Weihnachtsmann', 'Elch'] },
 ];
+/* Kostüme (Kostümverleih Maskerade): überschreiben Oberteil, Hose, Schuhe, Kopfbedeckung und zeichnen Extras (Haube, Ohren, Umhang …) */
+const COSTUMES = {
+  1: { n: 'Pirat', top: 0, hat: 7, pants: 0, shoes: 1, topC: '#c8352d', pantsC: '#222226', shoeC: '#1f1f23', hatC: '#232327' },
+  2: { n: 'Cowboy', top: 7, hat: 7, pants: 0, shoes: 1, topC: '#c8352d', pantsC: '#38558a', shoeC: '#6e4527', hatC: '#6a4428' },
+  3: { n: 'Bär', top: 4, pants: 4, shoes: 0, topC: '#7a4a28', pantsC: '#7a4a28', shoeC: '#5a3418', hood: '#7a4a28', belly: '#c8a070' },
+  4: { n: 'Kuh', top: 4, pants: 4, shoes: 0, topC: '#f4f0e6', pantsC: '#f4f0e6', shoeC: '#222226', hood: '#f4f0e6' },
+  5: { n: 'Pinguin', top: 4, pants: 4, shoes: 0, topC: '#1c1c24', pantsC: '#1c1c24', shoeC: '#e8902a', hood: '#1c1c24', belly: '#f4f0e6' },
+  6: { n: 'Dino', top: 4, pants: 4, shoes: 0, topC: '#3f8e4b', pantsC: '#3f8e4b', shoeC: '#2f6a38', hood: '#3f8e4b', belly: '#b8e08a' },
+  7: { n: 'Ritter', top: 4, pants: 5, shoes: 1, topC: '#9aa0a8', pantsC: '#8a9098', shoeC: '#5a5e64', hood: '#9aa0a8' },
+  8: { n: 'Superheld', top: 4, pants: 4, shoes: 1, topC: '#2f5fb8', pantsC: '#2f5fb8', shoeC: '#c8352d' },
+  9: { n: 'Weihnachtsmann', top: 4, pants: 4, shoes: 1, topC: '#c8352d', pantsC: '#c8352d', shoeC: '#1f1f23', beard: 8, beardCol: 10 },
+  10: { n: 'Elch', top: 4, pants: 4, shoes: 0, topC: '#6b4a2e', pantsC: '#6b4a2e', shoeC: '#4a3018', hood: '#6b4a2e', belly: '#a88a60' },
+};
+/* Wirksames Aussehen: mit Kostüm werden Kleidungs-Merkmale ersetzt, der Rest (Gesicht, Haar) bleibt */
+function effLook(L) {
+  const K = L.costume | 0; if (!K || !COSTUMES[K]) return L;
+  const cs = COSTUMES[K];
+  const E = Object.assign({}, L, { costume: K, top: cs.top, print: 0, acc: 0, hat: cs.hat || 0, pants: cs.pants, shoes: cs.shoes, glasses: K === 7 ? 0 : L.glasses });
+  if (cs.beard != null) { E.beard = cs.beard; E.beardCol = cs.beardCol; }
+  if (cs.hood) E.hair = 0;
+  return E;
+}
 const LOOK_GROUPS = ['Körper', 'Kopf', 'Gesicht', 'Kleidung'];
 const LOOK_BY_KEY = Object.fromEntries(LOOK_OPTS.map((o) => [o.k, o]));
 const LOOK_COUNT = LOOK_OPTS.reduce((s, o) => s + (o.col || o.v).length, 0);
 /* Trachtenstücke sind erst nach dem Kauf im Trachtenladen frei */
-const LOCKED = { hat: { 9: 'tirolerhut' }, top: { 11: 'trachtenhemd' }, pants: { 7: 'lederhose' }, shoes: { 6: 'haferlschuhe' } };
+const LOCKED = { hat: { 9: 'tirolerhut' }, top: { 11: 'trachtenhemd' }, pants: { 7: 'lederhose' }, shoes: { 6: 'haferlschuhe' }, costume: { 1: 'k_pirat', 2: 'k_cowboy', 3: 'k_baer', 4: 'k_kuh', 5: 'k_pinguin', 6: 'k_dino', 7: 'k_ritter', 8: 'k_held', 9: 'k_santa', 10: 'k_elch' } };
 const optLen = (k) => (LOOK_BY_KEY[k].col || LOOK_BY_KEY[k].v).length;
 const optName = (k, i) => { const o = LOOK_BY_KEY[k]; return o.col ? o.col[i][0] : o.v[i]; };
 const lc = (L, k) => LOOK_BY_KEY[k].col[L[k]][1];
 function isLocked(k, i, unlocked) { const l = LOCKED[k]; return !!(l && l[i] && !(unlocked && unlocked[l[i]])); }
 
 function defaultLook() {
-  return { skin: 2, build: 1, height: 1, head: 0, ears: 0, hair: 3, hairCol: 2, eyes: 0, eyeCol: 5, brows: 0, nose: 1, mouth: 0, beard: 1, beardCol: 2, mark: 0, glasses: 0, jewel: 0, hat: 0, hatCol: 2, top: 7, topCol: 0, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 0 };
+  return { skin: 2, build: 1, height: 1, head: 0, ears: 0, hair: 3, hairCol: 2, eyes: 0, eyeCol: 5, brows: 0, nose: 1, mouth: 0, beard: 1, beardCol: 2, mark: 0, glasses: 0, jewel: 0, hat: 0, hatCol: 2, top: 7, topCol: 0, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 0, costume: 0 };
 }
 function randomLook(r = Math.random, unlocked) {
   const L = {};
@@ -700,6 +773,7 @@ function randomLook(r = Math.random, unlocked) {
     while (isLocked(o.k, i, unlocked) && guard++ < 20) i = Math.floor(r() * n);
     L[o.k] = i;
   }
+  L.costume = 0;
   if (r() < 0.55) L.hat = 0;
   if (r() < 0.6) L.glasses = 0;
   if (r() < 0.6) L.jewel = 0;
@@ -767,13 +841,16 @@ function maskRender(x, M, base, tex, opt = {}) {
 }
 
 function drawPortrait(x, L, opt = {}) {
+  L = effLook(L);
   const g = headGeo(L);
   const { cx, top, chin, ey, my, hw } = g;
   const skin = lc(L, 'skin'), skinD = shade(skin, -0.14), skinDD = shade(skin, -0.3), ol = shade(skin, -0.45), skinL = shade(skin, 0.12);
   const hair = lc(L, 'hairCol');
   const beardC = lc(L, 'beardCol');
-  const topC = lc(L, 'topCol');
-  const hatC = lc(L, 'hatCol');
+  let topC = lc(L, 'topCol');
+  let hatC = lc(L, 'hatCol');
+  const CS = COSTUMES[L.costume | 0];
+  if (CS) { topC = CS.topC; if (CS.hatC) hatC = CS.hatC; }
   if (!opt.noBg) {
     R(x, 0, 0, 64, 64, opt.bg || '#2a3a52');
   }
@@ -910,6 +987,28 @@ function drawPortrait(x, L, opt = {}) {
   if (L.jewel === 4) for (const s of [-1, 1]) { const [lx, ly] = lobe(s); for (let a = 0; a < 12; a++) P(x, lx + Math.round(Math.cos(a / 12 * 6.283) * 2.5), ly + 3 + Math.round(Math.sin(a / 12 * 6.283) * 3), gold); }
   /* Kopfbedeckung */
   drawHatP(x, L, g, hatC, hair);
+  drawCostumeP(x, L, g);
+}
+/* Kostüm im Porträt: Haube mit Ohren/Hörnern/Geweih/Zacken, Helm, Augenklappe, Maske, Zipfelmütze */
+function drawCostumeP(x, L, g) {
+  const K = L.costume | 0; if (!K) return; const cs = COSTUMES[K];
+  const { cx, top, chin, ey, hw, maxW } = g;
+  const W = Math.round(maxW) + 2;
+  const dome = (cy, ry, w, from, to, col) => { for (let y = from; y <= to; y++) { const dy = cy - y; const hh = dy > 0 ? w * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry))) : w; R(x, cx - hh, y, hh * 2 + 1, 1, col); } };
+  if (cs.hood) {
+    const h = cs.hood, hd = shade(h, -0.25);
+    dome(top + 8, 12, W, top - 6, top + 7, h);
+    for (let y = top + 8; y <= chin + 3; y++) { const w = hw(Math.min(y, chin)); R(x, cx - w - 4, y, 4, 1, h); R(x, cx + w + 1, y, 4, 1, hd); }
+    if (K === 3 || K === 10) for (const sd of [-1, 1]) { E(x, cx + sd * (W - 2), top - 6, 4, 4, h); E(x, cx + sd * (W - 2), top - 6, 2, 2, K === 3 ? '#e8a0a0' : shade(h, 0.3)); }
+    if (K === 10) { for (const sd of [-1, 1]) { line(x, cx + sd * (W + 1), top - 6, cx + sd * (W + 6), top - 18, '#c8a060'); line(x, cx + sd * (W + 3), top - 11, cx + sd * (W + 8), top - 13, '#c8a060'); line(x, cx + sd * (W + 4), top - 14, cx + sd * (W + 1), top - 17, '#c8a060'); } E(x, cx, ey + 7, 3, 2, '#e03030'); }
+    if (K === 4) for (const sd of [-1, 1]) { R(x, cx + sd * (W - 3) - 1, top - 10, 2, 5, '#e8d8a0'); E(x, cx + sd * (W - 1), top - 4, 4, 2, '#1c1c24'); }
+    if (K === 5) { R(x, cx - 3, top - 4, 7, 2, '#f0a030'); R(x, cx - 2, top - 2, 5, 1, '#f0a030'); }
+    if (K === 6) { for (let k = 0; k < 4; k++) { const sx = cx - 11 + k * 7; R(x, sx, top - 8, 3, 3, hd); R(x, sx + 1, top - 10, 1, 2, hd); } for (const sd of [-1, 1]) { E(x, cx + sd * 5, top - 1, 2.5, 2.5, '#ffffff'); P(x, cx + sd * 5, top - 1, '#111'); } }
+    if (K === 7) { R(x, cx - hw(ey) - 4, ey - 2, hw(ey) * 2 + 9, 4, '#2a2a30'); for (let k = -2; k <= 2; k++) P(x, cx + k * 3, ey, '#5a5a66'); R(x, cx - 1, top - 17, 3, 11, '#c8352d'); R(x, cx - 2, top - 16, 5, 4, '#c8352d'); }
+  }
+  if (K === 1) { R(x, cx + 3, ey - 3, 7, 6, '#101014'); line(x, cx - hw(ey) - 2, ey - 6, cx + 3, ey - 3, '#101014'); line(x, cx + 9, ey - 3, cx + hw(ey) + 2, ey - 7, '#101014'); R(x, cx - 2, top - 1, 5, 4, '#f4f0e6'); P(x, cx - 1, top, '#101014'); P(x, cx + 1, top, '#101014'); }
+  if (K === 8) { const m = '#1a1a40', w = hw(ey); R(x, cx - w - 1, ey - 4, w * 2 + 3, 2, m); R(x, cx - w - 1, ey + 2, w * 2 + 3, 2, m); R(x, cx - w - 1, ey - 4, 2, 8, m); R(x, cx + w, ey - 4, 2, 8, m); R(x, cx - 1, ey - 4, 3, 8, m); }
+  if (K === 9) { dome(top + 6, 12, W, top - 8, top + 4, '#c8352d'); R(x, cx - W - 1, top + 3, W * 2 + 3, 4, '#f4f0e6'); E(x, cx + W - 2, top - 9, 3, 3, '#f4f0e6'); }
 }
 
 function drawEyeP(x, ex, ey, s, st, eyeC, skin) {
@@ -1109,6 +1208,16 @@ function drawTopPortrait(x, L, g, sh, nw, c, skin) {
     case 10: { fillBody(c); R(x, cx - nw - 1, 47, (nw + 1) * 2 + 1, 3, dk); R(x, cx, 50, 1, 14, '#c9ccd0'); R(x, cx - 1, 51, 3, 2, '#e6e8ea'); line(x, cx - sh + 1, 57, cx - nw - 3, 50, '#f6f4ee'); line(x, cx - sh + 2, 58, cx - nw - 2, 51, '#f6f4ee'); line(x, cx + sh - 1, 57, cx + nw + 3, 50, '#f6f4ee'); line(x, cx + sh - 2, 58, cx + nw + 2, 51, '#f6f4ee'); break; }
     case 11: { const wh = '#f3f0e6'; fillBody(wh, (y, w) => { for (let xx = -w; xx <= w; xx++) if ((Math.floor((cx + xx) / 2) + Math.floor(y / 2)) % 2 === 0) P(x, cx + xx, y, mix(wh, c, 0.55)); }); R(x, cx - nw - 1, 47, (nw + 1) * 2 + 1, 3, mix(wh, c, 0.3)); R(x, cx, 50, 1, 14, shade(wh, -0.15)); for (let y = 52; y < 64; y += 3) P(x, cx, y, '#8a6a3a'); break; }
   }
+  if (L.costume) {
+    const K = L.costume, cs = COSTUMES[K];
+    if (cs.belly) for (let y = 53; y < 64; y++) { const w = Math.max(2, bodyRow(y) - 5); R(x, cx - w, y, w * 2 + 1, 1, cs.belly); }
+    if (K === 1) for (let y = 51; y < 64; y += 3) { const w = bodyRow(y); R(x, cx - w + 1, y, w * 2 - 1, 1, '#f4f0e6'); }
+    if (K === 2) { for (let y = 49; y < 64; y++) { const w = bodyRow(y); R(x, cx - w, y, 5, 1, '#5a3a24'); R(x, cx + w - 4, y, 5, 1, '#5a3a24'); } R(x, cx - nw, 49, nw * 2 + 1, 3, '#c8352d'); }
+    if (K === 4) { R(x, cx - 6, 54, 4, 3, '#1c1c24'); R(x, cx + 3, 58, 3, 3, '#1c1c24'); R(x, cx - 2, 61, 3, 2, '#1c1c24'); }
+    if (K === 7) { R(x, cx - 1, 52, 3, 9, '#c8352d'); R(x, cx - 4, 55, 9, 3, '#c8352d'); }
+    if (K === 8) { R(x, cx - 4, 54, 9, 7, '#ffd23d'); R(x, cx - 2, 56, 5, 3, '#2f5fb8'); for (let y = 49; y < 64; y++) { const w = bodyRow(y); R(x, cx - w - 1, y, 3, 1, '#c8352d'); R(x, cx + w - 1, y, 3, 1, '#c8352d'); } }
+    if (K === 9) { R(x, cx - sh, 58, sh * 2 + 1, 3, '#1c1c24'); R(x, cx - 2, 58, 5, 3, '#ffd23d'); R(x, cx - nw - 2, 48, nw * 2 + 5, 3, '#f4f0e6'); }
+  }
   /* Hosenträger zur Lederhose */
   if (L.pants === 7 && ![8, 9].includes(t)) { const br = '#5b3a1e'; for (const s of [-1, 1]) R(x, cx + s * 8 - 1, 49, 3, 15, br); R(x, cx - 7, 57, 15, 3, br); R(x, cx - 1, 57, 3, 3, '#f2efe0'); P(x, cx, 58, '#e6c94a'); }
   /* Accessoires */
@@ -1152,13 +1261,16 @@ function outlineCanvas(c, x) {
 }
 
 function drawSprite(x, L, dir, pose, OX, OY) {
+  L = effLook(L);
   const p = (xx, yy, c) => P(x, OX + xx, OY + yy, c);
   const r = (xx, yy, w, h, c) => R(x, OX + xx, OY + yy, w, h, c);
   const skin = lc(L, 'skin'), skinD = shade(skin, -0.18), skinL = shade(skin, 0.12);
   const hair = lc(L, 'hairCol'), hairD = shade(hair, -0.3), hairL = shade(hair, 0.22);
   const beard = lc(L, 'beardCol');
   let topC = lc(L, 'topCol');
-  const pantsC = lc(L, 'pantsCol'), shoeC = lc(L, 'shoesCol'), hatC = lc(L, 'hatCol');
+  let pantsC = lc(L, 'pantsCol'), shoeC = lc(L, 'shoesCol'), hatC = lc(L, 'hatCol');
+  const CS = COSTUMES[L.costume | 0];
+  if (CS) { topC = CS.topC; pantsC = CS.pantsC; shoeC = CS.shoeC; if (CS.hatC) hatC = CS.hatC; }
   const sitting = pose === 'sit', bend = pose === 'bend';
   const walkA = pose === 'walkA', walkB = pose === 'walkB';
   const bob = walkA || walkB ? -1 : 0;
@@ -1200,6 +1312,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
     r(4 - earW, hy + 4, earW, 2, skinD); r(12, hy + 4, earW, 2, skinD);
     drawHairBack(r, p, L, hy, hair, hairD, hairL, skin);
     drawHatSprite(r, p, L, 3, hy, hatC);
+    drawCostumeSprite(r, p, L, 3, hy, tTop, legsTop, tx0, tx1);
     return;
   }
   /* -------- Seitenansicht (nach links) -------- */
@@ -1230,6 +1343,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
     drawHairSide(r, p, L, hy, hair, hairD, hairL, skin);
     if (L.glasses) { const gc = L.glasses === 4 ? '#18181c' : L.glasses === 5 ? '#ff7a2a' : L.glasses === 3 ? '#c9a24a' : L.glasses === 8 ? '#7a4a20' : '#202024'; r(4, hy + 4, 3, 1, gc); r(7, hy + 4, 2, 1, gc); if (L.glasses === 4) r(4, hy + 3, 2, 1, gc); }
     drawHatSprite(r, p, L, 1, hy, hatC);
+    drawCostumeSprite(r, p, L, 1, hy, tTop, legsTop, tx0, tx1);
     // Arm
     let ax = 7, ay = tTop + 1;
     if (walkA) ax = 5; if (walkB) ax = 9;
@@ -1305,6 +1419,36 @@ function drawSprite(x, L, dir, pose, OX, OY) {
     else { p(5, eyeY, gc); p(7, eyeY, gc); p(8, eyeY, gc); p(10, eyeY, gc); if (L.glasses === 6) { p(6, eyeY - 1, gc); p(9, eyeY - 1, gc); } }
   }
   drawHatSprite(r, p, L, 0, hy, hatC);
+  drawCostumeSprite(r, p, L, 0, hy, tTop, legsTop, tx0, tx1);
+}
+/* Kostüm-Extras auf der Spielfigur: Haube mit Ohren, Flecken, Bauch, Zacken, Umhang, Maske, Augenklappe, Zipfelmütze */
+function drawCostumeSprite(r, p, L, dir, hy, tTop, legsTop, tx0, tx1) {
+  const K = L.costume | 0; if (!K) return; const cs = COSTUMES[K];
+  const side = dir === 1, back = dir === 3;
+  const bh = legsTop - tTop;
+  const sx0 = tx0 + 2, sx1 = tx1 - 1;
+  const bx0 = side ? sx0 : tx0, bx1 = side ? sx1 : tx1, bwid = bx1 - bx0 + 1;
+  if (cs.hood) {
+    const h = cs.hood, hd = shade(h, -0.25);
+    if (back) r(4, hy - 1, 8, 10, h);
+    else if (side) { r(4, hy - 1, 7, 1, h); r(8, hy, 3, 8, h); r(10, hy, 1, 8, hd); r(4, hy + 8, 7, 1, h); }
+    else { r(4, hy - 1, 8, 1, h); r(4, hy, 1, 9, h); r(11, hy, 1, 9, hd); r(5, hy + 8, 6, 1, h); }
+    const earL = side ? 8 : 4, earR = side ? 10 : 11;
+    if (K === 3 || K === 10) { r(earL - 1, hy - 3, 2, 2, h); r(earR, hy - 3, 2, 2, h); p(earL, hy - 2, K === 3 ? '#e8a0a0' : shade(h, 0.3)); p(earR, hy - 2, K === 3 ? '#e8a0a0' : shade(h, 0.3)); }
+    if (K === 10) { for (const ax of [earL - 2, earR + 2]) { r(ax, hy - 6, 1, 4, '#c8a060'); p(ax - 1, hy - 6, '#c8a060'); p(ax + 1, hy - 5, '#c8a060'); } if (!back) p(side ? 3 : 8, hy + 5, '#e03030'); }
+    if (K === 4) { r(earL - 1, hy - 2, 2, 1, '#1c1c24'); r(earR, hy - 2, 2, 1, '#1c1c24'); p(earL, hy - 3, '#e8d8a0'); p(earR, hy - 3, '#e8d8a0'); }
+    if (K === 5 && !back) { if (side) { p(3, hy - 1, '#f0a030'); p(2, hy - 1, '#f0a030'); } else { p(7, hy - 2, '#f0a030'); p(8, hy - 2, '#f0a030'); } }
+    if (K === 6) { for (const [dx, dy] of back ? [[7, -3], [8, -5], [7, -2]] : side ? [[5, -3], [8, -3], [10, -2]] : [[5, -3], [7, -4], [9, -3]]) p(dx, hy + dy, hd); if (!back) { p(side ? 5 : 5, hy - 1, '#ffffff'); p(side ? 6 : 10, hy - 1, '#ffffff'); } }
+    if (K === 7) { if (!back) { if (side) r(3, hy + 4, 4, 1, '#2a2a30'); else r(5, hy + 4, 6, 1, '#2a2a30'); } r(7, hy - 4, 2, 3, '#c8352d'); }
+  }
+  if (cs.belly && !back) { if (side) r(sx0, tTop + 1, 2, bh - 2, cs.belly); else r(bx0 + 2, tTop + 1, bwid - 4, bh - 2, cs.belly); }
+  if (K === 4) { const sp = '#1c1c24'; if (back) { r(bx0 + 1, tTop + 1, 2, 2, sp); r(bx1 - 2, tTop + 4, 2, 2, sp); } else if (side) r(sx0 + 1, tTop + 2, 2, 2, sp); else { r(bx0 + 1, tTop + 2, 2, 2, sp); r(bx1 - 2, tTop + 5, 2, 1, sp); p(bx0 + 3, legsTop - 2, sp); } }
+  if (K === 6 && back) for (let yy = tTop; yy < legsTop; yy += 2) p(8, yy, shade(cs.topC, -0.3));
+  if (K === 1) { for (let yy = tTop + 1; yy < legsTop - 1; yy += 2) r(bx0, yy, bwid, 1, '#f4f0e6'); if (!back) { if (side) p(5, hy + 4, '#101014'); else { p(9, hy + 4, '#101014'); p(10, hy + 4, '#101014'); r(5, hy + 3, 6, 1, '#101014'); } } if (!side) { p(7, hy - 2, '#f4f0e6'); p(8, hy - 2, '#f4f0e6'); } }
+  if (K === 2) { const v = '#5a3a24'; if (side) r(sx0, tTop, 2, bh - 1, v); else { r(bx0, tTop, 2, bh - 1, v); r(bx1 - 1, tTop, 2, bh - 1, v); } if (!back) { r(side ? 4 : 6, tTop, side ? 3 : 4, 1, '#c8352d'); p(side ? 4 : 7, tTop + 1, '#c8352d'); } }
+  if (K === 7 && !back && !side) { r(7, tTop + 1, 2, 4, '#c8352d'); r(6, tTop + 2, 4, 1, '#c8352d'); }
+  if (K === 8) { const cape = '#c8352d'; if (back) r(bx0, tTop, bwid, bh + 1, cape); else if (side) r(sx1 + 1, tTop, 1, bh + 1, cape); else { p(bx0, tTop, cape); p(bx1, tTop, cape); r(7, tTop + 2, 2, 2, '#ffd23d'); p(6, tTop + 3, '#ffd23d'); p(9, tTop + 3, '#ffd23d'); } if (!back) { if (side) r(3, hy + 3, 4, 1, '#1a1a40'); else { r(5, hy + 3, 6, 1, '#1a1a40'); r(5, hy + 5, 6, 1, '#1a1a40'); p(5, hy + 4, '#1a1a40'); p(10, hy + 4, '#1a1a40'); } } }
+  if (K === 9) { const w = '#f4f0e6'; r(bx0, legsTop - 2, bwid, 1, w); r(bx0, tTop + 4, bwid, 1, '#1c1c24'); if (!back && !side) p(8, tTop + 4, '#ffd23d'); if (!side) { r(4, hy - 1, 8, 1, w); r(5, hy - 3, 6, 2, '#c8352d'); p(10, hy - 4, w); p(11, hy - 4, w); } else { r(4, hy - 1, 7, 1, w); r(5, hy - 3, 5, 2, '#c8352d'); p(10, hy - 3, w); } }
 }
 function drawMug(r, p, xx, yy) { r(xx, yy, 2, 3, '#e8b33a'); r(xx, yy - 1, 2, 1, '#fbf6e8'); p(xx + 2, yy + 1, '#d9e2e6'); }
 function pxTextTiny(r, s, xx, yy, c) {
@@ -1535,12 +1679,12 @@ const Editor = {
     const mode = o.mode || 'new';
     return new Promise((resolve) => {
       const el = document.getElementById('editor');
-      const L = Object.assign({}, o.look || (G.S ? G.S.look : defaultLook()));
+      const L = Object.assign({ costume: 0 }, o.look || (G.S ? G.S.look : defaultLook()));
       const unlocked = (G.S && G.S.unlocked) || {};
       let pid = o.pid || (mode === 'new' ? pick(CREW).id : null);
       if (mode === 'new' && pid) Object.assign(L, crewLook(pid));
       let crewSeed = o.crewSeed || 0;
-      const keysFor = { clothes: ['hat', 'hatCol', 'top', 'topCol', 'print', 'pants', 'pantsCol', 'shoes', 'shoesCol', 'acc', 'glasses'], hair: ['hair', 'hairCol'], beard: ['beard', 'beardCol'] }[mode];
+      const keysFor = { clothes: ['costume', 'hat', 'hatCol', 'top', 'topCol', 'print', 'pants', 'pantsCol', 'shoes', 'shoesCol', 'acc', 'glasses'], hair: ['hair', 'hairCol'], beard: ['beard', 'beardCol'] }[mode];
       const groups = mode === 'new' ? ['Wer bist du?', ...LOOK_GROUPS] : ['Auswahl'];
       let tab = groups[0];
       let dir = 0, walk = 0;
@@ -1599,7 +1743,7 @@ const Editor = {
           list.appendChild(n);
           return;
         }
-        const opts = LOOK_OPTS.filter((op) => (keysFor ? keysFor.includes(op.k) : op.g === tab));
+        const opts = keysFor ? keysFor.map((k) => LOOK_BY_KEY[k]).filter(Boolean) : LOOK_OPTS.filter((op) => op.g === tab);
         for (const op of opts) {
           const row = document.createElement('div');
           row.className = 'feat';
@@ -1630,7 +1774,7 @@ const Editor = {
             stp.append(a, out, b);
             row.appendChild(stp);
             const locks = Object.keys(LOCKED[op.k] || {});
-            if (locks.some((i) => isLocked(op.k, +i, unlocked))) { const hint = document.createElement('small'); hint.style.cssText = 'grid-column:1/-1;color:var(--ink-dim);font-family:var(--f-sign)'; hint.textContent = `🔒 ${op.v[locks[0]]}: im Trachtenladen in Innsbruck erhältlich`; row.appendChild(hint); }
+            if (locks.some((i) => isLocked(op.k, +i, unlocked))) { const hint = document.createElement('small'); hint.style.cssText = 'grid-column:1/-1;color:var(--ink-dim);font-family:var(--f-sign)'; hint.textContent = op.k === 'costume' ? '🔒 Kostüme gibt es im Kostümverleih Maskerade in Innsbruck' : `🔒 ${op.v[locks[0]]}: im Trachtenladen in Innsbruck erhältlich`; row.appendChild(hint); }
           }
           list.appendChild(row);
         }
@@ -1778,6 +1922,7 @@ const ACH = {
   springer: ['Adlerflug', 'Von der Bergiselschanze gesprungen'],
   kpunkt: ['K-Punkt', 'Am Bergisel über 120 Meter gesprungen'],
   rekord: ['Schanzenrekord', 'Am Bergisel weiter als 138 Meter geflogen'],
+  kostuem: ['Maskerade', 'Im Kostüm durch Innsbruck'],
   museum: ['Kulturbanause', 'Im Tirol Panorama das Riesenrundgemälde gesehen'],
   sturz: ['Bauchlandung', 'Beim Skispringen gestürzt – und überlebt'],
   turm: ['Turmblick', 'Auf den Stadtturm gestiegen'],
@@ -1958,7 +2103,7 @@ function saveGame(silent) {
   catch (e) { if (!silent) UI.toast('Speichern ist in diesem Browser nicht möglich.', 'warn'); return false; }
 }
 function loadSave() {
-  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); return o && o.v === 4 ? o : null; } catch (e) { return null; }
+  try { const s = localStorage.getItem(SAVE_KEY); if (!s) return null; const o = JSON.parse(s); if (o && o.look && o.look.costume == null) o.look.costume = 0; return o && o.v === 4 ? o : null; } catch (e) { return null; }
 }
 function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
 
@@ -3158,6 +3303,50 @@ shopInterior('cafe', { name: 'Café Konditorei', sign: 'Cafe Konditorei', w: 13,
     for (const [x, y] of [[2, 6], [6, 6], [10, 6]]) { m.add(objTable(x, y, 1, 1, { col: '#f4f0e6', round: true })); m.add(objStool(x - 1, y, '#7a2a2a')); m.add(objStool(x + 1, y, '#7a2a2a')); }
     m.add(objPlant(11, 8)); h.door(5);
   } });
+/* Kleiderstange mit Jacken in Farben */
+function rackRow(x, y, w, cols) {
+  return mkObj(x, y, w, 1, 20, (c, W, H) => { R(c, 1, 0, W - 2, 2, '#8a8e94'); R(c, 1, H - 4, 2, 4, '#5a5e64'); R(c, W - 3, H - 4, 2, 4, '#5a5e64'); for (let k = 0; k < Math.floor((W - 4) / 5); k++) { const col = cols[k % cols.length]; R(c, 3 + k * 5, 2, 1, 2, '#c9ccd2'); R(c, 2 + k * 5, 4, 4, 11, col); R(c, 2 + k * 5, 4, 1, 11, shade(col, -0.25)); R(c, 3 + k * 5, 5, 2, 1, shade(col, 0.3)); } }, { solid: true });
+}
+/* Schaufensterpuppe in frei wählbaren Farben (Oberteil, Hose, Kopfbedeckung) */
+function dummy(x, y, top, pants, hat) {
+  return mkObj(x, y, 1, 1, 22, (c, W, H) => { R(c, 6, H - 4, 4, 3, '#5a3a24'); R(c, 7, 8, 2, H - 12, '#c9b89a'); R(c, 4, 6, 8, 8, top); R(c, 4, 14, 8, 6, pants); R(c, 5, 8, 1, 6, shade(top, -0.3)); R(c, 10, 8, 1, 6, shade(top, -0.3)); E(c, 8, 4, 3, 3, '#e8d8c0'); if (hat) { R(c, 4, 0, 8, 2, hat); R(c, 5, 2, 6, 1, hat); } }, { solid: true });
+}
+/* Mode Alpin: Jackenstangen, Mützenregal, Umkleide */
+shopInterior('mode', { name: 'Mode Alpin', w: 12, h: 9, keeper: 'Verkäuferin Lena', seed: 1001, look: { hair: 10, hairCol: 5, beard: 0, top: 3, topCol: 2, hat: 3, hatCol: 7 }, floor: T.STONE, cap: '#1f6f73', signCol: '#9fe0e0', buy: 'Outfit kaufen', bubble: ['dots', 'heart'],
+  wall: (c) => { for (let k = 0; k < 6; k++) { const px = 6 * 16 + k * 14, col = ['#e27c2c', '#2f5fb8', '#efede6', '#3f8e4b', '#e3589c', '#212125'][k]; R(c, px, 34, 10, 5, col); R(c, px + 1, 32, 8, 2, shade(col, 0.3)); R(c, px + 4, 30, 2, 2, shade(col, 0.3)); } },
+  build: (m, h) => {
+    h.counter(8, 6, 3, { top: '#c9ccd2', front: '#1f6f73' }); h.keeper(9, 5);
+    m.add(rackRow(1, 3, 5, ['#e27c2c', '#2f5fb8', '#efede6', '#c8352d'])); m.add(rackRow(1, 6, 4, ['#3f8e4b', '#212125', '#e3589c', '#7fb4e2']));
+    m.add(dummy(7, 3, '#e27c2c', '#45474d', '#e07b25')); m.add(dummy(9, 3, '#2f5fb8', '#38558a', '#22345e'));
+    m.add(mkObj(10, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#7a2a2a'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#8a3a3a' : '#7a2a2a'); R(c, 2, 0, 12, 2, '#5a5e64'); }, { solid: true }));
+    m.trig(10, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    m.add(objPlant(1, 8)); h.door(5);
+  } });
+/* Boutique Maximilian: Teppich, Anzug-Puppen, Spiegelwand, Schuhregal */
+shopInterior('boutique', { name: 'Boutique Maximilian', w: 12, h: 9, keeper: 'Herr Maximilian', seed: 1002, look: { hair: 3, hairCol: 9, beard: 2, beardCol: 9, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 7 }, floor: T.CARPET, cap: '#1a1a22', signCol: '#e8c870', buy: 'Beraten lassen', bubble: ['dots'],
+  wall: (c) => { for (let k = 0; k < 3; k++) { R(c, 2 * 16 + k * 36, 30, 30, 16, '#8a9096'); R(c, 2 * 16 + 1 + k * 36, 31, 28, 14, '#c8e0f0'); R(c, 2 * 16 + 3 + k * 36, 33, 10, 10, 'rgba(255,255,255,0.35)'); } },
+  build: (m, h) => {
+    h.counter(7, 6, 4, { top: '#1a1a22', front: '#2a2a34', reg: true }); h.keeper(8, 5);
+    m.add(dummy(2, 3, '#23325a', '#222226', 0)); m.add(dummy(4, 3, '#efede6', '#cdb48c', 0)); m.add(dummy(6, 3, '#212125', '#222226', 0));
+    m.add(mkObj(9, 3, 2, 1, 22, (c, W, H) => { R(c, 0, 0, W, H - 1, '#3a2a1a'); for (let row = 0; row < 3; row++) { R(c, 1, 2 + row * 7, W - 2, 1, '#8a6a3a'); for (let k = 0; k < 4; k++) R(c, 2 + k * 7, 3 + row * 7, 5, 3, ['#1f1f23', '#6e4527', '#85878c', '#efede8'][(k + row) % 4]); } }, { solid: true }));
+    m.add(objSofa(1, 7, 2, '#3a2a3a', 0)); m.add(objTable(3, 7, 1, 1, { col: '#1a1a22', round: true, items: 1 }));
+    m.add(mkObj(10, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#2a2a34'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#3a3a48' : '#2a2a34'); R(c, 2, 0, 12, 2, '#e8c870'); }, { solid: true }));
+    m.trig(10, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    h.door(5);
+  } });
+/* Maskerade: Masken an der Wand, bunte Kostümstange, Pirat und Dino als Puppen, Spiegel, Umkleide */
+shopInterior('kostuem', { name: 'Maskerade', w: 13, h: 10, keeper: 'Verkäufer Fredl', seed: 1003, look: { hair: 6, hairCol: 13, beard: 5, beardCol: 0, top: 0, topCol: 11, print: 1, hat: 0, glasses: 0 }, floor: T.WOOD, floorV: 1, cap: '#4a2a6c', signCol: '#ffd23d', buy: 'Kostüm leihen', bubble: ['!', 'note', 'dots'],
+  wall: (c) => { for (let k = 0; k < 7; k++) { const px = 16 + k * 22 + (k > 2 ? 40 : 0), col = ['#ffd23d', '#e3589c', '#3f8e4b', '#c8352d', '#7fb4e2', '#efede6', '#e27c2c'][k]; if (px > 12 * 16) break; E(c, px + 7, 38, 7, 8, col); R(c, px + 3, 35, 3, 2, '#1a1a1e'); R(c, px + 8, 35, 3, 2, '#1a1a1e'); R(c, px + 5, 40, 4, 1, '#1a1a1e'); if (k % 2) R(c, px + 2, 30, 10, 2, shade(col, -0.3)); } },
+  build: (m, h) => {
+    h.counter(9, 6, 3, { top: '#4a2a6c', front: '#2a1a3c', reg: true }); h.keeper(10, 5);
+    m.add(rackRow(1, 3, 6, ['#c8352d', '#1c1c24', '#7a4a28', '#f4f0e6', '#3f8e4b', '#2f5fb8', '#9aa0a8', '#6b4a2e']));
+    m.add(dummy(8, 3, '#c8352d', '#222226', '#232327')); m.add(dummy(10, 3, '#3f8e4b', '#3f8e4b', '#2f6a38'));
+    m.add(mkObj(1, 6, 2, 1, 22, (c, W, H) => { R(c, 0, 0, W, H - 1, '#8a9096'); R(c, 1, 1, W - 2, H - 3, '#c8e0f0'); R(c, 3, 3, 8, 10, 'rgba(255,255,255,0.35)'); R(c, 0, 0, W, 2, '#ffd23d'); for (let k = 2; k < W; k += 6) P(c, k, 1, '#fff8c0'); }, { solid: true }));
+    m.add(mkObj(11, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#6a4a9c'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#7a5aac' : '#6a4a9c'); R(c, 2, 0, 12, 2, '#ffd23d'); }, { solid: true }));
+    m.trig(11, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    m.add(mkObj(4, 7, 2, 1, 10, (c, W, H) => { R(c, 0, 2, W, H - 3, '#5a3a24'); R(c, 0, 2, W, 1, '#7a5a3a'); for (let k = 0; k < 5; k++) R(c, 2 + k * 6, 4, 4, 3, ['#ffd23d', '#e3589c', '#7fb4e2', '#c8352d', '#3f8e4b'][k]); E(c, 8, 0, 4, 2, '#1a1a1e'); E(c, 22, 0, 4, 2, '#e3589c'); }, { solid: true }));
+    m.add(objPlant(1, 8)); h.door(6);
+  } });
 /* Coiffeur: drei Sessel mit Spiegeln, drehender Pole, Wartebank */
 shopInterior('barbier', { name: 'Friseur & Barbier', w: 14, h: 9, keeper: 'Barbier Mehmet', seed: 998, look: { hair: 4, hairCol: 0, beard: 7, beardCol: 0, top: 1, topCol: 16, pants: 5, pantsCol: 2, acc: 0 }, floor: T.STONE, floorV: 1, cap: '#1a1a22', signCol: '#ffd27a', buy: 'Termin: Haare oder Bart', bubble: ['note', 'dots'],
   wall: (c) => { for (const x of [2, 5, 8]) { R(c, x * 16 + 2, 33, 28, 14, '#8a9096'); R(c, x * 16 + 3, 34, 26, 12, '#c8e0f0'); R(c, x * 16 + 5, 36, 8, 8, 'rgba(255,255,255,0.35)'); } },
@@ -3307,8 +3496,9 @@ MAP_BUILDERS.ibk = () => {
   m.fill(0, 58, 57, 26, T.COBBLE, 0);
   m.fill(30, 58, 12, 23, T.PLAZA);
   m.fill(0, 65, 30, 2, T.COBBLE, 1); m.fill(42, 65, 12, 2, T.COBBLE, 1); m.fill(0, 73, 30, 2, T.COBBLE, 1); m.fill(42, 73, 12, 2, T.COBBLE, 1);
-  house(m, 1, 59, 7, 6, 2); house(m, 8, 59, 8, 6, 5);
-  house(m, 16, 59, 7, 6, 1, { erker: [2, 2] });
+  shopHouse(m, 1, 59, 7, 6, 2, { text: 'MODE ALPIN', bg: '#1f6f73', fg: '#ffffff', label: 'Mode Alpin' }, 3, 'mode', { goods: ['#e27c2c', '#2f5fb8', '#f4f0e6'] });
+  shopHouse(m, 8, 59, 8, 6, 5, { text: 'BOUTIQUE MAXIMILIAN', bg: '#1a1a22', fg: '#e8c870', label: 'Boutique Maximilian' }, 3, 'boutique', { goods: ['#23325a', '#efede6', '#212125'], awning: { cols: [0, 1, 2, 4, 5, 6, 7], col: '#1a1a22' } });
+  shopHouse(m, 16, 59, 7, 6, 1, { text: 'MASKERADE', bg: '#6a4a9c', fg: '#ffd23d', label: 'Kostümverleih Maskerade' }, 3, 'kostuem', { goods: ['#ffd23d', '#e3589c', '#3f8e4b', '#c8352d'] });
   house(m, 23, 59, 7, 6, 6, { erker: [2, 2] });
   const bar = house(m, 42, 59, 6, 6, 7, { wall: '#c9a27a', roof: '#5a3a2a', doors: [{ dx: 1, col: '#3a2418', lit: true }], sign: { text: 'GAMSBOCK BAR', bg: '#2a1a10', fg: '#ffb53d', lit: true, x: 22 }, hang: { dx: 0, icon: 'gams', side: 'l' }, shopWins: [3, 4, 5], goods: ['#e8b33a', '#c8352d', '#e8b33a'] });
   m.warp(43, 64, 'bar', 'entry', { label: 'Gamsbock Bar', guard: () => Story.openGuard('bar') });
@@ -4605,6 +4795,7 @@ const UI = {
     const close = () => { if (d.classList.contains('out')) return; d.classList.add('out'); setTimeout(() => d.remove(), 350); };
     d.addEventListener('pointerdown', (e) => { e.stopPropagation(); close(); });
     setTimeout(close, type === 'ach' ? 9000 : 8000);
+    return d;
   },
   /* ---- Sprecher ---- */
   speaker(sp) {
@@ -5089,6 +5280,30 @@ const SHOPS = {
     it('o_jacke', 79, { n: 'Trainerjacke', icon: 'shirt', wear: { top: 10, topCol: 9 }, d: 'Blau mit Streifen' }),
     it('o_lauf', 119, { n: 'Laufschuhe Neon', icon: 'shoe', wear: { shoes: 5, shoesCol: 9 }, d: 'Leuchten im Dunkeln (fast)' }),
   ] }] },
+  mode: { title: 'Mode Alpin', mode: 'wear', venue: 'shop', intro: 'Daunenjacken, Beanies und alles, was nach Après-Ski riecht.', sections: [{ t: 'Outfits', items: [
+    it('m_apres', 149, { n: 'Après-Ski-Set', icon: 'shirt', wear: { top: 3, topCol: 2, hat: 3, hatCol: 7, pants: 2, pantsCol: 3, shoes: 1, shoesCol: 2, print: 0, costume: 0 }, d: 'Oranger Hoodie, Beanie, Cargohose, Boots' }),
+    it('m_winter', 189, { n: 'Winter-Set', icon: 'shirt', wear: { top: 10, topCol: 9, hat: 3, hatCol: 2, pants: 0, pantsCol: 0, shoes: 2, shoesCol: 2, print: 0, costume: 0 }, d: 'Trainerjacke blau, Beanie, Jeans, Wanderschuhe' }),
+    it('m_sport', 99, { n: 'Sport-Set', icon: 'shirt', wear: { top: 6, topCol: 0, print: 3, hat: 5, hatCol: 6, pants: 4, pantsCol: 2, shoes: 5, shoesCol: 9, costume: 0 }, d: 'Trikot Nummer 10, Trucker-Cap, Jogginghose, Laufschuhe' }),
+    it('m_fan', 59, { n: 'Fan-Set', icon: 'hat', wear: { acc: 4, hat: 1, hatCol: 1, top: 0, topCol: 13, print: 2, costume: 0 }, d: 'Fan-Schal, rote Cap, Shirt mit Schweizerkreuz' }),
+  ] }] },
+  boutique: { title: 'Boutique Maximilian', mode: 'wear', venue: 'shop', intro: 'Leise Musik, grosse Spiegel – und ein Verkäufer, der deine Schuhe mustert.', sections: [{ t: 'Fein gemacht', items: [
+    it('b_sakko', 299, { n: 'Sakko-Set', icon: 'shirt', wear: { top: 9, topCol: 10, pants: 5, pantsCol: 3, shoes: 3, shoesCol: 1, hat: 0, print: 0, acc: 3, costume: 0 }, d: 'Navy-Sakko, Anzughose, Halbschuhe, Uhr' }),
+    it('b_hemd', 129, { n: 'Hemd-Set', icon: 'shirt', wear: { top: 1, topCol: 13, pants: 1, pantsCol: 5, shoes: 3, shoesCol: 2, hat: 0, print: 0, costume: 0 }, d: 'Weisses Hemd, Chino beige, braune Halbschuhe' }),
+    it('b_leder', 349, { n: 'Rocker-Set', icon: 'shirt', wear: { top: 8, topCol: 16, pants: 0, pantsCol: 2, shoes: 1, shoesCol: 1, hat: 0, print: 0, costume: 0 }, d: 'Lederjacke, schwarze Jeans, Boots' }),
+    it('b_polo', 89, { n: 'Polo-Set', icon: 'shirt', wear: { top: 2, topCol: 7, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0, print: 0, costume: 0 }, d: 'Petrol-Polo, weisse Chino, Sneaker' }),
+  ] }] },
+  kostuem: { title: 'Maskerade Kostümverleih', mode: 'wear', venue: 'shop', intro: 'Perücken, Masken, Plüsch. „Fasching ist, wann du willst“, sagt der Verkäufer.', sections: [{ t: 'Kostüme (einmal kaufen, immer tragen)', items: [
+    it('k_pirat', 39, { n: 'Pirat', icon: 'hat', wear: { costume: 1 }, unlock: 'k_pirat', d: 'Dreispitz, Augenklappe, Streifenhemd' }),
+    it('k_cowboy', 39, { n: 'Cowboy', icon: 'hat', wear: { costume: 2 }, unlock: 'k_cowboy', d: 'Hut, Weste, rotes Halstuch' }),
+    it('k_baer', 49, { n: 'Bär', icon: 'shirt', wear: { costume: 3 }, unlock: 'k_baer', d: 'Plüsch-Overall mit Ohren' }),
+    it('k_kuh', 49, { n: 'Kuh', icon: 'shirt', wear: { costume: 4 }, unlock: 'k_kuh', d: 'Overall mit Flecken und Hörnern' }),
+    it('k_pinguin', 49, { n: 'Pinguin', icon: 'shirt', wear: { costume: 5 }, unlock: 'k_pinguin', d: 'Frack von Natur aus, oranger Schnabel' }),
+    it('k_dino', 59, { n: 'Dino', icon: 'shirt', wear: { costume: 6 }, unlock: 'k_dino', d: 'Grün, mit Zacken auf dem Rücken' }),
+    it('k_ritter', 59, { n: 'Ritter', icon: 'hat', wear: { costume: 7 }, unlock: 'k_ritter', d: 'Rüstung, Helm mit Federbusch' }),
+    it('k_held', 49, { n: 'Superheld', icon: 'shirt', wear: { costume: 8 }, unlock: 'k_held', d: 'Blauer Anzug, roter Umhang, Maske' }),
+    it('k_santa', 39, { n: 'Weihnachtsmann', icon: 'hat', wear: { costume: 9 }, unlock: 'k_santa', d: 'Rot, weisser Rauschebart, Zipfelmütze' }),
+    it('k_elch', 49, { n: 'Elch', icon: 'shirt', wear: { costume: 10 }, unlock: 'k_elch', d: 'Geweih und rote Nase' }),
+  ] }, { t: 'Zurück zu dir', items: [it('k_none', 0, { n: 'Kostüm ablegen', icon: 'shirt', wear: { costume: 0 }, d: 'Wieder in deinen eigenen Kleidern' })] }] },
   tracht: { title: 'Trachten Holzer', mode: 'wear', venue: 'shop', intro: 'Es riecht nach Leder und Loden. Die Verkäuferin lächelt wissend.', sections: [{ t: 'Echte Tracht', items: [
     it('o_hut', 69, { n: 'Tirolerhut mit Feder', icon: 'hat', wear: { hat: 9, hatCol: 8 }, unlock: 'tirolerhut', d: 'Loden, mit Spielhahnfeder' }),
     it('o_hemd', 79, { n: 'Trachtenhemd kariert', icon: 'shirt', wear: { top: 11, topCol: 0 }, unlock: 'trachtenhemd', d: 'Rot-weiss kariert' }),
@@ -5161,7 +5376,7 @@ const Story = {
       { x: 65, y: 63, n: 'Rouge', c: N }, { x: 50, y: 80, n: 'Casino', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
       { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V }, { x: 79, y: 82, n: 'Tram Bergisel', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
-      { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
+      { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 4, y: 64, n: 'Mode', c: S }, { x: 11, y: 64, n: 'Boutique', c: S }, { x: 19, y: 64, n: 'Kostüme', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
       { x: 43, y: 72, n: 'Souvenir', c: S }, { x: 49, y: 72, n: 'Trafik', c: S }, { x: 19, y: 80, n: 'Bankomat', c: A }, { x: 60, y: 74, n: 'Bankomat', c: A }, { x: 28, y: 80, n: 'Barbier', c: S }, { x: 43, y: 80, n: 'Konditorei', c: S }, { x: 61, y: 77, n: 'Würstel', c: S }, { x: 87, y: 77, n: 'Taxi', c: A },
     ];
   },
@@ -5357,7 +5572,7 @@ const Story = {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
     /* Tag 5: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
-    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
+    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.announce('monster').then(() => this.ev_monster()); return; }
     /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
        einmal gemischt (flags.evOrder), damit jede Reise anders verläuft. Passt das nächste geplante Ereignis zur Zeit nicht
        (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
@@ -5372,7 +5587,40 @@ const Story = {
     if (!pool.length) return;
     const e = pool[0];
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
-    this['ev_' + e.id]();
+    this.announce(e.id).then(() => this['ev_' + e.id]());
+  },
+  /* Jedes Ereignis beginnt mit einer kurzen Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich
+     Buchstabe für Buchstabe hin, Fanfare, Blitz – dann geht es in der Spielwelt los. Die Welt steht derweil (G.busy). */
+  EV_TITLES: {
+    ueberfall: ['Nachtschatten', 'Schritte hinter dir in der Gasse …'],
+    polizei: ['Blaulicht', 'Die Polizei hat jemanden im Visier'],
+    hundkatze: ['Hund gegen Katze', 'Showdown auf dem Platz'],
+    taube: ['Die Taube', 'Von oben droht Gefahr'],
+    krampus: ['Krampuslauf', 'Es rasselt und klirrt in den Gassen'],
+    portemonnaie: ['Fundsache', 'Da liegt etwas auf dem Pflaster'],
+    ufo: ['Unbekanntes Flugobjekt', 'Lichter über der Maria-Theresien-Strasse'],
+    trump: ['Hoher Besuch', 'Motorradeskorte und Sirenen'],
+    verfolgung: ['Taschendieb', 'Halt den Dieb!'],
+    monster: ['Godzilla & King Kong', 'Die Stadt bebt'],
+  },
+  async announce(id) {
+    const el = document.getElementById('cine');
+    const [title, sub] = this.EV_TITLES[id] || ['Ereignis', ''];
+    if (!el) return;
+    G.busy++;
+    const kick = el.querySelector('.ckick'), tt = el.querySelector('.ctitle'), ss = el.querySelector('.csub');
+    kick.textContent = `Ereignis · Tag ${dayOf(G.S.time) + 1}`; tt.textContent = ''; ss.textContent = '';
+    el.classList.add('on');
+    Snd.tone(392, 0.12, 'square', 0.06); setTimeout(() => Snd.tone(523, 0.12, 'square', 0.06), 140); setTimeout(() => Snd.tone(659, 0.25, 'square', 0.07), 280);
+    G.fx.shake = Math.max(G.fx.shake || 0, 0.35);
+    await sleep(520);
+    for (const ch of title) { tt.textContent += ch; if (ch !== ' ') Snd.tone(1200 + Math.random() * 400, 0.03, 'square', 0.025); await sleep(45); }
+    ss.textContent = sub;
+    el.classList.add('flash'); Snd.sfx('ding');
+    await sleep(1500);
+    el.classList.remove('on'); el.classList.remove('flash');
+    await sleep(450);
+    G.busy--;
   },
   /* Helfer für Ereignisse in der Spielwelt */
   wait(cond, max = 15000) { return new Promise((res) => { const t0 = performance.now(); const iv = setInterval(() => { if (cond() || performance.now() - t0 > max) { clearInterval(iv); res(); } }, 50); }); },
@@ -6941,8 +7189,9 @@ const Story = {
       if (item.unlock) G.S.unlocked[item.unlock] = 1;
       Object.assign(G.S.look, item.wear);
       G.player.look = G.S.look;
-      UI.toast(`${item.n} gekauft und angezogen.`);
+      UI.toast(item.price ? `${item.n} gekauft und angezogen.` : `${item.n}.`);
       if (tracht()) achieve('tracht');
+      if (item.wear.costume) achieve('kostuem');
       return;
     }
     if (item.special === 'tip' || item.special === 'bottle') {
@@ -8466,5 +8715,18 @@ function wireInput() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) Snd.init(); });
 }
 window.addEventListener('load', boot);
+/* Homescreen-Apps und Browser halten gern eine alte Version im Cache: version.json ohne Cache lesen und zum Neuladen auffordern */
+async function checkUpdate() {
+  if (!/^https?:/.test(location.protocol)) return;
+  try {
+    const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j.v || j.v === APP_VERSION) return;
+    const el = UI.toast(`Neue Version ${j.v} verfügbar – hier tippen zum Neuladen.`, 'ach');
+    if (el) { el.addEventListener('pointerdown', () => location.reload(), { once: true }); setTimeout(() => el.classList.remove('out'), 400); }
+  } catch (e) { /* offline */ }
+}
+window.addEventListener('load', () => setTimeout(checkUpdate, 2500));
 
 </script>

@@ -384,6 +384,50 @@ shopInterior('cafe', { name: 'Café Konditorei', sign: 'Cafe Konditorei', w: 13,
     for (const [x, y] of [[2, 6], [6, 6], [10, 6]]) { m.add(objTable(x, y, 1, 1, { col: '#f4f0e6', round: true })); m.add(objStool(x - 1, y, '#7a2a2a')); m.add(objStool(x + 1, y, '#7a2a2a')); }
     m.add(objPlant(11, 8)); h.door(5);
   } });
+/* Kleiderstange mit Jacken in Farben */
+function rackRow(x, y, w, cols) {
+  return mkObj(x, y, w, 1, 20, (c, W, H) => { R(c, 1, 0, W - 2, 2, '#8a8e94'); R(c, 1, H - 4, 2, 4, '#5a5e64'); R(c, W - 3, H - 4, 2, 4, '#5a5e64'); for (let k = 0; k < Math.floor((W - 4) / 5); k++) { const col = cols[k % cols.length]; R(c, 3 + k * 5, 2, 1, 2, '#c9ccd2'); R(c, 2 + k * 5, 4, 4, 11, col); R(c, 2 + k * 5, 4, 1, 11, shade(col, -0.25)); R(c, 3 + k * 5, 5, 2, 1, shade(col, 0.3)); } }, { solid: true });
+}
+/* Schaufensterpuppe in frei wählbaren Farben (Oberteil, Hose, Kopfbedeckung) */
+function dummy(x, y, top, pants, hat) {
+  return mkObj(x, y, 1, 1, 22, (c, W, H) => { R(c, 6, H - 4, 4, 3, '#5a3a24'); R(c, 7, 8, 2, H - 12, '#c9b89a'); R(c, 4, 6, 8, 8, top); R(c, 4, 14, 8, 6, pants); R(c, 5, 8, 1, 6, shade(top, -0.3)); R(c, 10, 8, 1, 6, shade(top, -0.3)); E(c, 8, 4, 3, 3, '#e8d8c0'); if (hat) { R(c, 4, 0, 8, 2, hat); R(c, 5, 2, 6, 1, hat); } }, { solid: true });
+}
+/* Mode Alpin: Jackenstangen, Mützenregal, Umkleide */
+shopInterior('mode', { name: 'Mode Alpin', w: 12, h: 9, keeper: 'Verkäuferin Lena', seed: 1001, look: { hair: 10, hairCol: 5, beard: 0, top: 3, topCol: 2, hat: 3, hatCol: 7 }, floor: T.STONE, cap: '#1f6f73', signCol: '#9fe0e0', buy: 'Outfit kaufen', bubble: ['dots', 'heart'],
+  wall: (c) => { for (let k = 0; k < 6; k++) { const px = 6 * 16 + k * 14, col = ['#e27c2c', '#2f5fb8', '#efede6', '#3f8e4b', '#e3589c', '#212125'][k]; R(c, px, 34, 10, 5, col); R(c, px + 1, 32, 8, 2, shade(col, 0.3)); R(c, px + 4, 30, 2, 2, shade(col, 0.3)); } },
+  build: (m, h) => {
+    h.counter(8, 6, 3, { top: '#c9ccd2', front: '#1f6f73' }); h.keeper(9, 5);
+    m.add(rackRow(1, 3, 5, ['#e27c2c', '#2f5fb8', '#efede6', '#c8352d'])); m.add(rackRow(1, 6, 4, ['#3f8e4b', '#212125', '#e3589c', '#7fb4e2']));
+    m.add(dummy(7, 3, '#e27c2c', '#45474d', '#e07b25')); m.add(dummy(9, 3, '#2f5fb8', '#38558a', '#22345e'));
+    m.add(mkObj(10, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#7a2a2a'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#8a3a3a' : '#7a2a2a'); R(c, 2, 0, 12, 2, '#5a5e64'); }, { solid: true }));
+    m.trig(10, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    m.add(objPlant(1, 8)); h.door(5);
+  } });
+/* Boutique Maximilian: Teppich, Anzug-Puppen, Spiegelwand, Schuhregal */
+shopInterior('boutique', { name: 'Boutique Maximilian', w: 12, h: 9, keeper: 'Herr Maximilian', seed: 1002, look: { hair: 3, hairCol: 9, beard: 2, beardCol: 9, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 7 }, floor: T.CARPET, cap: '#1a1a22', signCol: '#e8c870', buy: 'Beraten lassen', bubble: ['dots'],
+  wall: (c) => { for (let k = 0; k < 3; k++) { R(c, 2 * 16 + k * 36, 30, 30, 16, '#8a9096'); R(c, 2 * 16 + 1 + k * 36, 31, 28, 14, '#c8e0f0'); R(c, 2 * 16 + 3 + k * 36, 33, 10, 10, 'rgba(255,255,255,0.35)'); } },
+  build: (m, h) => {
+    h.counter(7, 6, 4, { top: '#1a1a22', front: '#2a2a34', reg: true }); h.keeper(8, 5);
+    m.add(dummy(2, 3, '#23325a', '#222226', 0)); m.add(dummy(4, 3, '#efede6', '#cdb48c', 0)); m.add(dummy(6, 3, '#212125', '#222226', 0));
+    m.add(mkObj(9, 3, 2, 1, 22, (c, W, H) => { R(c, 0, 0, W, H - 1, '#3a2a1a'); for (let row = 0; row < 3; row++) { R(c, 1, 2 + row * 7, W - 2, 1, '#8a6a3a'); for (let k = 0; k < 4; k++) R(c, 2 + k * 7, 3 + row * 7, 5, 3, ['#1f1f23', '#6e4527', '#85878c', '#efede8'][(k + row) % 4]); } }, { solid: true }));
+    m.add(objSofa(1, 7, 2, '#3a2a3a', 0)); m.add(objTable(3, 7, 1, 1, { col: '#1a1a22', round: true, items: 1 }));
+    m.add(mkObj(10, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#2a2a34'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#3a3a48' : '#2a2a34'); R(c, 2, 0, 12, 2, '#e8c870'); }, { solid: true }));
+    m.trig(10, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    h.door(5);
+  } });
+/* Maskerade: Masken an der Wand, bunte Kostümstange, Pirat und Dino als Puppen, Spiegel, Umkleide */
+shopInterior('kostuem', { name: 'Maskerade', w: 13, h: 10, keeper: 'Verkäufer Fredl', seed: 1003, look: { hair: 6, hairCol: 13, beard: 5, beardCol: 0, top: 0, topCol: 11, print: 1, hat: 0, glasses: 0 }, floor: T.WOOD, floorV: 1, cap: '#4a2a6c', signCol: '#ffd23d', buy: 'Kostüm leihen', bubble: ['!', 'note', 'dots'],
+  wall: (c) => { for (let k = 0; k < 7; k++) { const px = 16 + k * 22 + (k > 2 ? 40 : 0), col = ['#ffd23d', '#e3589c', '#3f8e4b', '#c8352d', '#7fb4e2', '#efede6', '#e27c2c'][k]; if (px > 12 * 16) break; E(c, px + 7, 38, 7, 8, col); R(c, px + 3, 35, 3, 2, '#1a1a1e'); R(c, px + 8, 35, 3, 2, '#1a1a1e'); R(c, px + 5, 40, 4, 1, '#1a1a1e'); if (k % 2) R(c, px + 2, 30, 10, 2, shade(col, -0.3)); } },
+  build: (m, h) => {
+    h.counter(9, 6, 3, { top: '#4a2a6c', front: '#2a1a3c', reg: true }); h.keeper(10, 5);
+    m.add(rackRow(1, 3, 6, ['#c8352d', '#1c1c24', '#7a4a28', '#f4f0e6', '#3f8e4b', '#2f5fb8', '#9aa0a8', '#6b4a2e']));
+    m.add(dummy(8, 3, '#c8352d', '#222226', '#232327')); m.add(dummy(10, 3, '#3f8e4b', '#3f8e4b', '#2f6a38'));
+    m.add(mkObj(1, 6, 2, 1, 22, (c, W, H) => { R(c, 0, 0, W, H - 1, '#8a9096'); R(c, 1, 1, W - 2, H - 3, '#c8e0f0'); R(c, 3, 3, 8, 10, 'rgba(255,255,255,0.35)'); R(c, 0, 0, W, 2, '#ffd23d'); for (let k = 2; k < W; k += 6) P(c, k, 1, '#fff8c0'); }, { solid: true }));
+    m.add(mkObj(11, 7, 1, 1, 24, (c, W, H) => { R(c, 2, 0, 12, H - 2, '#6a4a9c'); for (let k = 0; k < 4; k++) R(c, 3 + k * 3, 2, 2, H - 6, k % 2 ? '#7a5aac' : '#6a4a9c'); R(c, 2, 0, 12, 2, '#ffd23d'); }, { solid: true }));
+    m.trig(11, 7, 1, 1, { label: 'Umkleide', act: () => Story.wardrobe() });
+    m.add(mkObj(4, 7, 2, 1, 10, (c, W, H) => { R(c, 0, 2, W, H - 3, '#5a3a24'); R(c, 0, 2, W, 1, '#7a5a3a'); for (let k = 0; k < 5; k++) R(c, 2 + k * 6, 4, 4, 3, ['#ffd23d', '#e3589c', '#7fb4e2', '#c8352d', '#3f8e4b'][k]); E(c, 8, 0, 4, 2, '#1a1a1e'); E(c, 22, 0, 4, 2, '#e3589c'); }, { solid: true }));
+    m.add(objPlant(1, 8)); h.door(6);
+  } });
 /* Coiffeur: drei Sessel mit Spiegeln, drehender Pole, Wartebank */
 shopInterior('barbier', { name: 'Friseur & Barbier', w: 14, h: 9, keeper: 'Barbier Mehmet', seed: 998, look: { hair: 4, hairCol: 0, beard: 7, beardCol: 0, top: 1, topCol: 16, pants: 5, pantsCol: 2, acc: 0 }, floor: T.STONE, floorV: 1, cap: '#1a1a22', signCol: '#ffd27a', buy: 'Termin: Haare oder Bart', bubble: ['note', 'dots'],
   wall: (c) => { for (const x of [2, 5, 8]) { R(c, x * 16 + 2, 33, 28, 14, '#8a9096'); R(c, x * 16 + 3, 34, 26, 12, '#c8e0f0'); R(c, x * 16 + 5, 36, 8, 8, 'rgba(255,255,255,0.35)'); } },
@@ -533,8 +577,9 @@ MAP_BUILDERS.ibk = () => {
   m.fill(0, 58, 57, 26, T.COBBLE, 0);
   m.fill(30, 58, 12, 23, T.PLAZA);
   m.fill(0, 65, 30, 2, T.COBBLE, 1); m.fill(42, 65, 12, 2, T.COBBLE, 1); m.fill(0, 73, 30, 2, T.COBBLE, 1); m.fill(42, 73, 12, 2, T.COBBLE, 1);
-  house(m, 1, 59, 7, 6, 2); house(m, 8, 59, 8, 6, 5);
-  house(m, 16, 59, 7, 6, 1, { erker: [2, 2] });
+  shopHouse(m, 1, 59, 7, 6, 2, { text: 'MODE ALPIN', bg: '#1f6f73', fg: '#ffffff', label: 'Mode Alpin' }, 3, 'mode', { goods: ['#e27c2c', '#2f5fb8', '#f4f0e6'] });
+  shopHouse(m, 8, 59, 8, 6, 5, { text: 'BOUTIQUE MAXIMILIAN', bg: '#1a1a22', fg: '#e8c870', label: 'Boutique Maximilian' }, 3, 'boutique', { goods: ['#23325a', '#efede6', '#212125'], awning: { cols: [0, 1, 2, 4, 5, 6, 7], col: '#1a1a22' } });
+  shopHouse(m, 16, 59, 7, 6, 1, { text: 'MASKERADE', bg: '#6a4a9c', fg: '#ffd23d', label: 'Kostümverleih Maskerade' }, 3, 'kostuem', { goods: ['#ffd23d', '#e3589c', '#3f8e4b', '#c8352d'] });
   house(m, 23, 59, 7, 6, 6, { erker: [2, 2] });
   const bar = house(m, 42, 59, 6, 6, 7, { wall: '#c9a27a', roof: '#5a3a2a', doors: [{ dx: 1, col: '#3a2418', lit: true }], sign: { text: 'GAMSBOCK BAR', bg: '#2a1a10', fg: '#ffb53d', lit: true, x: 22 }, hang: { dx: 0, icon: 'gams', side: 'l' }, shopWins: [3, 4, 5], goods: ['#e8b33a', '#c8352d', '#e8b33a'] });
   m.warp(43, 64, 'bar', 'entry', { label: 'Gamsbock Bar', guard: () => Story.openGuard('bar') });
