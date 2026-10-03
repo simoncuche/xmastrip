@@ -15,9 +15,9 @@ const LOOK_OPTS = [
   { g: 'Gesicht', k: 'beard', n: 'Bart', v: ['Glatt rasiert', '3-Tage-Bart', 'Schnauz', 'Walross', 'Kinnbart', 'Goatee', 'Henriquatre', 'Vollbart kurz', 'Vollbart lang', 'Koteletten', 'Hufeisen', 'Kinnriemen', 'Wikinger', 'Musketier'] },
   { g: 'Gesicht', k: 'beardCol', n: 'Bartfarbe', col: [['Schwarz', '#1f1b1a'], ['Dunkelbraun', '#3b2618'], ['Braun', '#5c3a22'], ['Hellbraun', '#82572f'], ['Dunkelblond', '#9e7746'], ['Blond', '#d3aa5e'], ['Platin', '#ebddb0'], ['Rot', '#a8431d'], ['Kupfer', '#c4682e'], ['Grau', '#8c8985'], ['Weiss', '#ece9e2'], ['Salz & Pfeffer', '#6a6560'], ['Rotblond', '#c58a4f'], ['Kastanie', '#6e3320']] },
   { g: 'Gesicht', k: 'mark', n: 'Besonderheit', v: ['Keine', 'Sommersprossen', 'Narbe Wange', 'Narbe Braue', 'Muttermal', 'Rote Wangen', 'Sonnenbrand', 'Augenringe'] },
-  { g: 'Gesicht', k: 'glasses', n: 'Brille', v: ['Keine', 'Rund', 'Eckig', 'Pilot', 'Sonnenbrille', 'Sportbrille', 'Hornbrille', 'Halbbrille'] },
+  { g: 'Gesicht', k: 'glasses', n: 'Brille', v: ['Keine', 'Rund', 'Eckig', 'Pilot', 'Sonnenbrille', 'Sportbrille', 'Hornbrille', 'Halbbrille', 'Rund, braun'] },
   { g: 'Gesicht', k: 'jewel', n: 'Ohrschmuck', v: ['Keiner', 'Stecker links', 'Ring rechts', 'Beidseitig', 'Kreolen'] },
-  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut'] },
+  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut', 'Baskenmütze'] },
   { g: 'Kleidung', k: 'hatCol', n: 'Farbe Kopfbedeckung', col: [['Schwarz', '#232327'], ['Rot', '#c4312b'], ['Navy', '#22345e'], ['Grau', '#7b7f86'], ['Beige', '#c9b38a'], ['Oliv', '#5d6a37'], ['Weiss', '#ece9e1'], ['Orange', '#e07b25'], ['Lodengrün', '#3f5a3b'], ['Braun', '#6a4428']] },
   { g: 'Kleidung', k: 'top', n: 'Oberteil', v: ['T-Shirt', 'Hemd', 'Polo', 'Hoodie', 'Pullover', 'Tanktop', 'Fussballtrikot', 'Holzfällerhemd', 'Lederjacke', 'Sakko', 'Trainerjacke', 'Trachtenhemd'] },
   { g: 'Kleidung', k: 'topCol', n: 'Farbe Oberteil', col: [['Rot', '#c8352d'], ['Weinrot', '#7c2333'], ['Orange', '#e27c2c'], ['Senf', '#cf9f2e'], ['Gelb', '#efd34a'], ['Oliv', '#6e7a3a'], ['Grün', '#3f8e4b'], ['Petrol', '#1f6f73'], ['Hellblau', '#7fb4e2'], ['Blau', '#2f5fb8'], ['Navy', '#23325a'], ['Lila', '#6a4a9c'], ['Rosa', '#e79bb4'], ['Weiss', '#efede6'], ['Hellgrau', '#b9bbbf'], ['Anthrazit', '#45474d'], ['Schwarz', '#212125'], ['Beige', '#d4c09a']] },
@@ -362,12 +362,12 @@ function drawBeardP(x, L, g, c, skin) {
 function drawGlassesP(x, g, st, skin) {
   if (!st) return;
   const { cx, ey, hw } = g;
-  const fr = ['#000', '#2a2a30', '#1f1f24', '#c9a24a', '#1a1a1e', '#2b2b30', '#5a3418', '#7d6b55'][st];
+  const fr = ['#000', '#2a2a30', '#1f1f24', '#c9a24a', '#1a1a1e', '#2b2b30', '#5a3418', '#7d6b55', '#7a4a20'][st];
   const lx = cx - 6, rx = cx + 6;
   const rectO = (ex, y0, w, h, c, th = 1) => { R(x, ex - Math.floor(w / 2), y0, w, th, c); R(x, ex - Math.floor(w / 2), y0 + h - th, w, th, c); R(x, ex - Math.floor(w / 2), y0, th, h, c); R(x, ex - Math.floor(w / 2) + w - th, y0, th, h, c); };
   const temples = (y) => { R(x, cx - hw(ey) , y, lx - 3 - (cx - hw(ey)), 1, fr); R(x, rx + 4, y, cx + hw(ey) - rx - 4, 1, fr); };
   switch (st) {
-    case 1: for (const ex of [lx, rx]) { rectO(ex, ey - 3, 8, 7, fr); P(x, ex - 4, ey - 3, skin); P(x, ex + 3, ey - 3, skin); P(x, ex - 4, ey + 3, skin); P(x, ex + 3, ey + 3, skin); } R(x, lx + 4, ey - 2, rx - lx - 7, 1, fr); temples(ey - 2); break;
+    case 1: case 8: for (const ex of [lx, rx]) { rectO(ex, ey - 3, 8, 7, fr); P(x, ex - 4, ey - 3, skin); P(x, ex + 3, ey - 3, skin); P(x, ex - 4, ey + 3, skin); P(x, ex + 3, ey + 3, skin); } R(x, lx + 4, ey - 2, rx - lx - 7, 1, fr); temples(ey - 2); break;
     case 2: for (const ex of [lx, rx]) rectO(ex, ey - 3, 9, 6, fr); R(x, lx + 5, ey - 2, rx - lx - 9, 1, fr); temples(ey - 2); break;
     case 3: for (const ex of [lx, rx]) { R(x, ex - 4, ey - 3, 9, 1, fr); for (let k = 0; k < 5; k++) { const w = 9 - (k > 2 ? (k - 2) * 2 : 0); R(x, ex - 4 + (9 - w) / 2, ey - 2 + k, w, 1, 'rgba(120,150,170,0.25)'); P(x, ex - 4 + (9 - w) / 2, ey - 2 + k, fr); P(x, ex + 4 - (9 - w) / 2, ey - 2 + k, fr); } } R(x, lx + 5, ey - 3, rx - lx - 9, 1, fr); temples(ey - 3); break;
     case 4: for (const ex of [lx, rx]) { R(x, ex - 4, ey - 3, 9, 6, '#18181c'); P(x, ex - 2, ey - 2, '#5a6070'); P(x, ex - 3, ey - 1, '#5a6070'); R(x, ex - 4, ey - 3, 9, 1, '#000'); } R(x, lx + 5, ey - 3, rx - lx - 9, 1, '#000'); temples(ey - 2); break;
@@ -410,6 +410,18 @@ function drawHatP(x, L, g, c, hair) {
       for (let xx = -(W - 2); xx <= W - 2; xx++) { P(x, cx + xx, top + 4, xx % 2 ? '#c23a2a' : '#2f7a3a'); P(x, cx + xx, top + 5, xx % 2 ? '#2f7a3a' : '#c23a2a'); }
       E(x, cx, top + 7, W + 4, 1, c); R(x, cx - W - 4, top + 8, (W + 4) * 2 + 1, 1, dk);
       const fx = cx + W - 4; line(x, fx, top + 3, fx + 6, top - 10, '#1d1d1d'); line(x, fx + 1, top + 3, fx + 7, top - 9, '#3b3b3b'); P(x, fx + 6, top - 10, '#f0f0f0'); P(x, fx + 7, top - 10, '#f0f0f0'); P(x, fx + 5, top - 8, '#6a7cb0');
+      break;
+    }
+    case 10: {
+      /* Baskenmütze: flache Scheibe, leicht nach rechts hängend, mit Stiel */
+      for (let y = top - 3; y <= top + 5; y++) {
+        const t = (y - (top - 3)) / 8;
+        const w = Math.round(lerp(W - 5, W + 3, Math.sin(t * Math.PI))) + (t > 0.5 ? 1 : 0);
+        const off = Math.round(t * 3);
+        R(x, cx - w + off, y, w * 2 + 1, 1, y === top - 2 ? lt : c); P(x, cx - w + off, y, dk); P(x, cx + w + off, y, dk);
+      }
+      R(x, cx - W + 4, top + 5, (W - 4) * 2 + 1, 1, dk);
+      R(x, cx, top - 5, 1, 2, dk);
       break;
     }
   }
@@ -565,7 +577,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
     if (L.jewel >= 1) p(earX, hy + 6, '#f2c84b');
     drawBeardSide(r, p, L, hy, beard, skin);
     drawHairSide(r, p, L, hy, hair, hairD, hairL, skin);
-    if (L.glasses) { const gc = L.glasses === 4 ? '#18181c' : L.glasses === 5 ? '#ff7a2a' : L.glasses === 3 ? '#c9a24a' : '#202024'; r(4, hy + 4, 3, 1, gc); r(7, hy + 4, 2, 1, gc); if (L.glasses === 4) r(4, hy + 3, 2, 1, gc); }
+    if (L.glasses) { const gc = L.glasses === 4 ? '#18181c' : L.glasses === 5 ? '#ff7a2a' : L.glasses === 3 ? '#c9a24a' : L.glasses === 8 ? '#7a4a20' : '#202024'; r(4, hy + 4, 3, 1, gc); r(7, hy + 4, 2, 1, gc); if (L.glasses === 4) r(4, hy + 3, 2, 1, gc); }
     drawHatSprite(r, p, L, 1, hy, hatC);
     // Arm
     let ax = 7, ay = tTop + 1;
@@ -635,7 +647,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
   drawBeardFront(r, p, L, hy, beard, skin);
   drawHairFront(r, p, L, hy, hair, hairD, hairL, skin);
   if (L.glasses) {
-    const gc = ['', '#26262c', '#26262c', '#c9a24a', '#151519', '#2b2b30', '#5a3418', '#7d6b55'][L.glasses];
+    const gc = ['', '#26262c', '#26262c', '#c9a24a', '#151519', '#2b2b30', '#5a3418', '#7d6b55', '#7a4a20'][L.glasses];
     if (L.glasses === 4) { r(5, eyeY, 6, 1, '#151519'); p(5, eyeY, '#5a6070'); }
     else if (L.glasses === 5) { r(4, eyeY, 8, 1, '#ff7a2a'); p(9, eyeY, '#b45ad0'); p(10, eyeY, '#b45ad0'); }
     else if (L.glasses === 7) { p(5, eyeY + 1, gc); p(7, eyeY + 1, gc); p(8, eyeY + 1, gc); p(10, eyeY + 1, gc); }
@@ -848,6 +860,7 @@ function drawHatSprite(r, p, L, dir, hy, c) {
     case 7: r(5, y - 3, 6, 3, c); p(7, y - 3, dk); p(8, y - 3, dk); r(5, y - 1, 6, 1, dk); r(1, y, 14, 1, c); p(1, y - 1, c); p(14, y - 1, c); r(2, y + 1, 12, 1, dk); break;
     case 8: r(4, y - 1, 8, 3, c); for (let xx = 4; xx < 12; xx += 3) p(xx, y, dk); if (side) r(2, y + 1, 3, 1, dk); else if (dir === 0) r(5, y + 2, 6, 1, dk); break;
     case 9: r(6, y - 3, 4, 1, c); r(5, y - 2, 6, 3, c); for (let xx = 5; xx <= 10; xx++) p(xx, y, xx % 2 ? '#c23a2a' : '#2f7a3a'); r(3, y + 1, 10, 1, c); r(3, y + 2, 10, 1, dk); r(11, y - 5, 1, 4, '#1d1d1d'); p(12, y - 6, '#1d1d1d'); p(12, y - 7, '#f0f0f0'); break;
+    case 10: r(4, y - 1, 8, 1, lt); r(3, y, 11, 2, c); r(5, y + 2, 7, 1, dk); p(8, y - 2, dk); if (side) r(10, y, 4, 1, dk); else if (dir === 0) p(13, y + 1, c); break;
   }
 }
 

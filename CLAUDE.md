@@ -21,7 +21,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 |---|---|
 | `00_util.js` | Hilfsfunktionen, Pixel-Zeichnen (`R`, `P`, `E`, `line`), Pixelschrift `pxText`, `MAP_BUILDERS` |
 | `01_audio.js` | `Snd`: synthetische Soundeffekte und Musik-Loops (WebAudio) |
-| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (27 Merkmale, 247 Varianten), Porträt 64×64, Sprite-Sheets 18×26 |
+| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (27 Merkmale, 249 Varianten), Porträt 64×64, Sprite-Sheets 18×26 |
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
 | `04_state.js` | Spielzustand `G`, `newState`, Gegenstände `ITEMS`, Sehenswürdigkeiten `SIGHTS`, Erlebnisse `ACH`, Werte-Logik, Speichern |
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
