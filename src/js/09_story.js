@@ -657,7 +657,7 @@ const Story = {
     UI.toast('Sirenen in der ganzen Stadt. Der Boden bebt …', 'warn');
     G.fx.shake = 1; Snd.tone(55, 0.8, 'sawtooth', 0.14, 0, -20);
     await this.say(voice('pilot'), 'Das ist KEIN Föhn! Da … da kommt GODZILLA über die Nordkette! Der Turm ist höher als die Hofburg!');
-    await this.say(null, 'Godzilla stapft auf dich zu. Wo ein Schatten auf den Boden fällt, landet gleich ein Fuss – und wenn seine Rückenplatten blau leuchten, kommt der Atomstrahl: raus aus der Linie! 32 Sekunden, dann ist er durch.');
+    await this.say(null, 'Godzilla jagt dich durch die Stadt! Renn (Shift oder Joystick weit ziehen) und lass dich nicht berühren. Leuchten seine Rückenplatten blau, kommt der Atomstrahl: seitlich raus aus der markierten Linie! 32 Sekunden, dann zieht er weiter.');
     const self = this;
     /* Godzilla: Schritte mit angehobenem Fuss, schwingender Schwanz, Rückenplatten, die vor dem Atomstrahl von hinten nach vorn
        blau aufglühen, aufreissendes Maul mit Zahnreihe, Atemstrahl, der über den Boden fegt und Brandspuren hinterlässt */
@@ -699,32 +699,20 @@ const Story = {
     const beamEnd = (b) => { const mp = mouthPos(); return { x: mp.x + Math.cos(b.a) * b.len, y: mp.y + Math.sin(b.a) * b.len }; };
     const segDist = (px, py, ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy || 1; const u = clamp(((px - ax) * dx + (py - ay) * dy) / l2, 0, 1); return Math.hypot(px - (ax + dx * u), py - (ay + dy * u)); };
     const roar = (big) => { god.roarT = big ? 1.2 : 0.6; Snd.tone(70, big ? 1.1 : 0.5, 'sawtooth', 0.14, 0, -30); Snd.noise(big ? 0.9 : 0.4, 0.1, 260); G.fx.shake = Math.max(G.fx.shake, big ? 1 : 0.5); };
-    let result = null, t = 0, next = 2.2, stomps = 0, shadows = [], rings = [], nextBeam = 7, beamPhase = null, beamT = 0;
+    let result = null, t = 0, prints = [], rings = [], nextBeam = 6, beamPhase = null, beamT = 0;
     const live = {
       update(dt) {
         t += dt;
-        /* Godzilla hält sich nördlich vom Spieler, pendelt seitlich, stapft heran */
-        const tx = G.player.x + Math.sin(t * 0.35) * 50, ty = G.player.y - 66;
+        /* Godzilla jagt den Spieler: anfangs schnell heran, dann stetig hinterher – langsamer als rennen, etwas schneller als schlendern wird er mit der Zeit */
+        const tx = G.player.x, ty = G.player.y;
         const dx = tx - god.x, dy = ty - god.y, d = Math.hypot(dx, dy) || 1;
-        god.walking = d > 6 && !beamPhase;
-        if (god.walking) { const sp = t < 4 ? 34 : 18; god.x += dx / d * sp * dt; god.y += dy / d * sp * dt; god.step += dt * 1.1; if (god.step >= 1) { god.step -= 1; god.foot = god.foot === 1 ? -1 : 1; god.footT = 0.001; Snd.tone(50, 0.25, 'sawtooth', 0.08, 0, -20); G.fx.shake = Math.max(G.fx.shake, 0.4); } }
+        god.walking = d > 4 && !beamPhase;
+        if (god.walking) { const sp = d > 150 ? 72 : d > 110 ? 50 : Math.min(44, 30 + t * 0.4); god.x += dx / d * sp * dt; god.y += dy / d * sp * dt; god.step += dt * 1.1; if (god.step >= 1) { god.step -= 1; god.foot = god.foot === 1 ? -1 : 1; god.footT = 0.001; Snd.tone(50, 0.25, 'sawtooth', 0.08, 0, -20); G.fx.shake = Math.max(G.fx.shake, 0.4); prints.push({ x: god.x + god.foot * 13, y: god.y + 2, t: 0 }); rings.push({ x: god.x + god.foot * 13, y: god.y + 2, t: 0 }); for (let k = 0; k < 5; k++) addPart({ x: god.x + god.foot * 13 + rnd(-8, 8), y: god.y + rnd(-2, 3), vx: rnd(-14, 14), vy: rnd(-14, -4), life: 0.9, kind: 'smoke' }); } }
         if (god.footT > 0) { god.footT += dt * 1.4; if (god.footT >= 1) god.footT = 0; }
         god.blink = god.blink > 0 ? god.blink - dt : (Math.random() < dt * 0.3 ? 0.15 : 0);
         if (god.roarT > 0) { god.roarT -= dt; god.mouth = Math.max(god.mouth, Math.min(1, god.roarT * 2)); } else if (!beamPhase) god.mouth = Math.max(0, god.mouth - dt * 2);
-        /* Stampfer: Schatten wächst, dann kracht der Fuss herunter – mit Druckwelle und Trümmern */
-        next -= dt;
-        if (next <= 0 && !beamPhase) { next = Math.max(0.9, 1.7 - stomps * 0.05); const atP = Math.random() < 0.55; const a = Math.random() * 6.28, r = atP ? rnd(0, 8) : rnd(14, 46); shadows.push({ x: G.player.x + Math.cos(a) * r, y: G.player.y + Math.sin(a) * r, t: 0 }); god.foot = Math.random() < 0.5 ? -1 : 1; god.footT = 0.001; }
-        for (const sh of shadows) {
-          sh.t += dt;
-          if (sh.t >= 0.9 && !sh.done) {
-            sh.done = true; stomps++; G.fx.shake = 1; Snd.sfx('hit'); Snd.tone(60, 0.4, 'sawtooth', 0.15, 0, -30);
-            rings.push({ x: sh.x, y: sh.y, t: 0 });
-            for (let k = 0; k < 14; k++) addPart({ x: sh.x + rnd(-12, 12), y: sh.y, vx: rnd(-60, 60), vy: rnd(-80, -20), g: 170, life: 0.9, kind: 'crumb' });
-            for (let k = 0; k < 6; k++) addPart({ x: sh.x + rnd(-14, 14), y: sh.y + rnd(-4, 4), vx: rnd(-10, 10), vy: rnd(-16, -6), life: 1.2, kind: 'smoke' });
-            if (Math.hypot(G.player.x - sh.x, G.player.y - 4 - sh.y) < 17 && !result) result = 'caught';
-          }
-        }
-        shadows = shadows.filter((sh) => sh.t < 1.5);
+        /* Berührung: wer Godzilla zu nahe kommt (Füsse, Beine, Schwanzansatz), wird zertreten */
+        { const ddx = G.player.x - god.x, ddy = G.player.y - god.y; if ((ddx / 22) ** 2 + ((ddy + 4) / 13) ** 2 < 1 && !result) result = 'caught'; }
         for (const r of rings) r.t += dt; rings = rings.filter((r) => r.t < 0.7);
         /* Atomstrahl: Platten laden auf (1,4 s), dann fegt der Strahl 1,5 s lang über den Boden */
         if (!beamPhase && t >= nextBeam && t < 29) { beamPhase = 'charge'; beamT = 0; god.walking = false; god.fan = { x: G.player.x, y: G.player.y }; roar(true); addPart({ x: god.x, y: god.y - 100, vy: -8, life: 1.3, kind: 'txt', txt: 'ATOMSTRAHL!', col: 'rgba(140,230,255,1)' }); }
@@ -746,17 +734,28 @@ const Story = {
           for (let k = 0; k < 2; k++) addPart({ x: hit.x + rnd(-8, 8), y: hit.y + rnd(-4, 4), vx: rnd(-40, 40), vy: rnd(-70, -20), g: 120, life: rnd(0.4, 0.8), kind: 'fire' });
           addPart({ x: hit.x + rnd(-10, 10), y: hit.y, vx: rnd(-20, 20), vy: rnd(-50, -20), life: 1, kind: 'ember' });
           if (b.t > 0.08 && segDist(G.player.x, G.player.y - 4, mp.x, mp.y, e.x, e.y) < 10 && !result) result = 'caught';
-          if (beamT >= 1.5) { beamPhase = null; god.beam = null; god.charge = 0; nextBeam = t + rnd(6, 8); next = 1.2; }
+          if (beamT >= 1.5) { beamPhase = null; god.beam = null; god.charge = 0; nextBeam = t + rnd(5, 7); }
         }
         for (const sc of god.scorch) sc.t += dt; god.scorch = god.scorch.filter((sc) => sc.t < 14);
+        for (const fp of prints) fp.t += dt; prints = prints.filter((fp) => fp.t < 10);
         if (!beamPhase && Math.floor(t / 5) !== this._roar && t > 1) { this._roar = Math.floor(t / 5); roar(false); }
         if (t > 32 && !result) result = 'survived';
       },
       draw(c, cx, cy, gt) {
         for (const sc of god.scorch) { const a = Math.max(0, 1 - sc.t / 14); E(c, sc.x - cx, sc.y - cy, 7, 3, `rgba(20,16,12,${0.65 * a})`); if (sc.t < 3 && Math.floor(gt * 10 + sc.x) % 3 === 0) P(c, sc.x - cx + rnd(-3, 3), sc.y - cy - 1, `rgba(255,140,40,${a})`); }
-        for (const sh of shadows) { const x = sh.x - cx, y = sh.y - cy; if (!sh.done) E(c, x, y, 7 + sh.t * 16, 4 + sh.t * 10, `rgba(0,0,0,${0.25 + sh.t * 0.5})`); else { R(c, x - 18, y - 10, 36, 18, MID); R(c, x - 18, y - 10, 36, 4, DARK); for (let k = 0; k < 3; k++) R(c, x - 16 + k * 12, y + 6, 8, 4, CLAW); for (let k = 0; k < 4; k++) P(c, x - 14 + k * 8, y - 3, LIGHT); } }
+        for (const fp of prints) { const a = Math.max(0, 1 - fp.t / 10), x = fp.x - cx, y = fp.y - cy; E(c, x, y, 9, 4, `rgba(30,24,18,${0.35 * a})`); for (let k = 0; k < 3; k++) E(c, x - 6 + k * 6, y - 4, 2, 1.5, `rgba(30,24,18,${0.4 * a})`); }
         for (const r of rings) { const q = r.t / 0.7; c.strokeStyle = `rgba(120,100,80,${(1 - q) * 0.7})`; c.lineWidth = 2; c.beginPath(); c.ellipse(r.x - cx, r.y - cy, 10 + q * 46, 4 + q * 18, 0, 0, Math.PI * 2); c.stroke(); }
         drawGod(c, god.x - cx, god.y - cy, gt);
+        /* Ausserhalb des Bildes: Warnpfeil am Rand, der auf Godzilla zeigt */
+        { const VW = c.canvas.width, VH = c.canvas.height, gx = god.x - cx, gy = god.y - 40 - cy;
+          if (gx < -10 || gx > VW + 10 || gy < -10 || gy > VH + 10) {
+            const px = G.player.x - cx, py = G.player.y - cy, a = Math.atan2(gy - py, gx - px);
+            const ex = clamp(px + Math.cos(a) * 400, 12, VW - 12), ey = clamp(py + Math.sin(a) * 400, 12, VH - 12);
+            const blink = Math.floor(gt * 4) % 2;
+            c.save(); c.translate(ex, ey); c.rotate(a); c.fillStyle = blink ? '#ff5a4a' : '#ffd23d'; c.beginPath(); c.moveTo(8, 0); c.lineTo(-5, -6); c.lineTo(-2, 0); c.lineTo(-5, 6); c.closePath(); c.fill(); c.restore();
+            const lbl = 'GODZILLA', lw = pxTextW(lbl); const lx = clamp(ex - lw / 2, 2, VW - lw - 2), ly = clamp(ey + (ey > VH / 2 ? -16 : 10), 2, VH - 9);
+            R(c, lx - 2, ly - 1, lw + 4, 8, 'rgba(0,0,0,0.6)'); pxText(c, lbl, lx, ly, blink ? '#ff5a4a' : '#ffd23d');
+          } }
         if (god.beam) {
           const b = god.beam, mp = mouthPos(), e = beamEnd(b);
           const x0 = mp.x - cx, y0 = mp.y - cy, x1 = e.x - cx, y1 = e.y - cy;
@@ -771,7 +770,7 @@ const Story = {
       },
       lights() { if (god.beam) { const e = beamEnd(god.beam), mp = mouthPos(); return [{ x: e.x, y: e.y, r: 60, c: '#7ad0ff' }, { x: mp.x, y: mp.y, r: 50, c: '#7ad0ff' }]; } if (god.charge > 0) return [{ x: god.x, y: god.y - 76, r: 30 + god.charge * 40, c: '#7ad0ff' }]; return []; },
       onLeave() { if (!result) result = 'survived'; },
-      dbg() { return { t, stomps, result, beamPhase, fan: god.fan && beamPhase ? [Math.round(god.fan.x), Math.round(god.fan.y)] : null, god: [Math.round(god.x), Math.round(god.y)], shadows: shadows.map((sh) => [Math.round(sh.x), Math.round(sh.y), Math.round(sh.t * 100) / 100, !!sh.done]) }; },
+      dbg() { return { t, result, beamPhase, fan: god.fan && beamPhase ? [Math.round(god.fan.x), Math.round(god.fan.y)] : null, god: [Math.round(god.x), Math.round(god.y)], shadows: [] }; },
     };
     G.live = live;
     G.busy--;

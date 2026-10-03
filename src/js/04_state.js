@@ -155,7 +155,7 @@ const ACH = {
   alien: ['Erster Kontakt', 'Ein Alien in Innsbruck getroffen'],
   trump: ['Tremendous', 'Donald Trump samt Entourage begegnet'],
   verfolgung: ['Sprinter', 'Den Taschendieb bei der Verfolgungsjagd erwischt'],
-  monster: ['Überlebt', 'Godzilla entkommen – Stampfer und Atomstrahl überstanden'],
+  monster: ['Überlebt', 'Godzilla entkommen – nicht erwischt, Atomstrahl ausgewichen'],
   platt: ['Plattgetreten', 'Von Godzilla erwischt und im Spital gelandet'],
   casino: ['Spieler', 'Im Casino Innsbruck gewesen'],
   jackpot: ['Plein!', 'Beim Roulette die richtige Zahl getroffen'],

@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.14.0 – 03.10.2026
+
+- Godzilla ohne Stampfer: Keine Fuss-Schatten mehr, die vom Himmel fallen. Stattdessen jagt er dich zu Fuss durch die Stadt – erst schnell heran, dann stetig hinterher und mit der Zeit etwas schneller. Gefährlich sind nur noch zwei Dinge: ihn berühren und der Atomstrahl, der jetzt etwas öfter kommt. Seine Schritte lassen weiterhin den Boden beben, Staub aufwirbeln und Fussabdrücke zurück.
+
 ## 2.13.0 – 03.10.2026
 
 - Jeder Raumwechsel hat seine eigene Szene, passend zum Ort:
