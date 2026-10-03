@@ -212,7 +212,7 @@ function updateBirds(dt) {
       else { b.t += dt; if (d < 42) { b.state = 'hide'; b.t = 0; Snd.tone(2400, 0.18, 'sine', 0.06); Snd.tone(2000, 0.12, 'sine', 0.05, 0.2); } }
       continue;
     }
-    if (b.state !== 'fly' && b.kind === 'pigeon' && d < (p.running ? 34 : 16)) { b.state = 'fly'; b.vx = (b.x - p.x) / (d || 1) * rnd(40, 70); b.vy = (b.y - p.y) / (d || 1) * rnd(20, 40) - 10; b.vz = rnd(40, 60); if (Math.random() < 0.3) Snd.sfx('whoosh'); }
+    if (b.state !== 'fly' && (b.kind === 'pigeon' || b.kind === 'crow') && d < (p.running ? 34 : 16)) { b.state = 'fly'; b.vx = (b.x - p.x) / (d || 1) * rnd(40, 70); b.vy = (b.y - p.y) / (d || 1) * rnd(20, 40) - 10; b.vz = rnd(40, 60); if (Math.random() < 0.3) Snd.sfx('whoosh'); }
     if (b.state === 'fly') {
       b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt; b.vz -= 5 * dt;
       b.t += dt;
@@ -263,10 +263,11 @@ function drawBird(c, b, cx, cy) {
   }
   if (b.z <= 0) E(c, x, y + 1, 2, 1, 'rgba(0,0,0,0.2)'); else E(c, Math.round(b.x - cx), Math.round(b.y - cy) + 1, 2, 1, 'rgba(0,0,0,0.15)');
   const fl = b.state === 'fly' && Math.floor(G.t * 14) % 2;
-  R(c, x - 2, y - 3, 4, 3, '#8a8e9a'); R(c, x + (b.fx ? -3 : 1), y - 5, 2, 2, '#6a6e7a'); P(c, x + (b.fx ? -3 : 2), y - 4, '#e86a3a');
-  if (b.state === 'peck' && Math.floor(G.t * 3 + b.x) % 4 === 0) R(c, x + (b.fx ? -3 : 1), y - 3, 2, 2, '#6a6e7a');
-  if (fl) { R(c, x - 4, y - 5, 3, 1, '#a8acb8'); R(c, x + 1, y - 5, 3, 1, '#a8acb8'); }
-  P(c, x - 1, y - 2, '#4a7a8a');
+  const crow = b.kind === 'crow', body = crow ? '#1c1c24' : '#8a8e9a', head = crow ? '#121218' : '#6a6e7a', wing = crow ? '#2a2a34' : '#a8acb8';
+  R(c, x - 2, y - 3, 4, 3, body); R(c, x + (b.fx ? -3 : 1), y - 5, 2, 2, head); P(c, x + (b.fx ? -3 : 2), y - 4, crow ? '#3a3a40' : '#e86a3a');
+  if (b.state === 'peck' && Math.floor(G.t * 3 + b.x) % 4 === 0) R(c, x + (b.fx ? -3 : 1), y - 3, 2, 2, head);
+  if (fl) { R(c, x - 4, y - 5, 3, 1, wing); R(c, x + 1, y - 5, 3, 1, wing); }
+  P(c, x - 1, y - 2, crow ? '#3a3a48' : '#4a7a8a');
 }
 function addPart(o) { G.parts.push(Object.assign({ t: 0, life: 1, vx: 0, vy: 0, g: 0 }, o)); }
 function updateParts(dt) {

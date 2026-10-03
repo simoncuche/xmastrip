@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.6.0 – 03.10.2026
+
+- Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.
+- Skisprung-Minispiel „Gästespringen“ bei Trainer Sepp (25 € Leihgebühr, Tageslicht, nüchtern): Start antippen, Anlauf mit Tempoanzeige, am Schanzentisch im richtigen Moment abspringen, im Flug die Haltung mit ◀ ▶ im grünen Bereich halten (Wind, Böen und Alkohol machen es wackelig), kurz vor dem Boden Telemark drücken. Weite, Haltungsnoten von fünf Punktrichtern und Gesamtpunkte; Sturz bei zu viel Schräglage. Erlebnisse „Bergisel“, „Adlerflug“, „K-Punkt“ (120 m), „Schanzenrekord“ (über 138 m), „Bauchlandung“ und „Kulturbanause“; weitester Sprung im Handy-Status.
+- Casino: Die Sonnenschirme der Konditorei standen vor dem Casino-Eingang und blockierten die Tür. Jetzt stehen sie vor der Konditorei.
+
 ## 2.5.0 – 03.10.2026
 
 - Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.

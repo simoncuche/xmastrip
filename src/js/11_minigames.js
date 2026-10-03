@@ -205,6 +205,164 @@ const Mini = {
 
 
 
+  /* ---------- Skispringen am Bergisel: Anlauf, Absprung, Flug mit Haltung, Telemark ---------- */
+  skijump() {
+    const W = 160, H = 120, S = 2.0; /* Pixel pro Meter */
+    const LAND = (() => { const l = [0]; let y = 0; for (let x = 1; x <= 220; x++) { let s; if (x < 8) s = 0.12 + x / 8 * 0.3; else if (x < 30) s = 0.42 + (x - 8) / 22 * 0.25; else if (x < 118) s = 0.67; else if (x < 140) s = 0.67 - (x - 118) / 22 * 0.45; else if (x < 165) s = 0.22 - (x - 140) / 25 * 0.22; else s = 0; y += s; l.push(y); } return l; })();
+    const IN = (() => { const a = []; let y = 0; for (let u = 0; u <= 70; u++) { a.push(y); y += u < 44 ? 0.72 : u < 64 ? 0.72 - (u - 44) / 20 * 0.54 : 0.18; } const end = a[70]; return a.map((v) => v - end); })();
+    const yHill = (x) => { if (x <= -70) return IN[0]; if (x < 0) { const u = x + 70, i = Math.floor(u), f = u - i; return IN[i] * (1 - f) + (IN[i + 1] ?? IN[i]) * f; } if (x >= 220) return LAND[220]; const i = Math.floor(x), f = x - i; return LAND[i] * (1 - f) + LAND[i + 1] * f; };
+    const slopeAt = (x) => yHill(x + 0.5) - yHill(x - 0.5);
+    const night = isNight(), wob = Mini.wob();
+    const wind = Math.round(rnd(-2, 2) * 10) / 10; /* positiv = Aufwind, hilft */
+    const PH = { v0: 0.4, v1: 2.4, l0: 0.6, l1: 3.9, lw: 0.2 };
+    const suit = lc(G.S.look, 'topCol'), skin = lc(G.S.look, 'skin'), seed = Math.random() * 7;
+    const sheet = getSheet(G.S.look);
+    return this.run('Bergiselschanze', 'Gästespringen · HS 128', `<canvas aria-label="Schanze"></canvas><div class="mini-bar"><span id="sjInfo">Tippe START.</span><b id="sjDist">–</b></div><div class="lanes"><button id="sjL" aria-label="Vorlage">◀ Vorlage</button><button id="sjA" class="primary">START</button><button id="sjR" aria-label="Rücklage">Rücklage ▶</button></div>`, W, H, (api) => {
+      const st = { phase: 'ready', x: -70, y: yHill(-70) - 1, v: 0, vx: 0, vy: 0, t: 0, pt: 0, lean: 0, q: 1, qSum: 0, qN: 0, tq: 0, tap: -9, msg: '', msgT: 0, msgCol: '#ffb53d', d: 0, tele: false, crash: false, res: null, spin: 0, parts: [], cheer: 0, ang: 0 };
+      const info = api.o.querySelector('#sjInfo'), dist = api.o.querySelector('#sjDist'), btnA = api.o.querySelector('#sjA');
+      const flash = (m, col = '#ffb53d', t = 0.9) => { st.msg = m; st.msgT = t; st.msgCol = col; };
+      const takeoff = () => {
+        const tq = clamp(1 - Math.abs(st.x + 1.5) / 7, 0, 1);
+        st.tq = tq; st.phase = 'flight'; st.pt = 0; st.vx = st.v; st.vy = -(PH.v0 + PH.v1 * tq); st.y = yHill(0) - 2.2; if (st.x < 0) st.x = 0;
+        flash(tq > 0.85 ? 'PERFEKT!' : tq > 0.5 ? 'GUT' : st.x < -1.5 ? 'ZU FRÜH' : 'ZU SPÄT', tq > 0.5 ? '#7af0a0' : '#ffb53d');
+        Snd.sfx('whoosh'); btnA.textContent = 'TELEMARK'; info.textContent = 'Haltung halten: Balken im grünen Bereich. Vor dem Boden: TELEMARK.';
+      };
+      const land = () => {
+        st.d = Math.round(st.x * 2) / 2;
+        const since = st.pt - st.tap;
+        st.tele = since >= 0 && since < 0.6 && !st.crash;
+        if (!st.crash && (Math.abs(st.lean) > 22 || st.d > 152)) st.crash = true;
+        st.phase = 'slide'; st.pt = 0; st.y = yHill(st.x);
+        if (st.crash) { Snd.sfx('hit'); Snd.sfx('lose'); flash('STURZ!', '#e2554a', 1.6); }
+        else { Snd.sfx(st.tele ? 'win' : 'ok'); flash(st.tele ? 'TELEMARK!' : 'BEIDBEINIG', st.tele ? '#7af0a0' : '#ffb53d', 1.2); Snd.sfx('cheer'); st.cheer = 2.5; }
+        for (let k = 0; k < 18; k++) st.parts.push({ x: st.x, y: st.y, vx: rnd(-6, 2), vy: rnd(-9, -2), t: 0, life: rnd(0.4, 0.9) });
+        btnA.textContent = 'Weiter';
+      };
+      const finishJump = () => {
+        const qa = st.qN ? st.qSum / st.qN : 0;
+        const judges = []; for (let k = 0; k < 5; k++) { const j = st.crash ? 8 + rnd(0, 3) : 16.5 + qa * 2 + (st.tele ? 1 : -0.5) + (st.d > 110 ? 0.5 : 0) + rnd(-0.5, 0.5); judges.push(clamp(Math.round(j * 2) / 2, 5, 20)); }
+        judges.sort((a, b) => a - b); const style = judges[1] + judges[2] + judges[3];
+        const total = Math.max(0, Math.round((60 + (st.d - 120) * 1.8 + style) * 10) / 10);
+        st.res = { d: st.d, style, total, crash: st.crash, telemark: st.tele, judges, wind };
+        st.phase = 'result'; info.textContent = st.crash ? 'Sturz. Die Punktrichter schauen weg.' : st.d >= 120 ? 'Über den K-Punkt!' : 'Gelandet.';
+        Snd.sfx(st.crash ? 'lose' : st.d >= 120 ? 'win' : 'ok');
+      };
+      const act = () => {
+        if (st.phase === 'ready') { st.phase = 'go'; st.pt = 0; Snd.sfx('ding'); btnA.textContent = 'ABSPRUNG'; info.textContent = 'Anlauf … am Schanzentisch ABSPRUNG drücken!'; }
+        else if (st.phase === 'inrun') { if (st.x < -14) flash('NOCH NICHT!', '#e2554a', 0.5); else takeoff(); }
+        else if (st.phase === 'flight') { st.tap = st.pt; }
+        else if (st.phase === 'result') api.finish(st.res);
+      };
+      const lean = (dir) => { if (st.phase === 'flight') { st.lean += dir * 5; Snd.sfx('blip'); } };
+      btnA.addEventListener('pointerdown', (e) => { e.preventDefault(); act(); });
+      api.o.querySelector('#sjL').addEventListener('pointerdown', (e) => { e.preventDefault(); lean(-1); });
+      api.o.querySelector('#sjR').addEventListener('pointerdown', (e) => { e.preventDefault(); lean(1); });
+      Mini.key = (k) => { if (['Space', 'Enter', 'KeyE'].includes(k)) act(); if (['ArrowLeft', 'KeyA'].includes(k)) lean(-1); if (['ArrowRight', 'KeyD'].includes(k)) lean(1); };
+      Mini._sj = { st, act, lean, yHill }; /* für Tests */
+      const crowdCol = ['#c8352d', '#2f5fb8', '#e8c23a', '#f4f0e6', '#3a3c40', '#7a2f3a', '#3f8e4b'];
+      /* Skispringer: Anzug in deiner Oberteilfarbe, Helm, Brille, Ski */
+      const drawSkier = (c, sx, sy, mode, ang, t) => {
+        c.save(); c.translate(Math.round(sx), Math.round(sy)); c.rotate(ang);
+        const ski = '#ffd23d', helm = '#e8e4dc';
+        if (mode === 'ready') { R(c, -6, 2, 14, 1, ski); R(c, -6, 4, 14, 1, ski); R(c, -3, -6, 7, 8, suit); E(c, 1, -8, 2.5, 2.5, helm); P(c, 2, -8, '#1a1a2e'); R(c, -2, 0, 2, 3, '#1a1a2e'); R(c, 2, 0, 2, 3, '#1a1a2e'); }
+        else if (mode === 'inrun') { R(c, -9, 3, 18, 1, ski); R(c, -9, 5, 18, 1, ski); R(c, -2, 1, 5, 2, '#1a1a2e'); R(c, -5, -3, 10, 4, suit); R(c, -6, -1, 3, 3, suit); E(c, 6, -4, 2.5, 2.5, helm); P(c, 7, -4, '#1a1a2e'); P(c, 5, -3, skin); if (t > 0.3) for (let k = 0; k < 3; k++) line(c, -12 - k * 3, 2 + k, -16 - k * 3, 2 + k, 'rgba(255,255,255,0.7)'); }
+        else if (mode === 'flight') { line(c, -1, 3, -14, 0, ski); line(c, -1, 4, -14, 6, ski); line(c, 0, 3, 13, 1, ski); line(c, 0, 4, 13, 7, ski); R(c, -3, 0, 4, 3, '#1a1a2e'); R(c, -4, -3, 13, 4, suit); R(c, 8, -4, 4, 3, suit); E(c, 12, -4, 2.5, 2.5, helm); P(c, 13, -4, '#1a1a2e'); P(c, 11, -3, skin); line(c, -3, -1, -8, 2, suit); }
+        else if (mode === 'tele') { R(c, -10, 3, 20, 1, ski); R(c, -8, 5, 20, 1, ski); R(c, 2, 0, 3, 3, '#1a1a2e'); R(c, -5, 1, 3, 3, '#1a1a2e'); R(c, -3, -7, 6, 8, suit); R(c, -8, -6, 5, 2, suit); R(c, 3, -6, 5, 2, suit); E(c, 0, -9, 2.5, 2.5, helm); P(c, 1, -9, '#1a1a2e'); }
+        else if (mode === 'two') { R(c, -9, 3, 18, 1, ski); R(c, -9, 5, 18, 1, ski); R(c, -3, 0, 3, 3, '#1a1a2e'); R(c, 1, 0, 3, 3, '#1a1a2e'); R(c, -3, -6, 7, 7, suit); R(c, -7, -4, 4, 2, suit); R(c, 4, -4, 4, 2, suit); E(c, 0, -8, 2.5, 2.5, helm); P(c, 1, -8, '#1a1a2e'); }
+        else { /* Sturz: rollt */ c.rotate(t * 9); R(c, -4, -4, 8, 8, suit); E(c, 4, -3, 2.5, 2.5, helm); R(c, -8, 2, 6, 1, ski); R(c, 3, -7, 1, 6, ski); }
+        c.restore();
+      };
+      let last = 0;
+      return (dt, T) => {
+        const c = api.ctx;
+        st.t += dt;
+        /* ---- Physik ---- */
+        if (st.phase === 'go') { st.pt += dt; if (st.pt > 1.1) { st.phase = 'inrun'; st.pt = 0; Snd.sfx('ok'); } }
+        else if (st.phase === 'inrun') {
+          st.pt += dt;
+          const sl = slopeAt(st.x); st.v += (9.81 * sl * 0.92 - 0.004 * st.v * st.v) * dt; st.x += st.v * dt * 0.96; st.y = yHill(st.x) - 1;
+          if (st.v > 8 && Math.floor(st.t * 8) !== last) { last = Math.floor(st.t * 8); Snd.noise(0.1, 0.02 + st.v / 600, 900 + st.v * 40); }
+          if (st.x > 3) { flash('VERSCHLAFEN!', '#e2554a', 1.1); takeoff(); }
+        } else if (st.phase === 'flight') {
+          st.pt += dt;
+          /* Ohne Gegensteuern kippt der Springer langsam in die Rücklage; Wind und Böen kommen dazu, Alkohol macht zittrig */
+          const drift = 2.2 + wind * 0.9 + Math.sin(st.pt * 1.7 + seed) * 2.2 + Math.sin(st.pt * 4.3 + seed * 2) * 1.2 * wob + rnd(-1, 1) * (wob - 1) * 3;
+          st.lean += drift * dt * 2.4;
+          const q = clamp(1 - Math.abs(st.lean) / 14, 0, 1); st.q = q; st.qSum += q * dt; st.qN += dt;
+          const L = st.crash ? 0 : PH.l0 + PH.l1 * q + wind * PH.lw;
+          st.vy += (9.81 - L) * dt; st.vx *= Math.pow(0.9995, dt * 100); st.x += st.vx * dt; st.y += st.vy * dt;
+          if (!st.crash && Math.abs(st.lean) > 32) { st.crash = true; flash('ZU SCHRÄG!', '#e2554a', 1); Snd.sfx('error'); }
+          if (st.y >= yHill(st.x)) land();
+        } else if (st.phase === 'slide') {
+          st.pt += dt; st.cheer -= dt;
+          st.vx *= Math.pow(st.crash ? 0.5 : 0.75, dt); st.x += st.vx * dt; st.y = yHill(st.x);
+          if (st.pt < 1 && Math.floor(st.pt * 20) % 2 === 0) st.parts.push({ x: st.x - 1, y: st.y, vx: rnd(-5, -1), vy: rnd(-6, -1), t: 0, life: 0.5 });
+          if (st.pt > 2.4 || st.vx < 0.5) finishJump();
+        }
+        for (const pp of st.parts) { pp.t += dt; pp.x += pp.vx * dt; pp.y += pp.vy * dt; pp.vy += 12 * dt; }
+        st.parts = st.parts.filter((pp) => pp.t < pp.life);
+        if (st.msgT > 0) st.msgT -= dt;
+        /* ---- Kamera ---- */
+        const camX = st.x - 30, camY = st.y - 25;
+        const sx = (xm) => (xm - camX) * S, sy = (ym) => (ym - camY) * S;
+        /* ---- Himmel, Nordkette, Stadt ---- */
+        const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, night ? '#0a1028' : '#6fa8dc'); g.addColorStop(1, night ? '#28345a' : '#d8ecf8'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+        if (night) for (let i = 0; i < 20; i++) P(c, (i * 53) % W, (i * 29) % 50, i % 3 ? '#ffffff' : '#c8d0ff');
+        const hor = 36 - camY * 0.25;
+        for (let px = 0; px < W; px++) { const xx = px + camX * 0.3; const h = 10 + Math.abs(Math.sin(xx * 0.04) * 16 + Math.sin(xx * 0.11 + 1) * 6 + Math.sin(xx * 0.27) * 2); R(c, px, hor - h, 1, h + 60, night ? '#2a3046' : '#8ea0b8'); R(c, px, hor - h, 1, Math.max(1, Math.round(h * 0.3)), night ? '#9aa8c8' : '#f4f6f8'); }
+        for (let i = 0; i < 50; i++) { const bx = ((i * 37 - camX * 0.5) % (W + 40) + W + 40) % (W + 40) - 20, by = hor + 8 + (i * 7) % 12, bw = 5 + (i * 3) % 6, bh = 4 + (i * 5) % 6; R(c, bx, by, bw, bh, night ? '#1e2638' : ['#e8d8c0', '#c8c8d0', '#d8c0b0'][i % 3]); if (night && i % 2) P(c, bx + 1, by + 1, '#ffd27a'); }
+        /* ---- Hügel ---- */
+        for (let px = 0; px < W; px++) {
+          const xm = camX + px / S, ym = yHill(xm), yy = Math.round(sy(ym));
+          R(c, px, yy, 1, H - yy, night ? '#b8c4d8' : '#f2f6fa');
+          R(c, px, yy, 1, 1, night ? '#dde6f2' : '#ffffff');
+          if (xm < 0 && xm > -70) { R(c, px, yy - 1, 1, 2, '#c9d4e0'); if (Math.floor(xm) % 2 === 0) R(c, px, yy, 1, 1, '#8aa0b4'); }
+          if (xm > 0 && xm < 170 && Math.floor(px + camX) % 6 === 0) P(c, px, yy + 2 + (px * 7) % 5, night ? '#9aa8c0' : '#dbe4ee');
+        }
+        /* Schanzentisch */
+        R(c, sx(-6), sy(yHill(-1)) - 1, 12, 5, '#7a8690'); R(c, sx(-6), sy(yHill(-1)) - 1, 12, 1, '#c9d2da');
+        /* Weitenmarken, K-Punkt, Hillsize, Rekord */
+        for (let d = 60; d <= 150; d += 10) { const mx = sx(d), my = sy(yHill(d)); if (mx < -20 || mx > W + 20) continue; const k = d === 120, hs = d === 130; const col = k ? '#e03a3a' : hs ? '#3a6ae0' : '#8a96a8'; R(c, mx, my - 6, 1, 6, col); if (d % 20 === 0 || k) pxText(c, k ? 'K' : '' + d, mx - 3, my - 13, col); }
+        { const mx = sx(128), my = sy(yHill(128)); if (mx > -20 && mx < W + 20) { R(c, mx, my - 8, 1, 8, '#3a6ae0'); pxText(c, 'HS', mx + 2, my - 8, '#3a6ae0'); } }
+        { const mx = sx(138), my = sy(yHill(138)); if (mx > -20 && mx < W + 20) { R(c, mx, my - 10, 1, 10, '#ffd23d'); pxText(c, 'REK', mx + 2, my - 10, '#ffd23d'); } }
+        /* Turm mit Café-Kopf, Startbalken */
+        { const tx = sx(-72), ty = sy(yHill(-70)); R(c, tx, ty - 6, 8, 160, '#d0d6dc'); R(c, tx, ty - 6, 2, 160, '#b8c0c8'); R(c, tx + 6, ty - 6, 2, 160, '#e6eaee'); for (let k = 0; k < 12; k++) R(c, tx + 3, ty + 6 + k * 12, 2, 5, '#5a6a7a'); c.fillStyle = '#e8ecef'; c.beginPath(); c.moveTo(tx - 6, ty - 6); c.quadraticCurveTo(tx - 8, ty - 26, tx + 6, ty - 26); c.lineTo(tx + 22, ty - 26); c.quadraticCurveTo(tx + 30, ty - 24, tx + 26, ty - 12); c.lineTo(tx + 20, ty - 6); c.closePath(); c.fill(); R(c, tx - 2, ty - 21, 24, 6, '#3a5068'); for (let k = 0; k < 6; k++) R(c, tx - 1 + k * 4, ty - 20, 3, 4, night ? '#ffe09a' : '#7ab0d8'); R(c, tx + 6, ty - 30, 2, 4, '#c9ccd2'); R(c, tx + 4, ty - 32, 6, 2, '#c8302a'); R(c, tx + 8, ty - 2, 10, 1, '#5a5e64'); }
+        /* Sprungrichterturm, Tribünen, Fahnen, Flutlicht */
+        { const jx = sx(52), jy = sy(yHill(52)); R(c, jx, jy - 16, 10, 16, '#5a5e64'); R(c, jx + 1, jy - 15, 8, 5, night ? '#ffe09a' : '#9ac0d8'); R(c, jx - 1, jy - 17, 12, 1, '#2a2e34'); }
+        for (let xm = 96; xm < 176; xm += 3) { const bx = sx(xm); if (bx < -4 || bx > W) continue; const by = sy(yHill(xm)); for (let row = 0; row < 4; row++) { const col = crowdCol[(xm * 7 + row * 3) % crowdCol.length]; const jump = st.cheer > 0 ? Math.abs(Math.sin(st.t * 12 + xm)) * 2 : 0; R(c, bx, by - 8 - row * 3 - jump, 2, 2, col); } R(c, bx, by - 4, 2, 4, '#8a8e94'); }
+        for (const fx of [100, 120, 140, 160]) { const px = sx(fx), py = sy(yHill(fx)); if (px < -10 || px > W) continue; R(c, px, py - 26, 1, 22, '#5a5e64'); const wave = Math.sin(st.t * 6 + fx) * 1.5; const col = fx === 160 ? '#c8352d' : fx === 140 ? '#ffffff' : '#c8352d'; R(c, px + 1, py - 26 + wave, 7, 4, col); if (fx === 160) { R(c, px + 4, py - 25 + wave, 1, 2, '#ffffff'); R(c, px + 3, py - 24.5 + wave, 3, 1, '#ffffff'); } if (fx === 140) R(c, px + 1, py - 25 + wave, 7, 2, '#c8352d'); }
+        for (const lx of [40, 150]) { const px = sx(lx), py = sy(yHill(lx)); if (px < -10 || px > W) continue; R(c, px, py - 34, 1, 30, '#4a4e54'); R(c, px - 3, py - 36, 7, 3, '#2a2e34'); if (night) { R(c, px - 2, py - 35, 5, 1, '#fff4c0'); c.fillStyle = 'rgba(255,240,190,0.08)'; c.beginPath(); c.moveTo(px, py - 34); c.lineTo(px - 30, py + 10); c.lineTo(px + 30, py + 10); c.closePath(); c.fill(); } }
+        /* Schneespritzer */
+        for (const pp of st.parts) P(c, sx(pp.x), sy(pp.y), 'rgba(255,255,255,0.9)');
+        /* ---- Springer ---- */
+        const psx = sx(st.x), psy = sy(st.y);
+        if (st.phase === 'ready' || st.phase === 'go') drawSkier(c, psx, psy - 4, 'ready', 0, st.t);
+        else if (st.phase === 'inrun') drawSkier(c, psx, psy - 1, 'inrun', Math.atan(slopeAt(st.x)), st.pt);
+        else if (st.phase === 'flight') { st.ang = Math.atan2(st.vy, st.vx) + st.lean * 0.012; drawSkier(c, psx, psy, st.crash ? 'crash' : 'flight', st.ang, st.pt); }
+        else if (st.phase === 'slide' || st.phase === 'result') drawSkier(c, psx, psy - 4, st.crash ? 'crash' : st.tele && st.pt < 1.2 ? 'tele' : 'two', st.crash ? 0 : Math.atan(slopeAt(st.x)), st.crash ? Math.min(st.pt, 1.2) : st.pt);
+        /* ---- HUD ---- */
+        R(c, 0, 0, W, 11, 'rgba(10,16,32,0.55)');
+        if (st.phase === 'inrun' || st.phase === 'go') pxText(c, `${Math.round(st.v * 3.6)} KM/H`, 3, 2, '#ffffff');
+        else if (st.phase === 'flight' || st.phase === 'slide' || st.phase === 'result') pxText(c, `${(st.phase === 'flight' ? st.x : st.d).toFixed(1)} M`, 3, 2, st.x >= 120 ? '#7af0a0' : '#ffffff');
+        else pxText(c, 'BEREIT', 3, 2, '#ffffff');
+        { const wx = W - 34; pxText(c, `${wind > 0 ? '+' : ''}${wind.toFixed(1)}`, wx + 8, 2, wind > 0 ? '#7af0a0' : wind < 0 ? '#ff9a7a' : '#ffffff'); R(c, wx, 5, 6, 1, '#ffffff'); if (wind !== 0) { R(c, wind > 0 ? wx : wx + 5, 4, 1, 3, '#ffffff'); } }
+        if (st.phase === 'flight') { const bx = 50, bw = 60; R(c, bx, 3, bw, 5, '#2a2e34'); R(c, bx + bw / 2 - 9, 3, 18, 5, '#2f7a3a'); R(c, bx + bw / 2 - 4, 3, 8, 5, '#3fb04a'); const mx = clamp(bx + bw / 2 + st.lean * 1.4, bx, bx + bw - 2); R(c, mx, 2, 2, 7, Math.abs(st.lean) < 14 ? '#ffffff' : '#e2554a'); }
+        if (st.phase === 'go') { const n = Math.min(3, Math.floor(st.pt / 0.37)); for (let k = 0; k < 3; k++) E(c, 80 - 10 + k * 10, 24, 3.5, 3.5, k < n ? (k === 2 ? '#3fe05a' : '#ffd23d') : '#3a3c40'); }
+        if (st.phase === 'ready' && Math.floor(st.t * 2) % 2) pxText(c, 'START ANTIPPEN', 48, 40, '#ffffff');
+        if (st.phase === 'inrun' && st.x > -14 && st.x < 3 && Math.floor(st.t * 10) % 2) pxText(c, 'JETZT!', 66, 30, '#7af0a0');
+        if (st.phase === 'flight' && st.x > 40 && yHill(st.x) - st.y < 2.2 && Math.floor(st.t * 10) % 2) pxText(c, 'TELEMARK!', 60, 30, '#7af0a0');
+        if (st.msgT > 0) { const w = pxTextW(st.msg); pxText(c, st.msg, 80 - w / 2, 46, st.msgCol); }
+        if (st.phase === 'result') {
+          const r = st.res; R(c, 22, 28, 116, 62, 'rgba(10,16,32,0.88)'); R(c, 22, 28, 116, 1, '#ffd23d');
+          pxText(c, r.crash ? 'STURZ' : r.d > 138 ? 'SCHANZENREKORD!' : r.d >= 120 ? 'K-PUNKT GEKNACKT' : 'GELANDET', 28, 32, r.crash ? '#e2554a' : '#ffd23d');
+          pxText(c, `WEITE   ${r.d.toFixed(1)} M`, 28, 44, '#ffffff'); pxText(c, `HALTUNG ${r.style.toFixed(1)}`, 28, 54, '#ffffff'); pxText(c, `TOTAL   ${r.total.toFixed(1)}`, 28, 64, '#7af0a0');
+          pxText(c, r.judges.map((j) => j.toFixed(1)).join(' '), 28, 76, '#9aa8c0');
+        }
+        dist.textContent = st.phase === 'result' ? `${st.d.toFixed(1)} m` : st.phase === 'flight' ? `${st.x.toFixed(0)} m` : st.phase === 'inrun' ? `${Math.round(st.v * 3.6)} km/h` : '–';
+      };
+    });
+  },
+
   /* ---------- Bierpong: zielen, Kraft, werfen – jeder Treffer lässt den anderen trinken ---------- */
   beerpong(opp, onDrink) {
     const CUPS = (top) => { const out = []; const rows = top ? [[3, 22], [2, 30], [1, 38]] : [[1, 104], [2, 112], [3, 120]]; for (const [n, y] of rows) for (let i = 0; i < n; i++) out.push({ x: 80 + (i - (n - 1) / 2) * 13, y, alive: true }); return out; };
@@ -461,8 +619,8 @@ const Mini = {
 
   /* ---------- Panorama ---------- */
   panorama(kind) {
-    const tower = kind === 'turm';
-    return this.run(tower ? 'Blick vom Stadtturm' : 'Fernrohr auf der Seegrube', tower ? '31 m über der Altstadt' : '1.905 m · Blick nach Süden', `<div style="overflow-x:auto;touch-action:pan-x;border-radius:8px"><canvas aria-label="Panorama" style="width:auto;height:240px;max-width:none"></canvas></div><p class="note" id="pInfo">Wisch zur Seite, um dich umzusehen.</p>${!tower && !G.S.photos.seegrube ? '<button class="btn primary" id="pFoto">Foto machen</button>' : ''}<button class="btn" id="pOk">Zurück</button>`, 480, 160, (api) => {
+    const tower = kind === 'turm', berg = kind === 'bergisel';
+    return this.run(tower ? 'Blick vom Stadtturm' : berg ? 'Bergisel-Turm' : 'Fernrohr auf der Seegrube', tower ? '31 m über der Altstadt' : berg ? '50 m über dem Stadion · Blick nach Norden' : '1.905 m · Blick nach Süden', `<div style="overflow-x:auto;touch-action:pan-x;border-radius:8px"><canvas aria-label="Panorama" style="width:auto;height:240px;max-width:none"></canvas></div><p class="note" id="pInfo">Wisch zur Seite, um dich umzusehen.</p>${kind === 'seegrube' && !G.S.photos.seegrube ? '<button class="btn primary" id="pFoto">Foto machen</button>' : ''}<button class="btn" id="pOk">Zurück</button>`, 480, 160, (api) => {
       api.o.querySelector('#pOk').onclick = () => api.finish(true);
       const pf = api.o.querySelector('#pFoto');
       if (pf) pf.onclick = () => { G.photoImg = G.photoImg || {}; G.photoImg.seegrube = api.cv.toDataURL(); addPhoto('seegrube'); pf.remove(); };
@@ -472,7 +630,20 @@ const Mini = {
       sky.addColorStop(0, night ? '#0a1028' : '#7fb2e0'); sky.addColorStop(1, night ? '#28345a' : '#d8eaf4');
       c.fillStyle = sky; c.fillRect(0, 0, 480, 160);
       const ridge = (base, amp, f, col, snow, s) => { for (let x = 0; x < 480; x++) { let v = 0; for (let k = 1; k < 4; k++) v += Math.abs(Math.sin(x / 480 * f * k + s * k)) / k; const y = base - v * amp; R(c, x, y, 1, 160 - y, col); if (snow && v > 1.05) R(c, x, y, 1, 3, night ? '#9aa8c8' : '#f4f6f8'); } };
-      if (tower) {
+      if (berg) {
+        ridge(62, 36, 8, night ? '#2a3046' : '#9aa6b8', true, 0.9);
+        ridge(86, 12, 10, night ? '#1e2638' : '#4a6a44', false, 2.4);
+        R(c, 0, 96, 480, 64, night ? '#141a2a' : '#8a9a7a');
+        for (let i = 0; i < 160; i++) { const x = (i * 23) % 480, w = 6 + (i * 5) % 8, h = 5 + (i * 7) % 9, y = 98 + (i * 13) % 34; R(c, x, y, w, h, night ? '#2a2a3a' : PASTELS[i % PASTELS.length]); R(c, x, y - 2, w, 2, night ? '#3a2a2a' : ROOFS[i % ROOFS.length]); if (night && i % 2) P(c, x + 2, y + 2, '#ffd27a'); }
+        R(c, 0, 118, 480, 4, night ? '#20304a' : '#4a8aa8');
+        R(c, 236, 104, 8, 7, '#e8b830'); R(c, 150, 100, 4, 16, '#f0d8b8'); R(c, 160, 100, 4, 16, '#f0d8b8'); R(c, 300, 102, 5, 14, '#c8302a');
+        /* Aufsprunghügel und Stadion direkt unter dem Turm */
+        c.fillStyle = night ? '#9aa8c0' : '#f2f6fa'; c.beginPath(); c.moveTo(140, 160); c.lineTo(200, 130); c.lineTo(280, 130); c.lineTo(340, 160); c.closePath(); c.fill();
+        line(c, 206, 139, 274, 139, '#e03a3a'); line(c, 212, 145, 268, 145, '#3a6ae0');
+        for (let k = 0; k < 40; k++) { R(c, 120 + (k * 7) % 60, 150 + (k * 3) % 10, 2, 3, ['#c8352d', '#2f5fb8', '#e8c23a'][k % 3]); R(c, 300 + (k * 7) % 60, 150 + (k * 3) % 10, 2, 3, ['#f4f0e6', '#c8352d', '#3a3c40'][k % 3]); }
+        pxText(c, 'NORDKETTE', 200, 22, '#ffffff'); pxText(c, 'SEEGRUBE', 318, 36, '#ffffff'); pxText(c, 'HUNGERBURG', 60, 70, '#ffffff'); pxText(c, 'INNSBRUCK', 190, 86, '#ffffff'); pxText(c, 'INN', 400, 112, '#ffffff'); pxText(c, 'ALTSTADT', 130, 90, '#ffffff');
+        pxText(c, 'K120', 282, 134, '#e03a3a'); pxText(c, 'STADION', 220, 150, '#1a1a2e');
+      } else if (tower) {
         ridge(70, 34, 7, night ? '#2a3046' : '#8c8a86', true, 1.3);
         ridge(92, 14, 11, night ? '#1a2a24' : '#3a5a34', false, 2);
         for (let i = 0; i < 70; i++) { const x = (i * 53) % 480, w = 14 + (i * 7) % 18, y = 100 + (i * 11) % 40; R(c, x, y, w, 60, night ? '#2a2a3a' : PASTELS[i % PASTELS.length]); R(c, x - 1, y - 6, w + 2, 7, night ? '#3a2a2a' : ROOFS[i % ROOFS.length]); if (night) for (let k = 0; k < 3; k++) if ((i + k) % 2) R(c, x + 3 + k * 4, y + 6, 2, 3, '#ffd27a'); }

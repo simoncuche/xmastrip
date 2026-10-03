@@ -554,7 +554,7 @@ MAP_BUILDERS.ibk = () => {
   house(m, 48, 75, 6, 6, 4, { wall: '#2a2a34', roof: '#1a1a22', trim: '#c9a227', doors: [{ dx: 2, type: 'glass', lit: true }], sign: { text: 'CASINO', bg: '#1a1a22', fg: '#ffd23d', lit: true }, shutter: null });
   m.warp(50, 80, 'casino', 'entry', { label: 'Casino Innsbruck', guard: () => Story.casinoDoor() });
   m.spawn('casino_out', 50, 81, 0);
-  for (const [x, y] of [[45, 81], [49, 81]]) m.add(objUmbrellaTable(x, y, '#7a2a2a'));
+  for (const [x, y] of [[44, 81], [46, 81]]) m.add(objUmbrellaTable(x, y, '#7a2a2a'));
   m.add(objAnnasaeule(35, 63));
   m.trig(33, 62, 6, 5, { here: true, label: 'Foto: Annasäule', act: () => Story.photo('annasaeule'), cond: () => !G.S.photos.annasaeule });
   m.trig(33, 66, 6, 2, { here: true, label: 'Tauben füttern', act: () => Story.feedBirds('pigeon'), cond: () => !!G.S.photos.annasaeule });
@@ -615,6 +615,10 @@ MAP_BUILDERS.ibk = () => {
   m.vehicles.push(makeTram(56, W), makeCar(26, -1, '#c8352d', 0.2), makeCar(28, 1, '#2f5fb8', 0.6), makeCar(26, -1, '#efede6', 0.75), makeCar(84, 1, '#3a3c40', 0.1), makeCar(86, -1, '#3f8e4b', 0.5), makeCar(66, 1, '#e8c23a', 0.3, 57), makeCar(68, -1, '#7a2f3a', 0.8, 57));
   m.vehicles.push(makeTram(85, W, 0.5));
   m.spawn('hbf', 74, 75, 0);
+  /* Tram-Haltestelle Richtung Bergisel */
+  m.add(objTramStop(79, 83, 'BERGISEL'));
+  m.trig(78, 83, 4, 1, { label: 'Tram zum Bergisel', act: () => Story.bergiselTram() });
+  m.spawn('bergisel_stop', 81, 83, 1);
   m.spawn('hotel_out', 19, 47, 0);
   m.spawn('bar_out', 43, 65, 0);
   m.spawn('stueberl_out', 25, 47, 0);
@@ -983,6 +987,103 @@ MAP_BUILDERS.club = () => {
   return m;
 };
 /* ----------- Seegrube ----------- */
+/* Haltestellen-Schild (grünes H) mit Zielanzeige */
+function objTramStop(x, y, txt) {
+  return mkObj(x, y, 1, 1, 22, (c, W, H) => {
+    const cx = W / 2;
+    R(c, cx - 1, 6, 2, H - 7, '#5a5e64'); R(c, cx - 7, 0, 14, 10, '#1f7a3a'); R(c, cx - 6, 1, 12, 8, '#2f9a4a'); pxText(c, 'H', cx - 3, 2, '#ffe84a');
+    const tw = pxTextW(txt) + 4; R(c, cx - tw / 2, 11, tw, 7, '#f4f0e6'); R(c, cx - tw / 2, 11, tw, 1, '#c9c5bd'); pxText(c, txt, cx - tw / 2 + 2, 12, '#1a1a1e');
+  }, { solid: true, padX: 12 });
+}
+/* Bergiselschanze: Turm (Zaha Hadid), Anlaufspur, Aufsprunghügel, Stadion – ein grosses Sprite */
+function objSchanze(x, y) {
+  return mkObj(x, y, 12, 4, 120, (c, W, H) => {
+    /* Hang hinter der Schanze */
+    for (let yy = 40; yy < H; yy++) R(c, 0, yy, W, 1, mix('#c9d8e6', '#eef3f8', (yy - 40) / (H - 40)));
+    for (let i = 0; i < 40; i++) { const fx = (i * 37) % W, fy = 44 + (i * 23) % (H - 60); if (fx > 24 && fx < 150 && fy < 120) continue; R(c, fx, fy, 1, 6, '#2e4a24'); R(c, fx - 2, fy - 3, 5, 3, '#3e6b32'); R(c, fx - 1, fy - 5, 3, 2, '#3e6b32'); }
+    /* Anlaufspur vom Turm bis zum Schanzentisch */
+    c.fillStyle = '#dde6ee'; c.beginPath(); c.moveTo(22, 22); c.lineTo(38, 22); c.lineTo(110, 112); c.lineTo(92, 114); c.closePath(); c.fill();
+    c.fillStyle = '#f6f9fc'; c.beginPath(); c.moveTo(26, 23); c.lineTo(34, 23); c.lineTo(104, 111); c.lineTo(96, 112); c.closePath(); c.fill();
+    line(c, 28, 24, 99, 111, '#8aa0b4'); line(c, 32, 24, 102, 111, '#8aa0b4');
+    for (let k = 0; k < 9; k++) { const t = k / 9; R(c, 22 + t * 70, 26 + t * 86, 2, 4 + t * 10, '#9aa6b0'); }
+    /* Schanzentisch */
+    R(c, 92, 110, 20, 6, '#7a8690'); R(c, 92, 110, 20, 1, '#c9d2da');
+    /* Aufsprunghügel mit K-Linie (rot) und Hillsize (blau) */
+    c.fillStyle = '#f2f6fa'; c.beginPath(); c.moveTo(84, 116); c.lineTo(118, 116); c.lineTo(176, H - 10); c.lineTo(36, H - 10); c.closePath(); c.fill();
+    for (let k = 0; k < 7; k++) { const yy = 124 + k * 8; const wL = 84 - k * 7, wR = 118 + k * 8; line(c, wL, yy, wR, yy, k === 3 ? '#e03a3a' : k === 4 ? '#3a6ae0' : '#d6e0ea'); if (k === 3) pxText(c, 'K120', wR + 2, yy - 3, '#e03a3a'); if (k === 4) pxText(c, 'HS128', wR + 2, yy - 3, '#3a6ae0'); }
+    /* Turm: schlanker Schaft, geschwungener Kopf mit Café und Panoramafenstern */
+    R(c, 10, 18, 14, 112, '#d0d6dc'); R(c, 10, 18, 4, 112, '#b8c0c8'); R(c, 20, 18, 4, 112, '#e6eaee');
+    for (let k = 0; k < 9; k++) R(c, 15, 30 + k * 11, 4, 5, '#5a6a7a');
+    c.fillStyle = '#e8ecef'; c.beginPath(); c.moveTo(2, 20); c.quadraticCurveTo(0, 0, 22, 2); c.lineTo(40, 2); c.quadraticCurveTo(50, 2, 48, 14); c.lineTo(44, 24); c.lineTo(6, 24); c.closePath(); c.fill();
+    R(c, 8, 8, 34, 7, '#3a5068'); for (let k = 0; k < 8; k++) R(c, 9 + k * 4, 9, 3, 5, '#7ab0d8');
+    R(c, 6, 15, 38, 2, '#c9ccd2'); R(c, 18, 2, 2, 6, '#c9ccd2'); R(c, 16, 0, 6, 2, '#c8302a');
+    E(c, 25, 24, 20, 4, 'rgba(0,0,0,0.18)');
+    /* Flutlichtmasten und Fahnen */
+    for (const fx of [60, 150]) { R(c, fx, 100, 2, 60, '#4a4e54'); R(c, fx - 5, 96, 12, 5, '#2a2e34'); for (let k = 0; k < 3; k++) R(c, fx - 4 + k * 4, 97, 3, 3, '#ffe8a0'); }
+    for (let k = 0; k < 6; k++) { const fx = 40 + k * 26; R(c, fx, H - 36, 1, 26, '#5a5e64'); const col = ['#c8352d', '#ffffff', '#c8352d', '#ffffff', '#c8352d', '#2f5fb8'][k]; R(c, fx + 1, H - 36, 8, 5, col); if (k === 5) { R(c, fx + 4, H - 35, 2, 3, '#ffffff'); R(c, fx + 3, H - 34, 4, 1, '#ffffff'); } }
+    pxText(c, 'BERGISEL', 76, H - 24, '#1a1a2e');
+  }, { solid: true, emit: (c, W, H) => { for (const fx of [60, 150]) for (let k = 0; k < 3; k++) R(c, fx - 4 + k * 4, 97, 3, 3, '#fff4c0'); for (let k = 0; k < 8; k++) R(c, 9 + k * 4, 9, 3, 5, '#ffe09a'); } });
+}
+/* Tribüne mit Zuschauern */
+function objTribune(x, y, w, side) {
+  return mkObj(x, y, w, 3, 20, (c, W, H) => {
+    const r = rng(x * 7 + y);
+    for (let k = 0; k < 5; k++) { const yy = 4 + k * 9; R(c, 0, yy, W, 9, k % 2 ? '#8a8e94' : '#9aa0a6'); R(c, 0, yy, W, 1, '#c9ccd2'); for (let px = 2; px < W - 3; px += 4) { if (r() < 0.25) continue; const col = ['#c8352d', '#2f5fb8', '#e8c23a', '#f4f0e6', '#3a3c40', '#7a2f3a'][r() * 6 | 0]; R(c, px, yy + 2, 3, 5, col); R(c, px, yy, 3, 2, '#e8c8a0'); } }
+    R(c, 0, H - 4, W, 4, '#5a5e64');
+    if (side < 0) R(c, W - 2, 0, 2, H, '#5a5e64'); else R(c, 0, 0, 2, H, '#5a5e64');
+  }, { solid: true });
+}
+/* Andreas-Hofer-Denkmal (1893): Bronzefigur auf Granitsockel */
+function objHofer(x, y) {
+  return mkObj(x, y, 2, 1, 44, (c, W, H) => {
+    E(c, 16, H - 2, 14, 3, 'rgba(0,0,0,0.2)');
+    R(c, 4, H - 22, 24, 20, '#8a8e94'); R(c, 6, H - 24, 20, 3, '#a8acb2'); R(c, 4, H - 22, 24, 1, '#c9ccd2');
+    R(c, 8, H - 14, 16, 6, '#6a6e74'); pxText(c, 'HOFER', 7, H - 13, '#e8e4dc');
+    R(c, 13, H - 42, 6, 10, '#4a6a5a'); R(c, 11, H - 36, 10, 12, '#4a6a5a'); R(c, 12, H - 48, 8, 7, '#5a7a6a'); R(c, 11, H - 50, 10, 3, '#3a5a4a');
+    R(c, 20, H - 46, 2, 22, '#3a5a4a'); R(c, 20, H - 50, 8, 5, '#c8352d'); R(c, 20, H - 50, 8, 2, '#f4f0e6');
+    R(c, 9, H - 36, 3, 10, '#4a6a5a');
+  }, { solid: true });
+}
+MAP_BUILDERS.bergisel = () => {
+  const m = new GMap('bergisel', 30, 24, { name: 'Bergisel · 746 m', bg: '#2a3a2a' });
+  m.fill(0, 0, 30, 24, T.SNOW, (x, y) => (hash(x, y, 5) > 0.72 ? 1 : 0));
+  m.add(objMountains(0, 0, 30, 7, { drawH: 0, seed: 17 }));
+  m.fill(0, 0, 30, 7, T.CLIFF);
+  m.fill(0, 7, 30, 1, T.FOREST);
+  m.add(objSchanze(9, 8));
+  m.fill(7, 12, 16, 3, T.SNOW, 0);
+  m.add(objTribune(3, 12, 4, -1)); m.add(objTribune(23, 12, 4, 1));
+  m.fill(1, 15, 28, 2, T.GRAVEL); m.fill(6, 17, 2, 4, T.GRAVEL); m.fill(1, 20, 28, 1, T.GRAVEL);
+  m.fill(0, 21, 30, 1, T.PAVE); m.fill(0, 22, 30, 2, T.ASPH); m.fill(0, 22, 30, 1, T.TRAMR);
+  /* Kassa */
+  const kassa = objBuilding(1, 16, 4, 2, { floors: 1, wall: '#d8dcdf', roof: '#5a5e64', roofType: 'flat', flowers: false, seed: 41, doors: [{ dx: 1, type: 'glass' }], allShop: true, goods: ['#c9d4dc'], sign: { text: 'KASSA', bg: '#c8302a', fg: '#ffffff' }, drawH: 6 });
+  m.add(kassa);
+  m.trig(2, 18, 1, 1, { label: 'Kassa: Eintritt und Panoramalift', act: () => Story.bergiselTicket() });
+  m.trig(10, 12, 2, 1, { label: 'Panoramalift auf den Turm', act: () => Story.bergiselTower() });
+  m.trig(13, 12, 5, 1, { label: 'Schanze: Gästespringen', act: () => Story.skijump() });
+  m.trig(9, 15, 12, 2, { here: true, label: 'Foto: Bergiselschanze', act: () => Story.photo('bergisel'), cond: () => !G.S.photos.bergisel });
+  m.add(objHofer(24, 16)); m.trig(23, 16, 4, 2, { label: 'Andreas-Hofer-Denkmal', act: () => Story.hofer() });
+  const museum = objBuilding(21, 17, 8, 3, { floors: 1, wall: '#c9b8a0', roof: '#4a4e54', roofType: 'flat', flowers: false, seed: 43, doors: [{ dx: 3, type: 'glass' }], wins: 'tall', sign: { text: 'TIROL PANORAMA', bg: '#2a3a4a', fg: '#ffffff' }, drawH: 8 });
+  m.add(museum);
+  m.trig(24, 20, 1, 1, { label: 'Tirol Panorama: Riesenrundgemälde', act: () => Story.panoramaMuseum() });
+  for (const [x, y, h] of [[0, 9, 34], [1, 11, 28], [28, 9, 30], [29, 11, 26], [0, 17, 24], [29, 15, 30], [14, 18, 20], [17, 18, 24], [11, 19, 18]]) m.add(objFir(x, y, h));
+  m.add(objBench(9, 18, 0, '#8a5a32')); m.add(objBench(19, 18, 0, '#8a5a32'));
+  for (const x of [4, 12, 20, 27]) m.add(objLamp(x, 21, 'new'));
+  m.add(objTramStop(5, 21, 'STADT'));
+  m.trig(4, 21, 3, 1, { label: 'Tram in die Stadt', act: () => Story.bergiselBack() });
+  m.spawn('entry', 7, 21, 3);
+  m.spawn('tower_out', 11, 13, 0);
+  m.npcDefs.push(
+    { id: 'trainer', name: 'Trainer Sepp', x: 15 * 16 + 8, y: 13 * 16 + 12, dir: 0, look: npcLook(930, { hat: 2, hatCol: 2, top: 10, topCol: 2, pants: 5, pantsCol: 8, beard: 2, beardCol: 0, glasses: 4 }), talk: () => Story.skijump(), keepDir: true, bubbleRand: ['dots', '!'] },
+    { id: 'kassa', name: 'Kassierin Vroni', x: 2 * 16 + 8, y: 15 * 16 + 10, dir: 0, look: npcLook(931, { hair: 7, hairCol: 9, beard: 0, top: 4, topCol: 10, glasses: 7 }), talk: () => Story.bergiselTicket(), keepDir: true },
+  );
+  m.pedZones.push({ x: 8, y: 15, w: 14, h: 2, n: 4 });
+  for (const [x, y] of [[12.5, 14], [18.5, 14]]) m.light(x * 16, y * 16, 70, '#fff4c0');
+  m.light(11 * 16, 1 * 16 + 8, 36, '#ffe09a');
+  m.vehicles.push(makeTram(22, 30, 0.3));
+  m.birdSpots.push({ x: 1, y: 8, w: 6, h: 3, n: 3, kind: 'crow' });
+  return m;
+};
 MAP_BUILDERS.seegrube = () => {
   const m = new GMap('seegrube', 30, 20, { name: 'Seegrube · 1.905 m', bg: '#8c8a86' });
   m.fill(0, 0, 30, 20, T.ROCK, (x, y) => (hash(x, y, 2) > 0.7 ? 1 : 0));

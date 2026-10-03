@@ -135,6 +135,7 @@ const SHOPS = {
     { t: 'Für die Bühne', items: [it('piccolo', 45, { n: 'Piccolo für die Tänzerin', d: 'Chantal prostet dir zu', icon: 'wine', special: 'tip' }), it('flasche', 180, { n: 'Flasche Champagner für die Bühne', d: 'Mit Wunderkerze. Alle schauen.', icon: 'wine', special: 'bottle' })] },
   ] },
   casinobar: { title: 'Casinobar', mode: 'eat', venue: 'casino', intro: 'Gedämpftes Licht, leises Klackern der Jetons.', sections: [{ t: 'Drinks', items: [it('bier', 6.5), it('gintonic', 12), it('wein', 7.5), it('cola', 4.5), it('wasser', 4)] }] },
+  turmcafe: { title: 'Café im Turm', mode: 'eat', intro: 'Panoramafenster, Kaffee und Strudel in 50 Metern Höhe über dem Stadion.', sections: [{ t: 'Getränke', items: [it('kaffee', 3.9), it('melange', 4.6), it('wasser', 3.2), it('jagertee', 6.2)] }, { t: 'Süsses', items: [it('strudel', 5.8), it('sacher', 6.5)] }] },
   huette: { title: 'Restaurant Seegrube', mode: 'eat', intro: 'Auf 1.905 Metern schmeckt alles doppelt so gut.', sections: [{ t: 'Getränke', items: [it('radler', 4.9), it('bier', 5.2), it('jagertee', 5.9), it('kaffee', 3.5), it('wasser', 3.2)] }, { t: 'Hüttenküche', items: [it('kaiserschmarrn', 13.9), it('germknoedel', 9.9), it('gulasch', 7.9), it('strudel', 6.5)] }] },
   minibar: { title: 'Minibar', mode: 'eat', intro: 'Hotelpreise. Natürlich.', sections: [{ t: 'Inhalt', items: [it('dosenbier', 6.5), it('zirben', 7.0), it('cola', 4.5), it('wasser', 4.0), it('schoko', 4.5), it('erdnuesse', 5.0)] }] },
   kebap: { title: 'Kebap im Bogen', mode: 'eat', venue: 'kebap', sections: [{ t: 'Auf die Hand', items: [it('kebap', 6.5, { n: 'Kebap mit allem', icon: 'kebap', d: 'macht richtig satt · gegen Übelkeit' }), it('pommes', 3.9), it('cola', 3.0), it('dosenbier', 3.5)] }] },
@@ -194,6 +195,7 @@ const Story = {
         else if (G.S.st.nau > 70) tips.push('Dir ist übel – Wasser, Essen oder Schlaf');
         else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
         else if (h < 17 && !G.S.ach.seegrube) tips.push('Nordkettenbahn zur Seegrube (bis 17:30)');
+        else if (h < 16 && !G.S.ach.springer) tips.push('Tram zum Bergisel: Schanze, Turm und Gästespringen (9–16:30)');
         else if (dayOf(G.S.time) >= 2 && Math.floor(hourOf(G.S.time)) % 3 === 0) tips.push('Genug gefeiert? Heimreise am Hauptbahnhof – das beendet das Spiel');
         else tips.push('Die Jungs sind in der Gamsbock Bar');
         return `${tips[0]} · Fotos ${Object.keys(G.S.photos).length}/${Object.keys(SIGHTS).length}`;
@@ -221,7 +223,7 @@ const Story = {
     return [
       { x: 19, y: 46, n: 'Hotel Zirbe', c: A }, { x: 43, y: 64, n: 'Gamsbock Bar', c: A }, { x: 25, y: 46, n: 'Stüberl', c: A }, { x: 71, y: 63, n: 'Club Lawine', c: N },
       { x: 65, y: 63, n: 'Rouge', c: N }, { x: 50, y: 80, n: 'Casino', c: N }, { x: 74, y: 74, n: 'Hauptbahnhof', c: V }, { x: 34, y: 33, n: 'Goldenes Dachl', c: V }, { x: 24, y: 38, n: 'Stadtturm', c: V }, { x: 45, y: 33, n: 'Dom', c: V },
-      { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V },
+      { x: 62, y: 33, n: 'Hofburg', c: V }, { x: 61, y: 38, n: 'Leopoldsbrunnen', c: V }, { x: 77, y: 31, n: 'Nordkettenbahn', c: V }, { x: 85, y: 44, n: 'Hofgarten', c: V }, { x: 79, y: 82, n: 'Tram Bergisel', c: V },
       { x: 35, y: 64, n: 'Annasäule', c: V }, { x: 35, y: 81, n: 'Triumphpforte', c: V }, { x: 30, y: 20, n: 'Innbrücke', c: V },
       { x: 3, y: 46, n: 'Sport', c: S }, { x: 9, y: 46, n: 'Tracht', c: S }, { x: 29, y: 46, n: 'Souvenir', c: S }, { x: 21, y: 72, n: 'Apotheke', c: S }, { x: 28, y: 72, n: 'Spar', c: S },
       { x: 43, y: 72, n: 'Souvenir', c: S }, { x: 49, y: 72, n: 'Trafik', c: S }, { x: 19, y: 80, n: 'Bankomat', c: A }, { x: 60, y: 74, n: 'Bankomat', c: A }, { x: 28, y: 80, n: 'Barbier', c: S }, { x: 43, y: 80, n: 'Konditorei', c: S }, { x: 61, y: 77, n: 'Würstel', c: S }, { x: 87, y: 77, n: 'Taxi', c: A },
@@ -934,7 +936,7 @@ const Story = {
       case 'smoke': await this.smoke(id); break;
       case 'foto': {
         const miss = Object.keys(SIGHTS).filter((s2) => !G.S.photos[s2]);
-        const where = { dachl: 'am Ende der Herzog-Friedrich-Strasse', stadtturm: 'gleich westlich vom Goldenen Dachl', annasaeule: 'mitten in der Maria-Theresien-Strasse', triumphpforte: 'am südlichen Ende der Maria-Theresien-Strasse', hofburg: 'östlich vom Dom', dom: 'nördlich vom Domplatz', leopold: 'vor der Hofburg', mariahilf: 'vom Südufer des Inn aus', innbruecke: 'über den Inn', bogen: 'bei den Viaduktbögen östlich der Maria-Theresien-Strasse', seegrube: 'oben auf der Nordkette – Bahn ab Congress', hofgarten: 'im Park östlich der Hofburg', torbogen: 'in Luzern, zu spät', kapellbruecke: 'in Luzern, zu spät' };
+        const where = { dachl: 'am Ende der Herzog-Friedrich-Strasse', stadtturm: 'gleich westlich vom Goldenen Dachl', annasaeule: 'mitten in der Maria-Theresien-Strasse', triumphpforte: 'am südlichen Ende der Maria-Theresien-Strasse', hofburg: 'östlich vom Dom', dom: 'nördlich vom Domplatz', leopold: 'vor der Hofburg', mariahilf: 'vom Südufer des Inn aus', innbruecke: 'über den Inn', bogen: 'bei den Viaduktbögen östlich der Maria-Theresien-Strasse', seegrube: 'oben auf der Nordkette – Bahn ab Congress', bergisel: 'südlich der Stadt – Tram ab der Haltestelle beim Hauptbahnhof', hofgarten: 'im Park östlich der Hofburg', torbogen: 'in Luzern, zu spät', kapellbruecke: 'in Luzern, zu spät' };
         const miss2 = miss.filter((x) => !['torbogen', 'kapellbruecke'].includes(x));
         await this.say(id, miss2.length ? `Dir fehlen noch ${miss2.length} Fotos. Probier mal ${SIGHTS[miss2[0]].n} – ${where[miss2[0]]}.` : 'Du hast alles fotografiert! Respekt, da bin sogar ich neidisch.');
         break;
@@ -1778,6 +1780,87 @@ const Story = {
     enterMap('ibk', 'hbb_out'); await UI.fadeIn();
   },
   async telescope() { await Mini.panorama('seegrube'); mood(4); },
+  /* ---------- Bergisel: Tram, Kassa, Turm, Schanze ---------- */
+  async bergiselTram() {
+    const h = hourOf(G.S.time);
+    if (h < 6 || h >= 23.5) { await this.say(null, 'Die Tram zum Bergisel fährt von 6 bis 23:30 Uhr.'); return; }
+    const c = await this.ask(null, 'Tram zum Bergisel: in zwölf Minuten zur Sprungschanze von Zaha Hadid, zum Andreas-Hofer-Denkmal und zum Tirol Panorama.', [{ t: 'Einsteigen', r: '3,00 €' }, { t: 'Lieber nicht' }]);
+    if (c !== 0) return;
+    if (!pay('eur', 3)) { await this.say(null, 'Kein Geld fürs Ticket. Der Bankomat ist gleich hier beim Bahnhof.'); return; }
+    await Scene.play('tram', { text: 'Tram zum Bergisel … Wilten … Endstation Bergisel.', ms: 3400, keep: true });
+    passTime(12);
+    enterMap('bergisel', 'entry'); await UI.fadeIn();
+    if (!G.S.ach.bergisel) { achieve('bergisel'); await this.say('me', 'Da oben thront sie: die Bergiselschanze. Sieht aus wie eine Kobra, die über die Stadt schaut.'); }
+  },
+  async bergiselBack() {
+    const c = await this.ask(null, 'Tram zurück in die Stadt, zum Hauptbahnhof.', [{ t: 'Einsteigen', r: '3,00 €' }, { t: 'Noch bleiben' }]);
+    if (c !== 0) return;
+    if (!pay('eur', 3)) { await this.say(null, 'Pleite? Dann heisst es: zu Fuss. Eine halbe Stunde bergab durch Wilten.'); await UI.fadeOut('Zu Fuss durch Wilten …'); passTime(35); energy(-8); await sleep(900); enterMap('ibk', 'bergisel_stop'); await UI.fadeIn(); return; }
+    await Scene.play('tram', { text: 'Tram in die Stadt … Hauptbahnhof.', ms: 2800, keep: true, back: true });
+    passTime(12);
+    enterMap('ibk', 'bergisel_stop'); await UI.fadeIn();
+  },
+  hasBergiselTicket() { return G.S.flags.bergiselTicket === dayOf(G.S.time); },
+  async bergiselTicket() {
+    const k = G.npcs.find((n) => n.id === 'kassa') || 'Kassa';
+    if (this.hasBergiselTicket()) { await this.say(k, 'Du hast heute schon ein Ticket, Bursch. Lift und Stadion stehen dir offen.'); return; }
+    const h = hourOf(G.S.time);
+    if (h < 9 || h >= 17) { await this.say(k, 'Kassa offen von 9 bis 17 Uhr. Die Schanze kannst du von aussen anschauen.'); return; }
+    const c = await this.ask(k, 'Bergisel: Eintritt ins Schanzenstadion und Panoramalift auf den Turm – mit Café und Aussicht über ganz Innsbruck.', [{ t: 'Ticket', r: '11,00 €' }, { t: 'Nur schauen' }]);
+    if (c !== 0) return;
+    if (!pay('eur', 11)) { await this.say(k, 'Nicht genug Geld. Und einen Bankomaten gibt es hier oben nicht.'); return; }
+    G.S.flags.bergiselTicket = dayOf(G.S.time);
+    UI.toast('Ticket Bergisel: Stadion und Panoramalift, gültig heute.');
+  },
+  async bergiselTower() {
+    if (!this.hasBergiselTicket()) { await this.say(null, 'Der Lift braucht ein Ticket – gibt es an der Kassa beim Eingang (9–17 Uhr).'); return; }
+    await Scene.play('lift', { text: 'Panoramalift … 50 Meter in 30 Sekunden …', ms: 3000 });
+    passTime(10);
+    await Mini.panorama('bergisel');
+    mood(5);
+    const c = await this.ask(null, 'Oben im Turm: das Café mit Panoramafenstern. Unter dir das Stadion, gegenüber die Nordkette.', [{ t: 'Café im Turm' }, { t: 'Wieder runter' }]);
+    if (c === 0) await this.shop('turmcafe');
+    await Scene.play('lift', { text: 'Lift abwärts …', ms: 1800, down: true }); passTime(10);
+  },
+  async hofer() { await this.say(null, '<em>Andreas-Hofer-Denkmal</em> (1893). Der Tiroler Freiheitskämpfer schlug 1809 hier am Bergisel dreimal bayerische und französische Truppen – und verlor die vierte Schlacht. 1810 wurde er in Mantua erschossen.'); mood(1); },
+  async panoramaMuseum() {
+    const h = hourOf(G.S.time);
+    if (h < 9 || h >= 17) { await this.say(null, 'Das Tirol Panorama hat von 9 bis 17 Uhr offen.'); return; }
+    const c = await this.ask(null, 'Tirol Panorama: Das Riesenrundgemälde von 1896 zeigt die Bergiselschlacht von 1809 – rund 1.000 Quadratmeter Leinwand, einmal rundherum.', [{ t: 'Hinein', r: '11,00 €' }, { t: 'Später' }]);
+    if (c !== 0 || !pay('eur', 11)) return;
+    await UI.card('Du stehst mitten im Gemälde: Pulverdampf, Sensen, Andreas Hofer auf dem Hügel … und ein Schweizer, der sich fragt, warum er nicht in der Bar ist.', 2600);
+    passTime(45); mood(4); energy(-4); achieve('museum');
+  },
+  async skijump() {
+    const t = G.npcs.find((n) => n.id === 'trainer') || 'Trainer Sepp';
+    const st = G.S.st, h = hourOf(G.S.time);
+    if (h < 9 || h >= 16.5) { await this.say(t, 'Gästespringen gibt es nur bei Tageslicht, 9 bis 16:30 Uhr. Im Dunkeln spring nicht mal ich.'); return; }
+    if (!this.hasBergiselTicket()) { await this.say(t, 'Ohne Stadion-Ticket kommst du nicht mal zum Schanzentisch. Kassa beim Eingang.'); return; }
+    if (st.prom > 1.5) { await this.say(t, 'Du riechst wie eine Schnapsbrennerei. Mit dem Pegel? Nein. Nüchtern wiederkommen.'); return; }
+    if (st.energy < 20) { await this.say(t, 'Du schläfst ja im Stehen. So lass ich dich nicht auf den Balken.'); return; }
+    if (!G.S.flags.sjIntro) { G.S.flags.sjIntro = 1; await this.say(t, 'Gästespringen? Die Schweizer wieder. Okay: Helm, Anzug, Leihski – 25 Euro. Anlauf, am Tisch abspringen, in der Luft ruhig bleiben, Telemark bei der Landung. Und wenn du dir was brichst, bist du selber schuld.'); }
+    const c = await this.ask(t, `Bereit? K-Punkt 120 Meter, Schanzenrekord 138.${G.S.rec.jump ? ` Dein Bester: ${G.S.rec.jump.toFixed(1)} m.` : ''}`, [{ t: 'Springen', r: '25,00 €' }, { t: 'Wie geht das nochmal?' }, { t: 'Lieber nicht' }]);
+    if (c === 1) { await this.say(t, 'START antippen. Am Schanzentisch – da, wo die Spur aufhört – im richtigen Moment ABSPRUNG drücken. Im Flug mit ◀ und ▶ die Haltung halten, der Balken oben muss im grünen Bereich bleiben. Kurz vor dem Boden nochmal drücken: Telemark.'); return; }
+    if (c !== 0) return;
+    if (!pay('eur', 25)) { await this.say(t, 'Kein Geld, kein Ski. So einfach ist das.'); return; }
+    Snd.sfx('ok');
+    const res = await Mini.skijump();
+    if (!res) { UI.toast('Abgebrochen – die Leihgebühr ist trotzdem weg.'); return; }
+    passTime(30); energy(-12);
+    if (!res.crash) G.S.rec.jump = Math.max(G.S.rec.jump || 0, res.d);
+    achieve('springer');
+    if (res.crash) {
+      energy(-18); mood(-4); st.nau = clamp(st.nau + 10, 0, 140); achieve('sturz');
+      await this.say(t, pick(['Au weh! Das war keine Landung, das war ein Einschlag. Alles noch dran?', 'Bauchlandung. Ein paar blaue Flecken, sonst nichts – Glück gehabt, Schweizer.']));
+    } else {
+      if (res.d >= 120) achieve('kpunkt');
+      if (res.d > 138) achieve('rekord');
+      mood(res.d >= 120 ? 14 : 8);
+      await this.say(t, res.d > 138 ? 'SCHANZENREKORD?! Das … das gibt es nicht. Hast du das gefilmt? Keiner glaubt mir das!' : res.d >= 120 ? `${res.d.toFixed(1)} Meter, über den K-Punkt! ${res.telemark ? 'Und mit Telemark. ' : ''}Du bist sicher, dass du Schweizer bist?` : res.d >= 100 ? `${res.d.toFixed(1)} Meter. Sauber. Für einen Touristen fast schon ernst zu nehmen.` : `${res.d.toFixed(1)} Meter. Na ja. Der Hügel ist steil, die Luft ist dünn, und du bist kein Adler.`);
+    }
+    const f = who('party');
+    UI.toast(`${fname(f)} per WhatsApp: „${res.crash ? 'Hab das Video. Das geht in die Gruppe. Sofort.' : res.d >= 120 ? `${res.d.toFixed(0)} METER?! Heute Abend geht das Bier auf mich!` : `${res.d.toFixed(0)} Meter? Mein Grosi springt weiter.`}“`);
+  },
   async yodel() {
     Snd.sfx('yodel'); achieve('jodel'); mood(6);
     for (const b of G.birds) if (b.kind === 'marmot') { b.state = 'hide'; b.t = 0; }

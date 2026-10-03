@@ -3,7 +3,7 @@ const T = {
   VOID: 0, COBBLE: 1, ASPH: 2, PAVE: 3, GRASS: 4, WATER: 5, BRIDGE: 6, STONE: 7, WOOD: 8, CARPET: 9, BATH: 10,
   PLAT: 11, RAIL: 12, LED: 13, DARK: 14, ROCK: 15, GRAVEL: 16, PLAZA: 17, TRAINF: 18, FLOWER: 19, ZEBRA: 20,
   DECK: 21, KIES: 22, WALL: 23, WALLF: 24, FOREST: 25, TRAMR: 26, EDGE: 27, MEADOW: 28, CLIFF: 29, STAIRS: 30,
-  MARBLE: 31, HEDGE: 32, SAND: 33,
+  MARBLE: 31, HEDGE: 32, SAND: 33, SNOW: 34,
 };
 const SOLID_T = new Set([T.VOID, T.WATER, T.RAIL, T.WALL, T.WALLF, T.FOREST, T.FLOWER, T.CLIFF, T.HEDGE]);
 
@@ -169,6 +169,7 @@ const TILE_PAINT = {
   [T.STAIRS]: (x, px, py, tx, ty, m, v) => { const b = v === 1 ? '#8a6a46' : '#b5aea2'; R(x, px, py, 16, 16, b); for (let k = 0; k < 16; k += 4) { R(x, px, py + k, 16, 1, shade(b, 0.2)); R(x, px, py + k + 3, 16, 1, shade(b, -0.3)); } },
   [T.MARBLE]: (x, px, py, tx, ty) => { const a = (tx + ty) % 2 ? '#e9e4d8' : '#4a4e56'; R(x, px, py, 16, 16, a); line(x, px + 2, py + 3, px + 9, py + 12, shade(a, (tx + ty) % 2 ? -0.06 : 0.08)); },
   [T.HEDGE]: (x, px, py, tx, ty) => { R(x, px, py, 16, 16, '#3c6a34'); for (let i = 0; i < 10; i++) R(x, px + (hash(tx, ty, i) * 14 | 0), py + (hash(ty, tx, i) * 14 | 0), 2, 2, i % 2 ? '#4d8040' : '#2f5629'); R(x, px, py + 13, 16, 3, '#2a4a24'); },
+  [T.SNOW]: (x, px, py, tx, ty, m, v) => { R(x, px, py, 16, 16, v ? '#e4ecf4' : '#f2f6fa'); for (let i = 0; i < 8; i++) P(x, px + (hash(tx, ty, i) * 16 | 0), py + (hash(ty, tx, i) * 16 | 0), i % 2 ? '#ffffff' : '#d6e2ee'); if (v && hash(tx, ty, 9) > 0.6) { line(x, px + 1, py + 6 + (hash(tx, ty, 4) * 6 | 0), px + 15, py + 7 + (hash(tx, ty, 4) * 6 | 0), '#c8d6e4'); } },
   [T.SAND]: (x, px, py, tx, ty) => { R(x, px, py, 16, 16, '#d9c9a2'); for (let i = 0; i < 10; i++) P(x, px + (hash(tx, ty, i) * 16 | 0), py + (hash(ty, tx, i) * 16 | 0), '#c4b48c'); },
 };
 function paintWallFace(x, px, py, tx, ty, m, v) {

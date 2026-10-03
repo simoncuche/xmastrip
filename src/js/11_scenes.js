@@ -144,6 +144,47 @@ const SCENES = {
     for (let i = 0; i < 3; i++) { const cx2 = (hash(i, 3) * 200 + t * 6) % 200 - 20; E(c, cx2, 16 + i * 8, 10, 3, 'rgba(255,255,255,0.8)'); }
     pxText(c, st.down ? 'TALFAHRT' : `${Math.round(574 + q * 1331)} M`, 6, 6, '#ffffff');
   },
+  /* Tram zum Bergisel (oder zurück): Häuserzeilen, Oberleitung, rote Tram */
+  tram(c, t, p, st) {
+    sceneSky(c, st.night);
+    sceneMountains(c, 34, '#7a8aa0', true, st.back ? 90 : 10);
+    const off = t * 60;
+    if (!st.back) { /* Richtung Bergisel: die Schanze wächst am Horizont */ const sx = 118 - p * 14, sy = 34 - p * 10, sc = 0.6 + p * 0.9; R(c, sx, sy, 3 * sc, 22 * sc, '#d8dcdf'); E(c, sx + 1.5 * sc, sy, 5 * sc, 2.5 * sc, '#e8ecef'); line(c, sx + 3 * sc, sy + 2, sx + 14 * sc, sy + 20 * sc, '#eef3f8'); }
+    for (let i = -1; i < 10; i++) { const bx = Math.round(i * 30 - (off % 30)), k = Math.floor((i + Math.floor(off / 30)) % 7 + 7) % 7; const h = 18 + Math.floor(hash(k, 4) * 24); R(c, bx, 60 - h, 26, h, ['#e8d8c0', '#c8c8d0', '#d8c0b0', '#b8c0b0', '#e0c8a8'][k % 5]); R(c, bx - 1, 60 - h - 4, 28, 5, ['#8a3b2a', '#5a5e64', '#7a4a3a'][k % 3]); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = bx + 3; wx < bx + 24; wx += 6) R(c, wx, wy, 3, 3, st.night && hash(k, wy + wx) > 0.3 ? '#ffd27a' : '#3a4a5a'); if (k === 2) { R(c, bx + 4, 52, 18, 8, '#f4f0e6'); pxText(c, 'WILTEN', bx + 5, 53, '#2a2a2e'); } }
+    for (let i = -1; i < 6; i++) { const lx = Math.round(i * 60 - (off % 60)) + 10; R(c, lx, 36, 2, 24, '#3a3a40'); R(c, lx - 3, 36, 8, 1, '#3a3a40'); }
+    line(c, 0, 37, SCENE_W, 37, '#5a5a60');
+    R(c, 0, 60, SCENE_W, 36, '#3a3c40'); R(c, 0, 60, SCENE_W, 2, '#8a8a90');
+    R(c, 0, 72, SCENE_W, 1, '#8a8e94'); R(c, 0, 76, SCENE_W, 1, '#8a8e94');
+    for (let i = -1; i < 20; i++) R(c, Math.round(i * 8 - (off % 8)), 71, 4, 7, '#2a2a2e');
+    const cx = 36, cy = 64 + Math.sin(t * 9) * 0.5;
+    R(c, cx, cy - 18, 90, 20, '#c8302a'); R(c, cx, cy - 18, 90, 6, '#f4f0e6'); R(c, cx + 2, cy - 16, 86, 2, '#c8302a');
+    for (let k = 0; k < 7; k++) { R(c, cx + 4 + k * 12, cy - 15, 9, 9, st.night ? '#ffe8b0' : '#9ac0d8'); if (k === 1 || k === 4) sceneHead(c, st, cx + 2 + k * 12, cy - 14, 0.6, 0); }
+    R(c, cx, cy - 20, 90, 2, '#2a2a2e'); R(c, cx + 40, cy - 30, 2, 10, '#2a2a2e'); line(c, cx + 34, cy - 30, cx + 48, cy - 30, '#2a2a2e');
+    R(c, cx + 8, cy - 26, 30, 6, '#1a1a1e'); pxText(c, st.back ? 'HBF' : 'BERGISEL', cx + 9, cy - 25, '#ffb53d');
+    R(c, cx + 86, cy - 8, 4, 3, '#fff8d0'); R(c, cx, cy - 8, 3, 3, '#e2554a');
+    for (const wx of [cx + 10, cx + 70]) { E(c, wx, cy + 3, 4, 4, '#1e1e22'); E(c, wx + 12, cy + 3, 4, 4, '#1e1e22'); }
+    if (Math.floor(t * 2) % 5 === 0) { Snd.sfx('ding'); }
+    pxText(c, st.back ? 'TRAM · HAUPTBAHNHOF' : 'TRAM · BERGISEL', 6, 6, '#ffffff');
+  },
+  /* Panoramalift im Bergisel-Turm: Glaskabine, die Stadt sinkt */
+  lift(c, t, p, st) {
+    sceneSky(c, st.night);
+    const q = st.down ? 1 - p : p;
+    sceneMountains(c, 46 + q * 10, '#6a7f9a', true, 30);
+    const base = 70 + q * 50;
+    for (let i = 0; i < 60; i++) { const x = (i * 29) % SCENE_W, w = 6 + (i * 5) % 9, h = 6 + (i * 7) % 10, y = base - h + (i * 11) % 24; R(c, x, y, w, h, st.night ? '#2a2a3a' : ['#e8d8c0', '#c8c8d0', '#d8c0b0'][i % 3]); R(c, x, y - 2, w, 2, '#7a4a3a'); if (st.night && i % 2) P(c, x + 2, y + 2, '#ffd27a'); }
+    /* Aufsprunghügel und Stadion unter dem Turm */
+    c.fillStyle = '#eef3f8'; c.beginPath(); c.moveTo(60, 96); c.lineTo(100 + q * 30, 40 + q * 56); c.lineTo(SCENE_W, 60 + q * 40); c.lineTo(SCENE_W, 96); c.closePath(); c.fill();
+    /* Turmschaft und Kabine */
+    R(c, 20, 0, 22, 96, '#d0d6dc'); R(c, 20, 0, 5, 96, '#b8c0c8'); R(c, 37, 0, 5, 96, '#e6eaee');
+    const ky = 30 - Math.sin(t * 6) * 0.4;
+    R(c, 23, ky, 16, 26, '#3a5068'); R(c, 24, ky + 1, 14, 24, st.night ? '#243a50' : '#9ac8e8');
+    sceneSprite(c, st, 'stand', 0, 22, ky + 3, 0.85);
+    R(c, 23, ky, 16, 1, '#c9ccd2'); R(c, 23, ky + 25, 16, 1, '#c9ccd2');
+    for (let k = 0; k < 6; k++) { const yy = ((k * 18 + q * 110) % 108) - 6; R(c, 26, yy, 10, 2, 'rgba(0,0,0,0.12)'); }
+    pxText(c, `${Math.round(q * 50)} M`, 6, 6, '#ffffff');
+    const stp = Math.floor(t * 1.5); if (stp !== st._step && !st.night) { st._step = stp; }
+  },
   /* Stadtturm: 133 Stufen */
   tower(c, t, p, st) {
     const off = Math.round(t * 40);
