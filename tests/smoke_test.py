@@ -34,7 +34,7 @@ with sync_playwright() as p:
         return pg.evaluate("() => ({stage: G.S.stage, map: G.map.id, time: clockStr(), beers: G.S.beers})")
 
     run("const S2 = newState(randomLook(rng(9), {}), 'Hoshy'); S2.pid = 'hoshy'; await startGame(S2, true);", 1.0)
-    run("for (const id of Object.keys(FRIENDS)) { G.busy++; await Story.meetTalk(id); G.busy--; }", 1.0)
+    run("for (const id of [who('party'), who('foto'), who('kassier'), 'kusi', 'lexx']) { G.busy++; await Story.meetTalk(id); G.busy--; }")
     assert state()["stage"] == "board", state()
     # Ohne Billett lässt dich niemand einsteigen
     run("G.busy++; await Story.boardTrain(); G.busy--;", 0.6)

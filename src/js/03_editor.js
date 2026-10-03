@@ -64,7 +64,7 @@ const Editor = {
           list.appendChild(grid);
           const n = document.createElement('p');
           n.className = 'note';
-          n.textContent = 'Die anderen elf fahren als Kollegen mit, jeder in seinem gewohnten Look. In Luzern musst du jeden einzelnen von ihnen beim Torbogen begrüssen, bevor es zum Gleis geht. Wer eine Schlüsselrolle hat (Kassier mit der Gruppenkasse, Anwalt als Jass-Schiedsrichter, Muskelprotz beim Armdrücken …), gibt sie an einen anderen ab, wenn du ihn spielst.';
+          n.textContent = 'Die anderen elf fahren als Kollegen mit, jeder in seinem gewohnten Look. Wer eine Schlüsselrolle hat (Kassier mit der Gruppenkasse, Anwalt als Jass-Schiedsrichter, Muskelprotz beim Armdrücken …), gibt sie an einen anderen ab, wenn du ihn spielst.';
           list.appendChild(n);
           return;
         }

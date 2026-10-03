@@ -150,7 +150,7 @@ const Story = {
   objective() {
     const s = G.S.stage, org = playerIsKassier() ? null : fname(who('kassier'));
     switch (s) {
-      case 'meet': { const n = Object.keys(G.S.flags.met).length, tot = Object.keys(FRIENDS).length; return `Begrüss jeden der ${tot} Jungs beim Torbogen (${n}/${tot})${playerIsKassier() ? '' : ` – ${org} gibt dir das Geld fürs Billett`}. Abfahrt 9:10!`; }
+      case 'meet': return playerIsKassier() ? 'Triff die Jungs beim Torbogen – du kaufst das Gruppenbillett. Abfahrt 9:10!' : `Triff die Jungs beim Torbogen – ${org} gibt dir das Geld fürs Billett. Abfahrt 9:10!`;
       case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
       case 'arrived': return 'Innsbruck Hbf! Aussteigen (Tür im Vorraum)';
@@ -174,7 +174,7 @@ const Story = {
   objectiveTag() { return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
   steps() {
     return [
-      { t: 'Alle elf Jungs beim Torbogen begrüssen', d: 'Bahnhofplatz Luzern – mit jedem einzeln reden', done: stageAt('board') },
+      { t: 'Die Jungs beim Torbogen treffen', d: 'Bahnhofplatz Luzern', done: stageAt('board') },
       { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
       { t: 'Pünktlich um 9:10 in den IR nach Zürich', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
       { t: 'Hotel Zirbe finden', d: 'Gasse südlich vom Goldenen Dachl', done: stageAt('checkin') },
@@ -246,8 +246,6 @@ const Story = {
         const sp = spots[k++ % spots.length];
         add(id, sp[0], sp[1], sp[2], 'stand', { bubbleRand: id === org ? ['?'] : ['dots', 'note'] });
       }
-      /* Wer noch nicht begrüsst wurde, winkt mit einem „!“ */
-      for (const n of G.npcs) if (n.friend && !G.S.flags.met[n.id]) n.bubbleRand = ['!'];
       return;
     }
     if (m.id === 'luzern_halle' && s === 'board') {
@@ -446,11 +444,7 @@ const Story = {
   },
   async meetTalk(id) {
     const fl = G.S.flags, org = who('kassier'), party = who('party'), foto = who('foto');
-    const first = !fl.met[id];
     fl.met[id] = 1;
-    const me = G.npcs.find((n) => n.friend && n.id === id);
-    if (me) { me.bubbleRand = ['dots', 'note']; me.bubble = null; }
-    UI.hud();
     if (id === party && !fl.gotBeer) {
       fl.gotBeer = 1; addInv('dosenbier');
       await this.say(id, 'Hoi! Ich hab Reiseproviant geholt. Da, ein Dosenbier für dich – aber erst im Zug aufmachen!');
@@ -460,9 +454,9 @@ const Story = {
       await this.say(id, `Hoi ${G.S.name}! Die Hotelreservation hab ich: Hotel Zirbe in der Altstadt. Aber das Gruppenbillett kaufst du – du bist heute für die Fahrkarten zuständig.`);
       if (!fl.gotCash) { fl.gotCash = 1; addMoney('chf', TICKET_CASH); Snd.sfx('coin'); await this.say(id, `Hier, ${TICKET_CASH} Franken aus der Gruppenkasse. Der Automat ist in der Bahnhofshalle. Und bitte: vor 9:10!`); UI.toast(`+${TICKET_CASH} CHF aus der Gruppenkasse`); }
     } else await this.say(id, this.line(id));
-    const all = Object.keys(FRIENDS);
-    const left = all.filter((x) => !fl.met[x]);
-    if (!left.length) {
+    const need = [party, foto].concat(playerIsKassier() ? [] : [org]);
+    const metCount = Object.keys(fl.met).length;
+    if (need.every((x) => fl.met[x]) && metCount >= 4) {
       const lead = playerIsKassier() ? party : org;
       const late = latecomer();
       await this.say(lead, `Alle da! ${G.S.name}, du holst das Gruppenbillett am Automaten in der Halle. Wir gehen schon mal auf Gleis 4 – der IR nach Zürich fährt um 9:10, pünktlich!`);
@@ -472,9 +466,9 @@ const Story = {
       G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
       UI.toast(hasInv('billett') ? 'Die Jungs gehen zum Gleis. Durch den Bahnhof zu Gleis 4!' : 'Die Jungs gehen zum Gleis. Kauf das Billett am Automaten in der Halle – bis 9:10!');
     } else {
-      const names = left.map(fname);
-      const shown = names.length > 4 ? names.slice(0, 4).join(', ') + ` und ${names.length - 4} weitere` : names.join(', ');
-      UI.toast(first ? `${all.length - left.length}/${all.length} begrüsst. Noch nicht: ${shown}` : `${fname(id)} hast du schon begrüsst. Noch nicht: ${shown}`);
+      const left = need.filter((x) => !fl.met[x]).map(fname);
+      if (left.length) UI.toast(`Noch nicht begrüsst: ${left.join(', ')}`);
+      else if (metCount < 4) UI.toast(`Begrüss noch ${4 - metCount} weitere Kollegen.`);
     }
   },
   async lateTalk(id) {
