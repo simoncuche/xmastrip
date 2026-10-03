@@ -130,6 +130,7 @@ const ACH = {
   dusche: ['Frisch gemacht', 'Im Hotel geduscht'],
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
+  abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],
 };
 
 function newState(look, name) {
@@ -235,6 +236,8 @@ function tickStats(dm) {
   if (st.hang > 0) { st.hang = Math.max(0, st.hang - dm * 0.5); mood(-1.2 / 60 * dm); }
   if (st.wet > 0) st.wet = Math.max(0, st.wet - dm);
   if (st.smell > 0) st.smell = Math.max(0, st.smell - dm * 0.5);
+  /* Pegel der Kollegen baut sich wie beim Spieler ab */
+  if (G.S.fprom) for (const k of Object.keys(G.S.fprom)) G.S.fprom[k] = Math.max(0, G.S.fprom[k] - (0.15 / 60) * dm);
   checkThresholds();
 }
 function warnOnce(key, cond, msg, reset) {

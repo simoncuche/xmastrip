@@ -62,7 +62,10 @@ function buildFriends() {
     FRIENDS[c.id] = { id: c.id, name: c.name, role: c.role, fn: c.fn, look: L, bg: c.bg };
   }
   for (const k of Object.keys(FRIENDS)) if (G.S.aff[k] == null) G.S.aff[k] = 50;
+  if (!G.S.fprom) G.S.fprom = {};
+  if (!G.S.flags.sick) G.S.flags.sick = {};
 }
+const fprom = (id) => (G.S.fprom && G.S.fprom[id]) || 0;
 function who(fn) { for (const id of FN_FALLBACK[fn] || []) if (FRIENDS[id]) return id; return Object.keys(FRIENDS)[0]; }
 const fname = (id) => (FRIENDS[id] ? FRIENDS[id].name : G.S.name);
 const playerIsKassier = () => G.S.pid === 'cuche';
@@ -229,10 +232,29 @@ const Story = {
     if (G.S.stage === 'board') return true;
     return !!(G.S.flags.late && !G.S.flags.lateArrived);
   },
+  /* Wo ist ein Kollege gerade? Text und Kartenpunkt für Handy-Status und Karte. */
+  whereIs(id) {
+    const s = G.S.stage;
+    if (this.away(id)) return { t: G.S.flags.late ? 'im Taxi unterwegs nach Innsbruck' : 'raucht noch vor dem Bahnhof', x: null };
+    if (!stageAt('bar')) {
+      if (G.S.map === 'luzern' || s === 'meet') return { t: 'beim Torbogen in Luzern', x: null };
+      if (s === 'board') return { t: 'auf Gleis 4', x: null };
+      if (s === 'ride' || s === 'arrived') return { t: 'im Zug, Wagen 3', x: null };
+      return { t: 'auf dem Weg ins Hotel Zirbe', x: 19, y: 46 };
+    }
+    const loc = this.schedule(id);
+    const P = { bar: ['in der Gamsbock Bar', 43, 64], stueberl: ['im Tiroler Stüberl', 25, 46], club: ['im Club Lawine', 71, 63], rouge: ['im Rouge', 65, 63], hotel: ['im Hotel Zirbe', 19, 46], breakfast: ['beim Frühstück im Hotel', 19, 46], city: ['beim Goldenen Dachl', 34, 33] };
+    const e = P[loc];
+    if (!e) return { t: 'irgendwo in Innsbruck', x: null };
+    const sick = G.S.flags.sick && G.S.flags.sick[id] === dayOf(G.S.time - 300);
+    return { t: sick && loc === 'hotel' ? 'im Hotel, schläft seinen Rausch aus' : e[0], x: e[1], y: e[2] };
+  },
   schedule(id) {
     if (this.away(id)) return null;
     const h = hourOf(G.S.time);
     const o = G.S.flags.group;
+    /* Wer sich übergeben hat, liegt bis zum Morgen im Hotel */
+    if (G.S.flags.sick && G.S.flags.sick[id] === dayOf(G.S.time - 300) && stageAt('bar')) return 'hotel';
     if (o && G.S.time < o.until && o.ids.includes(id)) return o.loc;
     if (!stageAt('bar')) return null;
     if (G.S.stage === 'bar') return 'bar';
@@ -391,6 +413,8 @@ const Story = {
     if (st.smell > 30 && f.fn !== 'raucher') p.push('Du riechst wie ein Aschenbecher.');
     if (tracht()) p.push(pick(['Schau dir den an! Fehlt nur noch das Alphorn.', 'Steht dir, die Lederhose! Echt jetzt.', 'Bist du jetzt Tiroler? Muesch no jodle lerne!']));
     if (st.hang > 0) p.push('Na, Brummschädel? Ein Gröstl oder eine Knödelsuppe hilft.');
+    if (fprom(id) > 2) p.push(pick(['Hicks … wo isch … mein Bier?', 'Du … du bisch mein beschter Freund. Ehrlich. Hicks.', 'Alles dreht sich. Ist das normal? Isch normal, oder?']));
+    else if (fprom(id) > 1.2) p.push(pick(['Heute läuft\'s! Noch eins?', 'Ich bin erst warm. ERST WARM!', 'Wer hat mir die Bier alle ausgegeben? Ah, du. Merci!']));
     if (fl.rougeAt && G.S.time - fl.rougeAt < 240 && m !== 'rouge') p.push(pick(['Du warst im Rouge?! Erzähl. Alles.', 'Rouge, hm? Wie viel hat der Piccolo gekostet? 45? Ha!', 'Im Rouge gewesen und jetzt pleite. Klassiker.']));
     if (m === 'rouge') p.push(pick(['Ich bin nur wegen der Musik hier. Ehrlich.', 'Schau nicht so, ich schau auch nicht. Wir schauen alle nicht.', 'Chantal hat mir zugezwinkert. Ganz sicher. Ganz sicher mir.']));
     if (st.energy < 22) p.push('Du gähnst ununterbrochen. Leg dich doch kurz ins Hotel.');
@@ -416,6 +440,33 @@ const Story = {
     const pool = p.length && Math.random() < 0.65 ? p : R[f.fn];
     return pick(pool);
   },
+  /* Ein Kollege trinkt (ausgegeben oder Runde): Pegel steigt, ab 2,6 ‰ übergibt er sich und geht ins Hotel. */
+  async friendDrink(id, alc) {
+    G.S.fprom[id] = Math.min(4, fprom(id) + alc);
+    const n = G.npcs.find((x) => x.friend && x.id === id);
+    const pr = fprom(id);
+    if (pr >= 2.6) { await this.friendVomit(id); return; }
+    if (pr > 1.8 && n) { n.bubbleRand = ['dots', 'zzz', 'beer']; n.bubble = 'dots'; n.bubbleT = 2; if (!G.S.flags['fwarn' + id + dayOf(G.S.time)]) { G.S.flags['fwarn' + id + dayOf(G.S.time)] = 1; UI.toast(`${fname(id)} schwankt schon bedenklich (${promStr(pr)}).`, 'warn'); } }
+  },
+  async friendVomit(id) {
+    const n = G.npcs.find((x) => x.friend && x.id === id);
+    if (n) { n.pose = 'bend'; n.bubble = null; }
+    Snd.sfx('vomit'); G.fx.shake = 0.6;
+    if (n) { for (let i = 0; i < 22; i++) addPart({ x: n.x + rnd(-4, 4), y: n.y - 10, vx: rnd(-30, 30), vy: rnd(10, 40), g: 140, life: 0.9, kind: 'vomit' }); G.S.vomitSpots.push({ map: G.map.id, x: n.x + 6, y: n.y + 2, t: G.S.time }); }
+    await this.say(id, pick(['Uuurgh … das war eins zu viel … sorry …', 'Blöärgh! Ich … ich geh mal … Hotel …', 'Das letzte Bier war schlecht. Ganz sicher das letzte.']));
+    G.S.fprom[id] = 0.8;
+    G.S.flags.sick[id] = dayOf(G.S.time - 300);
+    achieve('abgefuellt');
+    const host = { bar: 'Sepp', stueberl: 'Wirtin Resi', club: 'Türsteher', rouge: 'Rocky' }[G.map.id];
+    if (host) await this.say(host, pick(['Oida! Schafft\'s den heim, bevor er\'s nochmal macht!', 'Raus mit ihm an die Luft. Und wer putzt das?', 'Taxi für den Herrn. Sofort.']));
+    const other = this.friendsHere().find((x) => x !== id);
+    if (other) await this.say(other, `Ich bring ${fname(id)} ins Hotel. Du hast ihn abgefüllt, du zahlst morgen das Frühstück.`);
+    if (n) { n.pose = 'stand'; n.hidden = true; }
+    const o2 = other ? G.npcs.find((x) => x.friend && x.id === other) : null;
+    if (o2) o2.hidden = true;
+    UI.toast(`${fname(id)} wird ins Hotel gebracht. Bis morgen früh ist er ausser Gefecht.`);
+    mood(-3);
+  },
   async talkFriend(id) {
     const f = FRIENDS[id];
     const s = G.S.stage;
@@ -425,6 +476,8 @@ const Story = {
     const opts = [{ t: 'Plaudern', k: 'chat' }];
     const venue = ['bar', 'stueberl', 'club'].includes(G.map.id);
     if (venue) opts.push({ t: `${f.name} ein Getränk ausgeben`, r: G.map.id === 'club' ? '5,50 €' : '4,80 €', k: 'treat' });
+    const roundDef = { bar: ['beer', 28.8, 'Bier'], stueberl: ['zirben', 22.8, 'Zirbenschnaps'], club: ['shot', 27, 'Shots'], rouge: ['beer', 9 * (this.friendsHere().length + 1), 'Bier'] }[G.map.id];
+    if (roundDef && this.friendsHere().length > 1) opts.push({ t: `Runde ${roundDef[2]} für alle`, r: fmtEur(roundDef[1]), k: 'runde' });
     if (venue && id === who('jass') && G.map.id !== 'club') opts.push({ t: 'Jassen', k: 'jass' });
     if (venue && id === who('arm')) opts.push({ t: 'Armdrücken', k: 'arm' });
     if (G.map.id === 'bar' && id === who('darts')) opts.push({ t: 'Darts-Duell', k: 'darts' });
@@ -448,8 +501,16 @@ const Story = {
         if (!pay('eur', pr)) { await this.say(null, 'Dein Portemonnaie ist leer.'); break; }
         G.S.aff[id] = clamp(G.S.aff[id] + 8, 0, 100); mood(3);
         Snd.sfx('clink');
-        await this.say(id, pick(['Merci viu mau! Proscht!', 'Du bist ein Guter. Prost!', 'Auf Innsbruck!', 'Zum Wohl! Die nächste geht auf mich.']));
+        const pr0 = fprom(id);
+        await this.say(id, pr0 > 2 ? pick(['Hicks … noch eins? Du bisch … mein beschter Freund …', 'Proscht … die Bar dreht sich. Oder ich.', 'Isch das … mein Bier? Alles meins.']) : pr0 > 1.2 ? pick(['Jaaa, Proscht! Heute wird\'s wild!', 'Du willst mich abfüllen, oder? Funktioniert.', 'Noch eins und ich sing.']) : pick(['Merci viu mau! Proscht!', 'Du bist ein Guter. Prost!', 'Auf Innsbruck!', 'Zum Wohl! Die nächste geht auf mich.']));
+        await this.friendDrink(id, G.map.id === 'club' ? 0.2 : 0.3);
+        if (!G.npcs.some((x) => x.friend && x.id === id && !x.hidden)) break;
         if (G.S.aff[id] > 70 && !G.S.flags['gift_' + id + dayOf(G.S.time)]) { G.S.flags['gift_' + id + dayOf(G.S.time)] = 1; await this.say(id, 'Und weil du\'s bist: Die hier geht auf mich!'); consume(G.map.id === 'club' ? 'flaschenbier' : 'bier'); }
+        break;
+      }
+      case 'runde': {
+        if (!pay('eur', roundDef[1])) { await this.say(null, 'Dafür reicht dein Geld nicht. Bankomat?'); break; }
+        await this.round(roundDef[0]);
         break;
       }
       case 'jass': await this.jass(); break;
@@ -899,6 +960,7 @@ const Story = {
     achieve('runde');
     mood(8);
     await this.say(here[0] || who('party'), pick(['PROOOSCHT! Auf Innsbruck!', 'Auf uns und auf die Gruppenkasse!', 'Zum Wohl! Der war fällig.']));
+    for (const id of here) await this.friendDrink(id, kind === 'beer' ? 0.3 : 0.15);
   },
   async barTable() {
     const p = G.player;
@@ -1241,9 +1303,12 @@ const Story = {
     const d = dayOf(G.S.time);
     if (G.S.cashDay !== d) { G.S.cashDay = d; G.S.cashToday = 0; }
     const left = 1000 - G.S.cashToday;
+    const chf = G.S.money.chf;
+    const exOpt = chf >= 5 ? [{ t: `Franken wechseln (${fmtChf(chf)} → ${fmtEur(Math.floor(chf * 1.04 - 2))})` }] : [];
+    const c = await this.ask(null, `Bankomat · Konto: unbegrenzt (fast). Heute noch ${Math.max(0, left)} € möglich.${chf >= 5 ? ' Franken nimmt hier sonst niemand – wechseln lohnt sich.' : ''}`, ['50 €', '100 €', '200 €', '500 €'].concat(exOpt.map((o) => o.t)).concat(['Abbrechen']));
+    if (c === 4 + exOpt.length) return;
+    if (c === 4 && exOpt.length) { const eur = Math.floor(chf * 1.04 - 2); addMoney('chf', -chf); addMoney('eur', eur); Snd.sfx('coin'); UI.toast(`${fmtChf(chf)} gewechselt: ${fmtEur(eur)} (Kurs 1,04, 2 € Gebühr).`); return; }
     if (left <= 0) { await this.say(null, 'Tageslimit von 1.000 € erreicht. Morgen geht wieder was.'); return; }
-    const c = await this.ask(null, `Bankomat · Konto: unbegrenzt (fast). Heute noch ${left} € möglich.`, ['50 €', '100 €', '200 €', '500 €', 'Abbrechen']);
-    if (c === 4) return;
     const v = Math.min(left, [50, 100, 200, 500][c]);
     G.S.cashToday += v; addMoney('eur', v); Snd.sfx('coin');
     UI.toast(`${v} € abgehoben.`);

@@ -369,9 +369,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.8.1";
+const APP_VERSION = "1.9.0";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -1798,6 +1798,7 @@ const ACH = {
   dusche: ['Frisch gemacht', 'Im Hotel geduscht'],
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
+  abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],
 };
 
 function newState(look, name) {
@@ -1903,6 +1904,8 @@ function tickStats(dm) {
   if (st.hang > 0) { st.hang = Math.max(0, st.hang - dm * 0.5); mood(-1.2 / 60 * dm); }
   if (st.wet > 0) st.wet = Math.max(0, st.wet - dm);
   if (st.smell > 0) st.smell = Math.max(0, st.smell - dm * 0.5);
+  /* Pegel der Kollegen baut sich wie beim Spieler ab */
+  if (G.S.fprom) for (const k of Object.keys(G.S.fprom)) G.S.fprom[k] = Math.max(0, G.S.fprom[k] - (0.15 / 60) * dm);
   checkThresholds();
 }
 function warnOnce(key, cond, msg, reset) {
@@ -4553,7 +4556,7 @@ const Phone = {
       <div class="shop-sec">Erlebnisse ${achN}/${achT}</div><div class="list">${Object.entries(ACH).map(([k, [t, d]]) => `<div class="row ${G.S.ach[k] ? 'done' : ''}"><div><div class="t">${G.S.ach[k] ? t : '???'}</div><div class="d">${d}</div></div><span class="${G.S.ach[k] ? 'tick' : 'open'}">${G.S.ach[k] ? '✓' : '·'}</span></div>`).join('')}</div>`;
   },
   karte(b) {
-    const showCity = G.map.indoor && BUILT.ibk && ['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club'].includes(G.map.id);
+    const showCity = G.map.indoor && BUILT.ibk && ['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club', 'rouge'].includes(G.map.id);
     const m = showCity ? BUILT.ibk : G.map;
     const sc = m.w > 60 ? 7 : 9;
     const [c, x] = canvas(m.w * sc, m.h * sc);
@@ -4568,8 +4571,14 @@ const Phone = {
       E(x, px, py, 6, 6, '#0f1a2b'); E(x, px, py, 5, 5, p.c);
       x.lineWidth = 3; x.strokeStyle = '#0f1a2b'; x.strokeText(p.n, px - 4, ly); x.fillStyle = '#ffffff'; x.fillText(p.n, px - 4, ly);
     });
+    /* Die Jungs: pro Ort ein weisser Kreis mit Anzahl */
+    if (m.id === 'ibk') {
+      const groups = {};
+      for (const k of Object.keys(FRIENDS)) { const w = Story.whereIs(k); if (w.x == null) continue; const key = w.x + ',' + w.y; (groups[key] = groups[key] || { x: w.x, y: w.y, names: [] }).names.push(FRIENDS[k].name); }
+      for (const g of Object.values(groups)) { const px = (g.x + 0.5) * sc + 9, py = (g.y + 0.5) * sc - 9; E(x, px, py, 8, 8, '#0f1a2b'); E(x, px, py, 7, 7, '#ffffff'); x.fillStyle = '#0f1a2b'; x.font = 'bold 11px Barlow Semi Condensed, sans-serif'; x.fillText(String(g.names.length), px - (g.names.length > 9 ? 6 : 3), py + 4); }
+    }
     if (G.map.id === m.id) { const px = G.player.x / TS * sc, py = G.player.y / TS * sc; E(x, px, py, 6, 6, '#ffffff'); E(x, px, py, 4, 4, '#d8352d'); }
-    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
+    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof. Weisse Kreise mit Zahl: so viele der Jungs sind dort – Details unter Status.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffffff"></i>Die Jungs</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
     c.style.width = (m.w * sc) + 'px';
     b.querySelector('.mapwrap').appendChild(c);
     const wrap = b.querySelector('.mapwrap');
@@ -4625,7 +4634,7 @@ const Phone = {
       <div class="stat"><small>Jass gewonnen / verloren</small><b>${G.S.rec.jassW} / ${G.S.rec.jassL}</b></div><div class="stat"><small>Bestes Darts</small><b>${G.S.rec.darts}</b></div>
       <div class="stat"><small>Bestes Tanzen</small><b>${G.S.rec.dance} %</b></div><div class="stat"><small>Rekord Flitzer</small><b>${G.S.rec.stone}×</b></div></div>
       <p class="note">Wer viel trinkt, ohne zu essen oder zu schlafen, dem wird übel. Bei 100 % Übelkeit musst du dich übergeben. Essen, Wasser und Schlaf helfen. Ab 2,6 ‰ droht ein Filmriss.</p>
-      <div class="shop-sec">Die Jungs</div><div class="list">${Object.entries(FRIENDS).map(([k, fr]) => `<div class="row"><div><div class="t">${fr.name}</div><div class="d">${fr.role}</div></div><div class="bar" style="width:120px;grid-template-columns:1fr"><i style="--v:${f(G.S.aff[k])}%;--c:var(--amber)"></i></div></div>`).join('')}</div>`;
+      <div class="shop-sec">Die Jungs – wo sie sind, wie gut ihr euch versteht, ihr Pegel</div><div class="list">${Object.entries(FRIENDS).map(([k, fr]) => { const w = Story.whereIs(k); const pr = (G.S.fprom && G.S.fprom[k]) || 0; return `<div class="row"><div><div class="t">${fr.name} <small style="color:var(--ink-dim)">· ${fr.role}</small></div><div class="d">📍 ${w.t}${pr > 0.3 ? ` · 🍺 ${promStr(pr)}${pr > 2 ? ' – sturzbetrunken' : pr > 1.2 ? ' – angeheitert' : ''}` : ''}</div></div><div class="bar" style="width:120px;grid-template-columns:1fr"><i style="--v:${f(G.S.aff[k])}%;--c:var(--amber)"></i></div></div>`; }).join('')}</div>`;
   },
   opt(b) {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
@@ -4711,7 +4720,10 @@ function buildFriends() {
     FRIENDS[c.id] = { id: c.id, name: c.name, role: c.role, fn: c.fn, look: L, bg: c.bg };
   }
   for (const k of Object.keys(FRIENDS)) if (G.S.aff[k] == null) G.S.aff[k] = 50;
+  if (!G.S.fprom) G.S.fprom = {};
+  if (!G.S.flags.sick) G.S.flags.sick = {};
 }
+const fprom = (id) => (G.S.fprom && G.S.fprom[id]) || 0;
 function who(fn) { for (const id of FN_FALLBACK[fn] || []) if (FRIENDS[id]) return id; return Object.keys(FRIENDS)[0]; }
 const fname = (id) => (FRIENDS[id] ? FRIENDS[id].name : G.S.name);
 const playerIsKassier = () => G.S.pid === 'cuche';
@@ -4878,10 +4890,29 @@ const Story = {
     if (G.S.stage === 'board') return true;
     return !!(G.S.flags.late && !G.S.flags.lateArrived);
   },
+  /* Wo ist ein Kollege gerade? Text und Kartenpunkt für Handy-Status und Karte. */
+  whereIs(id) {
+    const s = G.S.stage;
+    if (this.away(id)) return { t: G.S.flags.late ? 'im Taxi unterwegs nach Innsbruck' : 'raucht noch vor dem Bahnhof', x: null };
+    if (!stageAt('bar')) {
+      if (G.S.map === 'luzern' || s === 'meet') return { t: 'beim Torbogen in Luzern', x: null };
+      if (s === 'board') return { t: 'auf Gleis 4', x: null };
+      if (s === 'ride' || s === 'arrived') return { t: 'im Zug, Wagen 3', x: null };
+      return { t: 'auf dem Weg ins Hotel Zirbe', x: 19, y: 46 };
+    }
+    const loc = this.schedule(id);
+    const P = { bar: ['in der Gamsbock Bar', 43, 64], stueberl: ['im Tiroler Stüberl', 25, 46], club: ['im Club Lawine', 71, 63], rouge: ['im Rouge', 65, 63], hotel: ['im Hotel Zirbe', 19, 46], breakfast: ['beim Frühstück im Hotel', 19, 46], city: ['beim Goldenen Dachl', 34, 33] };
+    const e = P[loc];
+    if (!e) return { t: 'irgendwo in Innsbruck', x: null };
+    const sick = G.S.flags.sick && G.S.flags.sick[id] === dayOf(G.S.time - 300);
+    return { t: sick && loc === 'hotel' ? 'im Hotel, schläft seinen Rausch aus' : e[0], x: e[1], y: e[2] };
+  },
   schedule(id) {
     if (this.away(id)) return null;
     const h = hourOf(G.S.time);
     const o = G.S.flags.group;
+    /* Wer sich übergeben hat, liegt bis zum Morgen im Hotel */
+    if (G.S.flags.sick && G.S.flags.sick[id] === dayOf(G.S.time - 300) && stageAt('bar')) return 'hotel';
     if (o && G.S.time < o.until && o.ids.includes(id)) return o.loc;
     if (!stageAt('bar')) return null;
     if (G.S.stage === 'bar') return 'bar';
@@ -5040,6 +5071,8 @@ const Story = {
     if (st.smell > 30 && f.fn !== 'raucher') p.push('Du riechst wie ein Aschenbecher.');
     if (tracht()) p.push(pick(['Schau dir den an! Fehlt nur noch das Alphorn.', 'Steht dir, die Lederhose! Echt jetzt.', 'Bist du jetzt Tiroler? Muesch no jodle lerne!']));
     if (st.hang > 0) p.push('Na, Brummschädel? Ein Gröstl oder eine Knödelsuppe hilft.');
+    if (fprom(id) > 2) p.push(pick(['Hicks … wo isch … mein Bier?', 'Du … du bisch mein beschter Freund. Ehrlich. Hicks.', 'Alles dreht sich. Ist das normal? Isch normal, oder?']));
+    else if (fprom(id) > 1.2) p.push(pick(['Heute läuft\'s! Noch eins?', 'Ich bin erst warm. ERST WARM!', 'Wer hat mir die Bier alle ausgegeben? Ah, du. Merci!']));
     if (fl.rougeAt && G.S.time - fl.rougeAt < 240 && m !== 'rouge') p.push(pick(['Du warst im Rouge?! Erzähl. Alles.', 'Rouge, hm? Wie viel hat der Piccolo gekostet? 45? Ha!', 'Im Rouge gewesen und jetzt pleite. Klassiker.']));
     if (m === 'rouge') p.push(pick(['Ich bin nur wegen der Musik hier. Ehrlich.', 'Schau nicht so, ich schau auch nicht. Wir schauen alle nicht.', 'Chantal hat mir zugezwinkert. Ganz sicher. Ganz sicher mir.']));
     if (st.energy < 22) p.push('Du gähnst ununterbrochen. Leg dich doch kurz ins Hotel.');
@@ -5065,6 +5098,33 @@ const Story = {
     const pool = p.length && Math.random() < 0.65 ? p : R[f.fn];
     return pick(pool);
   },
+  /* Ein Kollege trinkt (ausgegeben oder Runde): Pegel steigt, ab 2,6 ‰ übergibt er sich und geht ins Hotel. */
+  async friendDrink(id, alc) {
+    G.S.fprom[id] = Math.min(4, fprom(id) + alc);
+    const n = G.npcs.find((x) => x.friend && x.id === id);
+    const pr = fprom(id);
+    if (pr >= 2.6) { await this.friendVomit(id); return; }
+    if (pr > 1.8 && n) { n.bubbleRand = ['dots', 'zzz', 'beer']; n.bubble = 'dots'; n.bubbleT = 2; if (!G.S.flags['fwarn' + id + dayOf(G.S.time)]) { G.S.flags['fwarn' + id + dayOf(G.S.time)] = 1; UI.toast(`${fname(id)} schwankt schon bedenklich (${promStr(pr)}).`, 'warn'); } }
+  },
+  async friendVomit(id) {
+    const n = G.npcs.find((x) => x.friend && x.id === id);
+    if (n) { n.pose = 'bend'; n.bubble = null; }
+    Snd.sfx('vomit'); G.fx.shake = 0.6;
+    if (n) { for (let i = 0; i < 22; i++) addPart({ x: n.x + rnd(-4, 4), y: n.y - 10, vx: rnd(-30, 30), vy: rnd(10, 40), g: 140, life: 0.9, kind: 'vomit' }); G.S.vomitSpots.push({ map: G.map.id, x: n.x + 6, y: n.y + 2, t: G.S.time }); }
+    await this.say(id, pick(['Uuurgh … das war eins zu viel … sorry …', 'Blöärgh! Ich … ich geh mal … Hotel …', 'Das letzte Bier war schlecht. Ganz sicher das letzte.']));
+    G.S.fprom[id] = 0.8;
+    G.S.flags.sick[id] = dayOf(G.S.time - 300);
+    achieve('abgefuellt');
+    const host = { bar: 'Sepp', stueberl: 'Wirtin Resi', club: 'Türsteher', rouge: 'Rocky' }[G.map.id];
+    if (host) await this.say(host, pick(['Oida! Schafft\'s den heim, bevor er\'s nochmal macht!', 'Raus mit ihm an die Luft. Und wer putzt das?', 'Taxi für den Herrn. Sofort.']));
+    const other = this.friendsHere().find((x) => x !== id);
+    if (other) await this.say(other, `Ich bring ${fname(id)} ins Hotel. Du hast ihn abgefüllt, du zahlst morgen das Frühstück.`);
+    if (n) { n.pose = 'stand'; n.hidden = true; }
+    const o2 = other ? G.npcs.find((x) => x.friend && x.id === other) : null;
+    if (o2) o2.hidden = true;
+    UI.toast(`${fname(id)} wird ins Hotel gebracht. Bis morgen früh ist er ausser Gefecht.`);
+    mood(-3);
+  },
   async talkFriend(id) {
     const f = FRIENDS[id];
     const s = G.S.stage;
@@ -5074,6 +5134,8 @@ const Story = {
     const opts = [{ t: 'Plaudern', k: 'chat' }];
     const venue = ['bar', 'stueberl', 'club'].includes(G.map.id);
     if (venue) opts.push({ t: `${f.name} ein Getränk ausgeben`, r: G.map.id === 'club' ? '5,50 €' : '4,80 €', k: 'treat' });
+    const roundDef = { bar: ['beer', 28.8, 'Bier'], stueberl: ['zirben', 22.8, 'Zirbenschnaps'], club: ['shot', 27, 'Shots'], rouge: ['beer', 9 * (this.friendsHere().length + 1), 'Bier'] }[G.map.id];
+    if (roundDef && this.friendsHere().length > 1) opts.push({ t: `Runde ${roundDef[2]} für alle`, r: fmtEur(roundDef[1]), k: 'runde' });
     if (venue && id === who('jass') && G.map.id !== 'club') opts.push({ t: 'Jassen', k: 'jass' });
     if (venue && id === who('arm')) opts.push({ t: 'Armdrücken', k: 'arm' });
     if (G.map.id === 'bar' && id === who('darts')) opts.push({ t: 'Darts-Duell', k: 'darts' });
@@ -5097,8 +5159,16 @@ const Story = {
         if (!pay('eur', pr)) { await this.say(null, 'Dein Portemonnaie ist leer.'); break; }
         G.S.aff[id] = clamp(G.S.aff[id] + 8, 0, 100); mood(3);
         Snd.sfx('clink');
-        await this.say(id, pick(['Merci viu mau! Proscht!', 'Du bist ein Guter. Prost!', 'Auf Innsbruck!', 'Zum Wohl! Die nächste geht auf mich.']));
+        const pr0 = fprom(id);
+        await this.say(id, pr0 > 2 ? pick(['Hicks … noch eins? Du bisch … mein beschter Freund …', 'Proscht … die Bar dreht sich. Oder ich.', 'Isch das … mein Bier? Alles meins.']) : pr0 > 1.2 ? pick(['Jaaa, Proscht! Heute wird\'s wild!', 'Du willst mich abfüllen, oder? Funktioniert.', 'Noch eins und ich sing.']) : pick(['Merci viu mau! Proscht!', 'Du bist ein Guter. Prost!', 'Auf Innsbruck!', 'Zum Wohl! Die nächste geht auf mich.']));
+        await this.friendDrink(id, G.map.id === 'club' ? 0.2 : 0.3);
+        if (!G.npcs.some((x) => x.friend && x.id === id && !x.hidden)) break;
         if (G.S.aff[id] > 70 && !G.S.flags['gift_' + id + dayOf(G.S.time)]) { G.S.flags['gift_' + id + dayOf(G.S.time)] = 1; await this.say(id, 'Und weil du\'s bist: Die hier geht auf mich!'); consume(G.map.id === 'club' ? 'flaschenbier' : 'bier'); }
+        break;
+      }
+      case 'runde': {
+        if (!pay('eur', roundDef[1])) { await this.say(null, 'Dafür reicht dein Geld nicht. Bankomat?'); break; }
+        await this.round(roundDef[0]);
         break;
       }
       case 'jass': await this.jass(); break;
@@ -5548,6 +5618,7 @@ const Story = {
     achieve('runde');
     mood(8);
     await this.say(here[0] || who('party'), pick(['PROOOSCHT! Auf Innsbruck!', 'Auf uns und auf die Gruppenkasse!', 'Zum Wohl! Der war fällig.']));
+    for (const id of here) await this.friendDrink(id, kind === 'beer' ? 0.3 : 0.15);
   },
   async barTable() {
     const p = G.player;
@@ -5890,9 +5961,12 @@ const Story = {
     const d = dayOf(G.S.time);
     if (G.S.cashDay !== d) { G.S.cashDay = d; G.S.cashToday = 0; }
     const left = 1000 - G.S.cashToday;
+    const chf = G.S.money.chf;
+    const exOpt = chf >= 5 ? [{ t: `Franken wechseln (${fmtChf(chf)} → ${fmtEur(Math.floor(chf * 1.04 - 2))})` }] : [];
+    const c = await this.ask(null, `Bankomat · Konto: unbegrenzt (fast). Heute noch ${Math.max(0, left)} € möglich.${chf >= 5 ? ' Franken nimmt hier sonst niemand – wechseln lohnt sich.' : ''}`, ['50 €', '100 €', '200 €', '500 €'].concat(exOpt.map((o) => o.t)).concat(['Abbrechen']));
+    if (c === 4 + exOpt.length) return;
+    if (c === 4 && exOpt.length) { const eur = Math.floor(chf * 1.04 - 2); addMoney('chf', -chf); addMoney('eur', eur); Snd.sfx('coin'); UI.toast(`${fmtChf(chf)} gewechselt: ${fmtEur(eur)} (Kurs 1,04, 2 € Gebühr).`); return; }
     if (left <= 0) { await this.say(null, 'Tageslimit von 1.000 € erreicht. Morgen geht wieder was.'); return; }
-    const c = await this.ask(null, `Bankomat · Konto: unbegrenzt (fast). Heute noch ${left} € möglich.`, ['50 €', '100 €', '200 €', '500 €', 'Abbrechen']);
-    if (c === 4) return;
     const v = Math.min(left, [50, 100, 200, 500][c]);
     G.S.cashToday += v; addMoney('eur', v); Snd.sfx('coin');
     UI.toast(`${v} € abgehoben.`);

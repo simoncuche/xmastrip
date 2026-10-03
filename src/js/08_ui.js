@@ -337,7 +337,7 @@ const Phone = {
       <div class="shop-sec">Erlebnisse ${achN}/${achT}</div><div class="list">${Object.entries(ACH).map(([k, [t, d]]) => `<div class="row ${G.S.ach[k] ? 'done' : ''}"><div><div class="t">${G.S.ach[k] ? t : '???'}</div><div class="d">${d}</div></div><span class="${G.S.ach[k] ? 'tick' : 'open'}">${G.S.ach[k] ? '✓' : '·'}</span></div>`).join('')}</div>`;
   },
   karte(b) {
-    const showCity = G.map.indoor && BUILT.ibk && ['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club'].includes(G.map.id);
+    const showCity = G.map.indoor && BUILT.ibk && ['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club', 'rouge'].includes(G.map.id);
     const m = showCity ? BUILT.ibk : G.map;
     const sc = m.w > 60 ? 7 : 9;
     const [c, x] = canvas(m.w * sc, m.h * sc);
@@ -352,8 +352,14 @@ const Phone = {
       E(x, px, py, 6, 6, '#0f1a2b'); E(x, px, py, 5, 5, p.c);
       x.lineWidth = 3; x.strokeStyle = '#0f1a2b'; x.strokeText(p.n, px - 4, ly); x.fillStyle = '#ffffff'; x.fillText(p.n, px - 4, ly);
     });
+    /* Die Jungs: pro Ort ein weisser Kreis mit Anzahl */
+    if (m.id === 'ibk') {
+      const groups = {};
+      for (const k of Object.keys(FRIENDS)) { const w = Story.whereIs(k); if (w.x == null) continue; const key = w.x + ',' + w.y; (groups[key] = groups[key] || { x: w.x, y: w.y, names: [] }).names.push(FRIENDS[k].name); }
+      for (const g of Object.values(groups)) { const px = (g.x + 0.5) * sc + 9, py = (g.y + 0.5) * sc - 9; E(x, px, py, 8, 8, '#0f1a2b'); E(x, px, py, 7, 7, '#ffffff'); x.fillStyle = '#0f1a2b'; x.font = 'bold 11px Barlow Semi Condensed, sans-serif'; x.fillText(String(g.names.length), px - (g.names.length > 9 ? 6 : 3), py + 4); }
+    }
     if (G.map.id === m.id) { const px = G.player.x / TS * sc, py = G.player.y / TS * sc; E(x, px, py, 6, 6, '#ffffff'); E(x, px, py, 4, 4, '#d8352d'); }
-    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
+    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof. Weisse Kreise mit Zahl: so viele der Jungs sind dort – Details unter Status.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffffff"></i>Die Jungs</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
     c.style.width = (m.w * sc) + 'px';
     b.querySelector('.mapwrap').appendChild(c);
     const wrap = b.querySelector('.mapwrap');
@@ -409,7 +415,7 @@ const Phone = {
       <div class="stat"><small>Jass gewonnen / verloren</small><b>${G.S.rec.jassW} / ${G.S.rec.jassL}</b></div><div class="stat"><small>Bestes Darts</small><b>${G.S.rec.darts}</b></div>
       <div class="stat"><small>Bestes Tanzen</small><b>${G.S.rec.dance} %</b></div><div class="stat"><small>Rekord Flitzer</small><b>${G.S.rec.stone}×</b></div></div>
       <p class="note">Wer viel trinkt, ohne zu essen oder zu schlafen, dem wird übel. Bei 100 % Übelkeit musst du dich übergeben. Essen, Wasser und Schlaf helfen. Ab 2,6 ‰ droht ein Filmriss.</p>
-      <div class="shop-sec">Die Jungs</div><div class="list">${Object.entries(FRIENDS).map(([k, fr]) => `<div class="row"><div><div class="t">${fr.name}</div><div class="d">${fr.role}</div></div><div class="bar" style="width:120px;grid-template-columns:1fr"><i style="--v:${f(G.S.aff[k])}%;--c:var(--amber)"></i></div></div>`).join('')}</div>`;
+      <div class="shop-sec">Die Jungs – wo sie sind, wie gut ihr euch versteht, ihr Pegel</div><div class="list">${Object.entries(FRIENDS).map(([k, fr]) => { const w = Story.whereIs(k); const pr = (G.S.fprom && G.S.fprom[k]) || 0; return `<div class="row"><div><div class="t">${fr.name} <small style="color:var(--ink-dim)">· ${fr.role}</small></div><div class="d">📍 ${w.t}${pr > 0.3 ? ` · 🍺 ${promStr(pr)}${pr > 2 ? ' – sturzbetrunken' : pr > 1.2 ? ' – angeheitert' : ''}` : ''}</div></div><div class="bar" style="width:120px;grid-template-columns:1fr"><i style="--v:${f(G.S.aff[k])}%;--c:var(--amber)"></i></div></div>`; }).join('')}</div>`;
   },
   opt(b) {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>

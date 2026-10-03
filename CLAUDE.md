@@ -47,7 +47,8 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
   `consume(itemId)` wendet Essen/Trinken an, `tickStats` läuft pro Spielminute.
 - Freunde: `FRIENDS` wird aus `CREW` gebaut (ohne den Spieler). Funktionale Rollen per `who('jass' | 'arm' | 'party' …)`
   mit Fallbacks in `FN_FALLBACK`, damit jede Rolle besetzt ist, egal wen man spielt.
-- Wo die Jungs sind, entscheidet `Story.schedule(id)` (Uhrzeit, Story-Stufe, gemeinsame Taxifahrt in `G.S.flags.group`).
+- Wo die Jungs sind, entscheidet `Story.schedule(id)` (Uhrzeit, Story-Stufe, gemeinsame Taxifahrt in `G.S.flags.group`, Krankenlager `flags.sick`); `Story.whereIs(id)` liefert Text und Kartenpunkt dazu.
+- Pegel der Kollegen: `G.S.fprom[id]`, steigt über `Story.friendDrink`, Übergeben ab 2,6 ‰ (`Story.friendVomit`).
 - Story-Stufen: `meet → board → ride → arrived → findHotel → checkin → room → bar → free`.
 - Abfahrt Luzern: Der Spieler kauft das Gruppenbillett (`Story.ticketMachine`, Gegenstand `billett`, Preis `TICKET_PRICE`),
   Abfahrt ist `DEP_TIME` (9:10). `Story.minute` zählt herunter; ist die Gruppe dann nicht im Zug → `Story.missedTrain` → `UI.gameOver`

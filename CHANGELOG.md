@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.9.0 – 03.10.2026
+
+- Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.
+- Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.
+- Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).
+- Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr).
+
 ## 1.8.1 – 03.10.2026
 
 - Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.
