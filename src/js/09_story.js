@@ -567,12 +567,37 @@ const Story = {
       if (ts.tm > st2.t - 5 && ts.tm < st2.t && !this._announced[k] && st2.t > 0) { this._announced[k] = 1; UI.toast(`🔊 Nächster Halt: <b>${st2.n}</b>`); Snd.sfx('ding'); }
     }
     if (ts.scene === 'tunnel' && !this._announced.tunnel) { this._announced.tunnel = 1; UI.toast('Arlbergtunnel – über zehn Kilometer durch den Berg.'); }
-    if (ts.tm > 25 && !G.S.flags.ticketCheck && !G.busy) { G.S.flags.ticketCheck = 1; this.ticketCheck(); }
+    if (ts.tm > 25 && !G.S.flags.ticketCheck && !G.busy && !this._cond) this.conductorStart();
+    if (this._cond && !G.S.flags.ticketCheck) this.conductorFollow();
     if (ts.tm >= 216 && G.S.stage === 'ride' && !G.busy) this.arrive();
   },
-  async ticketCheck() {
+  /* Die Zugbegleiterin betritt den Wagen am anderen Ende und läuft durch den Gang (Reihe 4) zum Spieler. */
+  _cond: null,
+  conductorLook() { return npcLook(951, { hat: 8, hatCol: 2, top: 9, topCol: 1, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, hair: 9, beard: 0, glasses: 0, acc: 5, print: 0 }); },
+  conductorStart() {
+    const p = G.player;
+    const fromLeft = p.x > 32 * TS;
+    const s = T2P(fromLeft ? 1 : 62, 4);
+    const a = new Actor({ id: 'kondukteur', name: 'Zugbegleiterin', look: this.conductorLook(), x: s.x, y: s.y, dir: fromLeft ? 2 : 1, solid: false, speed: 78, label: 'Zugbegleiterin', talk: () => Story.say(a, 'Einen Moment, ich komm gleich zu Ihnen.') });
+    G.npcs.push(a);
+    this._cond = a;
+    UI.toast('Die Zugbegleiterin kommt durch den Wagen. Fahrkartenkontrolle!');
+    Snd.sfx('door');
+  },
+  conductorFollow() {
+    const a = this._cond, p = G.player;
+    const px = Math.floor(p.x / TS), py = Math.floor((p.y - 3) / TS);
+    const side = a.x < p.x ? -1 : 1;
+    const tgt = T2P(clamp(py === 4 ? px + side : px, 1, 62), 4);
+    const d = Math.hypot(tgt.x - a.x, tgt.y - a.y);
+    if (d > 2) { if (!a.path || !a.path.length || a.path[0].x !== tgt.x) a.path = [tgt]; return; }
+    a.path = null; a.moving = false; a.dir = dirTo(a.x, a.y, p.x, p.y);
+    if (!G.busy) { G.S.flags.ticketCheck = 1; this.ticketCheck(a); }
+  },
+  async ticketCheck(actor) {
     G.busy++;
-    const cond = { name: 'Zugbegleiterin', look: npcLook(951, { hat: 8, hatCol: 2, top: 9, topCol: 1, hair: 9, beard: 0 }) };
+    const cond = actor || { name: 'Zugbegleiterin', look: this.conductorLook() };
+    if (actor) { actor.bubble = '!'; actor.bubbleT = 1.5; await sleep(400); }
     await this.say(cond, 'Grüß Gott, die Fahrkarten bitte!');
     await this.say('me', 'Hier, das Gruppenbillett für zwölf Personen.');
     if (G.S.flags.late) {
@@ -581,6 +606,11 @@ const Story = {
     }
     await this.say(cond, 'Danke, passt. Gute Weiterfahrt nach Innsbruck – und viel Spass!');
     G.busy--;
+    this._cond = null;
+    if (actor) { /* weiter durch den Zug und am Ende des Wagens verschwinden */
+      const end = T2P(actor.x < G.player.x ? 62 : 1, 4);
+      actor.path = [end]; actor.onArrive = () => { G.npcs = G.npcs.filter((n) => n !== actor); };
+    }
   },
   async arrive() {
     G.busy++;
@@ -1207,7 +1237,7 @@ const Story = {
   onEnter(m) {
     if (m.id === 'hotel_lobby' && G.S.stage === 'findHotel') this.setStage('checkin');
     if (m.id === 'bar' && G.S.stage === 'bar') setTimeout(() => this.barArrive(), 650);
-    if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; }
+    if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; this._cond = null; }
   },
   async buy(def, item, cur, opts = {}) {
     if (item.special === 'hair' || item.special === 'beard') {
