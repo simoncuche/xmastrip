@@ -417,7 +417,9 @@ const Phone = {
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
       <div class="opt-row"><span>Spielstand</span><button class="btn primary" id="oSave">Speichern</button></div>
       <div class="opt-row"><span>Neues Spiel beginnen</span><button class="btn red" id="oNew">Neu starten</button></div>
-      <p class="note">Steuerung: Pfeiltasten oder WASD gehen, Shift rennen, E oder Leertaste für Aktionen, M öffnet das Handy. Auf dem Handy: links ziehen zum Gehen (weit ziehen = rennen), A-Knopf für Aktionen.</p>`;
+      <p class="note">Steuerung: Pfeiltasten oder WASD gehen, Shift rennen, E oder Leertaste für Aktionen, M öffnet das Handy. Auf dem Handy: links ziehen zum Gehen (weit ziehen = rennen), A-Knopf für Aktionen.</p>
+      <div class="shop-sec">Version ${APP_VERSION} · ${APP_VERSION_DATE}</div>
+      <div class="changelog">${changelogHtml()}</div>`;
     b.querySelector('#oSnd').onclick = (e) => { Snd.on = !Snd.on; e.target.textContent = Snd.on ? 'An' : 'Aus'; };
     b.querySelector('#oMus').onclick = (e) => { Snd.musicOn = !Snd.musicOn; e.target.textContent = Snd.musicOn ? 'An' : 'Aus'; };
     b.querySelector('#oDeck').onclick = (e) => { G.S.flags.deck = G.S.flags.deck === 'fr' ? 'de' : 'fr'; e.target.textContent = G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'; };

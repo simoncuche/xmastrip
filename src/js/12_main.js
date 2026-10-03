@@ -32,6 +32,9 @@ function boot() {
   document.addEventListener('visibilitychange', () => { if (document.hidden && G.mode === 'play') saveGame(true); });
 }
 
+function changelogHtml() {
+  return CHANGELOG.map((e, i) => `<div class="cl-entry${i === 0 ? ' cur' : ''}"><div class="cl-head"><b>Version ${e.v}</b><span>${e.date}${i === 0 ? ' · aktuell' : ''}</span></div><ul>${e.items.map((x) => `<li>${x}</li>`).join('')}</ul></div>`).join('');
+}
 function showTitle() {
   const t = document.getElementById('title');
   const save = loadSave();
@@ -50,7 +53,11 @@ function showTitle() {
       <button class="btn ${save ? '' : 'primary'}" id="tNew">Neues Spiel</button>
     </div>
     <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
+    <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
+    <div class="changelog" id="tChangelog" hidden>${changelogHtml()}</div>
   </div>`;
+  const logBtn = t.querySelector('#tLog'), logBox = t.querySelector('#tChangelog');
+  logBtn.onclick = () => { const open = logBox.hidden; logBox.hidden = !open; logBtn.textContent = open ? 'Historie schliessen' : 'Was ist neu?'; logBtn.setAttribute('aria-expanded', String(open)); if (open) logBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
   const cont = t.querySelector('#tCont');
   if (cont) cont.onclick = () => { Snd.init(); startGame(save); };
   t.querySelector('#tNew').onclick = async () => {

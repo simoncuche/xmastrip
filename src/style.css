@@ -248,6 +248,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .title-btns { display: grid; gap: 8px; }
 .title-btns .btn { padding: 13px; font-size: 17px; }
 .keys { font-family: var(--f-sign); font-size: 13px; color: var(--ink-dim); line-height: 1.6; }
+.version { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-family: var(--f-sign); font-size: 13px; color: var(--ink-dim); border-top: 1px solid var(--board-line); padding-top: 10px; }
+.link { background: none; border: 0; padding: 0; color: var(--amber); font-family: var(--f-sign); font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.changelog { display: grid; gap: 8px; }
+.cl-entry { border: 1px solid var(--board-line); border-radius: 8px; padding: 8px 10px; background: var(--board-2); font-family: var(--f-sign); }
+.cl-entry.cur { border-color: var(--amber); }
+.cl-head { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; margin-bottom: 4px; }
+.cl-head span { color: var(--ink-dim); font-size: 12px; }
+.cl-entry ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.45; color: var(--ink); }
+.cl-entry li + li { margin-top: 3px; }
 .keys kbd { font-family: var(--f-pixel); background: var(--board-2); border: 1px solid var(--board-line); border-radius: 3px; padding: 0 5px; color: var(--ink); }
 
 #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; z-index: 35; display: grid; place-items: center; }

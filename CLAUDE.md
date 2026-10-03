@@ -12,6 +12,8 @@ python3 tests/smoke_test.py   # optional: Playwright-Durchlauf der ganzen Story 
 ```
 
 `build.py` hängt `src/style.css` und alle `src/js/*.js` **in alphabetischer Reihenfolge** in `src/index.html` ein.
+Vorher liest es `CHANGELOG.md` und bettet `APP_VERSION`, `APP_VERSION_DATE` und `CHANGELOG` als Konstanten ein
+(Startbildschirm „Was ist neu?“ und Handy → Optionen). **Bei jeder Änderung einen neuen Eintrag `## x.y.z – TT.MM.JJJJ` zuoberst anlegen.**
 Die Nummern-Präfixe der JS-Dateien bestimmen die Reihenfolge. Top-Level-Code darf nur auf Dinge aus
 Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktionen werden erst zur Laufzeit aufgerufen.
 

@@ -43,4 +43,6 @@ python3 tests/smoke_test.py   # automatischer Durchlauf (benötigt: pip install 
 Bei jedem Push auf `main` baut der Workflow `.github/workflows/pages.yml` das Spiel und veröffentlicht `dist/` auf GitHub Pages
 (Repo-Einstellungen → Pages → Source: *GitHub Actions*).
 
+Die Versionsnummer und die Historie kommen aus `CHANGELOG.md`; bei jeder Änderung dort einen Eintrag ergänzen.
+
 Mehr zur Struktur in `CLAUDE.md`.
