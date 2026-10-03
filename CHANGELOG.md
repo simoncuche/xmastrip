@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.6.0 – 03.10.2026
+
+- Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.
+- Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt.
+
 ## 1.5.3 – 03.10.2026
 
 - Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke.

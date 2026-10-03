@@ -98,8 +98,8 @@ async function startGame(state, fresh) {
     G.busy++;
     await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
     await Story.say(null, playerIsKassier()
-      ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
-      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
+      ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die elf Jungs warten beim Torbogen: Begrüss jeden einzelnen von ihnen, erst dann geht's zum Gleis. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
+      : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Die elf warten beim Torbogen: Begrüss jeden einzelnen von ihnen, erst dann geht's zum Gleis. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
     if (Input.touch) await Story.say(null, 'Zieh mit dem Daumen links auf dem Bildschirm, um zu gehen. Weit ziehen heisst rennen. Mit A sprichst du mit Leuten und benutzt Dinge. Oben rechts ist dein Handy.');
     else await Story.say(null, 'WASD oder Pfeiltasten zum Gehen, Shift zum Rennen, E für Aktionen, M für dein Handy.');
     G.busy--;

@@ -6,7 +6,8 @@ const Editor = {
       const el = document.getElementById('editor');
       const L = Object.assign({}, o.look || (G.S ? G.S.look : defaultLook()));
       const unlocked = (G.S && G.S.unlocked) || {};
-      let pid = o.pid || null;
+      let pid = o.pid || (mode === 'new' ? pick(CREW).id : null);
+      if (mode === 'new' && pid) Object.assign(L, crewLook(pid));
       let crewSeed = o.crewSeed || 0;
       const keysFor = { clothes: ['hat', 'hatCol', 'top', 'topCol', 'print', 'pants', 'pantsCol', 'shoes', 'shoesCol', 'acc', 'glasses'], hair: ['hair', 'hairCol'], beard: ['beard', 'beardCol'] }[mode];
       const groups = mode === 'new' ? ['Wer bist du?', ...LOOK_GROUPS] : ['Auswahl'];
@@ -17,7 +18,7 @@ const Editor = {
         <div class="ed-main"><div class="ed-preview"><div class="ed-figs"><canvas id="edPortrait" width="64" height="64" aria-label="Porträt"></canvas><div><canvas id="edBody" width="18" height="26" aria-label="Spielfigur"></canvas><div class="ed-rot"><button id="edL" aria-label="Drehen links">◀</button><button id="edR" aria-label="Drehen rechts">▶</button></div></div></div>
         <div class="ed-name"><label>Spieler</label><div id="edWho" style="font-family:var(--f-sign);font-size:20px;font-weight:700">${pid ? CREW.find((c) => c.id === pid).name : '<span style="color:var(--ink-dim)">noch niemand gewählt</span>'}</div></div></div>
         <div class="ed-controls"><div class="ed-tabs" role="tablist">${groups.map((g) => `<button class="tab ${g === tab ? 'on' : ''}" data-g="${g}">${g}</button>`).join('')}</div><div class="ed-list" id="edList"></div></div></div>
-        <div class="ed-foot"><span class="grow" id="edHint">${mode === 'new' ? 'Wähle zuerst, wer du bist. Danach Kopf, Gesicht und Kleidung gestalten.' : 'Änderungen werden sofort übernommen.'}</span>${mode === 'new' ? '<button class="btn" id="edRnd">Zufall</button>' : '<button class="btn" id="edCancel">Abbrechen</button>'}<button class="btn primary" id="edOk">${mode === 'new' ? 'Los geht\'s!' : 'Fertig'}</button></div>`;
+        <div class="ed-foot"><span class="grow" id="edHint">${mode === 'new' ? `Vorschlag: ${CREW.find((c) => c.id === pid).name}, ${CREW.find((c) => c.id === pid).role}. Tipp auf einen anderen Namen oder gestalte dein Aussehen – dann los!` : 'Änderungen werden sofort übernommen.'}</span>${mode === 'new' ? '<button class="btn" id="edRnd">Zufall</button>' : '<button class="btn" id="edCancel">Abbrechen</button>'}<button class="btn primary" id="edOk">${mode === 'new' ? 'Los geht\'s!' : 'Fertig'}</button></div>`;
       el.hidden = false;
       const pcv = el.querySelector('#edPortrait'), pcx = pcv.getContext('2d');
       const bcv = el.querySelector('#edBody'), bcx = bcv.getContext('2d');
@@ -63,7 +64,7 @@ const Editor = {
           list.appendChild(grid);
           const n = document.createElement('p');
           n.className = 'note';
-          n.textContent = 'Die anderen elf fahren als Kollegen mit, jeder in seinem gewohnten Look. Wer eine Schlüsselrolle hat (Kassier mit der Gruppenkasse, Anwalt als Jass-Schiedsrichter, Muskelprotz beim Armdrücken …), gibt sie an einen anderen ab, wenn du ihn spielst.';
+          n.textContent = 'Die anderen elf fahren als Kollegen mit, jeder in seinem gewohnten Look. In Luzern musst du jeden einzelnen von ihnen beim Torbogen begrüssen, bevor es zum Gleis geht. Wer eine Schlüsselrolle hat (Kassier mit der Gruppenkasse, Anwalt als Jass-Schiedsrichter, Muskelprotz beim Armdrücken …), gibt sie an einen anderen ab, wenn du ihn spielst.';
           list.appendChild(n);
           return;
         }
