@@ -177,64 +177,6 @@ const SCENES = {
     for (const wx of [cx + 10, cx + 42]) { E(c, wx, cy + 14, 6, 6, '#1a1a1e'); E(c, wx, cy + 14, 3, 3, '#6a6a70'); for (let s = 0; s < 3; s++) line(c, wx, cy + 14, wx + Math.cos(ang + s * 2.1) * 4, cy + 14 + Math.sin(ang + s * 2.1) * 4, '#9a9a9a'); }
     if (Math.floor(t * 4) % 4 === 0) R(c, cx + 2, cy + 2, 4, 2, '#ffb53d');
   },
-  /* UFO landet auf dem Platz, ein Alien steigt aus */
-  ufo(c, t, p, st) {
-    sceneSky(c, true);
-    for (let i = 0; i < 9; i++) { const w = 14 + Math.floor(hash(i, 1) * 10), h = 22 + Math.floor(hash(i, 2) * 14), x = i * 18; R(c, x, 60 - h, w, h, '#2a2a3a'); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = x + 2; wx < x + w - 2; wx += 5) R(c, wx, wy, 2, 3, hash(i, wy) > 0.4 ? '#ffd27a' : '#2a2a3a'); }
-    R(c, 0, 60, SCENE_W, 36, '#6a6660');
-    const uy = 10 + Math.min(1, p / 0.55) * 34 + Math.sin(t * 3) * 1.5, ux = 80;
-    if (p > 0.5) { const bw = 10 + (p - 0.5) * 60; c.fillStyle = 'rgba(160,255,200,0.25)'; c.beginPath(); c.moveTo(ux - 6, uy + 6); c.lineTo(ux + 6, uy + 6); c.lineTo(ux + bw / 2, 92); c.lineTo(ux - bw / 2, 92); c.closePath(); c.fill(); }
-    E(c, ux, uy + 4, 30, 7, '#8a9096'); E(c, ux, uy + 3, 28, 5, '#b8bcc2'); E(c, ux, uy - 3, 12, 8, 'rgba(160,230,255,0.7)');
-    for (let k = 0; k < 8; k++) { const a = t * 4 + k * 0.785; P(c, Math.round(ux + Math.cos(a) * 24), Math.round(uy + 6 + Math.sin(a) * 4), k % 2 ? '#ff5aa0' : '#5aff8a'); }
-    if (p > 0.72) { const ay = 92 - Math.min(1, (p - 0.72) / 0.2) * 20; R(c, ux - 3, ay - 12, 6, 12, '#7ad08a'); E(c, ux, ay - 15, 5, 5, '#8ae09a'); R(c, ux - 3, ay - 16, 2, 2, '#1a1a1e'); R(c, ux + 1, ay - 16, 2, 2, '#1a1a1e'); R(c, ux - 6, ay - 8, 3, 1, '#7ad08a'); R(c, ux + 3, ay - 8, 3, 1, '#7ad08a'); }
-    sceneSprite(c, st, 'stand', 3, 36, 66, 1);
-    if (p > 0.85 && Math.floor(t * 2) % 2) pxText(c, 'BLIP BLOP', 100, 40, '#8ae09a');
-    const bl = Math.floor(t * 3); if (bl !== st._step) { st._step = bl; if (p < 0.6) Snd.tone(600 + bl % 3 * 200, 0.05, 'sine', 0.04); }
-  },
-  /* Wagenkolonne mit Fähnchen */
-  motorcade(c, t, p, st) {
-    sceneSky(c, st.night);
-    sceneMountains(c, 36, '#7a8aa0', true, 10);
-    for (let i = 0; i < 8; i++) { const bx = i * 20; R(c, bx, 36, 18, 26, ['#e8d2a8', '#d8b890', '#c8c0b0'][i % 3]); for (let wy = 40; wy < 58; wy += 7) for (let wx = bx + 3; wx < bx + 16; wx += 6) R(c, wx, wy, 3, 4, '#4a5a6a'); }
-    R(c, 0, 62, SCENE_W, 34, '#3a3c40'); R(c, 0, 62, SCENE_W, 2, '#8a8a90');
-    for (let i = 0; i < 20; i++) { const fx = i * 8 + 2; R(c, fx, 64 + (i % 2) * 28, 2, 4, hash(i, 1) > 0.5 ? '#c8302a' : '#2f5fb8'); R(c, fx + 1, 63 + (i % 2) * 28, 1, 5, '#ffffff'); }
-    const off = 200 - Math.min(1, p / 0.7) * 170;
-    for (let k = 0; k < 3; k++) {
-      const cx = off + k * 52;
-      R(c, cx, 72, 44, 12, '#111114'); R(c, cx + 8, 64, 28, 9, '#111114'); R(c, cx + 10, 66, 10, 6, '#2a3a4a'); R(c, cx + 23, 66, 11, 6, '#2a3a4a');
-      R(c, cx + 2, 60, 1, 6, '#8a8a90'); R(c, cx + 3, 60, 5, 3, k === 1 ? '#c8302a' : '#2f5fb8'); R(c, cx + 3, 60, 2, 3, k === 1 ? '#ffffff' : '#2f5fb8'); for (let s = 0; s < 3; s++) P(c, cx + 3 + s, 61, k === 1 ? '#ffffff' : '#c8302a');
-      for (const wx of [cx + 8, cx + 36]) { E(c, wx, 84, 5, 5, '#1a1a1e'); E(c, wx, 84, 2, 2, '#6a6a70'); }
-      if (k === 1) sceneHead(c, st, cx + 24, 65, 0.7, 2);
-    }
-    const mx = off - 30; R(c, mx, 76, 16, 6, '#2f5fb8'); R(c, mx + 4, 70, 6, 6, '#1a1a1e'); if (Math.floor(t * 8) % 2) R(c, mx + 2, 68, 4, 3, '#4a8aff'); else R(c, mx + 10, 68, 4, 3, '#ff4a4a');
-    if (p > 0.75) { c.fillStyle = 'rgba(255,255,255,' + (Math.floor(t * 10) % 2 ? 0.08 : 0) + ')'; c.fillRect(0, 0, SCENE_W, SCENE_H); }
-    pxText(c, 'SIRENEN', 6, 6, '#ff6a5a');
-    const sr = Math.floor(t * 2); if (sr !== st._step) { st._step = sr; Snd.tone(sr % 2 ? 660 : 520, 0.25, 'square', 0.03); }
-  },
-  /* Godzilla und King Kong hinter der Nordkette */
-  monster(c, t, p, st) {
-    for (let y = 0; y < 60; y++) R(c, 0, y, SCENE_W, 1, mix('#4a1020', '#c05030', y / 60));
-    sceneMountains(c, 48, '#3a2a3a', true, 10);
-    const bob = Math.sin(t * 2) * 3, bob2 = Math.cos(t * 2) * 3;
-    /* Godzilla */
-    const gx = 30 + p * 20, gy = 50;
-    R(c, gx - 10, gy - 36 + bob, 20, 40, '#1f3a2a'); R(c, gx - 4, gy - 48 + bob, 12, 14, '#1f3a2a'); R(c, gx + 6, gy - 44 + bob, 10, 5, '#1f3a2a');
-    for (let k = 0; k < 6; k++) R(c, gx - 8 + k * 3, gy - 40 - (k % 2) * 3 + bob, 2, 4, '#3a6a3a');
-    line(c, gx - 10, gy - 10 + bob, gx - 30, gy + 2 + bob, '#1f3a2a'); line(c, gx - 10, gy - 9 + bob, gx - 30, gy + 3 + bob, '#1f3a2a');
-    P(c, gx + 2, gy - 45 + bob, '#ffd23d'); if (Math.floor(t * 3) % 3 === 0) { for (let k = 0; k < 10; k++) P(c, gx + 16 + k * 3, gy - 42 + bob + Math.sin(k) * 2, '#7ad0ff'); }
-    /* Kong */
-    const kx = 120 - p * 15, ky = 52;
-    R(c, kx - 14, ky - 30 + bob2, 28, 32, '#3a2a1a'); R(c, kx - 8, ky - 42 + bob2, 16, 14, '#3a2a1a'); R(c, kx - 5, ky - 36 + bob2, 10, 7, '#5a4a3a');
-    R(c, kx - 22, ky - 44 + bob2, 8, 20, '#3a2a1a'); R(c, kx + 14, ky - 44 + bob2, 8, 20, '#3a2a1a');
-    P(c, kx - 3, ky - 39 + bob2, '#ffffff'); P(c, kx + 2, ky - 39 + bob2, '#ffffff');
-    /* Stadt im Vordergrund */
-    for (let i = 0; i < 10; i++) { const w = 14, h = 16 + Math.floor(hash(i, 1) * 10), x = i * 16; const crumble = p > 0.5 && hash(i, 5) > 0.5 ? Math.min(h - 4, (p - 0.5) * 30) : 0; R(c, x, 70 - h + crumble, w, h - crumble, '#5a4a4a'); for (let wy = 74 - h + crumble; wy < 66; wy += 6) for (let wx = x + 2; wx < x + w - 2; wx += 5) R(c, wx, wy, 2, 3, '#ffb53d'); }
-    R(c, 0, 70, SCENE_W, 26, '#4a4040');
-    for (let i = 0; i < 12; i++) { const u = ((t * 0.5 + hash(i, 3)) % 1); const x = 150 - u * 160; R(c, Math.round(x), 76 + Math.floor(hash(i, 4) * 12), 2, 5, '#e8d0b0'); P(c, Math.round(x), 75 + Math.floor(hash(i, 4) * 12), '#3a2a1a'); }
-    for (let k = 0; k < 14; k++) { const u = ((t * 0.7 + hash(k, 8)) % 1); R(c, Math.floor(hash(k, 9) * SCENE_W), Math.round(40 + u * 50), 2, 2, `rgba(220,200,180,${1 - u})`); }
-    if (Math.floor(t * 2) % 2) pxText(c, 'RRROOOAAAR!', 44, 8, '#ffffff', 1);
-    const rr = Math.floor(t * 1.5); if (rr !== st._step) { st._step = rr; Snd.tone(55, 0.6, 'sawtooth', 0.12, 0, -20); Snd.noise(0.3, 0.1, 300); }
-  },
   /* Zugfahrt (st.col = Zugfarbe, st.label = Aufschrift) */
   train(c, t, p, st) {
     sceneSky(c, st.night);

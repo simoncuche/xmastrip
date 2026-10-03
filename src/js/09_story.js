@@ -415,10 +415,10 @@ const Story = {
   ],
   victim() { return FRIENDS.oelu && !Story.away('oelu') ? 'oelu' : (FRIENDS.didu ? 'didu' : Object.keys(FRIENDS)[0]); },
   maybeEvent() {
-    if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free')) return;
+    if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
-    /* Tag 10: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
-    if (dayOf(G.S.time) >= 9 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
+    /* Tag 5: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
+    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
     if (fl.evDay === dayOf(G.S.time)) return; /* höchstens ein Ereignis pro Tag */
     if (G.S.time - (fl.lastEv || 0) < 40) return;
     if (Math.random() > 0.08) return;
@@ -428,82 +428,179 @@ const Story = {
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
     this['ev_' + e.id]();
   },
+  /* Helfer für Ereignisse in der Spielwelt */
+  wait(cond, max = 15000) { return new Promise((res) => { const t0 = performance.now(); const iv = setInterval(() => { if (cond() || performance.now() - t0 > max) { clearInterval(iv); res(); } }, 50); }); },
+  roadRow() {
+    const p = G.player, ty = p.y / TS, tx = p.x / TS;
+    const rows = [26, 28, 84, 86].concat(tx >= 58 ? [66, 68] : []);
+    return rows.reduce((a, b) => (Math.abs(b - ty) < Math.abs(a - ty) ? b : a));
+  },
   async ev_ufo() {
     G.busy++;
-    UI.toast('Ein Summen am Himmel. Die Strassenlaternen flackern …', 'warn');
-    await Scene.play('ufo', { text: 'Ein Lichtkegel auf dem Platz. Die Luke öffnet sich.', ms: 4200 });
-    const alien = { name: 'Alien', look: npcLook(980, { skin: 0, hair: 0, beard: 0, eyes: 1, eyeCol: 3, top: 5, topCol: 6, glasses: 5, mark: 0, hat: 0, jewel: 0 }) };
+    const p = G.player;
+    const side = p.x > G.map.w * TS / 2 ? -1 : 1;
+    const sx = p.x + side * 64, sy = p.y + 4;
+    const live = { runWhileBusy: true, t: 0, h: 190, phase: 'descend', beam: 0,
+      update(dt) { this.t += dt; if (this.phase === 'descend') { this.h = Math.max(46, this.h - 55 * dt); if (this.h <= 46) this.phase = 'hover'; } if (this.phase === 'hover') this.beam = Math.min(1, this.beam + dt * 1.5); if (this.phase === 'leave') { this.beam = Math.max(0, this.beam - dt * 2); this.h += 90 * dt; } },
+      lights() { return this.beam > 0 ? [{ x: sx, y: sy, r: 70 * this.beam, c: '#8affb0' }, { x: sx, y: sy - this.h, r: 50, c: '#aee8ff' }] : []; },
+      draw(c, cx, cy, t) {
+        const x = sx - cx, gy = sy - cy, y = gy - this.h + Math.sin(t * 3) * 1.5;
+        if (this.beam > 0) { c.fillStyle = `rgba(160,255,200,${0.22 * this.beam})`; c.beginPath(); c.moveTo(x - 8, y + 6); c.lineTo(x + 8, y + 6); c.lineTo(x + 26 * this.beam, gy + 4); c.lineTo(x - 26 * this.beam, gy + 4); c.closePath(); c.fill(); E(c, x, gy + 3, 26 * this.beam, 6 * this.beam, `rgba(160,255,200,${0.3 * this.beam})`); }
+        E(c, x, gy + 3, 18, 4, 'rgba(0,0,0,0.25)');
+        E(c, x, y + 4, 30, 7, '#8a9096'); E(c, x, y + 3, 28, 5, '#b8bcc2'); E(c, x, y - 3, 12, 8, 'rgba(160,230,255,0.75)'); E(c, x - 3, y - 5, 4, 2, 'rgba(255,255,255,0.6)');
+        for (let k = 0; k < 10; k++) { const a = t * 4 + k * 0.628; P(c, Math.round(x + Math.cos(a) * 24), Math.round(y + 6 + Math.sin(a) * 4), k % 2 ? '#ff5aa0' : '#5aff8a'); }
+      } };
+    G.live = live;
+    UI.toast('Ein Summen am Himmel. Die Laternen flackern – etwas landet neben dir!', 'warn');
+    G.fx.shake = 0.3;
+    for (let k = 0; k < 6; k++) { Snd.tone(500 + k * 90, 0.08, 'sine', 0.04, k * 0.3); }
+    await this.wait(() => live.phase === 'hover');
+    await sleep(900);
+    const alien = this.tempActor({ name: 'Alien', look: npcLook(980, { skin: 12, hair: 0, beard: 0, eyes: 1, eyeCol: 3, top: 5, topCol: 6, pants: 3, pantsCol: 2, shoes: 0, shoesCol: 3, glasses: 0, mark: 0, hat: 0, jewel: 0, acc: 0, print: 0, build: 0, height: 0 }), x: sx, y: sy, speed: 40, bubbleRand: ['?'] });
+    for (let i = 0; i < 16; i++) addPart({ x: sx + rnd(-10, 10), y: sy - rnd(0, 30), vx: 0, vy: -20, life: 1.2, kind: 'spark', col: 'rgba(160,255,200,0.9)' });
+    await this.walk(alien, p.x + side * 16, p.y);
+    alien.dir = dirTo(alien.x, alien.y, p.x, p.y); p.dir = dirTo(p.x, p.y, alien.x, alien.y);
     await this.say(alien, 'Blip. Blop. … Übersetzer an. Grüss dich, Erdling. Bring mich zu eurem Anführer.');
     const c = await this.ask(alien, 'Das Wesen ist grün, hat riesige Augen und riecht nach Zirbe.', [`Zum Kassier (${fname(who('kassier'))})`, 'In die Gamsbock Bar', 'Ein Bier anbieten', 'Weglaufen']);
     if (c === 3) { await this.say(alien, 'Blop. Unhöflich. Wir kommen wieder. In 3.000 Jahren.'); mood(-2); }
     else {
-      if (c === 0) await this.say(alien, `Der ${FRIENDS[who('kassier')] ? 'mit der Bauchtasche' : 'Kassier'}? Er hat … eine Strichliste. Faszinierend. Primitiv, aber faszinierend.`);
+      if (c === 0) await this.say(alien, 'Der mit der Bauchtasche? Er hat … eine Strichliste. Faszinierend. Primitiv, aber faszinierend.');
       if (c === 1) await this.say(alien, 'Gams-bock-bar. Dort gibt es „Bier“? Unser Scanner zeigt: 4,8 Prozent Freude.');
       if (c === 2) { if (hasInv('dosenbier') || hasInv('bier')) { takeInv(hasInv('dosenbier') ? 'dosenbier' : 'bier'); await this.say(alien, '… … … BLOP! Das ist das Beste, was ich je … Wir nehmen zwölf Kisten mit. Hier, ein Geschenk.'); } else await this.say(alien, 'Du hast gar keins dabei. Erdlinge. Trotzdem: ein Geschenk, für die Mühe.'); }
       addInv('meteorit'); mood(10);
       await this.say(alien, 'Ein Stein von unserem Mond. Leuchtet im Dunkeln. Erzähl niemandem davon – sie glauben dir eh nicht.');
-      UI.toast('Du hast einen leuchtenden Stein bekommen (Tasche). Das UFO steigt lautlos auf und ist weg.');
     }
     achieve('alien');
     G.busy--;
+    await this.walk(alien, sx, sy);
+    this.dropActor(alien);
+    for (let i = 0; i < 16; i++) addPart({ x: sx + rnd(-10, 10), y: sy - rnd(0, 30), vx: 0, vy: -20, life: 1.2, kind: 'spark', col: 'rgba(160,255,200,0.9)' });
+    live.phase = 'leave';
+    Snd.sfx('whoosh');
+    setTimeout(() => { if (G.live === live) G.live = null; }, 3500);
+    UI.toast('Das UFO steigt lautlos auf und ist weg.');
   },
   async ev_trump() {
     G.busy++;
-    UI.toast('Sirenen! Eine Wagenkolonne mit Fähnchen rollt in die Altstadt.', 'warn');
-    await Scene.play('motorcade', { text: 'Drei schwarze Limousinen, Polizeieskorte, Blaulicht.', ms: 3600 });
-    const p = G.player;
-    const side = Math.random() < 0.5 ? -1 : 1;
-    const dt = this.tempActor({ name: 'Donald', look: npcLook(983, { skin: 4, hair: 3, hairCol: 5, beard: 0, top: 9, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, build: 3, height: 2, mouth: 3, brows: 5, glasses: 0, hat: 0, print: 0, acc: 0 }), x: p.x + side * 110, y: p.y, speed: 55 });
-    const g1 = this.tempActor({ name: 'Secret Service', look: npcLook(984, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: p.x + side * 130, y: p.y - 14, speed: 55 });
-    const g2 = this.tempActor({ name: 'Secret Service', look: npcLook(985, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: p.x + side * 130, y: p.y + 14, speed: 55 });
-    await Promise.all([this.walk(dt, p.x + side * 24, p.y), this.walk(g1, p.x + side * 44, p.y - 14), this.walk(g2, p.x + side * 44, p.y + 14)]);
+    const p = G.player, m = G.map;
+    const row = this.roadRow();
+    const ry = row * TS + 13;
+    const dir = p.x > m.w * TS / 2 ? -1 : 1;
+    const startX = dir > 0 ? -60 : m.w * TS + 60;
+    const stopX = p.x - dir * 20;
+    const [cc, cx] = canvas(32, 22); objCar(0, 0, '#111114').paint(cx, 32, 22);
+    const cars = [0, 1, 2].map((k) => { const v = { kind: 'car', ev: true, x: startX - dir * k * 44, y: ry, dir, speed: 95, k, update(dt) { const target = stopX - dir * k * 44; if (dir > 0 ? v.x < target : v.x > target) v.x += dir * v.speed * dt; else v.x = target; }, draw(c, cx2, cy2) { const x = Math.round(v.x - cx2), y = Math.round(v.y - cy2 - 20); if (x > View.w + 40 || x < -60) return; if (v.dir < 0) { c.save(); c.translate(x + 32, y); c.scale(-1, 1); c.drawImage(cc, 0, 0); c.restore(); } else c.drawImage(cc, x, y); R(c, x + 4, y - 2, 1, 6, '#c9ccd2'); R(c, x + 5, y - 2, 5, 3, k === 1 ? '#c8302a' : '#2f5fb8'); if (k === 1) { R(c, x + 5, y - 2, 2, 3, '#ffffff'); } if (Math.floor(G.t * 8) % 2 === 0) R(c, x + 26, y + 2, 3, 2, '#4a8aff'); }, sortY: () => v.y }; return v; });
+    const bike = { kind: 'car', ev: true, x: startX + dir * 30, y: ry, dir, speed: 100, update(dt) { const target = stopX + dir * 40; if (dir > 0 ? bike.x < target : bike.x > target) bike.x += dir * bike.speed * dt; }, draw(c, cx2, cy2) { const x = Math.round(bike.x - cx2), y = Math.round(bike.y - cy2 - 12); R(c, x, y + 4, 16, 6, '#2f5fb8'); R(c, x + 5, y - 2, 6, 7, '#1a1a1e'); E(c, x + 3, y + 11, 3, 3, '#1a1a1e'); E(c, x + 13, y + 11, 3, 3, '#1a1a1e'); R(c, x + 2, y - 3, 4, 3, Math.floor(G.t * 8) % 2 ? '#4a8aff' : '#ff4a4a'); }, sortY: () => bike.y };
+    m.vehicles.push(bike, ...cars);
+    UI.toast('Sirenen! Eine Wagenkolonne mit Fähnchen biegt in die Strasse ein.', 'warn');
+    const sir = setInterval(() => Snd.tone(Math.floor(performance.now() / 300) % 2 ? 660 : 520, 0.22, 'square', 0.03), 300);
+    await this.wait(() => cars.every((v) => Math.abs(v.x - (stopX - dir * v.k * 44)) < 1), 9000);
+    clearInterval(sir);
+    const carX = cars[1].x + 16, carY = ry - 6;
+    const dt = this.tempActor({ name: 'Donald', look: npcLook(983, { skin: 4, hair: 3, hairCol: 5, beard: 0, top: 9, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, build: 3, height: 2, mouth: 3, brows: 5, glasses: 0, hat: 0, print: 0, acc: 0 }), x: carX, y: carY, speed: 50 });
+    const g1 = this.tempActor({ name: 'Secret Service', look: npcLook(984, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: cars[0].x + 16, y: carY, speed: 55 });
+    const g2 = this.tempActor({ name: 'Secret Service', look: npcLook(985, { hair: 1, hairCol: 0, beard: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 4, build: 3, hat: 0 }), x: cars[2].x + 16, y: carY, speed: 55 });
+    await Promise.all([this.walk(dt, p.x - dir * 22, p.y), this.walk(g1, p.x - dir * 40, p.y - 14), this.walk(g2, p.x - dir * 40, p.y + 14)]);
     dt.dir = dirTo(dt.x, dt.y, p.x, p.y); p.dir = dirTo(p.x, p.y, dt.x, dt.y);
     await this.say(dt, 'Innsbruck. Tremendous. The best mountains, everybody says so. You – are you from Switzerland? Great cheese. I love cheese.');
     const c = await this.ask(dt, 'Zwei Männer mit Sonnenbrillen und Knopf im Ohr mustern dich.', ['Selfie machen', 'Ihm ein Bier anbieten', 'Über Zölle diskutieren', 'Nur nicken']);
     if (c === 0) { Snd.sfx('shutter'); G.fx.flash = 1; mood(8); await this.say(dt, 'Great photo. The best photo. Put it on the internet, it\'ll go viral. Believe me.'); }
-    else if (c === 1) { await this.say(dt, 'I don\'t drink. Never did. Best decision I ever made. But my people will take it. Thank you, Swiss.'); if (hasInv('dosenbier')) { takeInv('dosenbier'); G.S.aff[who('kassier')] = G.S.aff[who('kassier')]; } mood(5); }
+    else if (c === 1) { await this.say(dt, 'I don\'t drink. Never did. Best decision I ever made. But my people will take it. Thank you, Swiss.'); if (hasInv('dosenbier')) takeInv('dosenbier'); mood(5); }
     else if (c === 2) { await this.say(g1, 'Sir, bitte zurücktreten.'); await this.say(dt, 'Tariffs? On cheese? Interesting. We\'ll look into it. Very strongly.'); mood(-3); UI.toast('Die Secret-Service-Männer schieben dich sanft, aber bestimmt zur Seite.'); }
     else { await this.say(dt, 'Smart guy. Very smart. I like him.'); mood(3); }
     await this.say(g2, 'Weiter geht\'s, Sir. Der Kaiserschmarrn wartet.');
-    for (const a of [dt, g1, g2]) { a.path = [{ x: a.x - side * 240, y: a.y }]; a.onArrive = () => this.dropActor(a); }
     achieve('trump');
     G.busy--;
+    await Promise.all([this.walk(dt, carX, carY), this.walk(g1, cars[0].x + 16, carY), this.walk(g2, cars[2].x + 16, carY)]);
+    for (const a of [dt, g1, g2]) this.dropActor(a);
+    for (const v of cars) v.update = (d) => { v.x += dir * 110 * d; };
+    bike.update = (d) => { bike.x += dir * 115 * d; };
+    const sir2 = setInterval(() => Snd.tone(Math.floor(performance.now() / 300) % 2 ? 660 : 520, 0.22, 'square', 0.02), 300);
+    setTimeout(() => { clearInterval(sir2); m.vehicles = m.vehicles.filter((v) => !v.ev); }, 6000);
   },
   async ev_verfolgung() {
     G.busy++;
-    const p = G.player;
+    const p = G.player, m = G.map;
     const side = Math.random() < 0.5 ? -1 : 1;
-    const th = this.tempActor({ name: 'Taschendieb', look: npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }), x: p.x + side * 60, y: p.y, speed: 120 });
+    const th = this.tempActor({ name: 'Taschendieb', look: npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }), x: p.x + side * 70, y: p.y, speed: 66, bubbleRand: ['dots'] });
     await this.walk(th, p.x + side * 14, p.y);
-    Snd.sfx('whoosh');
-    await this.say(null, 'Ein Rempler, ein „Entschuldigung“ – und dein Portemonnaie ist weg! Der Kerl rennt Richtung Inn.');
-    th.path = [{ x: th.x - side * 200, y: th.y }]; th.onArrive = () => this.dropActor(th);
-    const c = await this.ask(null, 'Hinterher?', ['HINTERHER!', 'Lass ihn laufen']);
-    if (c === 1) { const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60))); addMoney('eur', -loss); mood(-8); await this.say('me', `Nicht mit mir … doch, mit mir. ${fmtEur(loss)} weg.`); G.busy--; return; }
-    const won = await Mini.chase();
-    if (won) { mood(10); energy(-12); achieve('verfolgung'); await this.say('me', 'HAB DICH! Her mit dem Portemonnaie!'); await this.say('Taschendieb', 'Okay, okay! Schweizer sind schneller als sie aussehen.'); UI.toast('Portemonnaie zurück. Alles drin.'); }
-    else if (won === false) { const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60))); addMoney('eur', -loss); mood(-8); energy(-12); await this.say('me', `Weg ist er. Und ${fmtEur(loss)} mit ihm. Immerhin: Der Ausweis liegt im Hotel.`); }
+    Snd.sfx('whoosh'); th.bubble = '!'; th.bubbleT = 2;
+    await this.say(null, 'Ein Rempler, ein „Entschuldigung“ – und dein Portemonnaie ist weg! Der Kerl rennt los.');
+    /* Fluchtweg: vier Wegpunkte quer über die Karte, innerhalb der Kartengrenzen */
+    const W = m.w * TS, H = m.h * TS;
+    let x = th.x, y = th.y; const pts = [];
+    let dx = -side; let dy = p.y > H / 2 ? -1 : 1;
+    for (let k = 0; k < 4; k++) { x = clamp(x + dx * rnd(90, 150), 24, W - 24); y = clamp(y + dy * rnd(40, 90), 24, H - 24); pts.push({ x, y }); if (k === 1) dx = -dx; if (k === 2) dy = -dy; }
+    th.path = pts.slice(); th.onArrive = null;
+    th.bubbleRand = ['!'];
+    const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60)));
+    UI.toast('HINTERHER! Renn (Shift bzw. weit ziehen) und fass ihn!', 'warn');
+    G.busy--;
+    let done = false, t = 0;
+    const live = { update(dt) { t += dt; const d = Math.hypot(th.x - G.player.x, th.y - G.player.y); if (d < 15) done = 'caught'; else if ((!th.path || !th.path.length) || t > 32) done = 'lost'; } };
+    G.live = live;
+    await this.wait(() => !!done || G.map !== m, 40000);
+    if (G.live === live) G.live = null;
+    if (G.map !== m) { addMoney('eur', -loss); UI.toast(`Du hast ihn aus den Augen verloren. ${fmtEur(loss)} weg.`); return; }
+    G.busy++;
+    th.path = null; th.moving = false;
+    if (done === 'caught') { th.dir = dirTo(th.x, th.y, G.player.x, G.player.y); mood(10); energy(-12); achieve('verfolgung'); await this.say('me', 'HAB DICH! Her mit dem Portemonnaie!'); await this.say(th, 'Okay, okay! Schweizer sind schneller als sie aussehen.'); UI.toast('Portemonnaie zurück. Alles drin.'); th.path = [{ x: th.x + side * 120, y: th.y }]; th.onArrive = () => this.dropActor(th); }
+    else { addMoney('eur', -loss); mood(-8); energy(-10); await this.say('me', `Weg ist er. Und ${fmtEur(loss)} mit ihm. Immerhin: Der Ausweis liegt im Hotel.`); this.dropActor(th); }
     G.busy--;
   },
   async ev_monster() {
     G.busy++;
+    const p = G.player, m = G.map;
     UI.toast('Sirenen in der ganzen Stadt. Der Boden bebt …', 'warn');
-    G.fx.shake = 1;
-    await Scene.play('monster', { text: 'Tag 10. Godzilla kommt über die Nordkette, King Kong über den Bergisel. Innsbruck hat Pech.', ms: 5000 });
-    await this.say(voice('pilot'), 'Das ist KEIN Föhn! Alle Mann in Deckung – weg von den Füssen!');
-    const c = await this.ask(null, 'Zwei Schatten fallen auf den Platz.', ['Rennen und ausweichen!', 'Starr vor Schreck stehen bleiben']);
-    let ok = false;
-    if (c === 0) ok = await Mini.dodge();
-    if (ok) {
+    G.fx.shake = 1; Snd.tone(55, 0.8, 'sawtooth', 0.14, 0, -20);
+    await this.say(voice('pilot'), 'Das ist KEIN Föhn! Da … da kommt GODZILLA über die Nordkette! Und das auf dem Bergisel ist King Kong!');
+    await this.say(null, 'Zwei Riesen stapfen auf die Stadt zu. Wo ein Schatten auf den Boden fällt, landet gleich ein Fuss. Renn aus den Schatten – 30 Sekunden, dann sind sie durch!');
+    const self = this;
+    const drawGod = (c, x, y, t, s) => { const bob = Math.sin(t * 2) * 3; R(c, x - 14, y - 70 + bob, 28, 60, '#1f3a2a'); R(c, x - 6, y - 88 + bob, 18, 20, '#1f3a2a'); R(c, x + 10, y - 82 + bob, 14, 7, '#1f3a2a'); for (let k = 0; k < 7; k++) R(c, x - 12 + k * 4, y - 76 - (k % 2) * 4 + bob, 3, 6, '#3a6a3a'); line(c, x - 14, y - 30 + bob, x - 44, y - 6 + bob, '#1f3a2a'); line(c, x - 14, y - 28 + bob, x - 44, y - 4 + bob, '#1f3a2a'); R(c, x - 20, y - 12, 12, 12, '#1f3a2a'); R(c, x + 8, y - 12 + Math.abs(bob), 12, 12, '#1f3a2a'); P(c, x + 4, y - 84 + bob, '#ffd23d'); P(c, x + 5, y - 84 + bob, '#ffd23d'); if (Math.floor(t * 2) % 3 === 0) for (let k = 0; k < 12; k++) P(c, x + 24 + k * 3, y - 80 + bob + Math.sin(k + t * 9) * 2, '#7ad0ff'); };
+    const drawKong = (c, x, y, t, s) => { const bob = Math.cos(t * 2) * 3; R(c, x - 18, y - 60 + bob, 36, 52, '#3a2a1a'); R(c, x - 10, y - 78 + bob, 22, 20, '#3a2a1a'); R(c, x - 6, y - 70 + bob, 14, 9, '#5a4a3a'); R(c, x - 30, y - 80 - Math.abs(bob) * 2, 10, 32, '#3a2a1a'); R(c, x + 20, y - 80 - Math.abs(bob) * 2, 10, 32, '#3a2a1a'); R(c, x - 18, y - 12, 14, 12, '#3a2a1a'); R(c, x + 4, y - 12, 14, 12, '#3a2a1a'); P(c, x - 3, y - 73 + bob, '#ffffff'); P(c, x + 3, y - 73 + bob, '#ffffff'); P(c, x - 3, y - 72 + bob, '#1a1a1a'); P(c, x + 3, y - 72 + bob, '#1a1a1a'); };
+    const god = { x: p.x - 64, y: p.y - 24, draw: drawGod }, kong = { x: p.x + 64, y: p.y - 40, draw: drawKong };
+    let result = null, t = 0, next = 1.4, stomps = 0, shadows = [];
+    const live = {
+      update(dt) {
+        t += dt;
+        for (const mo of [god, kong]) { const dx = G.player.x - mo.x, dy = G.player.y - mo.y, d = Math.hypot(dx, dy) || 1; if (d > 56) { mo.x += dx / d * 16 * dt; mo.y += dy / d * 16 * dt; } }
+        next -= dt;
+        if (next <= 0) { next = Math.max(0.8, 1.5 - stomps * 0.04); const atP = Math.random() < 0.5; const a = Math.random() * 6.28, r = atP ? rnd(0, 8) : rnd(14, 46); shadows.push({ x: G.player.x + Math.cos(a) * r, y: G.player.y + Math.sin(a) * r, t: 0, who: Math.random() < 0.5 ? 'god' : 'kong' }); }
+        for (const sh of shadows) {
+          sh.t += dt;
+          if (sh.t >= 0.9 && !sh.done) {
+            sh.done = true; stomps++; G.fx.shake = 1; Snd.sfx('hit'); Snd.tone(60, 0.4, 'sawtooth', 0.15, 0, -30);
+            for (let k = 0; k < 12; k++) addPart({ x: sh.x + rnd(-10, 10), y: sh.y, vx: rnd(-50, 50), vy: rnd(-70, -20), g: 160, life: 0.8, kind: 'crumb' });
+            if (Math.hypot(G.player.x - sh.x, G.player.y - 4 - sh.y) < 17 && !result) result = 'caught';
+          }
+        }
+        shadows = shadows.filter((sh) => sh.t < 1.5);
+        if (t > 30 && !result) result = 'survived';
+        if (Math.floor(t * 0.6) !== this._roar) { this._roar = Math.floor(t * 0.6); Snd.tone(55, 0.6, 'sawtooth', 0.1, 0, -20); Snd.noise(0.3, 0.08, 300); }
+      },
+      draw(c, cx, cy, gt) {
+        for (const sh of shadows) { const x = sh.x - cx, y = sh.y - cy; if (!sh.done) E(c, x, y, 6 + sh.t * 14, 4 + sh.t * 9, `rgba(0,0,0,${0.25 + sh.t * 0.5})`); else { R(c, x - 16, y - 9, 32, 16, sh.who === 'god' ? '#1f3a2a' : '#3a2a1a'); for (let k = 0; k < 3; k++) R(c, x - 14 + k * 11, y + 5, 7, 4, '#0a0a0a'); } }
+        for (const mo of [god, kong]) { E(c, mo.x - cx, mo.y - cy + 2, 26, 7, 'rgba(0,0,0,0.3)'); mo.draw(c, mo.x - cx, mo.y - cy, gt); }
+      },
+      lights() { return []; },
+      onLeave() { if (!result) result = 'survived'; },
+      dbg() { return { t, stomps, result, shadows: shadows.map((sh) => [Math.round(sh.x), Math.round(sh.y), Math.round(sh.t * 100) / 100, !!sh.done]) }; },
+    };
+    G.live = live;
+    G.busy--;
+    await this.wait(() => !!result, 45000);
+    if (G.live === live) G.live = null;
+    G.busy++;
+    if (result === 'survived') {
       achieve('monster'); mood(15);
-      await this.say(null, 'Godzilla stapft Richtung Zürich, King Kong klettert auf den Stadtturm, überlegt es sich und folgt ihm. Innsbruck atmet auf.');
-      await this.say(who('party'), 'DAS erzählen wir in Luzern niemandem. Glaubt uns eh keiner. Runde?');
+      UI.toast('Die Riesen stapfen weiter – Godzilla Richtung Zürich, King Kong hinterher.');
+      await this.say(voice('party'), 'DAS erzählen wir in Luzern niemandem. Glaubt uns eh keiner. Runde?');
     } else {
       achieve('platt'); Snd.sfx('hit'); G.fx.shake = 1;
       await UI.card('Dunkel. … Piepsen. … Ein Spital. Es riecht nach Desinfektionsmittel.', 2200);
       const bill = Math.min(G.S.money.eur, 200);
       addMoney('eur', -bill);
-      const t = G.S.time, d = dayOf(t); G.S.time = (d + 1) * 1440 + 9 * 60; G.S.lastSleep = G.S.time;
+      const d = dayOf(G.S.time); G.S.time = (d + 1) * 1440 + 9 * 60; G.S.lastSleep = G.S.time;
       Object.assign(G.S.st, { energy: 45, prom: 0, nau: 0, mood: Math.max(20, G.S.st.mood - 20) });
       enterMap('hotel_room', 'bed');
       await this.say('Krankenschwester', `Plattgetreten, aber heil. ${fmtEur(bill)} Selbstbehalt, bitte. Die Monster sind übrigens weitergezogen – Richtung Schweiz.`);

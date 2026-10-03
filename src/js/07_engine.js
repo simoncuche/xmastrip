@@ -128,6 +128,7 @@ function enterMap(id, spawn, opts = {}) {
   if (sp) { G.player.x = sp.x; G.player.y = sp.y; G.player.dir = sp.dir ?? G.player.dir; }
   G.player.pose = 'stand'; G.player.anim = null;
   G.npcs = []; G.peds = []; G.parts = []; G.birds = [];
+  if (G.live) { const l = G.live; G.live = null; if (l.onLeave) l.onLeave(); }
   for (const d of m.npcDefs) if (!d.cond || d.cond()) G.npcs.push(new Actor(Object.assign({}, d)));
   Story.populate(m);
   spawnPeds(m);
@@ -377,6 +378,7 @@ function renderWorld() {
     else if (it.b) drawBird(c, it.b, cx, cy);
   }
   for (const p of G.parts) drawPart(c, p, cx, cy);
+  if (G.live && G.live.draw) G.live.draw(c, cx, cy, G.t);
   if (m.overlay) m.overlay(c, cx, cy, G.t);
   /* Licht */
   if (d.a > 0.01) {
@@ -386,7 +388,7 @@ function renderWorld() {
     l.fillStyle = `rgba(10,14,38,${d.a})`;
     l.fillRect(0, 0, vw, vh);
     l.globalCompositeOperation = 'destination-out';
-    const lights = m.lights.concat(m.dynLights ? m.dynLights() : []);
+    const lights = m.lights.concat(m.dynLights ? m.dynLights() : [], G.live && G.live.lights ? G.live.lights() : []);
     for (const L of lights) {
       const x = L.x - cx, y = L.y - cy;
       if (x < -L.r || y < -L.r || x > vw + L.r || y > vh + L.r) continue;
@@ -562,6 +564,7 @@ function updateWorld(dt) {
   if (G.fx.flash > 0) G.fx.flash = Math.max(0, G.fx.flash - dt * 3);
   if (G.fx.shake > 0) G.fx.shake = Math.max(0, G.fx.shake - dt * 2);
   updateParts(dt);
+  if (G.live && G.live.update && (G.live.runWhileBusy || !G.busy)) G.live.update(dt);
   updateBirds(dt);
   for (const a of G.peds) updatePed(a, dt);
   for (const a of G.npcs) updateNpc(a, dt);

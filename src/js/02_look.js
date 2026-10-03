@@ -1,6 +1,6 @@
 /* ============ Aussehen: Merkmale, Porträt, Spielfigur ============ */
 const LOOK_OPTS = [
-  { g: 'Körper', k: 'skin', n: 'Hautton', col: [['Porzellan', '#ffe3cc'], ['Hell', '#f6d2b4'], ['Rosig', '#f1c3a6'], ['Warm hell', '#e9b98f'], ['Sand', '#dcaa7f'], ['Oliv', '#c99a6c'], ['Honig', '#c48a58'], ['Bronze', '#a8714a'], ['Karamell', '#93613c'], ['Kakao', '#7a4c2f'], ['Dunkel', '#5f3a24'], ['Ebenholz', '#47291a']] },
+  { g: 'Körper', k: 'skin', n: 'Hautton', col: [['Porzellan', '#ffe3cc'], ['Hell', '#f6d2b4'], ['Rosig', '#f1c3a6'], ['Warm hell', '#e9b98f'], ['Sand', '#dcaa7f'], ['Oliv', '#c99a6c'], ['Honig', '#c48a58'], ['Bronze', '#a8714a'], ['Karamell', '#93613c'], ['Kakao', '#7a4c2f'], ['Dunkel', '#5f3a24'], ['Ebenholz', '#47291a'], ['Alien-Grün', '#7ad08a']] },
   { g: 'Körper', k: 'build', n: 'Statur', v: ['Schlank', 'Normal', 'Athletisch', 'Kräftig'] },
   { g: 'Körper', k: 'height', n: 'Grösse', v: ['Klein', 'Mittel', 'Gross'] },
   { g: 'Kopf', k: 'head', n: 'Kopfform', v: ['Oval', 'Rund', 'Eckig', 'Lang', 'Herz', 'Breit'] },
@@ -44,7 +44,7 @@ function defaultLook() {
 function randomLook(r = Math.random, unlocked) {
   const L = {};
   for (const o of LOOK_OPTS) {
-    const n = (o.col || o.v).length;
+    const n = (o.col || o.v).length - (o.k === 'skin' ? 1 : 0); /* Alien-Grün nicht auswürfeln */
     let i = Math.floor(r() * n);
     let guard = 0;
     while (isLocked(o.k, i, unlocked) && guard++ < 20) i = Math.floor(r() * n);

@@ -23,7 +23,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 |---|---|
 | `00_util.js` | Hilfsfunktionen, Pixel-Zeichnen (`R`, `P`, `E`, `line`), Pixelschrift `pxText`, `MAP_BUILDERS` |
 | `01_audio.js` | `Snd`: synthetische Soundeffekte und Musik-Loops (WebAudio) |
-| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (27 Merkmale, 250 Varianten), Porträt 64×64, Sprite-Sheets 18×26 |
+| `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (27 Merkmale, 251 Varianten), Porträt 64×64, Sprite-Sheets 18×26 |
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
 | `04_state.js` | Spielzustand `G`, `newState`, Gegenstände `ITEMS`, Sehenswürdigkeiten `SIGHTS`, Erlebnisse `ACH`, Werte-Logik, Speichern |
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
@@ -32,7 +32,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `08_ui.js` | HUD, Dialoge (`UI.say`, `UI.ask`), Läden, Overlays, Handy (`Phone`) |
 | `09_story.js` | Reisegruppe `CREW` (12 Namen mit Rollen), Läden `SHOPS`, Öffnungszeiten, **gesamte Story & alle Interaktionen** (`Story.*`), Taxi, Ereignisse (Übergeben, Filmriss, Einschlafen) |
 | `10_jass.js` | Schieber-Jass mit Regeln (`JassRules`) und KI |
-| `11_minigames.js` | Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama, Verfolgungsjagd (`chase`), Ausweichen (`dodge`), Roulette (`rouletteSpin`), Blackjack |
+| `11_minigames.js` | Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama, Roulette (`rouletteSpin`), Blackjack |
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug) |
 | `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
 
@@ -48,7 +48,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 - Freunde: `FRIENDS` wird aus `CREW` gebaut (ohne den Spieler). Funktionale Rollen per `who('jass' | 'arm' | 'party' …)`
   mit Fallbacks in `FN_FALLBACK`, damit jede Rolle besetzt ist, egal wen man spielt.
 - Wo die Jungs sind, entscheidet `Story.schedule(id)` (Uhrzeit, Story-Stufe, gemeinsame Taxifahrt in `G.S.flags.group`, Krankenlager `flags.sick`); `Story.whereIs(id)` liefert Text und Kartenpunkt dazu.
-- Zufallsereignisse: `Story.EVENTS` (Bedingung, Maximum), `Story.maybeEvent()` pro Spielminute in `ibk` ab Stufe `free`, Handler `Story.ev_<id>`; höchstens eines pro Tag (`flags.evDay`), Godzilla/Kong fix an Tag 10 (`ev_monster`); Hilfen `tempActor`, `walk`, `dropActor`; Polizeiwache über `flags.jail`.
+- Zufallsereignisse: `Story.EVENTS` (Bedingung, Maximum), `Story.maybeEvent()` pro Spielminute in `ibk` ab Stufe `free`, Handler `Story.ev_<id>`; höchstens eines pro Tag (`flags.evDay`), Godzilla/Kong fix an Tag 5 (`ev_monster`); Live-Ereignisse in der Welt über `G.live = { update, draw, lights, onLeave, runWhileBusy }` (Engine-Hook, wird bei Kartenwechsel gelöscht); Hilfen `tempActor`, `walk`, `dropActor`; Polizeiwache über `flags.jail`.
 - Pegel der Kollegen: `G.S.fprom[id]`, steigt über `Story.friendDrink`, Übergeben ab 2,6 ‰ (`Story.friendVomit`).
 - Spielende: `Story.goHome()` (Heimreise am Hauptbahnhof) setzt `G.S.finished`, zeigt `Ending.show()` ohne Weiterspielen; der Titel bietet dann nur „Neues Spiel“.
 - Story-Stufen: `meet → board → ride → arrived → findHotel → checkin → room → bar → free`.
