@@ -45,7 +45,7 @@ const CREW_LOOKS = {
 const FN_FALLBACK = {
   kassier: ['cuche', 'lexx'], jass: ['lexx', 'didu', 'dous'], arm: ['hoshy', 'coel', 'didu'], darts: ['didu', 'kusi', 'hoshy'],
   kicker: ['kusi', 'yaennu', 'coel'], dance: ['floeru', 'coel', 'haennsu'], smoke: ['yaennu', 'coel', 'didu'], food: ['dous', 'didu', 'hoshy'],
-  foto: ['roemu', 'lexx', 'oelu'], music: ['oelu', 'floeru', 'kusi'], party: ['coel', 'haennsu', 'floeru'], schnaps: ['didu', 'oelu', 'dous'],
+  pilot: ['roemu', 'lexx', 'hoshy'], foto: ['roemu', 'lexx', 'oelu'], music: ['oelu', 'floeru', 'kusi'], party: ['coel', 'haennsu', 'floeru'], schnaps: ['didu', 'oelu', 'dous'],
 };
 let FRIENDS = {};
 /* Der komplette Look eines Kollegen: Zufall nur für Merkmale, die CREW_LOOKS nicht vorgibt (z. B. Muster, Accessoire) */
@@ -528,10 +528,10 @@ const Story = {
     await this.walk(alien, p.x + side * 16, p.y);
     alien.dir = dirTo(alien.x, alien.y, p.x, p.y); p.dir = dirTo(p.x, p.y, alien.x, alien.y);
     await this.say(alien, 'Blip. Blop. … Übersetzer an. Grüss dich, Erdling. Bring mich zu eurem Anführer.');
-    const c = await this.ask(alien, 'Das Wesen ist grün, hat riesige Augen und riecht nach Zirbe.', [`Zum Kassier (${fname(who('kassier'))})`, 'In die Gamsbock Bar', 'Ein Bier anbieten', 'Weglaufen']);
+    const c = await this.ask(alien, 'Das Wesen ist grün, hat riesige Augen und riecht nach Zirbe.', [`Zum Piloten (${fname(who('pilot'))})`, 'In die Gamsbock Bar', 'Ein Bier anbieten', 'Weglaufen']);
     if (c === 3) { await this.say(alien, 'Blop. Unhöflich. Wir kommen wieder. In 3.000 Jahren.'); mood(-2); }
     else {
-      if (c === 0) await this.say(alien, 'Der mit der Bauchtasche? Er hat … eine Strichliste. Faszinierend. Primitiv, aber faszinierend.');
+      if (c === 0) await this.say(alien, `${fname(who('pilot'))}? Ein Pilot? Er fliegt in einem Blechvogel, ohne Antimaterie? Primitiv, aber mutig. Den nehmen wir mit. Später.`);
       if (c === 1) await this.say(alien, 'Gams-bock-bar. Dort gibt es „Bier“? Unser Scanner zeigt: 4,8 Prozent Freude.');
       if (c === 2) { if (hasInv('dosenbier') || hasInv('bier')) { takeInv(hasInv('dosenbier') ? 'dosenbier' : 'bier'); await this.say(alien, '… … … BLOP! Das ist das Beste, was ich je … Wir nehmen zwölf Kisten mit. Hier, ein Geschenk.'); } else await this.say(alien, 'Du hast gar keins dabei. Erdlinge. Trotzdem: ein Geschenk, für die Mühe.'); }
       addInv('meteorit'); mood(10);
@@ -727,15 +727,25 @@ const Story = {
     passTime(5);
   },
   async blackjack() {
-    const bet = await this.casinoBet('Blackjack');
-    if (!bet) return;
-    pay('eur', bet);
-    const r = await Mini.blackjack(bet);
-    if (!r) { addMoney('eur', bet); return; }
-    if (r.res === 'win') { addMoney('eur', bet + r.mult); Snd.sfx('coin'); mood(8); achieve('blackjack'); await this.say('Croupière Lisa', `Gewonnen – ${fmtEur(bet + r.mult)} für dich. Die Bank zahlt mit Lächeln.`); }
-    else if (r.res === 'push') { addMoney('eur', bet); await this.say('Croupière Lisa', 'Unentschieden. Einsatz zurück.'); }
-    else { if (r.mult < -bet) pay('eur', Math.min(G.S.money.eur, -r.mult - bet)); mood(-4); await this.say('Croupière Lisa', pick(['Die Bank gewinnt. Wie meistens.', 'Verloren. Noch eine Runde? Die Bar ist auch offen.', 'Siebzehn und vier war früher. Heute heisst es: die Bank.'])); }
-    passTime(6);
+    let bet = await this.casinoBet('Blackjack');
+    let rounds = 0, won = 0;
+    while (bet) {
+      pay('eur', bet);
+      const r = await Mini.blackjack(bet);
+      if (!r) { addMoney('eur', bet); break; }
+      rounds++;
+      if (r.res === 'win') { addMoney('eur', bet + r.mult); won += r.mult; Snd.sfx('coin'); mood(8); achieve('blackjack'); UI.toast(`Gewonnen – ${fmtEur(bet + r.mult)} zurück an dich.`, 'ach'); }
+      else if (r.res === 'push') { addMoney('eur', bet); UI.toast('Unentschieden. Einsatz zurück.'); }
+      else { if (r.mult < -bet) pay('eur', Math.min(G.S.money.eur, -r.mult - bet)); won += r.mult; mood(-4); UI.toast(pick(['Die Bank gewinnt. Wie meistens.', 'Verloren. Die Bar ist auch offen.', 'Siebzehn und vier war früher. Heute heisst es: die Bank.']), 'warn'); }
+      passTime(6);
+      /* Mehrere Runden hintereinander: gleicher Einsatz, neuer Einsatz oder Schluss */
+      const opts = []; if (canPay('eur', bet)) opts.push({ t: 'Noch eine Runde', r: fmtEur(bet) }); opts.push({ t: 'Einsatz ändern' }, { t: 'Aufhören' });
+      const c = await this.ask('Croupière Lisa', `${rounds}. Runde: ${won >= 0 ? '+' : '–'}${fmtEur(Math.abs(won))}. Bargeld ${fmtEur(G.S.money.eur)}.`, opts);
+      const k = opts[c] && opts[c].t;
+      if (k === 'Einsatz ändern') bet = await this.casinoBet('Blackjack');
+      else if (k !== 'Noch eine Runde') bet = 0;
+    }
+    if (rounds) await this.say('Croupière Lisa', won > 0 ? `${rounds} Runden, ${fmtEur(won)} Gewinn. Komm wieder – die Bank hat Geduld.` : won < 0 ? `${rounds} Runden, ${fmtEur(-won)} für die Bank. Danke fürs Spiel.` : 'Plus minus null. Unentschieden gegen die Bank – das schaffen nicht viele.');
   },
   async ev_ueberfall() {
     G.busy++;
@@ -1618,7 +1628,8 @@ const Story = {
     if (!pay('eur', price)) { await this.say(j, 'Kein Bares, kein Jessy. Der Bankomat ist beim Bahnhof.'); return; }
     takeUse('kondom');
     await this.say(j, 'Braver Junge. Sicherheit geht vor.');
-    await UI.card(['Zwanzig Minuten Händchenhalten am Inn. Jessy erzählt von ihrer Katze. Mit Gummi. Weil Regel.', 'Kuscheln in Bogen 12. Es ist warm, riecht nach Vanille, und Jessy schnarcht leise.', 'Was in den Bögen passiert, bleibt in den Bögen.'][c], 2400);
+    const jsheet = j && j.look ? getSheet(j.look) : null;
+    await Scene.play('jessy', { kind: c, jsheet, ms: 3600, text: ['Zwanzig Minuten Händchenhalten am Inn. Jessy erzählt von ihrer Katze. Mit Gummi. Weil Regel.', 'Kuscheln in Bogen 12. Es ist warm, riecht nach Vanille, und Jessy schnarcht leise.', 'Was in den Bögen passiert, bleibt in den Bögen.'][c] });
     passTime(mins); mood([6, 10, 15][c]); energy(-[2, 5, 12][c]);
     G.S.flags.jessyAt = G.S.time;
     achieve('gummi');

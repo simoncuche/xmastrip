@@ -144,10 +144,13 @@ function enterMap(id, spawn, opts = {}) {
 }
 async function warpTo(id, spawn, opts = {}) {
   G.busy++;
-  Snd.sfx('door');
-  await UI.fadeOut();
+  const to = getMap(id);
+  /* Kleine Türszene statt nur Schwarzbild: hinein (Rückenansicht, Tür geht auf) oder hinaus (Tür zu, Gesicht zum Spieler) */
+  const exit = !!(G.map && G.map.indoor && !to.indoor);
+  if (opts.plain || typeof Scene === 'undefined') { Snd.sfx('door'); await UI.fadeOut(); }
+  else await Scene.play('door', { ms: 820, keep: true, exit, label: opts.label || '' });
   enterMap(id, spawn, opts);
-  await sleep(120);
+  await sleep(100);
   await UI.fadeIn();
   G.busy--;
   if (opts.after) await opts.after();

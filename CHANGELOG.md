@@ -3,6 +3,14 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.8.0 – 03.10.2026
+
+- Türen statt Schwarzbild: Beim Betreten eines Gebäudes geht der Spieler zur Haustür, sie schwingt auf, warmes Licht fällt heraus und er verschwindet darin; beim Verlassen kommt er aus der offenen Tür, die hinter ihm zufällt. Mit Schritten, Türgeräusch und dem Namen des Ortes über der Tür.
+- Das Alien will zum Piloten (Römu) statt zum Kassier gebracht werden – und würde ihn am liebsten gleich mitnehmen.
+- Blackjack: Mehrere Runden hintereinander mit gleichem Einsatz, neuem Einsatz oder Schluss; Croupière Lisa zählt Runden und Bilanz mit.
+- Jessys Dienstleistungen sind animiert: Händchenhalten am nächtlichen Inn mit Herzen und Laternen, Kuscheln unter der Decke in Bogen 12 mit Lichterkette und Schnarchen, und beim vollen Programm bleibt der Vorhang zu – Schuhe vor der Tür, „Nicht stören“, flackerndes Licht.
+- Das Frühstücksbuffet im Hotel Zirbe ist gedeckt: Brotkorb, Gipfeli, Käse und Schinken, Eier, Früchte, Säfte, Müesli und Kaffeekanne.
+
 ## 2.7.0 – 03.10.2026
 
 - Homescreen-Icon: Wer das Spiel auf den Startbildschirm legt, bekommt jetzt einen Pixel-Bierkrug statt des Buchstabens „W“ (Web-Manifest, Apple-Touch-Icon). Dazu prüft das Spiel beim Start, ob eine neue Version online ist, und bietet das Neuladen an – so bleibt keine alte Version im Cache hängen.

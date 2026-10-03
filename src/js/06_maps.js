@@ -807,8 +807,8 @@ MAP_BUILDERS.hotel_lobby = () => {
   for (const [x, y] of [[1, 6], [16, 7], [1, 11], [16, 11]]) m.add(objPlant(x, y));
   m.add(objLuggage(8, 4));
   m.add(objTable(2, 8, 2, 1, { col: '#f4f2ec' })); m.add(objTable(2, 10, 2, 1, { col: '#f4f2ec' }));
-  m.add(objCounter(4, 8, 2, 1, { top: '#f4f2ec', front: '#6a4428', coffee: true }));
-  m.trig(4, 8, 2, 1, { label: 'Frühstücksbuffet', act: () => Story.breakfast() });
+  m.add(objBuffet(4, 8, 3));
+  m.trig(4, 8, 3, 1, { label: 'Frühstücksbuffet', act: () => Story.breakfast() });
   doorBottom(m, 8, 2, 'ibk', 'hotel_out', 'Ausgang');
   m.spawn('entry', 9, 11, 3); m.spawn('lift', 14, 3, 0); m.spawn('stairs', 15, 4, 1);
   return m;
@@ -1032,6 +1032,31 @@ MAP_BUILDERS.club = () => {
   return m;
 };
 /* ----------- Seegrube ----------- */
+/* Frühstücksbuffet: Tischtuch, Brotkorb, Gipfeli, Käse und Schinken, Eier, Früchte, Säfte, Müesli, Kaffee */
+function objBuffet(x, y, w = 3) {
+  return mkObj(x, y, w, 1, 18, (c, W, H) => {
+    R(c, 0, 10, W, H - 10, '#f4f2ec'); R(c, 0, 10, W, 2, '#ffffff'); R(c, 0, H - 4, W, 4, '#6a4428'); for (let k = 0; k < W; k += 6) R(c, k, 12, 3, H - 16, '#e8e4dc');
+    /* Brotkorb mit Semmeln */
+    R(c, 2, 6, 11, 6, '#8a5a32'); R(c, 3, 7, 9, 4, '#a87a4a'); E(c, 5, 6, 2, 1.5, '#d8a060'); E(c, 8, 5, 2, 1.5, '#e0b070'); E(c, 11, 6, 2, 1.5, '#d8a060'); E(c, 6, 4, 2, 1.5, '#e8c080');
+    /* Gipfeli */
+    for (let k = 0; k < 2; k++) { E(c, 16 + k * 5, 8, 2.5, 1.5, '#e0a040'); P(c, 15 + k * 5, 7, '#f0c060'); P(c, 18 + k * 5, 7, '#f0c060'); }
+    /* Käse- und Schinkenplatte */
+    E(c, 28, 9, 6, 3, '#f8f8f4'); R(c, 24, 7, 4, 3, '#f2d050'); R(c, 29, 7, 4, 3, '#f2c040'); R(c, 26, 5, 5, 2, '#f0a0a8'); R(c, 30, 5, 3, 2, '#e88a98');
+    /* Eier im Becher */
+    for (let k = 0; k < 2; k++) { R(c, 37 + k * 4, 8, 3, 3, '#f4f0e6'); E(c, 38 + k * 4, 6, 1.5, 2, '#fff8e0'); P(c, 38 + k * 4, 5, '#f2c030'); }
+    /* Früchteschale */
+    E(c, 50, 9, 6, 3, '#4a6a8a'); for (let k = 0; k < 5; k++) P(c, 46 + k * 2, 6 - (k % 2), ['#e03030', '#60b040', '#f0a020', '#e03030', '#f0d040'][k]); P(c, 50, 5, '#60b040');
+    if (W > 56) {
+      /* Saftkrüge */
+      R(c, 58, 2, 4, 9, '#f0a020'); R(c, 58, 2, 4, 1, '#f8f8f4'); R(c, 62, 4, 1, 4, '#c88010'); R(c, 64, 2, 4, 9, '#c83040'); R(c, 64, 2, 4, 1, '#f8f8f4'); R(c, 68, 4, 1, 4, '#a02030');
+      /* Müesli und Kaffeekanne */
+      R(c, 72, 3, 6, 8, '#d8e8f0'); R(c, 73, 6, 4, 4, '#d8b070'); R(c, 72, 3, 6, 1, '#8aa0b0');
+      R(c, 82, 1, 6, 10, '#c9ccd2'); R(c, 83, 0, 4, 1, '#8a8e94'); R(c, 88, 3, 2, 5, '#8a8e94'); R(c, 84, 11, 2, 1, '#2a2a2e');
+      /* Schild */
+      R(c, 36, 0, 28, 7, '#f4f2ec'); R(c, 36, 0, 28, 1, '#c9c5bd'); pxText(c, 'BUFFET', 38, 1, '#6a4428');
+    }
+  }, { solid: true });
+}
 /* Haltestellen-Schild (grünes H) mit Zielanzeige */
 function objTramStop(x, y, txt) {
   return mkObj(x, y, 1, 1, 22, (c, W, H) => {
