@@ -104,10 +104,12 @@ const UI = {
   toast(html, type = '') {
     const d = document.createElement('div');
     d.className = 'toast ' + type;
-    d.innerHTML = html;
+    d.innerHTML = `<span>${html}</span><b class="x" aria-label="Schliessen">×</b>`;
     this.els.toasts.appendChild(d);
-    while (this.els.toasts.children.length > 3) this.els.toasts.firstChild.remove();
-    setTimeout(() => { d.classList.add('out'); setTimeout(() => d.remove(), 350); }, type === 'ach' ? 4200 : 3300);
+    while (this.els.toasts.children.length > 4) this.els.toasts.firstChild.remove();
+    const close = () => { if (d.classList.contains('out')) return; d.classList.add('out'); setTimeout(() => d.remove(), 350); };
+    d.addEventListener('pointerdown', (e) => { e.stopPropagation(); close(); });
+    setTimeout(close, type === 'ach' ? 9000 : 8000);
   },
   /* ---- Sprecher ---- */
   speaker(sp) {

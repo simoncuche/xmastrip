@@ -880,6 +880,7 @@ const Story = {
     if (roundDef && this.friendsHere().length > 1) opts.push({ t: `Runde ${roundDef[2]} für alle`, r: fmtEur(roundDef[1]), k: 'runde' });
     if (venue && id === who('jass') && G.map.id !== 'club') opts.push({ t: 'Jassen', k: 'jass' });
     if (venue && id === who('arm')) opts.push({ t: 'Armdrücken', k: 'arm' });
+    if (['bar', 'club'].includes(G.map.id)) opts.push({ t: 'Bierpong spielen (Trinkspiel)', r: G.map.id === 'club' ? '11,00 €' : '9,60 €', k: 'pong' });
     if (G.map.id === 'bar' && id === who('darts')) opts.push({ t: 'Darts-Duell', k: 'darts' });
     if (G.map.id === 'bar' && id === who('kicker')) opts.push({ t: 'Kicker-Duell', k: 'kicker' });
     if (id === who('smoke')) opts.push({ t: 'Eine rauchen gehen', k: 'smoke' });
@@ -915,6 +916,7 @@ const Story = {
       }
       case 'jass': await this.jass(); break;
       case 'arm': await this.armwrestle(id); break;
+      case 'pong': await this.beerpong(id); break;
       case 'darts': await this.darts(); break;
       case 'kicker': await this.kicker(); break;
       case 'smoke': await this.smoke(id); break;
@@ -1407,6 +1409,21 @@ const Story = {
     if (opp && res.win) { achieve('darts'); mood(6); await this.say(opp.id, 'Na gut, du hast gewonnen. Zufall!'); }
     else if (opp) await this.say(opp.id, 'Übung macht den Meister. Nächstes Mal vielleicht!');
     else mood(3);
+  },
+  async beerpong(id) {
+    const price = G.map.id === 'club' ? 11 : 9.6;
+    if (!pay('eur', price)) { await this.say(null, 'Zwei Bier für die Becher – dafür reicht dein Geld nicht.'); return; }
+    await this.say(id, pick(['Bierpong? Du gegen mich. Sechs Becher, wer trifft, lässt den anderen trinken. Der Verlierer trinkt den Rest!', 'Okay, Bierpong. Aber ich sag\'s dir: Ich hab das an der Uni gelernt. Jeden Abend.', 'Sechs Becher, ein Ball, keine Gnade. Los!']));
+    const res = await Mini.beerpong(FRIENDS[id], (whoDrinks) => { if (whoDrinks === 'me') consume('pong', { silent: true }); else this.friendDrink(id, 0.09); });
+    if (!res) return;
+    passTime(12);
+    /* Der Verlierer trinkt die übrigen Becher des Gewinners */
+    if (res.win) { for (let k = 0; k < res.myLeft; k++) await this.friendDrink(id, 0.09); }
+    else { for (let k = 0; k < res.theirLeft; k++) consume('pong', { silent: true }); }
+    checkThresholds();
+    UI.toast(`Bierpong: Du hast ${res.myDrinks + (res.win ? 0 : res.theirLeft)} Becher getrunken (${promStr()}), ${fname(id)} ${res.oppDrinks + (res.win ? res.myLeft : 0)} (${promStr(fprom(id))}).`);
+    if (res.win) { achieve('bierpong'); mood(8); G.S.rec.pong = (G.S.rec.pong || 0) + 1; if (G.npcs.some((n) => n.friend && n.id === id && !n.hidden)) await this.say(id, pick(['Pfff. Der Ball war schlecht aufgepumpt.', 'Revanche! Sofort! … Okay, gleich. Mir ist etwas schwindlig.', 'Du hast geübt. Gib\'s zu.'])); }
+    else { mood(2); if (G.npcs.some((n) => n.friend && n.id === id && !n.hidden)) await this.say(id, pick(['Uni-Erfahrung. Hab ich dir gesagt.', 'Trink aus, trink aus! Regeln sind Regeln.', 'Nächstes Mal mit links, versprochen.'])); }
   },
   async kicker() {
     const opp = this.friendsHere().includes(who('kicker')) ? FRIENDS[who('kicker')] : null;

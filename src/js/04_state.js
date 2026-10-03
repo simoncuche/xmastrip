@@ -74,6 +74,7 @@ const ITEMS = {
   edelweiss: { n: 'Edelweiss-Anstecker', t: 'souv', icon: 'flower', inv: true },
   muenze: { n: 'Glücksmünze', t: 'souv', icon: 'coin', inv: true },
   billett: { n: 'Gruppenbillett Luzern–Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
+  pong: { n: 'Bierpong-Becher', t: 'drink', alc: 0.09, mood: 3, en: -1, icon: 'beer' },
   meteorit: { n: 'Leuchtender Stein vom Alien', t: 'souv', icon: 'globe', inv: true },
 };
 
@@ -147,6 +148,7 @@ const ACH = {
   jackpot: ['Plein!', 'Beim Roulette die richtige Zahl getroffen'],
   blackjack: ['Siebzehn und vier', 'Beim Blackjack gegen die Bank gewonnen'],
   heimreise: ['Heimreise', 'Mit dem Zug zurück nach Luzern – das Spiel ist beendet'],
+  bierpong: ['Pong-König', 'Beim Bierpong gegen einen Kollegen gewonnen'],
 };
 
 function newState(look, name) {

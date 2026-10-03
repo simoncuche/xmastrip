@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.3.0 – 03.10.2026
+
+- Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.
+- Hinweise bleiben länger stehen (8 Sekunden) und lassen sich antippen, um sie zu schliessen.
+
 ## 2.2.0 – 03.10.2026
 
 - Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.

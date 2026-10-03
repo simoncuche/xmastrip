@@ -204,6 +204,65 @@ const Mini = {
   },
 
 
+
+  /* ---------- Bierpong: zielen, Kraft, werfen – jeder Treffer lässt den anderen trinken ---------- */
+  beerpong(opp, onDrink) {
+    const CUPS = (top) => { const out = []; const rows = top ? [[3, 22], [2, 30], [1, 38]] : [[1, 104], [2, 112], [3, 120]]; for (const [n, y] of rows) for (let i = 0; i < n; i++) out.push({ x: 80 + (i - (n - 1) / 2) * 13, y, alive: true }); return out; };
+    const theirs = CUPS(true), mine = CUPS(false);
+    const me = getSheet(G.S.look), oppSheet = getSheet(opp.look);
+    const oppSkill = Math.max(0.22, 0.52 - ((G.S.fprom && G.S.fprom[opp.id]) || 0) * 0.1);
+    const mySkill = G.S.st.prom > 1.5 ? 1.8 : G.S.st.prom > 0.8 ? 1.3 : 1;
+    return this.run('Bierpong', `gegen ${opp.name}`, `<canvas aria-label="Bierpong"></canvas><div class="mini-bar"><span id="nInfo">Tippen: Richtung festlegen. Nochmal tippen: Kraft.</span><b id="nScore"></b></div><div class="lanes" style="grid-template-columns:1fr"><button data-l="0" aria-label="Werfen">WERFEN</button></div>`, 160, 150, (api) => {
+      let phase = 'aim', t = 0, aimX = 80, power = 0.5, ball = null, msg = '', mt = 0, over = false, myDrinks = 0, oppDrinks = 0;
+      const info = (s) => { api.o.querySelector('#nInfo').textContent = s; };
+      const score = () => { api.o.querySelector('#nScore').textContent = `${mine.filter((c) => c.alive).length} : ${theirs.filter((c) => c.alive).length}`; };
+      score();
+      const tap = () => {
+        if (over) return;
+        if (phase === 'aim') { phase = 'power'; info('Tippen, wenn die Kraft stimmt – die Becher stehen in der Mitte.'); Snd.sfx('blip'); }
+        else if (phase === 'power') {
+          phase = 'fly';
+          const wob = (Math.random() - 0.5) * 10 * (mySkill - 1);
+          const land = { x: aimX + wob, y: 44 + (0.55 - power) * 120 + wob };
+          ball = { x: 80, y: 136, tx: land.x, ty: land.y, t: 0, mine: true };
+          Snd.sfx('whoosh');
+        }
+      };
+      api.o.querySelector('[data-l]').addEventListener('pointerdown', (e) => { e.preventDefault(); tap(); });
+      api.cv.addEventListener('pointerdown', (e) => { e.preventDefault(); tap(); });
+      Mini.key = (k) => { if (['Space', 'Enter', 'KeyE'].includes(k)) tap(); };
+      const finish = () => { over = true; const win = theirs.every((c) => !c.alive); setTimeout(() => api.finish({ win, myDrinks, oppDrinks, myLeft: mine.filter((c) => c.alive).length, theirLeft: theirs.filter((c) => c.alive).length }), 1400); };
+      const landBall = () => {
+        const cups = ball.mine ? theirs : mine;
+        let best = null, bd = 99;
+        for (const c of cups) if (c.alive) { const d = Math.hypot(c.x - ball.tx, c.y - ball.ty); if (d < bd) { bd = d; best = c; } }
+        if (best && bd < 7) {
+          best.alive = false; Snd.sfx('splash');
+          if (ball.mine) { msg = 'TREFFER!'; oppDrinks++; if (onDrink) onDrink('opp'); }
+          else { msg = `${opp.name} trifft – du trinkst!`; myDrinks++; if (onDrink) onDrink('me'); }
+        } else { msg = ball.mine ? 'Daneben.' : `${opp.name} verfehlt.`; Snd.sfx('card'); }
+        mt = 1.2; score();
+        const wasMine = ball.mine; ball = null;
+        if (theirs.every((c) => !c.alive) || mine.every((c) => !c.alive)) { finish(); return; }
+        if (wasMine) { phase = 'opp'; info(`${opp.name} wirft …`); setTimeout(() => { if (over) return; const alive = mine.filter((c) => c.alive); const target = pick(alive); const hit = Math.random() < oppSkill; const off = hit ? rnd(-4, 4) : rnd(9, 20) * (Math.random() < 0.5 ? -1 : 1); ball = { x: 80, y: 14, tx: target.x + off, ty: target.y + (hit ? rnd(-3, 3) : rnd(-12, 12)), t: 0, mine: false }; Snd.sfx('whoosh'); }, 900); }
+        else { phase = 'aim'; info('Tippen: Richtung festlegen. Nochmal tippen: Kraft.'); }
+      };
+      return (dt) => {
+        t += dt; if (mt > 0) mt -= dt;
+        const c = api.ctx;
+        R(c, 0, 0, 160, 150, '#2a1a10'); R(c, 20, 6, 120, 138, '#1f6a3a'); R(c, 22, 8, 116, 134, '#2a7a44'); R(c, 20, 74, 120, 2, '#f4f0e6');
+        const cup = (k, red) => { if (!k.alive) { E(c, k.x, k.y + 3, 5, 2, 'rgba(0,0,0,0.15)'); return; } R(c, k.x - 5, k.y - 6, 10, 12, red ? '#c8302a' : '#2f5fb8'); R(c, k.x - 5, k.y - 6, 10, 2, red ? '#e85a4a' : '#5a8ae8'); R(c, k.x - 3, k.y - 4, 6, 2, '#e8c23a'); };
+        for (const k of theirs) cup(k, true); for (const k of mine) cup(k, false);
+        c.drawImage(oppSheet, 0, 0, SPR_W, SPR_H, 2, 20, SPR_W, SPR_H); c.drawImage(me, 0, 3 * SPR_H, SPR_W, SPR_H, 140, 104, SPR_W, SPR_H);
+        pxText(c, opp.name.toUpperCase(), 2, 50, '#ffb53d'); pxText(c, 'DU', 142, 134, '#ffb53d');
+        if (phase === 'aim') { aimX = 80 + Math.sin(t * 3.2) * 34; R(c, Math.round(aimX) - 1, 14, 2, 36, 'rgba(255,255,255,0.6)'); R(c, Math.round(aimX) - 4, 48, 8, 1, '#ffffff'); }
+        if (phase === 'power') { power = (Math.sin(t * 5) + 1) / 2; R(c, 146, 60, 8, 40, '#1a1a1e'); R(c, 147, 99 - Math.round(power * 38), 6, Math.round(power * 38), power > 0.42 && power < 0.68 ? '#6fe08a' : '#ffb53d'); R(c, 145, 99 - Math.round(0.55 * 38), 10, 1, '#ffffff'); R(c, Math.round(aimX) - 1, 14, 2, 36, 'rgba(255,255,255,0.25)'); }
+        if (ball) { ball.t += dt * 1.6; const u = Math.min(1, ball.t); const bx = ball.x + (ball.tx - ball.x) * u, by = ball.y + (ball.ty - ball.y) * u - Math.sin(u * Math.PI) * 30; E(c, Math.round(ball.x + (ball.tx - ball.x) * u), Math.round(ball.y + (ball.ty - ball.y) * u) + 2, 3, 1, 'rgba(0,0,0,0.25)'); E(c, Math.round(bx), Math.round(by), 3, 3, '#f8f4e8'); if (u >= 1) landBall(); }
+        if (mt > 0) { const w = pxTextW(msg); pxText(c, msg, 80 - w / 2, 66, msg.startsWith('TREFFER') ? '#6fe08a' : '#ffffff'); }
+        if (over) { const win = theirs.every((k) => !k.alive); pxText(c, win ? 'GEWONNEN!' : 'VERLOREN', 52, 80, win ? '#6fe08a' : '#ff6a5a', 2); }
+      };
+    });
+  },
   /* ---------- Roulette: Kessel dreht, Kugel fällt auf eine Zahl ---------- */
   rouletteSpin(target) {
     const ORDER = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
