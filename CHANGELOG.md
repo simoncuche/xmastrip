@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.1.2 – 03.10.2026
+
+- Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft.
+
 ## 2.1.1 – 03.10.2026
 
 - Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5.

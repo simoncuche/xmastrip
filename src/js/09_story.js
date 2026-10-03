@@ -419,17 +419,19 @@ const Story = {
     const fl = G.S.flags;
     /* Tag 5: Godzilla und King Kong – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
     if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.ev_monster(); return; }
-    /* Tagesplan: Pro Tag wird einmal gewürfelt, ob überhaupt etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit.
-       Passt zur geplanten Zeit kein Ereignis (z. B. UFO nur nachts), wird jede Minute neu geprüft, bis eines passt. */
+    /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
+       einmal gemischt (flags.evOrder), damit jede Reise anders verläuft. Passt das nächste geplante Ereignis zur Zeit nicht
+       (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
     const day = dayOf(G.S.time);
     fl.evPlan = fl.evPlan || {};
-    if (fl.evPlan[day] === undefined) fl.evPlan[day] = Math.random() < 0.55 ? Math.round((10 + Math.random() * 13) * 2) / 2 : null;
-    if (fl.evPlan[day] === null) return;
+    if (!fl.evOrder) { const ids = this.EVENTS.map((e) => e.id); for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; } fl.evOrder = ids; }
+    if (fl.evPlan[day] === undefined) fl.evPlan[day] = Math.round((10 + Math.random() * 13) * 2) / 2;
     if (hourOf(G.S.time) < fl.evPlan[day]) return;
-    if (fl.evDay === day) return; /* höchstens ein Ereignis pro Tag */
-    const pool = this.EVENTS.filter((e) => this.evCount(e.id) < e.max && e.cond());
+    if (fl.evDay === day) return; /* genau ein Ereignis pro Tag */
+    const byOrder = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter(Boolean);
+    const pool = byOrder.filter((e) => this.evCount(e.id) < e.max && e.cond()).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)); /* Wiederholungen erst, wenn alles einmal dran war */
     if (!pool.length) return;
-    const e = pick(pool);
+    const e = pool[0];
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
     this['ev_' + e.id]();
   },
