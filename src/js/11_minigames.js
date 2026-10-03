@@ -145,37 +145,43 @@ const Mini = {
       const beat = 60 / 124;
       const notes = [];
       const r = rng(dayOf(G.S.time) * 13 + Math.floor(G.t));
-      for (let b = 4; b < 40; b++) { if (r() < 0.82) notes.push({ t: b * beat, l: Math.floor(r() * 4) }); if (b > 16 && r() < 0.3) notes.push({ t: (b + 0.5) * beat, l: Math.floor(r() * 4) }); }
-      const travel = 1.5;
-      let win = 0.11, good = 0.19;
+      for (let b = 4; b < 40; b++) { if (r() < 0.82) notes.push({ t: b * beat, l: Math.floor(r() * 4) }); if (b > 20 && r() < 0.2) notes.push({ t: (b + 0.5) * beat, l: Math.floor(r() * 4) }); }
+      const travel = 1.8;
+      /* Trefferfenster (± Sekunden): grosszügig genug für Touch-Latenz; Alkohol und Müdigkeit machen es enger */
+      let win = 0.15, good = 0.28;
       const p = G.S.st.prom; if (p > 1) { win *= 0.85; good *= 0.85; } if (p > 1.8) { win *= 0.75; good *= 0.8; } if (G.S.st.energy < 25) { win *= 0.85; }
-      let pts = 0, t = -0.5, judge = '', jt = 0, combo = 0;
+      let pts = 0, t = -2.0, judge = '', jt = 0, combo = 0, lastBeat = -1;
       const hit = (l) => {
         const btn = api.o.querySelector(`[data-l="${l}"]`); btn.classList.add('hit'); setTimeout(() => btn.classList.remove('hit'), 90);
         let best = null, bd = 9;
         for (const n of notes) if (!n.done && n.l === l) { const d = Math.abs(n.t - t); if (d < bd) { bd = d; best = n; } }
-        if (best && bd < good) { best.done = true; const pf = bd < win; pts += pf ? 100 : 60; judge = pf ? 'PERFEKT!' : 'Gut'; combo++; Snd.tone([523, 587, 659, 784][l], 0.08, 'square', 0.04); }
+        if (best && bd < good) { best.done = true; const pf = bd < win; pts += pf ? 100 : 75; judge = pf ? 'PERFEKT!' : 'Gut'; combo++; Snd.tone([523, 587, 659, 784][l], 0.08, 'square', 0.04); }
         else { judge = 'Daneben'; combo = 0; }
         jt = 0.5;
       };
       api.o.querySelectorAll('[data-l]').forEach((b) => b.addEventListener('pointerdown', (e) => { e.preventDefault(); hit(+b.dataset.l); }));
       Mini.key = (k) => { const m = { ArrowLeft: 0, KeyA: 0, ArrowDown: 1, KeyS: 1, ArrowUp: 2, KeyW: 2, ArrowRight: 3, KeyD: 3 }; if (k in m) hit(m[k]); };
       const sheet = getSheet(G.S.look);
+      Mini._dance = { notes, now: () => t }; /* für Tests */
       return (dt) => {
         t += dt; jt -= dt;
         const c = api.ctx;
         const bt = Math.floor(t / beat);
+        /* Metronom: Klick auf jedem Schlag, Akzent auf der Eins – so hört man den Takt */
+        if (bt !== lastBeat && t >= 0) { lastBeat = bt; Snd.tone(bt % 4 === 0 ? 1400 : 900, 0.025, 'square', bt % 4 === 0 ? 0.05 : 0.03); }
         R(c, 0, 0, 160, 140, '#120f1a');
         for (let i = 0; i < 4; i++) { R(c, 8 + i * 22, 0, 20, 140, i % 2 ? '#1a1626' : '#171322'); }
         const ly = 116;
         R(c, 6, ly, 92, 2, '#f2eee4');
-        for (let i = 0; i < 4; i++) pxText(c, ['<', 'V', '^', '>'][i] === 'V' ? 'V' : ['<', 'V', '^', '>'][i] === '^' ? 'A' : ['<', 'V', '^', '>'][i] === '<' ? '-' : '+', 16 + i * 22, ly + 6, '#7a6a9a');
+        /* Pfeile unter der Linie: links, unten, oben, rechts */
+        const arrow = (ax, ay, d, col) => { for (let k = 0; k < 4; k++) { const w = k; if (d === 0) R(c, ax + k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 3) R(c, ax + 6 - k, ay + 3 - w, 1, w * 2 + 1, col); if (d === 1) R(c, ax + 3 - w, ay + 6 - k, w * 2 + 1, 1, col); if (d === 2) R(c, ax + 3 - w, ay + k, w * 2 + 1, 1, col); } };
+        for (let i = 0; i < 4; i++) arrow(14 + i * 22, ly + 5, i, '#7a6a9a');
         const jitter = p > 1.4 ? (p - 1.4) * 3 : 0;
         let missed = 0;
         for (const n of notes) {
           if (n.done) continue;
           const dtn = n.t - t;
-          if (dtn < -good) { n.done = true; n.miss = true; combo = 0; continue; }
+          if (dtn < -good) { n.done = true; n.miss = true; combo = 0; judge = 'Verpasst'; jt = 0.4; continue; }
           if (dtn > travel) continue;
           const y = ly - (dtn / travel) * ly;
           const x = 10 + n.l * 22 + Math.sin(t * 5 + n.t) * jitter;
@@ -187,7 +193,8 @@ const Mini = {
         c.drawImage(sheet, frame * SPR_W, 0, SPR_W, SPR_H, 110, 52, SPR_W * 2, SPR_H * 2);
         for (let k = 0; k < 6; k++) R(c, 104 + k * 9, 120 + ((bt + k) % 2) * 2, 6, 14, ['#3a2a5a', '#2a3a5a', '#5a2a4a'][k % 3]);
         if (bt % 4 === 0) R(c, 100, 0, 60, 140, 'rgba(255,58,208,0.06)');
-        if (jt > 0) pxText(c, judge.toUpperCase(), 104, 20, judge === 'Daneben' ? '#e2554a' : '#ffb53d');
+        if (jt > 0) pxText(c, judge.toUpperCase(), 104, 20, judge === 'Daneben' || judge === 'Verpasst' ? '#e2554a' : '#ffb53d');
+        if (t < 0) pxText(c, 'BEREIT…', 24, 50, '#ffb53d', 2);
         if (combo > 3) pxText(c, combo + 'X', 112, 30, '#7af0e0');
         const pct = Math.round((pts / (notes.length * 100)) * 100);
         api.o.querySelector('#nScore').textContent = pct + ' %';
