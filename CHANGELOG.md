@@ -3,6 +3,14 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.5.0 – 03.10.2026
+
+- Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.
+- Die Verfolgungsjagd mit dem Taschendieb ist härter: Er rennt so schnell wie du, schlägt im Zickzack neun Haken, spurtet kurz, wenn du ihm auf die Pelle rückst, und lässt sich nicht mehr gleich beim Rempler fassen. Erst nach 15 Sekunden geht ihm die Luft aus – dann heisst es Haken abschneiden.
+- Jeder Laden hat jetzt einen eigenen Innenraum: Skiständer und Turnschuhwand im Sportgeschäft, Schaufensterpuppen, Hutwand und Umkleide beim Trachtenhändler, Postkartenständer im Souvenirladen, weisse Apotheke mit grünem Kreuz und Wartebank, drei Regalgänge und Kühlschrank im Supermarkt, Vitrine und runde Tischchen in der Konditorei.
+- Der Coiffeur hat drei Barbiersessel mit Spiegeln; du setzt dich in den nächsten freien.
+- Beim Barbier gibt es neu „Glatze rasieren“ (15 €) und „Bart abrasieren“ (12 €): Maschine bzw. Messer, Haare fliegen, und der Avatar ist danach sofort kahl oder glatt rasiert. Erlebnis „Blank“.
+
 ## 2.4.0 – 03.10.2026
 
 - Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.

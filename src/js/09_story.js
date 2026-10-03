@@ -158,7 +158,7 @@ const SHOPS = {
     it('o_lederhose', 249, { n: 'Lederhose mit Hosenträgern', icon: 'pants', wear: { pants: 7 }, unlock: 'lederhose', d: 'Hirschleder, knielang' }),
     it('o_haferl', 139, { n: 'Haferlschuhe', icon: 'shoe', wear: { shoes: 6 }, unlock: 'haferlschuhe', d: 'Seitlich geschnürt' }),
   ] }] },
-  barbier: { title: 'Friseur & Barbier', mode: 'special', venue: 'barbier', intro: 'Der Barbier schärft sein Messer. „Was machen wir heute?“', sections: [{ t: 'Neuer Look', items: [it('s_hair', 28, { n: 'Haarschnitt & Farbe', icon: 'scissors', special: 'hair', d: 'Frisur und Haarfarbe frei wählen' }), it('s_beard', 18, { n: 'Bart trimmen', icon: 'scissors', special: 'beard', d: 'Bart und Bartfarbe frei wählen' })] }] },
+  barbier: { title: 'Friseur & Barbier', mode: 'special', venue: 'barbier', intro: 'Der Barbier schärft sein Messer. „Was machen wir heute?“', sections: [{ t: 'Neuer Look', items: [it('s_hair', 28, { n: 'Haarschnitt & Farbe', icon: 'scissors', special: 'hair', d: 'Frisur und Haarfarbe frei wählen' }), it('s_beard', 18, { n: 'Bart trimmen', icon: 'scissors', special: 'beard', d: 'Bart und Bartfarbe frei wählen' })] }, { t: 'Schnell und radikal', items: [it('s_glatze', 15, { n: 'Glatze rasieren', icon: 'scissors', special: 'glatze', d: 'Alles ab – blank wie ein Ei' }), it('s_rasur', 12, { n: 'Bart abrasieren', icon: 'scissors', special: 'rasur', d: 'Glatt rasiert mit dem Messer' })] }] },
 };
 ITEMS.kebap = { n: 'Kebap mit allem', t: 'food', food: 60, mood: 7, nau: -18, icon: 'kebap' };
 
@@ -530,29 +530,39 @@ const Story = {
     G.busy++;
     const p = G.player, m = G.map;
     const side = Math.random() < 0.5 ? -1 : 1;
-    const th = this.tempActor({ name: 'Taschendieb', look: npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }), x: p.x + side * 70, y: p.y, speed: 66, bubbleRand: ['dots'] });
+    const th = this.tempActor({ name: 'Taschendieb', look: npcLook(973, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, beard: 1 }), x: p.x + side * 70, y: p.y, speed: 82, bubbleRand: ['dots'] });
     await this.walk(th, p.x + side * 14, p.y);
     Snd.sfx('whoosh'); th.bubble = '!'; th.bubbleT = 2;
     await this.say(null, 'Ein Rempler, ein „Entschuldigung“ – und dein Portemonnaie ist weg! Der Kerl rennt los.');
-    /* Fluchtweg: vier Wegpunkte quer über die Karte, innerhalb der Kartengrenzen */
+    /* Fluchtweg: sieben Wegpunkte im Zickzack quer über die Karte, innerhalb der Kartengrenzen */
     const W = m.w * TS, H = m.h * TS;
     let x = th.x, y = th.y; const pts = [];
     let dx = -side; let dy = p.y > H / 2 ? -1 : 1;
-    for (let k = 0; k < 4; k++) { x = clamp(x + dx * rnd(90, 150), 24, W - 24); y = clamp(y + dy * rnd(40, 90), 24, H - 24); pts.push({ x, y }); if (k === 1) dx = -dx; if (k === 2) dy = -dy; }
+    for (let k = 0; k < 9; k++) { x = clamp(x + dx * rnd(70, 130), 24, W - 24); y = clamp(y + dy * rnd(40, 100), 24, H - 24); pts.push({ x, y }); if (k % 2 === 1) dx = -dx; if (k === 2 || k === 5) dy = -dy; }
     th.path = pts.slice(); th.onArrive = null;
     th.bubbleRand = ['!'];
     const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 60)));
-    UI.toast('HINTERHER! Renn (Shift bzw. weit ziehen) und fass ihn!', 'warn');
+    UI.toast('HINTERHER! Renn (Shift bzw. weit ziehen) und fass ihn – er ist schnell und schlägt Haken!', 'warn');
     G.busy--;
-    let done = false, t = 0;
-    const live = { update(dt) { t += dt; const d = Math.hypot(th.x - G.player.x, th.y - G.player.y); if (d < 15) done = 'caught'; else if ((!th.path || !th.path.length) || t > 32) done = 'lost'; } };
+    let done = false, t = 0, puff = 0, stamina = 3.5, away = false;
+    const live = { update(dt) {
+      t += dt; puff -= dt;
+      const d = Math.hypot(th.x - G.player.x, th.y - G.player.y);
+      if (d > 26) away = true;
+      /* Spurt, wenn du ihm auf die Pelle rückst (solange der Atem reicht); nach 15 Sekunden geht ihm die Luft aus */
+      const sprint = d < 40 && stamina > 0 && t < 15;
+      if (sprint) stamina -= dt;
+      th.speed = sprint ? 94 : t > 15 ? 66 : 78;
+      if (d < 40 && puff <= 0) { puff = 0.5; addPart({ x: th.x + rnd(-4, 4), y: th.y - 2, vx: rnd(-10, 10), vy: -12, life: 0.5, kind: 'spark', col: '#ffffff' }); }
+      if (away && d < 11) done = 'caught'; else if ((!th.path || !th.path.length) || t > 40) done = 'lost';
+    } };
     G.live = live;
-    await this.wait(() => !!done || G.map !== m, 40000);
+    await this.wait(() => !!done || G.map !== m, 48000);
     if (G.live === live) G.live = null;
     if (G.map !== m) { addMoney('eur', -loss); UI.toast(`Du hast ihn aus den Augen verloren. ${fmtEur(loss)} weg.`); return; }
     G.busy++;
     th.path = null; th.moving = false;
-    if (done === 'caught') { th.dir = dirTo(th.x, th.y, G.player.x, G.player.y); mood(10); energy(-12); achieve('verfolgung'); await this.say('me', 'HAB DICH! Her mit dem Portemonnaie!'); await this.say(th, 'Okay, okay! Schweizer sind schneller als sie aussehen.'); UI.toast('Portemonnaie zurück. Alles drin.'); th.path = [{ x: th.x + side * 120, y: th.y }]; th.onArrive = () => this.dropActor(th); }
+    if (done === 'caught') { th.dir = dirTo(th.x, th.y, G.player.x, G.player.y); mood(10); energy(-12); achieve('verfolgung'); await this.say('me', 'HAB DICH! Her mit dem Portemonnaie!'); await this.say(th, pick(['Okay, okay! Schweizer sind schneller als sie aussehen.', 'Keuch … wer rennt denn bei der Kälte so?! Da, nimm.'])); UI.toast('Portemonnaie zurück. Alles drin.'); th.path = [{ x: th.x + side * 120, y: th.y }]; th.onArrive = () => this.dropActor(th); }
     else { addMoney('eur', -loss); mood(-8); energy(-10); await this.say('me', `Weg ist er. Und ${fmtEur(loss)} mit ihm. Immerhin: Der Ausweis liegt im Hotel.`); this.dropActor(th); }
     G.busy--;
   },
@@ -1377,7 +1387,26 @@ const Story = {
     opts.push({ t: 'Aufstehen', k: 'up' });
     const c = await this.ask(null, here.length ? `Am Tisch: ${here.map(fname).join(', ')}.` : 'Der Stammtisch ist leer. Die Jungs sind woanders unterwegs.', opts);
     const k = opts[c].k;
-    if (k === 'prost') { Snd.sfx('clink'); p.pose = 'drink'; mood(3); for (const id of here) G.S.aff[id] = clamp(G.S.aff[id] + 1, 0, 100); await this.say(here[0] || null, here.length ? pick(['Proscht!', 'Zum Wohl!', 'Auf den Gruppenausflug!']) : 'Du prostest dir selbst zu. Auch schön.'); p.pose = 'sit'; }
+    if (k === 'prost') {
+      /* Ohne Bier kein Anstossen: aus der Tasche, oder eines vom Tresen bestellen */
+      const beers = Object.keys(G.S.inv).filter((id) => ITEMS[id] && ITEMS[id].beer && hasInv(id));
+      const price = G.map.id === 'stueberl' ? 4.4 : 4.8;
+      const bo = beers.map((id) => ({ t: `${ITEMS[id].n} aus der Tasche`, id }));
+      bo.push({ t: 'Ein Bier bestellen', r: fmtEur(price), order: true }, { t: 'Doch nicht' });
+      const bc = await this.ask(null, beers.length ? 'Womit stösst du an?' : 'Anstossen ohne Glas in der Hand? Du brauchst zuerst ein Bier.', bo);
+      const sel = bo[bc];
+      if (!sel || (!sel.id && !sel.order)) { p.pose = 'sit'; return; }
+      let beer = sel.id;
+      if (sel.order) { if (!pay('eur', price)) { await this.say(null, 'Die Bedienung schaut auf die leere Hand. Kein Geld, kein Bier.'); return; } beer = 'bier'; }
+      else takeInv(beer);
+      Snd.sfx('clink'); p.pose = 'drink';
+      for (const id of here) G.S.aff[id] = clamp(G.S.aff[id] + 1, 0, 100);
+      await this.say(here[0] || null, here.length ? pick(['Proscht!', 'Zum Wohl!', 'Auf den Gruppenausflug!']) : 'Du prostest dir selbst zu. Auch schön.');
+      consume(beer);
+      UI.toast(`${ITEMS[beer].n} – Prost! (${G.S.st.prom.toFixed(1)} ‰)`);
+      for (const id of here) await this.friendDrink(id, 0.12);
+      p.pose = 'sit';
+    }
     if (k === 'jass') await this.jass();
     if (k === 'arm') await this.armwrestle(who('arm'));
     if (k === 'up') { p.pose = 'stand'; p.y += 4; }
@@ -1491,23 +1520,28 @@ const Story = {
     return true;
   },
   /* ---------- Coiffeur: auf dem Stuhl wird geschnippelt ---------- */
-  async barberAnim(kind) {
-    const p = G.player, chair = { x: 4 * 16, y: 4 * 16 + 12 };
+  async barberAnim(kind, shave = false) {
+    /* Drei Sessel bei den Kacheln 2–3, 5–6 und 8–9 in Reihe 4: der Spieler nimmt den nächsten freien */
+    const p = G.player;
+    const chairs = [2, 5, 8].map((tx) => ({ x: (tx + 1) * 16, y: 4 * 16 + 12 }));
+    const chair = chairs.reduce((a, c) => Math.abs(c.x - p.x) < Math.abs(a.x - p.x) ? c : a, chairs[0]);
     p.x = chair.x; p.y = chair.y; p.dir = 0; p.pose = 'sit';
     const b = G.npcs.find((n) => n.id === 'keeper');
     if (b) { await this.walk(b, chair.x + 22, chair.y + 2); b.dir = 1; b.keepDir = true; }
-    UI.toast(kind === 'hair' ? 'Mehmet legt den Umhang um. „Wie immer? Es gibt kein Wie-immer, du warst noch nie da.“' : 'Mehmet schäumt ein. „Stillhalten. Das Messer ist scharf.“');
+    UI.toast(shave ? (kind === 'hair' ? 'Mehmet holt die Maschine. „Null Millimeter. Sicher? … Zu spät.“' : 'Mehmet schäumt dick ein. „Rasiermesser. Nicht sprechen, nicht lachen.“') : kind === 'hair' ? 'Mehmet legt den Umhang um. „Wie immer? Es gibt kein Wie-immer, du warst noch nie da.“' : 'Mehmet schäumt ein. „Stillhalten. Das Messer ist scharf.“');
     const col = lc(G.S.look, kind === 'hair' ? 'hairCol' : 'beardCol');
-    for (let k = 0; k < 7; k++) {
-      Snd.sfx('card'); Snd.tone(1800, 0.04, 'square', 0.04, 0.05);
-      for (let i = 0; i < 4; i++) addPart({ x: p.x + rnd(-6, 6), y: p.y - rnd(14, 22), vx: rnd(-15, 15), vy: rnd(10, 30), g: 90, life: 0.8, kind: 'crumb', col });
+    const n = shave ? 9 : 7;
+    for (let k = 0; k < n; k++) {
+      if (shave) { Snd.noise(0.12, 0.05, 1800); Snd.tone(kind === 'hair' ? 140 : 2400, 0.1, kind === 'hair' ? 'sawtooth' : 'square', 0.03); } else { Snd.sfx('card'); Snd.tone(1800, 0.04, 'square', 0.04, 0.05); }
+      for (let i = 0; i < (shave ? 6 : 4); i++) addPart({ x: p.x + rnd(-6, 6), y: p.y - rnd(14, 22), vx: rnd(-15, 15), vy: rnd(10, 30), g: 90, life: 0.8, kind: 'crumb', col });
+      if (shave && kind === 'beard') addPart({ x: p.x + rnd(-5, 5), y: p.y - rnd(12, 16), vx: rnd(-6, 6), vy: 14, g: 60, life: 0.6, kind: 'crumb', col: '#ffffff' });
       addPart({ x: p.x + rnd(-8, 8), y: p.y - rnd(16, 24), vx: 0, vy: -10, life: 0.4, kind: 'spark', col: '#ffffff' });
-      await sleep(330);
+      await sleep(shave ? 280 : 330);
     }
-    addPart({ x: p.x, y: p.y - 34, vy: -12, life: 1.4, kind: 'txt', txt: 'SCHNIPP SCHNAPP', col: 'rgba(255,255,255,1)' });
+    addPart({ x: p.x, y: p.y - 34, vy: -12, life: 1.4, kind: 'txt', txt: shave ? (kind === 'hair' ? 'BRRRRRRT' : 'RITSCH RATSCH') : 'SCHNIPP SCHNAPP', col: 'rgba(255,255,255,1)' });
     await sleep(500);
     p.pose = 'stand'; p.y = 5 * 16 + 12;
-    if (b) { b.path = [{ x: 9 * 16 + 8, y: 3 * 16 + 10 }]; }
+    if (b) { b.path = [{ x: 11 * 16 + 8, y: 3 * 16 + 10 }]; b.onArrive = () => { b.dir = 0; }; }
   },
   /* ---------- Jessy in den Bögen ---------- */
   async jessy() {
@@ -1866,6 +1900,20 @@ const Story = {
       if (G.map.id === 'shop_barbier') await this.barberAnim(item.special);
       await Editor.open({ mode: item.special });
       achieve('frisur');
+      return 'close';
+    }
+    if (item.special === 'glatze' || item.special === 'rasur') {
+      const hair = item.special === 'glatze';
+      if (hair && !G.S.look.hair) { await this.say(null, 'Mehmet schaut auf deinen Kopf. „Da ist nichts mehr zum Rasieren, Freund.“'); return; }
+      if (!hair && !G.S.look.beard) { await this.say(null, 'Mehmet fährt dir übers Kinn. „Glatt wie ein Babypopo. Wofür soll ich dich rasieren?“'); return; }
+      if (!pay(cur, item.price)) return;
+      UI.closeOverlay();
+      if (G.map.id === 'shop_barbier') await this.barberAnim(hair ? 'hair' : 'beard', true);
+      G.S.look[hair ? 'hair' : 'beard'] = 0;
+      G.player.look = G.S.look;
+      achieve('frisur');
+      if (hair) achieve('glatze');
+      await this.say(null, hair ? 'Mehmet hält den Spiegel hin. Blank. „Jetzt spürst du den Föhn richtig.“' : 'Mehmet hält den Spiegel hin. Glatt rasiert. „Zehn Jahre jünger. Mindestens.“');
       return 'close';
     }
     if (item.wear) {

@@ -130,6 +130,7 @@ const ACH = {
   musik: ['Mäzen', 'Dem Strassenmusiker etwas gegeben'],
   jodel: ['Juchizer', 'Auf der Seegrube gejodelt'],
   frisur: ['Neuer Look', 'Beim Barbier gewesen'],
+  glatze: ['Blank', 'Beim Barbier eine Glatze rasieren lassen'],
   dusche: ['Frisch gemacht', 'Im Hotel geduscht'],
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
