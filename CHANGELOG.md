@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.5.3 – 03.10.2026
+
+- Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke.
+
 ## 1.5.2 – 03.10.2026
 
 - Kusi ist glatt rasiert, Römu trägt keine Brille mehr.

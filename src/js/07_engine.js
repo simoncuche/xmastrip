@@ -16,7 +16,7 @@ class GMap {
   isSolid(x, y) { return !this.in(x, y) || this.sol[y * this.w + x] === 1; }
   add(o) { this.objs.push(o); if (o.solid) this.solid(o.x, o.y, o.w, o.h, 1); if (o.light) this.lights.push({ x: o.x * TS + o.light.dx, y: o.y * TS - o.drawH + o.light.dy, r: o.light.r, c: o.light.c }); return o; }
   trig(x, y, w, h, o) { const t = Object.assign({ x, y, w, h }, o); this.trigs.push(t); return t; }
-  warp(x, y, to, spawn, o = {}) { this.solid(x, y, 1, 1, 0); return this.trig(x, y, o.w || 1, o.h || 1, Object.assign({ auto: true, warp: [to, spawn] }, o)); }
+  warp(x, y, to, spawn, o = {}) { this.solid(x, y, o.w || 1, o.h || 1, 0); return this.trig(x, y, o.w || 1, o.h || 1, Object.assign({ auto: true, warp: [to, spawn] }, o)); }
   spawn(name, x, y, dir = 0) { this.spawns[name] = { x: x * TS + 8, y: y * TS + 14, dir }; }
   decal(fn) { this.decals.push(fn); }
   light(px, py, r, c = '#ffd78a') { this.lights.push({ x: px, y: py, r, c }); }
