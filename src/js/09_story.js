@@ -851,9 +851,8 @@ const Story = {
   },
   async friendVomit(id) {
     const n = G.npcs.find((x) => x.friend && x.id === id);
-    if (n) { n.pose = 'bend'; n.bubble = null; }
-    Snd.sfx('vomit'); G.fx.shake = 0.6;
-    if (n) { for (let i = 0; i < 22; i++) addPart({ x: n.x + rnd(-4, 4), y: n.y - 10, vx: rnd(-30, 30), vy: rnd(10, 40), g: 140, life: 0.9, kind: 'vomit' }); G.S.vomitSpots.push({ map: G.map.id, x: n.x + 6, y: n.y + 2, t: G.S.time }); }
+    if (n) { n.pose = 'bend'; n.bubble = null; await this.spew(n); }
+    else { Snd.sfx('vomit'); G.fx.shake = 0.6; }
     await this.say(id, pick(['Uuurgh … das war eins zu viel … sorry …', 'Blöärgh! Ich … ich geh mal … Hotel …', 'Das letzte Bier war schlecht. Ganz sicher das letzte.']));
     G.S.fprom[id] = 0.8;
     G.S.flags.sick[id] = dayOf(G.S.time - 300);
@@ -1859,16 +1858,28 @@ const Story = {
   },
 
   /* ---------- Ereignisse ---------- */
+  /* Sichtbarer Schwall: zwei Wellen Brocken aus dem Mund, Schrei als Text, Pfütze vor den Füssen */
+  async spew(a) {
+    const dx = DIRV[a.dir][0], dy = DIRV[a.dir][1];
+    const mouthX = a.x + dx * 6, mouthY = a.y - 12;
+    const wave = (n) => { for (let i = 0; i < n; i++) addPart({ x: mouthX + rnd(-2, 2), y: mouthY + rnd(-2, 2), vx: dx * rnd(25, 70) + rnd(-25, 25), vy: dy * 20 + rnd(-10, 30), g: 170, life: rnd(0.8, 1.4), kind: 'vomit', s: Math.random() < 0.35 ? 4 : Math.random() < 0.5 ? 3 : 2, col: pick(['rgba(165,170,60,0.95)', 'rgba(140,150,45,0.95)', 'rgba(200,190,90,0.95)']) }); };
+    Snd.sfx('vomit'); G.fx.shake = 1;
+    addPart({ x: a.x, y: a.y - 34, vy: -14, life: 1.6, kind: 'txt', txt: 'BLÖÄÄRGH!', col: 'rgba(170,220,90,1)' });
+    wave(30);
+    G.S.vomitSpots.push({ map: G.map.id, x: a.x + dx * 12, y: a.y + dy * 6 + 2, t: G.S.time });
+    await sleep(500);
+    Snd.sfx('vomit'); G.fx.shake = 0.6; wave(22);
+    await sleep(500);
+    wave(10);
+    await sleep(700);
+  },
   async vomit() {
     if (G.busy) return;
     G.busy++;
     const p = G.player, st = G.S.st;
     p.pose = 'bend';
     await this.say('me', 'Oh nein… mir wird…');
-    Snd.sfx('vomit'); G.fx.shake = 1;
-    for (let i = 0; i < 26; i++) addPart({ x: p.x + DIRV[p.dir][0] * 8 + rnd(-3, 3), y: p.y - 10, vx: DIRV[p.dir][0] * 30 + rnd(-20, 20), vy: rnd(10, 40), g: 140, life: 0.9, kind: 'vomit' });
-    G.S.vomitSpots.push({ map: G.map.id, x: p.x + DIRV[p.dir][0] * 10, y: p.y + DIRV[p.dir][1] * 6 - 2, t: G.S.time });
-    await sleep(900);
+    await this.spew(p);
     st.nau = 0; st.food = Math.max(0, st.food - 40); st.prom = Math.max(0, st.prom - 0.3); mood(-14); energy(-8);
     G.S.flags.vomitAt = G.S.time;
     achieve('kotzen');
@@ -1909,6 +1920,30 @@ const Story = {
     await this.say(null, `${extra} Dein Portemonnaie ist ${lost} € leichter.`);
     UI.toast(`💬 ${fname(who('party'))}: „Lebst du noch? Wir haben dich gestern ins Bett getragen 😂“`);
     G.busy--;
+  },
+  /* Kurz vor dem Einschlafen: letzte Chance, etwas zu essen, zu trinken oder ins Hotel zu fahren */
+  async tiredWarning() {
+    if (G.busy) return;
+    G.busy++;
+    G.warned.tiredCrit = 1;
+    Snd.sfx('yawn');
+    energy(6); /* Adrenalin: ein paar Minuten Zeit */
+    const bag = Object.keys(G.S.inv).filter((id) => ITEMS[id] && ['drink', 'food', 'med'].includes(ITEMS[id].t) && (ITEMS[id].en > 0 || ITEMS[id].food || ITEMS[id].water));
+    const opts = [];
+    if (bag.length) opts.push({ t: `Tasche öffnen (${bag.slice(0, 3).map((id) => ITEMS[id].n).join(', ')}${bag.length > 3 ? ' …' : ''})`, k: 'bag' });
+    else opts.push({ t: 'Tasche öffnen – leer, aber vielleicht hilft Wasser', k: 'bag' });
+    if (G.map.id === 'hotel_room') opts.push({ t: 'Ins Bett', k: 'bed' });
+    else if (G.map.city === 'ibk' || ['bar', 'stueberl', 'club', 'rouge', 'casino', 'hotel_lobby', 'hotel_floor'].includes(G.map.id)) opts.push({ t: 'Taxi ins Hotel Zirbe rufen', k: 'taxi' });
+    if (['bar', 'stueberl', 'casino', 'hotel_lobby'].includes(G.map.id)) opts.push({ t: 'Einen Kaffee an der Theke bestellen', k: 'coffee' });
+    opts.push({ t: 'Durchhalten', k: 'hold' });
+    const c = await this.ask('me', 'Meine Augen fallen zu … Wenn ich jetzt nichts mache, schlafe ich im Stehen ein. Essen, Wasser, Kaffee, Energy-Drink oder ab ins Bett!', opts);
+    const k = opts[c].k;
+    G.busy--;
+    if (k === 'bag') { Phone.open('inv'); UI.toast('Alles mit „weckt auf“ oder Essen hilft gegen die Müdigkeit.'); }
+    else if (k === 'bed') await this.bed();
+    else if (k === 'taxi') await this.taxi();
+    else if (k === 'coffee') { if (pay('eur', 3.4)) { consume('kaffee'); UI.toast('Ein doppelter Espresso. Das hält dich wach.'); } else UI.toast('Kein Geld für Kaffee.', 'warn'); }
+    else UI.toast('Du reisst dich zusammen. Ein paar Minuten hast du noch – dann brauchst du Schlaf.', 'warn');
   },
   async collapse() {
     if (G.busy) return;

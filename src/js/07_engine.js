@@ -321,7 +321,8 @@ function drawPart(c, p, cx, cy) {
     case 'drip': P(c, x, y, `rgba(150,200,240,${a})`); break;
     case 'splash': R(c, x, y, 2, 2, `rgba(170,215,245,${a})`); break;
     case 'smoke': E(c, x, y, 1 + p.t * 3, 1 + p.t * 2.5, `rgba(220,220,225,${a * 0.45})`); break;
-    case 'vomit': R(c, x, y, 2, 2, `rgba(165,170,60,${a})`); break;
+    case 'vomit': R(c, x, y, p.s || 2, p.s || 2, p.col || `rgba(165,170,60,${a})`); if (p.s > 2) P(c, x, y, `rgba(220,215,120,${a})`); break;
+    case 'txt': pxText(c, p.txt, x - pxTextW(p.txt) / 2, y, p.col || `rgba(255,255,255,${a})`, p.scale || 1); break;
     case 'note': R(c, x, y - 4, 1, 4, `rgba(80,40,160,${a})`); R(c, x - 2, y, 3, 2, `rgba(80,40,160,${a})`); break;
     case 'crumb': P(c, x, y, `rgba(220,190,120,${a})`); break;
     case 'spark': P(c, x, y, p.col || `rgba(255,230,140,${a})`); break;
@@ -350,7 +351,7 @@ function renderWorld() {
   if (m.bgDraw) m.bgDraw(c, cx, cy, G.t);
   c.drawImage(m.gcv, -cx, -cy);
   if (m.groundAnim) m.groundAnim(c, cx, cy, G.t);
-  for (const v of G.S.vomitSpots) if (v.map === m.id && G.S.time - v.t < 240) { const x = Math.round(v.x - cx), y = Math.round(v.y - cy); E(c, x, y, 7, 3, 'rgba(140,150,50,0.85)'); E(c, x + 3, y - 1, 3, 2, 'rgba(190,190,80,0.9)'); P(c, x - 4, y, '#c8a040'); P(c, x + 5, y + 1, '#c8a040'); }
+  for (const v of G.S.vomitSpots) if (v.map === m.id && G.S.time - v.t < 240) { const x = Math.round(v.x - cx), y = Math.round(v.y - cy); E(c, x, y, 11, 5, 'rgba(140,150,50,0.85)'); E(c, x + 4, y - 2, 5, 3, 'rgba(190,190,80,0.9)'); E(c, x - 5, y + 1, 4, 2, 'rgba(150,160,60,0.85)'); for (let k = 0; k < 6; k++) P(c, x - 7 + k * 3, y - 3 + (k % 3), k % 2 ? '#c8a040' : '#9aa050'); P(c, x + 9, y + 1, '#c8a040'); P(c, x - 9, y - 1, '#c8a040'); }
   /* Nachtlicht vorab berechnen: leuchtende Fenster werden mit dem Objekt gezeichnet (hinter Figuren), nicht als Ebene darüber */
   const d = darkness();
   const emitA = d.a > 0.2 ? clamp((d.a - 0.2) / 0.3, 0, 1) : 0;

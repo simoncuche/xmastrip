@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.2.0 – 03.10.2026
+
+- Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.
+- Bevor man vor Müdigkeit im Stehen einschläft, gibt es eine letzte Chance: Tasche öffnen und etwas essen oder trinken, Kaffee an der Theke, Taxi ins Hotel oder im Zimmer gleich ins Bett.
+
 ## 2.1.2 – 03.10.2026
 
 - Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft.

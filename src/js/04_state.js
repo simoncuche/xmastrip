@@ -268,9 +268,11 @@ function checkThresholds() {
   warnOnce('nau2', st.nau > 85, 'Dir wird richtig übel! Iss etwas oder geh schlafen.', st.nau < 70);
   warnOnce('prom1', st.prom > 1.2, 'Die Welt fängt an zu schwanken.', st.prom < 0.9);
   warnOnce('prom2', st.prom > 2.0, 'Du siehst doppelt. Vielleicht ein Wasser?', st.prom < 1.7);
+  if (st.energy > 40) G.warned.tiredCrit = 0;
   if (!G.busy && Story.ready) {
     if (st.nau >= 100) Story.vomit();
     else if (st.prom >= 2.6) Story.blackout();
+    else if (st.energy <= 7 && !G.warned.tiredCrit) Story.tiredWarning();
     else if (st.energy <= 0) Story.collapse();
   }
 }
