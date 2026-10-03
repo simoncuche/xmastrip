@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.5.0 – 03.10.2026
+
+- Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.
+- Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.
+- Alle Kollegen haben helle Haut und braune Augen.
+- Neue Kopfbedeckung „Cap, kurzer Schirm“.
+
 ## 1.4.0 – 03.10.2026
 
 - Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen.

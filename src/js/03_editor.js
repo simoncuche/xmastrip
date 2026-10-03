@@ -51,7 +51,7 @@ const Editor = {
             b.onclick = () => {
               pid = c.id;
               /* Der gewohnte Look des Gewählten als Ausgangspunkt – lässt sich danach frei ändern */
-              Object.assign(L, CREW_LOOKS[c.id] || {});
+              Object.assign(L, CREW_COMMON, CREW_LOOKS[c.id] || {});
               el.querySelector('#edWho').textContent = c.name;
               el.querySelector('#edHint').textContent = `${c.name}, ${c.role}. Jetzt Aussehen gestalten – oder direkt losfahren.`;
               renderList(); draw(); Snd.sfx('blip');

@@ -13,12 +13,14 @@ const CREW = [
   { id: 'lexx', name: 'Lexx', role: 'der Anwalt', fn: 'anwalt', bg: '#2a2a3a' },
   { id: 'haennsu', name: 'Hännsu', role: 'der Frauenschwarm', fn: 'charmeur', bg: '#5a3a4a' },
 ];
-/* Vordefiniertes Aussehen der Kollegen (Indizes siehe LOOK_OPTS in 02_look.js). Alles, was hier nicht steht, wird ausgewürfelt. */
+/* Vordefiniertes Aussehen der Kollegen (Indizes siehe LOOK_OPTS in 02_look.js). Alles, was hier nicht steht, wird ausgewürfelt.
+   Für alle gilt zusätzlich CREW_COMMON: helle Haut und braune Augen. */
+const CREW_COMMON = { skin: 1, eyeCol: 0 };
 const CREW_LOOKS = {
-  /* Cuche: schwarzes Cap, blaue Jeans, weisses T-Shirt */
-  cuche: { hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 1, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
-  /* Didu: rote, längere Haare, farbige Kleider */
-  didu: { build: 3, hair: 10, hairCol: 7, beard: 7, beardCol: 7, nose: 4, mark: 5, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
+  /* Cuche: schwarzes Cap mit kurzem Schirm, blaue Jeans, weisses T-Shirt, braune Augen */
+  cuche: { hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 11, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
+  /* Didu: kurze, orange-rote Haare (Kupfer), farbige Kleider */
+  didu: { build: 3, hair: 2, hairCol: 8, beard: 7, beardCol: 8, nose: 4, mark: 5, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
   /* Dous: Glatze, T-Shirt, braune Hose, braune Schuhe, französische Baskenmütze */
   dous: { build: 3, hair: 0, hairCol: 1, beard: 2, beardCol: 1, mouth: 0, top: 0, topCol: 15, print: 0, pants: 1, pantsCol: 9, shoes: 3, shoesCol: 2, hat: 10, hatCol: 0, glasses: 0 },
   /* Coel: schwarze Haare, Stoppelbart, runde braune Brille, Hemd */
@@ -33,8 +35,8 @@ const CREW_LOOKS = {
   hoshy: { build: 3, hair: 12, hairCol: 5, beard: 1, beardCol: 5, top: 0, topCol: 9, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, hat: 0, glasses: 0, acc: 0 },
   /* Ölu: der Kanadier – Holzfällerhemd und Beanie (nicht vorgegeben) */
   oelu: { hair: 10, hairCol: 3, beard: 8, beardCol: 3, top: 7, topCol: 0, hat: 3, hatCol: 1, pants: 0, shoes: 1 },
-  /* Yännu: blondes, aufgestelltes Haar, Hemd, schwarze Hose, schwarze Schuhe */
-  yaennu: { hair: 13, hairCol: 5, beard: 1, beardCol: 5, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
+  /* Yännu: blondes, aufgestelltes Haar, grimmiger Blick, grosse Nase, Hemd, schwarze Hose, schwarze Schuhe */
+  yaennu: { hair: 13, hairCol: 5, beard: 1, beardCol: 5, brows: 5, eyes: 2, mouth: 3, nose: 4, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
   /* Lexx: lange blonde Haare, komplett weisse Kleider */
   lexx: { hair: 10, hairCol: 5, beard: 0, glasses: 0, top: 1, topCol: 13, print: 0, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0 },
   /* Hännsu: volles, kurzes schwarzes Haar, schwarze Brille, schwarze Kleider */
@@ -52,7 +54,7 @@ function buildFriends() {
   for (const c of CREW) {
     if (c.id === G.S.pid) continue;
     /* Zufall nur für Merkmale, die CREW_LOOKS nicht vorgibt */
-    const L = Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_LOOKS[c.id]);
+    const L = Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_COMMON, CREW_LOOKS[c.id]);
     FRIENDS[c.id] = { id: c.id, name: c.name, role: c.role, fn: c.fn, look: L, bg: c.bg };
   }
   for (const k of Object.keys(FRIENDS)) if (G.S.aff[k] == null) G.S.aff[k] = 50;

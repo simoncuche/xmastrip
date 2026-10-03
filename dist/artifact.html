@@ -236,18 +236,26 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .ed-figs canvas#edPortrait { max-width: 140px; }
 }
 
-/* ---------- Titel ---------- */
-#title { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 120%, #2a3f5e 0%, #0f1a2b 60%); display: grid; place-items: center; padding: 20px 16px; overflow: auto; }
-.title-card { width: min(520px, 100%); display: grid; gap: 16px; }
-.dep { background: var(--board); border: 2px solid var(--board-line); border-radius: 10px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.6); }
-.dep-head { display: flex; justify-content: space-between; padding: 8px 14px; background: var(--board-2); font-family: var(--f-sign); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); }
+/* ---------- Titel: Winternacht mit Lichterkette und Schnee ---------- */
+#title { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 115%, #1f5a3a 0%, #163a58 38%, #0c1a2f 70%); display: grid; place-items: center; padding: 24px 16px; overflow: auto; }
+.snow { position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  background-image: radial-gradient(2px 2px at 20px 30px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 120px 90px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 200px 160px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 60px 210px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 260px 40px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 160px 260px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 300px 300px, #fff 60%, transparent 61%);
+  background-size: 320px 320px; opacity: .55; animation: snowfall 18s linear infinite; }
+@keyframes snowfall { from { background-position: 0 -320px; } to { background-position: 40px 320px; } }
+.title-card { width: min(520px, 100%); display: grid; gap: 16px; position: relative; }
+.lights { height: 10px; margin: 0 6px -6px; border-top: 2px solid #3a4a5a;
+  background-image: radial-gradient(circle at 50% 70%, #ff5a4a 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #ffd23d 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #4ad06a 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #5ab0ff 0 3px, transparent 4px);
+  background-size: 96px 10px; background-position: 0 0, 24px 0, 48px 0, 72px 0; background-repeat: repeat-x; filter: drop-shadow(0 0 4px rgba(255,220,120,.7)); animation: twinkle 1.6s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: .7; } to { opacity: 1; } }
+.dep { background: var(--board); border: 2px solid #3a6a4a; border-radius: 10px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.6), 0 0 0 4px rgba(216,53,45,.25); }
+.dep-head { display: flex; justify-content: space-between; padding: 8px 14px; background: linear-gradient(90deg, #7a2420, #2a5a38); font-family: var(--f-sign); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fbe9c8; }
 .dep-row { display: grid; grid-template-columns: 62px 1fr 36px; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--board-line); align-items: baseline; font-family: var(--f-sign); }
 .dep-row .tm { color: var(--amber); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
 .dep-row .ds { font-size: 22px; font-weight: 600; }
 .dep-row .ds small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-dim); letter-spacing: .02em; }
 .dep-row .gl { justify-self: end; background: var(--ink); color: var(--board); font-weight: 700; border-radius: 4px; padding: 0 7px; font-size: 18px; }
-.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin: 0 0 -8px; }
-.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.04; margin: 0; text-wrap: balance; }
+.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #9fe0b0; margin: 0 0 -8px; text-align: center; }
+.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.08; margin: 0; text-wrap: balance; text-align: center; color: #fff4dc; text-shadow: 0 2px 0 #7a2420, 0 0 18px rgba(255,181,61,.35); }
 .title-name span { color: var(--amber); }
 .title-sub { margin: 0; color: var(--ink-dim); max-width: 46ch; line-height: 1.5; }
 .title-btns { display: grid; gap: 8px; }
@@ -340,9 +348,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -628,7 +636,7 @@ const LOOK_OPTS = [
   { g: 'Gesicht', k: 'mark', n: 'Besonderheit', v: ['Keine', 'Sommersprossen', 'Narbe Wange', 'Narbe Braue', 'Muttermal', 'Rote Wangen', 'Sonnenbrand', 'Augenringe'] },
   { g: 'Gesicht', k: 'glasses', n: 'Brille', v: ['Keine', 'Rund', 'Eckig', 'Pilot', 'Sonnenbrille', 'Sportbrille', 'Hornbrille', 'Halbbrille', 'Rund, braun'] },
   { g: 'Gesicht', k: 'jewel', n: 'Ohrschmuck', v: ['Keiner', 'Stecker links', 'Ring rechts', 'Beidseitig', 'Kreolen'] },
-  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut', 'Baskenmütze'] },
+  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut', 'Baskenmütze', 'Cap, kurzer Schirm'] },
   { g: 'Kleidung', k: 'hatCol', n: 'Farbe Kopfbedeckung', col: [['Schwarz', '#232327'], ['Rot', '#c4312b'], ['Navy', '#22345e'], ['Grau', '#7b7f86'], ['Beige', '#c9b38a'], ['Oliv', '#5d6a37'], ['Weiss', '#ece9e1'], ['Orange', '#e07b25'], ['Lodengrün', '#3f5a3b'], ['Braun', '#6a4428']] },
   { g: 'Kleidung', k: 'top', n: 'Oberteil', v: ['T-Shirt', 'Hemd', 'Polo', 'Hoodie', 'Pullover', 'Tanktop', 'Fussballtrikot', 'Holzfällerhemd', 'Lederjacke', 'Sakko', 'Trainerjacke', 'Trachtenhemd'] },
   { g: 'Kleidung', k: 'topCol', n: 'Farbe Oberteil', col: [['Rot', '#c8352d'], ['Weinrot', '#7c2333'], ['Orange', '#e27c2c'], ['Senf', '#cf9f2e'], ['Gelb', '#efd34a'], ['Oliv', '#6e7a3a'], ['Grün', '#3f8e4b'], ['Petrol', '#1f6f73'], ['Hellblau', '#7fb4e2'], ['Blau', '#2f5fb8'], ['Navy', '#23325a'], ['Lila', '#6a4a9c'], ['Rosa', '#e79bb4'], ['Weiss', '#efede6'], ['Hellgrau', '#b9bbbf'], ['Anthrazit', '#45474d'], ['Schwarz', '#212125'], ['Beige', '#d4c09a']] },
@@ -994,12 +1002,13 @@ function drawHatP(x, L, g, c, hair) {
   const dk = shade(c, -0.3), lt = shade(c, 0.2), W = Math.round(maxW) + 1;
   const dome = (cy, ry, w, from, to, col) => { for (let y = from; y <= to; y++) { const dy = cy - y; const hh = dy > 0 ? w * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry))) : w; R(x, cx - hh, y, hh * 2 + 1, 1, col); P(x, cx - hh, y, dk); P(x, cx + hh, y, dk); } };
   switch (st) {
-    case 1: case 5: {
+    case 1: case 5: case 11: {
       dome(top + 8, 11, W, top - 3, top + 8, c);
       if (st === 5) { dome(top + 8, 11, W - 6, top - 2, top + 8, mix(c, '#ffffff', 0.75)); for (let y = top; y <= top + 8; y++) for (let xx = -W; xx <= W; xx++) if (Math.abs(xx) > W - 6 && (xx + y) % 2) P(x, cx + xx, y, dk); R(x, cx - 2, top + 3, 5, 1, c); P(x, cx - 1, top + 2, c); P(x, cx + 1, top + 2, c); }
       R(x, cx - 1, top - 4, 3, 1, dk);
       line(x, cx - 6, top - 2, cx - 4, top + 7, dk); line(x, cx + 6, top - 2, cx + 4, top + 7, dk);
-      E(x, cx, top + 9, W - 1, 2, dk); R(x, cx - W + 2, top + 8, (W - 2) * 2 + 1, 1, lt);
+      if (st === 11) { E(x, cx, top + 9, W - 4, 1, dk); R(x, cx - W + 3, top + 8, (W - 3) * 2 + 1, 1, lt); }
+      else { E(x, cx, top + 9, W - 1, 2, dk); R(x, cx - W + 2, top + 8, (W - 2) * 2 + 1, 1, lt); }
       R(x, cx - hw(top + 11) + 1, top + 11, (hw(top + 11) - 1) * 2, 1, 'rgba(0,0,0,0.18)');
       break;
     }
@@ -1457,11 +1466,11 @@ function drawHatSprite(r, p, L, dir, hy, c) {
   const dk = shade(c, -0.3), lt = shade(c, 0.2), y = hy;
   const side = dir === 1;
   switch (st) {
-    case 1: case 5: case 2: {
+    case 1: case 5: case 2: case 11: {
       r(5, y - 1, 6, 1, c); r(4, y, 8, 2, c); p(7, y - 1, lt);
       if (st === 5 && !side && dir !== 3) r(6, y - 1, 4, 2, mix(c, '#ffffff', 0.7));
-      if (side) { if (st === 2) r(9, y + 1, 3, 1, dk); else r(1, y + 1, 4, 1, dk); }
-      else if (dir === 0) { if (st === 2) r(6, y - 2, 4, 1, dk); else r(4, y + 1, 8, 1, dk); }
+      if (side) { if (st === 2) r(9, y + 1, 3, 1, dk); else if (st === 11) r(2, y + 1, 3, 1, dk); else r(1, y + 1, 4, 1, dk); }
+      else if (dir === 0) { if (st === 2) r(6, y - 2, 4, 1, dk); else if (st === 11) r(5, y + 1, 6, 1, dk); else r(4, y + 1, 8, 1, dk); }
       else { if (st === 2) r(4, y + 1, 8, 1, dk); else r(6, y + 1, 4, 1, dk); }
       break;
     }
@@ -1542,7 +1551,7 @@ const Editor = {
             b.onclick = () => {
               pid = c.id;
               /* Der gewohnte Look des Gewählten als Ausgangspunkt – lässt sich danach frei ändern */
-              Object.assign(L, CREW_LOOKS[c.id] || {});
+              Object.assign(L, CREW_COMMON, CREW_LOOKS[c.id] || {});
               el.querySelector('#edWho').textContent = c.name;
               el.querySelector('#edHint').textContent = `${c.name}, ${c.role}. Jetzt Aussehen gestalten – oder direkt losfahren.`;
               renderList(); draw(); Snd.sfx('blip');
@@ -4558,12 +4567,14 @@ const CREW = [
   { id: 'lexx', name: 'Lexx', role: 'der Anwalt', fn: 'anwalt', bg: '#2a2a3a' },
   { id: 'haennsu', name: 'Hännsu', role: 'der Frauenschwarm', fn: 'charmeur', bg: '#5a3a4a' },
 ];
-/* Vordefiniertes Aussehen der Kollegen (Indizes siehe LOOK_OPTS in 02_look.js). Alles, was hier nicht steht, wird ausgewürfelt. */
+/* Vordefiniertes Aussehen der Kollegen (Indizes siehe LOOK_OPTS in 02_look.js). Alles, was hier nicht steht, wird ausgewürfelt.
+   Für alle gilt zusätzlich CREW_COMMON: helle Haut und braune Augen. */
+const CREW_COMMON = { skin: 1, eyeCol: 0 };
 const CREW_LOOKS = {
-  /* Cuche: schwarzes Cap, blaue Jeans, weisses T-Shirt */
-  cuche: { hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 1, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
-  /* Didu: rote, längere Haare, farbige Kleider */
-  didu: { build: 3, hair: 10, hairCol: 7, beard: 7, beardCol: 7, nose: 4, mark: 5, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
+  /* Cuche: schwarzes Cap mit kurzem Schirm, blaue Jeans, weisses T-Shirt, braune Augen */
+  cuche: { hair: 3, hairCol: 1, beard: 1, beardCol: 1, hat: 11, hatCol: 0, top: 0, topCol: 13, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, acc: 5, glasses: 0 },
+  /* Didu: kurze, orange-rote Haare (Kupfer), farbige Kleider */
+  didu: { build: 3, hair: 2, hairCol: 8, beard: 7, beardCol: 8, nose: 4, mark: 5, top: 3, topCol: 6, print: 1, pants: 1, pantsCol: 11, shoes: 0, shoesCol: 8, hat: 0, glasses: 0 },
   /* Dous: Glatze, T-Shirt, braune Hose, braune Schuhe, französische Baskenmütze */
   dous: { build: 3, hair: 0, hairCol: 1, beard: 2, beardCol: 1, mouth: 0, top: 0, topCol: 15, print: 0, pants: 1, pantsCol: 9, shoes: 3, shoesCol: 2, hat: 10, hatCol: 0, glasses: 0 },
   /* Coel: schwarze Haare, Stoppelbart, runde braune Brille, Hemd */
@@ -4578,8 +4589,8 @@ const CREW_LOOKS = {
   hoshy: { build: 3, hair: 12, hairCol: 5, beard: 1, beardCol: 5, top: 0, topCol: 9, print: 0, pants: 0, pantsCol: 0, shoes: 0, shoesCol: 0, hat: 0, glasses: 0, acc: 0 },
   /* Ölu: der Kanadier – Holzfällerhemd und Beanie (nicht vorgegeben) */
   oelu: { hair: 10, hairCol: 3, beard: 8, beardCol: 3, top: 7, topCol: 0, hat: 3, hatCol: 1, pants: 0, shoes: 1 },
-  /* Yännu: blondes, aufgestelltes Haar, Hemd, schwarze Hose, schwarze Schuhe */
-  yaennu: { hair: 13, hairCol: 5, beard: 1, beardCol: 5, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
+  /* Yännu: blondes, aufgestelltes Haar, grimmiger Blick, grosse Nase, Hemd, schwarze Hose, schwarze Schuhe */
+  yaennu: { hair: 13, hairCol: 5, beard: 1, beardCol: 5, brows: 5, eyes: 2, mouth: 3, nose: 4, top: 1, topCol: 14, print: 0, pants: 1, pantsCol: 2, shoes: 3, shoesCol: 1, glasses: 0, hat: 0 },
   /* Lexx: lange blonde Haare, komplett weisse Kleider */
   lexx: { hair: 10, hairCol: 5, beard: 0, glasses: 0, top: 1, topCol: 13, print: 0, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0 },
   /* Hännsu: volles, kurzes schwarzes Haar, schwarze Brille, schwarze Kleider */
@@ -4597,7 +4608,7 @@ function buildFriends() {
   for (const c of CREW) {
     if (c.id === G.S.pid) continue;
     /* Zufall nur für Merkmale, die CREW_LOOKS nicht vorgibt */
-    const L = Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_LOOKS[c.id]);
+    const L = Object.assign(randomLook(rng(c.name.length * 977 + c.name.charCodeAt(0) * 31 + seed * 7919), {}), CREW_COMMON, CREW_LOOKS[c.id]);
     FRIENDS[c.id] = { id: c.id, name: c.name, role: c.role, fn: c.fn, look: L, bg: c.bg };
   }
   for (const k of Object.keys(FRIENDS)) if (G.S.aff[k] == null) G.S.aff[k] = 50;
@@ -6550,14 +6561,15 @@ function showTitle() {
   const t = document.getElementById('title');
   const save = loadSave();
   t.hidden = false;
-  t.innerHTML = `<div class="title-card">
+  t.innerHTML = `<div class="snow" aria-hidden="true"></div><div class="title-card">
+    <div class="lights" aria-hidden="true"></div>
+    <p class="title-kicker">❄ Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026 ❄</p>
+    <h1 class="title-name">🎄 Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <div class="dep" aria-label="Abfahrt">
       <div class="dep-head"><span>Abfahrt · Luzern · Fr 11.12.2026</span><span>Gleis</span></div>
       <div class="dep-row"><span class="tm">09:10</span><span class="ds">IR 70 Zürich HB<small>weiter mit Railjet nach Innsbruck Hbf, an 13:20</small></span><span class="gl">4</span></div>
       <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
     </div>
-    <p class="title-kicker">Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026</p>
-    <h1 class="title-name">Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
       ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}

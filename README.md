@@ -10,7 +10,7 @@ Kein Server, keine Installation. Funktioniert am Handy und am Computer.
 
 ## Was drin ist
 
-- **Charakter-Editor** mit 27 Merkmalen und 249 Varianten (Kopf, Gesicht, Haare, Bart, Brille, Kleidung …).
+- **Charakter-Editor** mit 27 Merkmalen und 250 Varianten (Kopf, Gesicht, Haare, Bart, Brille, Kleidung …).
   Du wählst, wer du bist: Cuche, Didu, Dous, Coel, Kusi, Römu, Flöru, Hoshy, Ölu, Yännu, Lexx oder Hännsu.
   Die anderen elf fahren mit, jeder mit seiner Rolle.
 - **Luzern:** Treffpunkt Torbogen, Kiosk, Kapellbrücke, Gleis 4. Du bist für die Fahrkarten zuständig: Gruppenbillett am Automaten kaufen

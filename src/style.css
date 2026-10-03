@@ -231,18 +231,26 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .ed-figs canvas#edPortrait { max-width: 140px; }
 }
 
-/* ---------- Titel ---------- */
-#title { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 120%, #2a3f5e 0%, #0f1a2b 60%); display: grid; place-items: center; padding: 20px 16px; overflow: auto; }
-.title-card { width: min(520px, 100%); display: grid; gap: 16px; }
-.dep { background: var(--board); border: 2px solid var(--board-line); border-radius: 10px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.6); }
-.dep-head { display: flex; justify-content: space-between; padding: 8px 14px; background: var(--board-2); font-family: var(--f-sign); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-dim); }
+/* ---------- Titel: Winternacht mit Lichterkette und Schnee ---------- */
+#title { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 115%, #1f5a3a 0%, #163a58 38%, #0c1a2f 70%); display: grid; place-items: center; padding: 24px 16px; overflow: auto; }
+.snow { position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  background-image: radial-gradient(2px 2px at 20px 30px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 120px 90px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 200px 160px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 60px 210px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 260px 40px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 160px 260px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 300px 300px, #fff 60%, transparent 61%);
+  background-size: 320px 320px; opacity: .55; animation: snowfall 18s linear infinite; }
+@keyframes snowfall { from { background-position: 0 -320px; } to { background-position: 40px 320px; } }
+.title-card { width: min(520px, 100%); display: grid; gap: 16px; position: relative; }
+.lights { height: 10px; margin: 0 6px -6px; border-top: 2px solid #3a4a5a;
+  background-image: radial-gradient(circle at 50% 70%, #ff5a4a 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #ffd23d 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #4ad06a 0 3px, transparent 4px), radial-gradient(circle at 50% 70%, #5ab0ff 0 3px, transparent 4px);
+  background-size: 96px 10px; background-position: 0 0, 24px 0, 48px 0, 72px 0; background-repeat: repeat-x; filter: drop-shadow(0 0 4px rgba(255,220,120,.7)); animation: twinkle 1.6s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: .7; } to { opacity: 1; } }
+.dep { background: var(--board); border: 2px solid #3a6a4a; border-radius: 10px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.6), 0 0 0 4px rgba(216,53,45,.25); }
+.dep-head { display: flex; justify-content: space-between; padding: 8px 14px; background: linear-gradient(90deg, #7a2420, #2a5a38); font-family: var(--f-sign); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fbe9c8; }
 .dep-row { display: grid; grid-template-columns: 62px 1fr 36px; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--board-line); align-items: baseline; font-family: var(--f-sign); }
 .dep-row .tm { color: var(--amber); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
 .dep-row .ds { font-size: 22px; font-weight: 600; }
 .dep-row .ds small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-dim); letter-spacing: .02em; }
 .dep-row .gl { justify-self: end; background: var(--ink); color: var(--board); font-weight: 700; border-radius: 4px; padding: 0 7px; font-size: 18px; }
-.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); margin: 0 0 -8px; }
-.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.04; margin: 0; text-wrap: balance; }
+.title-kicker { font-family: var(--f-sign); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #9fe0b0; margin: 0 0 -8px; text-align: center; }
+.title-name { font-family: var(--f-pixel); font-size: clamp(28px, 7.5vw, 44px); line-height: 1.08; margin: 0; text-wrap: balance; text-align: center; color: #fff4dc; text-shadow: 0 2px 0 #7a2420, 0 0 18px rgba(255,181,61,.35); }
 .title-name span { color: var(--amber); }
 .title-sub { margin: 0; color: var(--ink-dim); max-width: 46ch; line-height: 1.5; }
 .title-btns { display: grid; gap: 8px; }

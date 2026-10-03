@@ -39,14 +39,15 @@ function showTitle() {
   const t = document.getElementById('title');
   const save = loadSave();
   t.hidden = false;
-  t.innerHTML = `<div class="title-card">
+  t.innerHTML = `<div class="snow" aria-hidden="true"></div><div class="title-card">
+    <div class="lights" aria-hidden="true"></div>
+    <p class="title-kicker">❄ Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026 ❄</p>
+    <h1 class="title-name">🎄 Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <div class="dep" aria-label="Abfahrt">
       <div class="dep-head"><span>Abfahrt · Luzern · Fr 11.12.2026</span><span>Gleis</span></div>
       <div class="dep-row"><span class="tm">09:10</span><span class="ds">IR 70 Zürich HB<small>weiter mit Railjet nach Innsbruck Hbf, an 13:20</small></span><span class="gl">4</span></div>
       <div class="dep-row"><span class="tm">09:14</span><span class="ds" style="color:var(--ink-dim)">S1 Sursee<small>&nbsp;</small></span><span class="gl" style="background:var(--ink-dim)">1</span></div>
     </div>
-    <p class="title-kicker">Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026</p>
-    <h1 class="title-name">Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
     <p class="title-sub">Zwölf Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
     <div class="title-btns">
       ${save ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}

@@ -17,7 +17,7 @@ const LOOK_OPTS = [
   { g: 'Gesicht', k: 'mark', n: 'Besonderheit', v: ['Keine', 'Sommersprossen', 'Narbe Wange', 'Narbe Braue', 'Muttermal', 'Rote Wangen', 'Sonnenbrand', 'Augenringe'] },
   { g: 'Gesicht', k: 'glasses', n: 'Brille', v: ['Keine', 'Rund', 'Eckig', 'Pilot', 'Sonnenbrille', 'Sportbrille', 'Hornbrille', 'Halbbrille', 'Rund, braun'] },
   { g: 'Gesicht', k: 'jewel', n: 'Ohrschmuck', v: ['Keiner', 'Stecker links', 'Ring rechts', 'Beidseitig', 'Kreolen'] },
-  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut', 'Baskenmütze'] },
+  { g: 'Kleidung', k: 'hat', n: 'Kopfbedeckung', v: ['Keine', 'Cap', 'Cap verkehrt', 'Beanie', 'Fischerhut', 'Trucker-Cap', 'Stirnband', 'Cowboyhut', 'Schiebermütze', 'Tirolerhut', 'Baskenmütze', 'Cap, kurzer Schirm'] },
   { g: 'Kleidung', k: 'hatCol', n: 'Farbe Kopfbedeckung', col: [['Schwarz', '#232327'], ['Rot', '#c4312b'], ['Navy', '#22345e'], ['Grau', '#7b7f86'], ['Beige', '#c9b38a'], ['Oliv', '#5d6a37'], ['Weiss', '#ece9e1'], ['Orange', '#e07b25'], ['Lodengrün', '#3f5a3b'], ['Braun', '#6a4428']] },
   { g: 'Kleidung', k: 'top', n: 'Oberteil', v: ['T-Shirt', 'Hemd', 'Polo', 'Hoodie', 'Pullover', 'Tanktop', 'Fussballtrikot', 'Holzfällerhemd', 'Lederjacke', 'Sakko', 'Trainerjacke', 'Trachtenhemd'] },
   { g: 'Kleidung', k: 'topCol', n: 'Farbe Oberteil', col: [['Rot', '#c8352d'], ['Weinrot', '#7c2333'], ['Orange', '#e27c2c'], ['Senf', '#cf9f2e'], ['Gelb', '#efd34a'], ['Oliv', '#6e7a3a'], ['Grün', '#3f8e4b'], ['Petrol', '#1f6f73'], ['Hellblau', '#7fb4e2'], ['Blau', '#2f5fb8'], ['Navy', '#23325a'], ['Lila', '#6a4a9c'], ['Rosa', '#e79bb4'], ['Weiss', '#efede6'], ['Hellgrau', '#b9bbbf'], ['Anthrazit', '#45474d'], ['Schwarz', '#212125'], ['Beige', '#d4c09a']] },
@@ -383,12 +383,13 @@ function drawHatP(x, L, g, c, hair) {
   const dk = shade(c, -0.3), lt = shade(c, 0.2), W = Math.round(maxW) + 1;
   const dome = (cy, ry, w, from, to, col) => { for (let y = from; y <= to; y++) { const dy = cy - y; const hh = dy > 0 ? w * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry))) : w; R(x, cx - hh, y, hh * 2 + 1, 1, col); P(x, cx - hh, y, dk); P(x, cx + hh, y, dk); } };
   switch (st) {
-    case 1: case 5: {
+    case 1: case 5: case 11: {
       dome(top + 8, 11, W, top - 3, top + 8, c);
       if (st === 5) { dome(top + 8, 11, W - 6, top - 2, top + 8, mix(c, '#ffffff', 0.75)); for (let y = top; y <= top + 8; y++) for (let xx = -W; xx <= W; xx++) if (Math.abs(xx) > W - 6 && (xx + y) % 2) P(x, cx + xx, y, dk); R(x, cx - 2, top + 3, 5, 1, c); P(x, cx - 1, top + 2, c); P(x, cx + 1, top + 2, c); }
       R(x, cx - 1, top - 4, 3, 1, dk);
       line(x, cx - 6, top - 2, cx - 4, top + 7, dk); line(x, cx + 6, top - 2, cx + 4, top + 7, dk);
-      E(x, cx, top + 9, W - 1, 2, dk); R(x, cx - W + 2, top + 8, (W - 2) * 2 + 1, 1, lt);
+      if (st === 11) { E(x, cx, top + 9, W - 4, 1, dk); R(x, cx - W + 3, top + 8, (W - 3) * 2 + 1, 1, lt); }
+      else { E(x, cx, top + 9, W - 1, 2, dk); R(x, cx - W + 2, top + 8, (W - 2) * 2 + 1, 1, lt); }
       R(x, cx - hw(top + 11) + 1, top + 11, (hw(top + 11) - 1) * 2, 1, 'rgba(0,0,0,0.18)');
       break;
     }
@@ -846,11 +847,11 @@ function drawHatSprite(r, p, L, dir, hy, c) {
   const dk = shade(c, -0.3), lt = shade(c, 0.2), y = hy;
   const side = dir === 1;
   switch (st) {
-    case 1: case 5: case 2: {
+    case 1: case 5: case 2: case 11: {
       r(5, y - 1, 6, 1, c); r(4, y, 8, 2, c); p(7, y - 1, lt);
       if (st === 5 && !side && dir !== 3) r(6, y - 1, 4, 2, mix(c, '#ffffff', 0.7));
-      if (side) { if (st === 2) r(9, y + 1, 3, 1, dk); else r(1, y + 1, 4, 1, dk); }
-      else if (dir === 0) { if (st === 2) r(6, y - 2, 4, 1, dk); else r(4, y + 1, 8, 1, dk); }
+      if (side) { if (st === 2) r(9, y + 1, 3, 1, dk); else if (st === 11) r(2, y + 1, 3, 1, dk); else r(1, y + 1, 4, 1, dk); }
+      else if (dir === 0) { if (st === 2) r(6, y - 2, 4, 1, dk); else if (st === 11) r(5, y + 1, 6, 1, dk); else r(4, y + 1, 8, 1, dk); }
       else { if (st === 2) r(4, y + 1, 8, 1, dk); else r(6, y + 1, 4, 1, dk); }
       break;
     }
