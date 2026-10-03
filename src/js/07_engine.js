@@ -202,7 +202,9 @@ function spawnBirds(m) {
 }
 function updateBirds(dt) {
   const p = G.player;
+  let dead = false;
   for (const b of G.birds) {
+    if (b.kind === 'cat' || b.kind === 'dog') { b.t += dt; b.x += b.vx * dt; b.y += b.vy * dt; b.fx = b.vx < 0; if (b.t > b.life) { b.dead = true; dead = true; } continue; }
     const d = Math.hypot(b.x - p.x, b.y - p.y);
     if (b.kind === 'marmot') {
       if (b.state === 'hide') { b.t += dt; if (b.t > 7) { b.state = 'peck'; b.t = 0; } }
@@ -228,9 +230,24 @@ function updateBirds(dt) {
       else if (Math.random() < dt * 0.6) { b.x += rnd(-3, 3); b.y += rnd(-2, 2); b.fx = Math.random() < 0.5; }
     }
   }
+  if (dead) G.birds = G.birds.filter((b) => !b.dead);
 }
 function drawBird(c, b, cx, cy) {
   const x = Math.round(b.x - cx), y = Math.round(b.y - cy - b.z);
+  if (b.kind === 'cat' || b.kind === 'dog') {
+    const leg = Math.floor(b.t * 12) % 2, s = b.fx ? -1 : 1;
+    E(c, x, y + 1, 5, 1, 'rgba(0,0,0,0.25)');
+    if (b.kind === 'cat') {
+      R(c, x - 4, y - 4, 8, 3, '#7a7a82'); R(c, x + s * 4, y - 6, 3, 3, '#7a7a82'); P(c, x + s * 4, y - 7, '#7a7a82'); P(c, x + s * 6, y - 7, '#7a7a82');
+      P(c, x + s * 5, y - 5, '#3ad04a'); line(c, x - s * 4, y - 4, x - s * 8, y - 8 + leg, '#7a7a82');
+      R(c, x - 3, y - 1, 1, 2 - leg, '#5a5a62'); R(c, x + 2, y - 1, 1, 1 + leg, '#5a5a62');
+    } else {
+      R(c, x - 6, y - 4, 12, 4, '#6a4428'); R(c, x + s * 6, y - 7, 4, 4, '#6a4428'); R(c, x + s * 7, y - 8, 2, 2, '#4a2e1a'); P(c, x + s * 8, y - 6, '#1a1a1a');
+      line(c, x - s * 6, y - 4, x - s * 8, y - 7, '#6a4428');
+      R(c, x - 5, y, 2, 2 - leg, '#4a2e1a'); R(c, x + 3, y, 2, 1 + leg, '#4a2e1a');
+    }
+    return;
+  }
   if (b.kind === 'marmot') {
     E(c, x, y + 1, 4, 1, 'rgba(0,0,0,0.25)');
     if (b.state === 'hide') { E(c, x, y, 3, 1, '#4a3a2a'); return; }

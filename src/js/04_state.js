@@ -131,6 +131,12 @@ const ACH = {
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
   abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],
+  ueberfall: ['Nachtschatten', 'Einen nächtlichen Überfall überstanden'],
+  polizei: ['Sorry, eh!', 'Zugeschaut, wie die Polizei Ölu abführt'],
+  tierfilm: ['Tierfilm', 'Hund gegen Katze auf dem Platz erlebt'],
+  taube: ['Glücksbringer', 'Von einer Taube getroffen – soll Glück bringen'],
+  krampus: ['Krampuslauf', 'Dem Krampus in der Altstadt begegnet'],
+  ehrlich: ['Ehrliche Haut', 'Ein gefundenes Portemonnaie abgegeben'],
 };
 
 function newState(look, name) {

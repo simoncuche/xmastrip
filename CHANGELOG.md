@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 1.10.0 – 03.10.2026
+
+- Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse.
+
 ## 1.9.1 – 03.10.2026
 
 - Joystick ohne Pfeile: nur noch Ring und Knopf.

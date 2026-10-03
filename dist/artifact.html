@@ -357,9 +357,9 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "1.9.1";
+const APP_VERSION = "1.10.0";
 const APP_VERSION_DATE = "03.10.2026";
-const CHANGELOG = [{"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "1.10.0", "date": "03.10.2026", "items": ["Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse."]}, {"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -1787,6 +1787,12 @@ const ACH = {
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
   abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],
+  ueberfall: ['Nachtschatten', 'Einen nächtlichen Überfall überstanden'],
+  polizei: ['Sorry, eh!', 'Zugeschaut, wie die Polizei Ölu abführt'],
+  tierfilm: ['Tierfilm', 'Hund gegen Katze auf dem Platz erlebt'],
+  taube: ['Glücksbringer', 'Von einer Taube getroffen – soll Glück bringen'],
+  krampus: ['Krampuslauf', 'Dem Krampus in der Altstadt begegnet'],
+  ehrlich: ['Ehrliche Haut', 'Ein gefundenes Portemonnaie abgegeben'],
 };
 
 function newState(look, name) {
@@ -3830,7 +3836,9 @@ function spawnBirds(m) {
 }
 function updateBirds(dt) {
   const p = G.player;
+  let dead = false;
   for (const b of G.birds) {
+    if (b.kind === 'cat' || b.kind === 'dog') { b.t += dt; b.x += b.vx * dt; b.y += b.vy * dt; b.fx = b.vx < 0; if (b.t > b.life) { b.dead = true; dead = true; } continue; }
     const d = Math.hypot(b.x - p.x, b.y - p.y);
     if (b.kind === 'marmot') {
       if (b.state === 'hide') { b.t += dt; if (b.t > 7) { b.state = 'peck'; b.t = 0; } }
@@ -3856,9 +3864,24 @@ function updateBirds(dt) {
       else if (Math.random() < dt * 0.6) { b.x += rnd(-3, 3); b.y += rnd(-2, 2); b.fx = Math.random() < 0.5; }
     }
   }
+  if (dead) G.birds = G.birds.filter((b) => !b.dead);
 }
 function drawBird(c, b, cx, cy) {
   const x = Math.round(b.x - cx), y = Math.round(b.y - cy - b.z);
+  if (b.kind === 'cat' || b.kind === 'dog') {
+    const leg = Math.floor(b.t * 12) % 2, s = b.fx ? -1 : 1;
+    E(c, x, y + 1, 5, 1, 'rgba(0,0,0,0.25)');
+    if (b.kind === 'cat') {
+      R(c, x - 4, y - 4, 8, 3, '#7a7a82'); R(c, x + s * 4, y - 6, 3, 3, '#7a7a82'); P(c, x + s * 4, y - 7, '#7a7a82'); P(c, x + s * 6, y - 7, '#7a7a82');
+      P(c, x + s * 5, y - 5, '#3ad04a'); line(c, x - s * 4, y - 4, x - s * 8, y - 8 + leg, '#7a7a82');
+      R(c, x - 3, y - 1, 1, 2 - leg, '#5a5a62'); R(c, x + 2, y - 1, 1, 1 + leg, '#5a5a62');
+    } else {
+      R(c, x - 6, y - 4, 12, 4, '#6a4428'); R(c, x + s * 6, y - 7, 4, 4, '#6a4428'); R(c, x + s * 7, y - 8, 2, 2, '#4a2e1a'); P(c, x + s * 8, y - 6, '#1a1a1a');
+      line(c, x - s * 6, y - 4, x - s * 8, y - 7, '#6a4428');
+      R(c, x - 5, y, 2, 2 - leg, '#4a2e1a'); R(c, x + 3, y, 2, 1 + leg, '#4a2e1a');
+    }
+    return;
+  }
   if (b.kind === 'marmot') {
     E(c, x, y + 1, 4, 1, 'rgba(0,0,0,0.25)');
     if (b.state === 'hide') { E(c, x, y, 3, 1, '#4a3a2a'); return; }
@@ -4888,6 +4911,8 @@ const Story = {
       if (s === 'ride' || s === 'arrived') return { t: 'im Zug, Wagen 3', x: null };
       return { t: 'auf dem Weg ins Hotel Zirbe', x: 19, y: 46 };
     }
+    const j = G.S.flags.jail;
+    if (j && j.id === id && G.S.time < j.until) return { t: `auf der Polizeiwache beim Bahnhof (bis ca. ${clockStr(j.until)})`, x: 74, y: 74 };
     const loc = this.schedule(id);
     const P = { bar: ['in der Gamsbock Bar', 43, 64], stueberl: ['im Tiroler Stüberl', 25, 46], club: ['im Club Lawine', 71, 63], rouge: ['im Rouge', 65, 63], hotel: ['im Hotel Zirbe', 19, 46], breakfast: ['beim Frühstück im Hotel', 19, 46], city: ['beim Goldenen Dachl', 34, 33] };
     const e = P[loc];
@@ -4899,6 +4924,8 @@ const Story = {
     if (this.away(id)) return null;
     const h = hourOf(G.S.time);
     const o = G.S.flags.group;
+    const j = G.S.flags.jail;
+    if (j && j.id === id && G.S.time < j.until) return null;
     /* Wer sich übergeben hat, liegt bis zum Morgen im Hotel */
     if (G.S.flags.sick && G.S.flags.sick[id] === dayOf(G.S.time - 300) && stageAt('bar')) return 'hotel';
     if (o && G.S.time < o.until && o.ids.includes(id)) return o.loc;
@@ -5033,6 +5060,155 @@ const Story = {
       const closing = { bar: 'bar', club: 'club', stueberl: 'stueberl', rouge: 'rouge' }[m.id];
       if (closing && !isOpen(closing) && !G.busy) this.closingTime(closing);
     }
+    this.maybeEvent();
+  },
+
+  /* ---------- Versteckte Zufallsereignisse in der Stadt ---------- */
+  tempActor(o) { const a = new Actor(Object.assign({ solid: false, speed: 70, ev: true, dir: 0 }, o)); G.npcs.push(a); return a; },
+  walk(a, tx, ty) { return new Promise((res) => { a.path = [{ x: tx, y: ty }]; a.onArrive = () => res(); }); },
+  dropActor(a) { G.npcs = G.npcs.filter((n) => n !== a); },
+  evCount(id) { return (G.S.flags.ev && G.S.flags.ev[id]) || 0; },
+  EVENTS: [
+    { id: 'ueberfall', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 23 || h < 4; } },
+    { id: 'polizei', max: 1, cond: () => { const h = hourOf(G.S.time); const v = Story.victim(); return v && h >= 11 && h < 23 && Story.schedule(v) && !Story.away(v); } },
+    { id: 'hundkatze', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 8 && h < 20; } },
+    { id: 'taube', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 7 && h < 19 && G.S.st.wet === 0; } },
+    { id: 'krampus', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 17 && h < 22; } },
+    { id: 'portemonnaie', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 21; } },
+  ],
+  victim() { return FRIENDS.oelu && !Story.away('oelu') ? 'oelu' : (FRIENDS.didu ? 'didu' : Object.keys(FRIENDS)[0]); },
+  maybeEvent() {
+    if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free')) return;
+    const fl = G.S.flags;
+    if (G.S.time - (fl.lastEv || 0) < 40) return;
+    if (Math.random() > 0.12) return;
+    const pool = this.EVENTS.filter((e) => this.evCount(e.id) < e.max && e.cond());
+    if (!pool.length) return;
+    const e = pick(pool);
+    fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time;
+    this['ev_' + e.id]();
+  },
+  async ev_ueberfall() {
+    G.busy++;
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const a = this.tempActor({ name: 'Unbekannter', look: npcLook(971, { hat: 3, hatCol: 0, top: 3, topCol: 16, pants: 4, pantsCol: 2, shoes: 0, shoesCol: 1, beard: 1, beardCol: 0, glasses: 0, mark: 2 }), x: p.x + side * 90, y: p.y, dir: side < 0 ? 2 : 1, speed: 85 });
+    UI.toast('Aus dem Schatten löst sich eine Gestalt …', 'warn');
+    await this.walk(a, p.x + side * 16, p.y);
+    a.dir = dirTo(a.x, a.y, p.x, p.y); p.dir = dirTo(p.x, p.y, a.x, a.y);
+    await this.say(a, 'Hey. Hasch mal Feuer? … Und dein Portemonnaie, Schweizer. Langsam.');
+    const nearby = Object.keys(FRIENDS).filter((id) => ['bar', 'club', 'rouge', 'stueberl'].includes(this.schedule(id)));
+    const c = await this.ask(a, 'Der Typ ist einen Kopf grösser als du.', ['Weglaufen', 'Nach den Jungs rufen', 'Geld geben']);
+    const loss = Math.min(G.S.money.eur, Math.round(rnd(30, 70)));
+    if (c === 0) {
+      if (G.S.st.energy > 30 && G.S.st.prom < 1.6) { energy(-12); mood(2); await this.say('me', 'Nicht mit mir!'); UI.toast('Du rennst, bis dir die Lunge brennt. Er gibt auf.'); a.path = [{ x: a.x + side * 200, y: a.y }]; }
+      else { await this.say(a, 'Rennen? In dem Zustand? Haha. Her damit.'); addMoney('eur', -loss); mood(-10); UI.toast(`Er nimmt dir ${fmtEur(loss)} ab und verschwindet.`); a.path = [{ x: a.x + side * 200, y: a.y }]; }
+    } else if (c === 1) {
+      if (nearby.length && Math.random() < 0.75) {
+        const h1 = nearby[0], h2 = nearby[1] || nearby[0];
+        const f1 = this.friendActor(h1, Math.floor(p.x / TS) - side * 7, Math.floor(p.y / TS), 0, 'stand'); G.npcs.push(f1);
+        f1.solid = false; f1.speed = 95;
+        await this.say('me', `${fname(h1).toUpperCase()}! HOSHY! HIER!`);
+        await this.walk(f1, p.x - side * 20, p.y);
+        await this.say(h1, `Heast, lass meinen Kollegen in Ruhe! ${h2 !== h1 ? fname(h2) + ' kommt auch gleich' : 'Wir sind zwölf'} – willst du das wirklich?`);
+        await this.say(a, 'Schon gut, schon gut. War nur Spass, Burschen.');
+        a.path = [{ x: a.x + side * 220, y: a.y }];
+        mood(8); G.S.aff[h1] = clamp(G.S.aff[h1] + 10, 0, 100);
+        await this.say(h1, 'Alles okay? Komm, wir trinken eins drauf. Und du gehst nachts nicht mehr allein durch die Bögen.');
+        f1.path = [{ x: f1.x - side * 160, y: f1.y }]; f1.onArrive = () => this.dropActor(f1);
+      } else {
+        await this.say(null, 'Du rufst. Niemand kommt. Nur das Echo in den Bögen.');
+        await this.say(a, 'Deine Freunde sind nicht da. Ich schon.');
+        addMoney('eur', -loss); mood(-10); UI.toast(`Er nimmt dir ${fmtEur(loss)} ab und verschwindet.`); a.path = [{ x: a.x + side * 200, y: a.y }];
+      }
+    } else { addMoney('eur', -loss); mood(-8); await this.say(a, 'Braver Schweizer. Schöne Nacht noch.'); UI.toast(`${fmtEur(loss)} weg. Dafür heil geblieben.`); a.path = [{ x: a.x + side * 200, y: a.y }]; }
+    a.onArrive = () => this.dropActor(a);
+    achieve('ueberfall');
+    G.busy--;
+  },
+  async ev_polizei() {
+    G.busy++;
+    const p = G.player, v = this.victim();
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const cop = this.tempActor({ name: 'Polizist', look: npcLook(902, { hat: 1, hatCol: 2, top: 10, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, beard: 2, glasses: 0, print: 0, acc: 0 }), x: p.x + side * 120, y: p.y - 6, speed: 60 });
+    const f = this.friendActor(v, Math.floor((p.x + side * 136) / TS), Math.floor(p.y / TS), 0, 'stand'); f.solid = false; f.speed = 60; f.bubbleRand = ['dots']; G.npcs.push(f);
+    UI.toast(`Da kommt ein Polizist – und er hat ${fname(v)} am Arm.`);
+    await Promise.all([this.walk(cop, p.x + side * 22, p.y - 6), this.walk(f, p.x + side * 38, p.y)]);
+    cop.dir = dirTo(cop.x, cop.y, p.x, p.y); f.dir = cop.dir; p.dir = dirTo(p.x, p.y, cop.x, cop.y);
+    const reason = pick(['hat an die Hofburg-Mauer gepinkelt. In aller Öffentlichkeit, mit Gesang', 'wollte auf den Leopoldsbrunnen klettern, „um das Pferd zu reiten“', 'hat die Tram-Tür blockiert und dem Fahrer „Sorry, eh!“ zugerufen – dreimal', 'hat auf der Maria-Theresien-Strasse Ahornsirup an Passanten verteilt. Ohne Bewilligung']);
+    await this.say(cop, `Gehört der zu Ihnen? Der Herr ${reason}.`);
+    await this.say(v, pick(['Sorry, eh! In Kanada wäre das okay gewesen.', 'Ich wollte nur … es ist kompliziert. Sorry, eh.', 'Sag ihm, dass ich Kanadier bin. Das zählt doch irgendwie?']));
+    const opts = [{ t: 'Organmandat zahlen', r: '60,00 €' }];
+    if (FRIENDS.lexx && v !== 'lexx') opts.push({ t: 'Lexx anrufen – er ist Anwalt' });
+    opts.push({ t: '„Den kenn ich nicht.“' });
+    const c = await this.ask(cop, 'Also: 60 Euro Organmandat, oder er kommt mit auf die Wache.', opts);
+    let freed = false;
+    if (c === 0) { if (pay('eur', 60)) { freed = true; await this.say(cop, 'Danke. Und schauen S\', dass er sich benimmt.'); G.S.aff[v] = clamp(G.S.aff[v] + 12, 0, 100); } else await this.say(cop, 'Kein Geld? Dann kommt er mit.'); }
+    else if (opts[c].t.startsWith('Lexx')) { await UI.card('Zwanzig Minuten später steht Lexx mit Visitenkarte und Krawatte da …', 1800); passTime(20); await this.say('lexx', 'Grüß Gott, Herr Inspektor. Mein Mandant ist Kanadier, kulturell desorientiert und bereut zutiefst. Rechtlich gesehen: Verwarnung reicht.'); await this.say(cop, '… Sie haben a Krawatte an. Also gut. Verwarnung. Aber einmal noch und er sitzt.'); freed = true; G.S.aff.lexx = clamp((G.S.aff.lexx || 50) + 8, 0, 100); G.S.aff[v] = clamp(G.S.aff[v] + 8, 0, 100); }
+    else { await this.say(v, 'WAS?! Du … du Verräter! Ich hab dir ein Dosenbier gegeben!'); await this.say(cop, 'Dann kommt er mit. Wache beim Bahnhof, Auslösung ab drei Stunden.'); G.S.flags.jail = { id: v, until: G.S.time + 180 }; G.S.aff[v] = clamp(G.S.aff[v] - 25, 0, 100); mood(-4); }
+    achieve('polizei');
+    if (freed) { await this.say(v, 'Danke, Kollege. Das vergess ich dir nie. Bis zum nächsten Bier.'); f.path = [{ x: f.x - side * 160, y: f.y }]; f.onArrive = () => this.dropActor(f); cop.path = [{ x: cop.x + side * 160, y: cop.y }]; cop.onArrive = () => this.dropActor(cop); }
+    else { UI.toast(`${fname(v)} wird abgeführt. Auf der Wache beim Bahnhof, frei ab ${clockStr(G.S.time + 180)}.`); cop.path = [{ x: cop.x + side * 220, y: cop.y }]; f.path = [{ x: f.x + side * 220, y: f.y }]; cop.onArrive = () => this.dropActor(cop); f.onArrive = () => this.dropActor(f); G.npcs = G.npcs.filter((n) => !(n.friend && n.id === v && n !== f)); }
+    G.busy--;
+  },
+  async ev_hundkatze() {
+    G.busy++;
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    Snd.tone(1800, 0.12, 'sawtooth', 0.05); Snd.tone(300, 0.1, 'square', 0.06, 0.2); Snd.tone(280, 0.1, 'square', 0.06, 0.35);
+    G.birds.push({ x: p.x + side * 150, y: p.y + 10, vx: -side * 95, vy: 0, z: 0, t: 0, life: 4.2, kind: 'cat', state: 'run' });
+    G.birds.push({ x: p.x + side * 190, y: p.y + 12, vx: -side * 90, vy: 0, z: 0, t: 0, life: 4.2, kind: 'dog', state: 'run' });
+    UI.toast('FAUCHEN! BELLEN! Eine Katze rast über den Platz, ein Dackel hinterher!');
+    await sleep(1400);
+    const lady = G.npcs.find((n) => n.id === 'hund');
+    await this.say(lady ? lady : 'Frau mit Dackel', 'FERDL! FERDL, HIERHER! … Der hört nie. Zwölf Jahre und hört nie.');
+    const c = await this.ask(null, 'Die Katze flüchtet auf eine Linde, der Dackel kläfft unten. Wetten?', ['„Die Katze bleibt oben.“', '„Der Dackel gibt auf.“', 'Nur zuschauen']);
+    await sleep(900);
+    const catWins = Math.random() < 0.6;
+    if (c < 2) { const right = (c === 0) === catWins; mood(right ? 6 : 1); await this.say(null, catWins ? 'Die Katze putzt sich oben in aller Ruhe. Der Dackel trottet beleidigt zu Frauchen zurück.' : 'Der Dackel bellt, bis die Katze mit einem Satz über die Mauer verschwindet. Ferdl schaut stolz.'); UI.toast(right ? 'Richtig getippt!' : 'Daneben. Tiere sind unberechenbar.'); }
+    else { mood(3); await this.say(null, catWins ? 'Die Katze putzt sich oben in aller Ruhe. Der Dackel trottet beleidigt zu Frauchen zurück.' : 'Der Dackel bellt, bis die Katze über die Mauer verschwindet. Ferdl schaut stolz.'); }
+    achieve('tierfilm');
+    G.busy--;
+  },
+  async ev_taube() {
+    G.busy++;
+    Snd.sfx('whoosh');
+    for (let i = 0; i < 6; i++) addPart({ x: G.player.x + rnd(-3, 3), y: G.player.y - 40, vx: rnd(-5, 5), vy: 60, g: 80, life: 0.5, kind: 'splash' });
+    await sleep(400);
+    await this.say('me', pick(['… Ernsthaft?! Auf die Schulter?!', 'Das ist KEIN Regen.', 'Soll Glück bringen. SOLL.']));
+    G.S.st.smell = Math.min(100, G.S.st.smell + 35); mood(-4);
+    UI.toast('Taubenvolltreffer. Im Hotel duschen oder damit leben – die Jungs werden es riechen.');
+    achieve('taube');
+    G.busy--;
+  },
+  async ev_krampus() {
+    G.busy++;
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const k = this.tempActor({ name: 'Krampus', look: npcLook(972, { hair: 14, hairCol: 0, beard: 12, beardCol: 0, top: 8, topCol: 16, pants: 2, pantsCol: 2, shoes: 1, shoesCol: 1, hat: 0, mark: 6, glasses: 0, eyes: 1 }), x: p.x + side * 140, y: p.y, speed: 110, bubbleRand: ['!'] });
+    Snd.sfx('hit'); Snd.tone(90, 0.5, 'sawtooth', 0.1, 0, -40);
+    UI.toast('Kettenrasseln! Ein Krampus mit Rute rennt durch die Gasse – direkt auf dich zu!', 'warn');
+    await this.walk(k, p.x + side * 20, p.y);
+    k.dir = dirTo(k.x, k.y, p.x, p.y);
+    await this.say(k, 'RRRAAAAH! Warst du brav dieses Jahr, Schweizer?!');
+    const c = await this.ask(k, 'Die Rute pfeift durch die Luft.', ['Wegrennen', 'Stehen bleiben und Selfie machen', '„Ich war brav!“']);
+    if (c === 0) { energy(-10); mood(2); await this.say(null, 'Du rennst. Der Krampus auch. Er ist schneller – ein Rutenschlag auf den Hintern, dann lässt er von dir ab.'); G.fx.shake = 0.5; Snd.sfx('hit'); }
+    else if (c === 1) { mood(10); Snd.sfx('shutter'); G.fx.flash = 1; await this.say(k, '… Okay, das ist neu. Grinsen! Und jetzt: RRRAAH!'); UI.toast('Selfie mit Krampus. Die Jungs werden neidisch sein.'); }
+    else { await this.say(k, 'Brav? Du riechst nach Bier und Rouge. BRAV!'); energy(-5); mood(4); G.fx.shake = 0.4; Snd.sfx('hit'); await this.say(null, 'Ein symbolischer Rutenschlag. Dann poltert er weiter, Richtung Altstadt, wo schon die Kinder kreischen.'); }
+    k.path = [{ x: k.x - side * 240, y: k.y }]; k.onArrive = () => this.dropActor(k);
+    achieve('krampus');
+    G.busy--;
+  },
+  async ev_portemonnaie() {
+    G.busy++;
+    await this.say(null, 'Auf dem Boden liegt ein Portemonnaie. Drin: 80 Euro, ein Ausweis – Herbert Gruber, Wattens – und ein Foto von einem Dackel.');
+    const c = await this.ask(null, 'Niemand schaut.', ['Zur Polizei bringen', 'Behalten']);
+    if (c === 0) {
+      await UI.card('Bei der Polizei am Hauptbahnhof …', 1400); passTime(15);
+      await this.say('Polizist', 'Der Gruber Herbert? Der sucht das seit gestern! Ehrliche Haut, Sie. Zehn Euro Finderlohn, sagt er.');
+      addMoney('eur', 10); mood(8); achieve('ehrlich'); G.S.flags.karma = (G.S.flags.karma || 0) + 1;
+    } else { addMoney('eur', 80); mood(-3); G.S.flags.karma = (G.S.flags.karma || 0) - 1; UI.toast('80 Euro mehr. Das Dackelfoto schaut dich vorwurfsvoll an.'); const l = FRIENDS.lexx; if (l) await this.say('lexx', 'Rechtlich gesehen heisst das Fundunterschlagung. Moralisch gesehen: Du zahlst heute die Runde.'); }
+    G.busy--;
   },
   async closingTime(v) {
     G.busy++;
