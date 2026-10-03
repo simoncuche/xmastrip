@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.4.0 – 03.10.2026
+
+- Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.
+- Coiffeur: Barbierstuhl, Spiegel, drehender Barber-Pole. Beim Haarschnitt oder Bart setzt du dich in den Stuhl, Mehmet kommt mit der Schere, es schnippt und die Haare fliegen – dann darfst du den neuen Look wählen.
+- Apotheke, Trafik und Supermarkt verkaufen Kondome (3er-Pack, in der Tasche mit Zähler). Apothekenartikel landen wie bisher in der Tasche.
+- Jessy steht nachts (22–4 Uhr) in den Viaduktbögen und bietet Händchenhalten, Kuscheln oder das volle Programm an – aber nur mit Gummi, auch beim Händchenhalten. Erlebnis „Safer Sex“, die Jungs reden danach darüber.
+
 ## 2.3.0 – 03.10.2026
 
 - Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.

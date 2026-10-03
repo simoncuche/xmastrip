@@ -139,9 +139,9 @@ const SHOPS = {
   minibar: { title: 'Minibar', mode: 'eat', intro: 'Hotelpreise. Natürlich.', sections: [{ t: 'Inhalt', items: [it('dosenbier', 6.5), it('zirben', 7.0), it('cola', 4.5), it('wasser', 4.0), it('schoko', 4.5), it('erdnuesse', 5.0)] }] },
   kebap: { title: 'Kebap im Bogen', mode: 'eat', venue: 'kebap', sections: [{ t: 'Auf die Hand', items: [it('kebap', 6.5, { n: 'Kebap mit allem', icon: 'kebap', d: 'macht richtig satt · gegen Übelkeit' }), it('pommes', 3.9), it('cola', 3.0), it('dosenbier', 3.5)] }] },
   wurst: { title: 'Würstelstand', mode: 'eat', venue: 'wurst', intro: '„A Käsekrainer mit an Buckl und an Sechzehner-Blech?“ Du nickst einfach.', sections: [{ t: 'Würstel', items: [it('kaesekrainer', 4.9), it('bosna', 4.5), it('bratwurst', 4.2), it('pommes', 3.5)] }, { t: 'Dazu', items: [it('dosenbier', 3.0), it('cola', 2.8)] }] },
-  spar: { title: 'Supermarkt', mode: 'take', venue: 'spar', sections: [{ t: 'Einkaufen', items: [it('wasser', 0.89), it('dosenbier', 1.29), it('energy', 1.49), it('semmel', 0.39), it('banane', 0.39), it('sandwich', 3.49), it('chips', 2.29), it('schoko', 1.99), it('speck', 6.99)] }] },
-  apotheke: { title: 'Apotheke', mode: 'take', venue: 'apotheke', intro: 'Die Apothekerin mustert dich über ihre Brille hinweg.', sections: [{ t: 'Rezeptfrei', items: [it('aspirin', 6.9), it('magen', 8.5), it('elektrolyt', 5.9)] }] },
-  trafik: { title: 'Trafik', mode: 'take', venue: 'trafik', sections: [{ t: 'Tabak & Zeitung', items: [it('zigaretten', 7.0), it('feuerzeug', 1.5), it('zeitung', 2.2), it('postkarte', 1.2)] }] },
+  spar: { title: 'Supermarkt', mode: 'take', venue: 'spar', sections: [{ t: 'Einkaufen', items: [it('wasser', 0.89), it('dosenbier', 1.29), it('energy', 1.49), it('semmel', 0.39), it('banane', 0.39), it('sandwich', 3.49), it('chips', 2.29), it('schoko', 1.99), it('speck', 6.99), it('kondom', 3.99, { d: '3 Stück, Hausmarke' })] }] },
+  apotheke: { title: 'Apotheke', mode: 'take', venue: 'apotheke', intro: 'Die Apothekerin mustert dich über ihre Brille hinweg. Alles landet in deiner Tasche.', sections: [{ t: 'Rezeptfrei', items: [it('aspirin', 6.9), it('magen', 8.5), it('elektrolyt', 5.9)] }, { t: 'Diskret', items: [it('kondom', 4.9, { d: '3 Stück · Jessy besteht darauf' })] }] },
+  trafik: { title: 'Trafik', mode: 'take', venue: 'trafik', sections: [{ t: 'Tabak & Zeitung', items: [it('zigaretten', 7.0), it('feuerzeug', 1.5), it('zeitung', 2.2), it('postkarte', 1.2)] }, { t: 'Unter der Theke', items: [it('kondom', 5.5, { d: '3 Stück' })] }] },
   souvenir: { title: 'Souvenirs Dachl', mode: 'take', venue: 'souvenir', sections: [{ t: 'Andenken', items: [it('schneekugel', 12.9), it('magnet', 4.9), it('postkarte', 1.5), it('edelweiss', 7.9)] }, { t: 'Tiroler Spezialitäten', items: [it('speck', 14.9), it('zirbenflasche', 19.9)] }] },
   cafe: { title: 'Café Konditorei', mode: 'eat', venue: 'cafe', sections: [{ t: 'Kaffeehaus', items: [it('melange', 4.2), it('kaffee', 3.4), it('wasser', 2.8)] }, { t: 'Mehlspeisen', items: [it('strudel', 5.5), it('sacher', 6.2), it('kaiserschmarrn', 12.5)] }] },
   sport: { title: 'Sport Gipfel', mode: 'wear', venue: 'shop', intro: 'Ausrüstung für Berg und Stadt. Gekaufte Stücke ziehst du direkt an.', sections: [{ t: 'Kleidung', items: [
@@ -381,6 +381,7 @@ const Story = {
     if (h !== this._lastHour) {
       const prev = this._lastHour;
       this._lastHour = h;
+      if (prev >= 0 && m.id === 'ibk' && !G.busy) for (const d of m.npcDefs) if (d.cond) { const has = G.npcs.some((n) => n.id === d.id); const want = d.cond(); if (want && !has) G.npcs.push(new Actor(Object.assign({}, d))); if (!want && has) G.npcs = G.npcs.filter((n) => n.id !== d.id); }
       if (prev >= 0 && ['bar', 'club', 'stueberl', 'rouge', 'hotel_lobby', 'ibk'].includes(m.id) && !G.busy) {
         const before = this.friendsHere().sort().join();
         G.npcs = G.npcs.filter((n) => !n.friend);
@@ -816,6 +817,7 @@ const Story = {
     if (st.hang > 0) p.push('Na, Brummschädel? Ein Gröstl oder eine Knödelsuppe hilft.');
     if (fprom(id) > 2) p.push(pick(['Hicks … wo isch … mein Bier?', 'Du … du bisch mein beschter Freund. Ehrlich. Hicks.', 'Alles dreht sich. Ist das normal? Isch normal, oder?']));
     else if (fprom(id) > 1.2) p.push(pick(['Heute läuft\'s! Noch eins?', 'Ich bin erst warm. ERST WARM!', 'Wer hat mir die Bier alle ausgegeben? Ah, du. Merci!']));
+    if (fl.jessyAt && G.S.time - fl.jessyAt < 240) p.push(pick(['Du warst bei Jessy?! Hast du … wenigstens ein Gummi gehabt? … Gut. Dann sag ich nichts.', 'Jessy aus den Bögen? Die hat Hännsu letztes Jahr abblitzen lassen. Respekt.', 'Ich hab nichts gesehen. In den Bögen sieht man nie was.']));
     if (fl.rougeAt && G.S.time - fl.rougeAt < 240 && m !== 'rouge') p.push(pick(['Du warst im Rouge?! Erzähl. Alles.', 'Rouge, hm? Wie viel hat der Piccolo gekostet? 45? Ha!', 'Im Rouge gewesen und jetzt pleite. Klassiker.']));
     if (m === 'rouge') p.push(pick(['Ich bin nur wegen der Musik hier. Ehrlich.', 'Schau nicht so, ich schau auch nicht. Wir schauen alle nicht.', 'Chantal hat mir zugezwinkert. Ganz sicher. Ganz sicher mir.']));
     if (st.energy < 22) p.push('Du gähnst ununterbrochen. Leg dich doch kurz ins Hotel.');
@@ -1488,6 +1490,47 @@ const Story = {
     achieve('club');
     return true;
   },
+  /* ---------- Coiffeur: auf dem Stuhl wird geschnippelt ---------- */
+  async barberAnim(kind) {
+    const p = G.player, chair = { x: 4 * 16, y: 4 * 16 + 12 };
+    p.x = chair.x; p.y = chair.y; p.dir = 0; p.pose = 'sit';
+    const b = G.npcs.find((n) => n.id === 'keeper');
+    if (b) { await this.walk(b, chair.x + 22, chair.y + 2); b.dir = 1; b.keepDir = true; }
+    UI.toast(kind === 'hair' ? 'Mehmet legt den Umhang um. „Wie immer? Es gibt kein Wie-immer, du warst noch nie da.“' : 'Mehmet schäumt ein. „Stillhalten. Das Messer ist scharf.“');
+    const col = lc(G.S.look, kind === 'hair' ? 'hairCol' : 'beardCol');
+    for (let k = 0; k < 7; k++) {
+      Snd.sfx('card'); Snd.tone(1800, 0.04, 'square', 0.04, 0.05);
+      for (let i = 0; i < 4; i++) addPart({ x: p.x + rnd(-6, 6), y: p.y - rnd(14, 22), vx: rnd(-15, 15), vy: rnd(10, 30), g: 90, life: 0.8, kind: 'crumb', col });
+      addPart({ x: p.x + rnd(-8, 8), y: p.y - rnd(16, 24), vx: 0, vy: -10, life: 0.4, kind: 'spark', col: '#ffffff' });
+      await sleep(330);
+    }
+    addPart({ x: p.x, y: p.y - 34, vy: -12, life: 1.4, kind: 'txt', txt: 'SCHNIPP SCHNAPP', col: 'rgba(255,255,255,1)' });
+    await sleep(500);
+    p.pose = 'stand'; p.y = 5 * 16 + 12;
+    if (b) { b.path = [{ x: 9 * 16 + 8, y: 3 * 16 + 10 }]; }
+  },
+  /* ---------- Jessy in den Bögen ---------- */
+  async jessy() {
+    const j = G.npcs.find((n) => n.id === 'jessy') || 'Jessy';
+    await this.say(j, pick(['Na, Süsser. Kalt heute, hm? Suchst du Gesellschaft?', 'Schweizer? Hört man. Ihr seid immer so höflich. Und so … vorsichtig. Hoffentlich.', 'Du schaust aus, als hättest du gerade ein Bierpong verloren. Komm, ich muntere dich auf.']));
+    const c = await this.ask(j, 'Jessy zwinkert. Aus Bogen 12 dröhnt der Bass.', [{ t: 'Händchenhalten am Inn', r: '20,00 €' }, { t: 'Kuscheln im Bogen', r: '50,00 €' }, { t: 'Das volle Programm', r: '120,00 €' }, { t: 'Nur plaudern' }, { t: 'Weiter' }]);
+    if (c === 4) { await this.say(j, 'Schade. Weisst ja, wo du mich findest.'); return; }
+    if (c === 3) { mood(2); await this.say(j, pick(['Ich mach das nur im Winter. Im Sommer bin ich auf der Alm. Ehrlich.', 'Dein Kollege mit der Frisur – Hännsu? – hat mich gestern eine Stunde lang vollgequatscht. Ohne was zu kaufen.', 'Die Bögen sind wie ein Dorf. Jeder kennt jeden. Und jeder hat Durst.'])); return; }
+    const price = [20, 50, 120][c], mins = [20, 30, 45][c];
+    if (!hasInv('kondom')) {
+      await this.say(j, 'Ohne Gummi läuft gar nichts, Schatz. Nicht mal Händchenhalten. Meine Regel, keine Diskussion. Apotheke, Trafik oder Spar – und dann komm wieder.');
+      UI.toast('Jessy besteht auf ein Kondom. Gibt es in der Apotheke, in der Trafik und im Supermarkt (Tasche).', 'warn');
+      return;
+    }
+    if (!pay('eur', price)) { await this.say(j, 'Kein Bares, kein Jessy. Der Bankomat ist beim Bahnhof.'); return; }
+    takeUse('kondom');
+    await this.say(j, 'Braver Junge. Sicherheit geht vor.');
+    await UI.card(['Zwanzig Minuten Händchenhalten am Inn. Jessy erzählt von ihrer Katze. Mit Gummi. Weil Regel.', 'Kuscheln in Bogen 12. Es ist warm, riecht nach Vanille, und Jessy schnarcht leise.', 'Was in den Bögen passiert, bleibt in den Bögen.'][c], 2400);
+    passTime(mins); mood([6, 10, 15][c]); energy(-[2, 5, 12][c]);
+    G.S.flags.jessyAt = G.S.time;
+    achieve('gummi');
+    await this.say(j, pick(['Komm wieder, Süsser. Und sag deinem Kollegen mit der Frisur, er soll nicht nur reden.', 'War nett. Grüss die Schweiz. Und kauf Nachschub, die Packung ist nicht ewig.']));
+  },
   /* ---------- Rouge ---------- */
   async rougeDoor() {
     const st = G.S.st;
@@ -1820,6 +1863,7 @@ const Story = {
     if (item.special === 'hair' || item.special === 'beard') {
       if (!pay(cur, item.price)) return;
       UI.closeOverlay();
+      if (G.map.id === 'shop_barbier') await this.barberAnim(item.special);
       await Editor.open({ mode: item.special });
       achieve('frisur');
       return 'close';

@@ -54,6 +54,7 @@ function itemIconURL(icon) {
     case 'cap': E(x, 8, 8, 6, 4, '#c8352d'); R(x, 2, 8, 12, 4, '#c8352d'); R(x, 9, 11, 7, 2, '#8a1e1a'); break;
     case 'scissors': line(x, 3, 3, 12, 12, '#c9ccd2'); line(x, 12, 3, 3, 12, '#c9ccd2'); E(x, 3, 13, 2, 2, '#c8352d'); E(x, 12, 13, 2, 2, '#c8352d'); break;
     case 'ticket': R(x, 2, 4, 12, 8, '#f4f0e6'); R(x, 2, 4, 3, 8, '#c8352d'); R(x, 6, 6, 6, 1, '#1a1a1a'); R(x, 6, 9, 4, 1, '#1a1a1a'); break;
+    case 'kondom': R(x, 3, 3, 10, 10, '#2f5fb8'); R(x, 4, 4, 8, 8, '#4a7ad8'); E(x, 8, 8, 3, 3, '#e8e4dc'); E(x, 8, 8, 2, 2, '#c9ccd2'); R(x, 3, 3, 10, 1, '#ffffff'); break;
     case 'kebap': R(x, 3, 4, 10, 9, '#e8c890'); R(x, 4, 6, 8, 3, '#8a4a2a'); R(x, 4, 9, 8, 1, '#3f8a3a'); R(x, 4, 10, 8, 1, '#c8352d'); break;
     default: R(x, 3, 3, 10, 10, '#8a9096');
   }
@@ -339,7 +340,7 @@ const Phone = {
       <div class="shop-sec">Erlebnisse ${achN}/${achT}</div><div class="list">${Object.entries(ACH).map(([k, [t, d]]) => `<div class="row ${G.S.ach[k] ? 'done' : ''}"><div><div class="t">${G.S.ach[k] ? t : '???'}</div><div class="d">${d}</div></div><span class="${G.S.ach[k] ? 'tick' : 'open'}">${G.S.ach[k] ? '✓' : '·'}</span></div>`).join('')}</div>`;
   },
   karte(b) {
-    const showCity = G.map.indoor && BUILT.ibk && ['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club', 'rouge'].includes(G.map.id);
+    const showCity = G.map.indoor && BUILT.ibk && (['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club', 'rouge', 'casino'].includes(G.map.id) || G.map.id.startsWith('shop_'));
     const m = showCity ? BUILT.ibk : G.map;
     const sc = m.w > 60 ? 7 : 9;
     const [c, x] = canvas(m.w * sc, m.h * sc);

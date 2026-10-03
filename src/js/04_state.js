@@ -75,6 +75,7 @@ const ITEMS = {
   muenze: { n: 'Glücksmünze', t: 'souv', icon: 'coin', inv: true },
   billett: { n: 'Gruppenbillett Luzern–Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
   pong: { n: 'Bierpong-Becher', t: 'drink', alc: 0.09, mood: 3, en: -1, icon: 'beer' },
+  kondom: { n: 'Kondome (3er-Pack)', t: 'tool', icon: 'kondom', inv: true, uses: 3 },
   meteorit: { n: 'Leuchtender Stein vom Alien', t: 'souv', icon: 'globe', inv: true },
 };
 
@@ -149,6 +150,7 @@ const ACH = {
   blackjack: ['Siebzehn und vier', 'Beim Blackjack gegen die Bank gewonnen'],
   heimreise: ['Heimreise', 'Mit dem Zug zurück nach Luzern – das Spiel ist beendet'],
   bierpong: ['Pong-König', 'Beim Bierpong gegen einen Kollegen gewonnen'],
+  gummi: ['Safer Sex', 'Bei Jessy in den Bögen – mit Gummi, versteht sich'],
 };
 
 function newState(look, name) {
@@ -181,6 +183,8 @@ function canPay(cur, v) { return G.S.money[cur] + 1e-6 >= v; }
 function pay(cur, v) { if (!canPay(cur, v)) return false; addMoney(cur, -v); Snd.sfx('coin'); return true; }
 function addInv(id, n = 1) { G.S.inv[id] = (G.S.inv[id] || 0) + n; if (ITEMS[id] && ITEMS[id].uses && !G.S.uses[id]) G.S.uses[id] = ITEMS[id].uses; }
 function hasInv(id) { return (G.S.inv[id] || 0) > 0; }
+/* Einen Gebrauch verbrauchen (Zigaretten, Kondome …); ohne Gebrauchszähler wird das Stück entfernt */
+function takeUse(id) { if (!hasInv(id)) return false; const I = ITEMS[id]; if (I && I.uses) { G.S.uses[id] = (G.S.uses[id] || I.uses) - 1; if (G.S.uses[id] <= 0) { takeInv(id); delete G.S.uses[id]; } return true; } return takeInv(id); }
 function takeInv(id, n = 1) { if (!hasInv(id)) return false; G.S.inv[id] -= n; if (G.S.inv[id] <= 0) delete G.S.inv[id]; return true; }
 
 function achieve(id) {

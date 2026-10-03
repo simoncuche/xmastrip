@@ -504,7 +504,7 @@ async function runAuto(t) {
   G.busy++;
   try {
     if (t.guard) { const ok = await t.guard(t); if (!ok) { G.busy--; pushBack(); return; } }
-    if (t.warp) { G.busy--; await warpTo(t.warp[0], t.warp[1], t.opts || {}); return; }
+    if (t.warp) { G.busy--; await warpTo(t.warp[0], typeof t.warp[1] === 'function' ? t.warp[1]() : t.warp[1], t.opts || {}); return; }
     if (t.act) await t.act(t);
   } catch (e) { console.error(e); }
   G.busy--;

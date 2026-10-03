@@ -288,10 +288,63 @@ function house(m, x, y, w, h, i, o = {}) {
 }
 function shopHouse(m, x, y, w, h, i, sign, doorDx, shopId, o = {}) {
   const b = house(m, x, y, w, h, i, Object.assign({ doors: [{ dx: doorDx, type: 'glass' }], shopWins: [...Array(w).keys()].filter((k) => k !== doorDx), sign }, o));
-  m.solid(x + doorDx, y + h - 1, 1, 1, 1);
-  m.trig(x + doorDx, y + h - 1, 1, 1, { label: (sign && sign.label) || sign.text, act: () => Story.shop(shopId) });
+  /* Läden sind betretbar: Tür führt in den Innenraum shop_<id>; der Rückweg merkt sich die Haustür */
+  const back = `shop_${shopId}_${x}_${y}`;
+  m.spawn(back, x + doorDx, y + h, 0);
+  m.warp(x + doorDx, y + h - 1, 'shop_' + shopId, 'entry', { label: (sign && sign.label) || sign.text, guard: async () => { const ok = await Story.openGuard(SHOPS[shopId].venue || shopId); if (ok) G.S.flags.shopBack = back; return ok; } });
   return b;
 }
+/* Innenraum eines Ladens: Regale, Theke mit Kasse, Verkäufer, Ausgang zurück zur Haustür */
+function shopInterior(shopId, o) {
+  MAP_BUILDERS['shop_' + shopId] = () => {
+    const m = new GMap('shop_' + shopId, 12, 9, { name: o.name, indoor: true, wallStyle: { cap: o.cap || '#3a2a20' }, music: null, bg: '#0a0a10' });
+    roomShell(m, o.style ?? 1, { floor: o.floor ?? T.WOOD, floorV: o.floorV ?? 0 });
+    m.decal((c) => {
+      pxText(c, o.name.toUpperCase(), 16 + 4, 16 + 5, o.signCol || '#f4e8c0');
+      for (let k = 0; k < (o.shelves ?? 2); k++) DECAL.shelf(c, 6 * 16 + k * 40, 16 + 4, 36);
+      if (o.wall) o.wall(c);
+    });
+    const ct = o.counter || {};
+    m.add(objCounter(7, 4, 4, 1, Object.assign({ top: '#7a4a2a', front: '#4a2c18', reg: true }, ct)));
+    m.trig(7, 4, 4, 1, { label: o.buy || 'Kaufen', act: () => Story.shop(shopId) });
+    m.npcDefs.push({ id: 'keeper', name: o.keeper, x: 9 * 16 + 8, y: 3 * 16 + 10, dir: 0, look: npcLook(o.seed, o.look), talk: () => Story.shop(shopId), keepDir: true, bubbleRand: o.bubble || ['dots'] });
+    /* Warenregale links: farbige Packungen */
+    const goods = o.goods || ['#c8352d', '#2f5fb8', '#e8c23a', '#3f8e4b'];
+    m.add(mkObj(1, 3, 2, 3, 14, (c, W, H) => { R(c, 0, 0, W, H, '#5a3a24'); for (let y = 2; y < H - 2; y += 10) { R(c, 1, y + 8, W - 2, 2, '#8a6a4a'); for (let x = 3; x < W - 4; x += 6) R(c, x, y + 1, 4, 7, goods[(x / 6 + y / 10) % goods.length | 0]); } }, { solid: true }));
+    if (o.extras) o.extras(m);
+    m.add(objPlant(10, 7));
+    doorBottom(m, 5, 2, 'ibk', () => G.S.flags.shopBack || 'hbf', 'Ausgang');
+    m.spawn('entry', 5, 7, 3);
+    m.light(8 * 16, 3 * 16, 44, '#ffd78a');
+    return m;
+  };
+}
+shopInterior('sport', { name: 'Sport Gipfel', keeper: 'Verkäufer Markus', seed: 991, look: { top: 10, topCol: 9, hair: 1, beard: 0, hat: 5, hatCol: 2 }, floor: T.STONE, goods: ['#c8352d', '#2f5fb8', '#e8c23a', '#3f8e4b', '#ffffff'], cap: '#2a3a5a', counter: { top: '#c9ccd2', front: '#3a4a5a' }, buy: 'Ausrüstung kaufen',
+  extras: (m) => { m.add(mkObj(1, 6, 3, 1, 22, (c, W, H) => { for (let k = 0; k < 5; k++) { R(c, 3 + k * 9, 0, 3, H - 2, ['#c8352d', '#2f5fb8', '#e8c23a', '#3f8e4b', '#ff7a2a'][k]); R(c, 2 + k * 9, H - 4, 5, 2, '#1a1a1e'); } }, { solid: true })); } });
+shopInterior('tracht', { name: 'Trachten Holzer', keeper: 'Frau Holzer', seed: 992, look: { hair: 9, hairCol: 2, beard: 0, top: 11, topCol: 0, pants: 5, pantsCol: 9 }, goods: ['#6b4423', '#3f5a3b', '#f1eee4', '#c23a2a'], buy: 'Tracht anprobieren',
+  wall: (c) => { for (let k = 0; k < 3; k++) { const px = 32 + k * 20, py = 18; R(c, px, py + 8, 14, 2, '#3f5a3b'); R(c, px + 3, py + 2, 8, 6, '#3f5a3b'); R(c, px + 3, py + 6, 8, 1, '#c23a2a'); line(c, px + 11, py + 7, px + 13, py + 1, '#1d1d1d'); } },
+  extras: (m) => { m.add(mkObj(1, 6, 3, 1, 22, (c, W, H) => { for (let k = 0; k < 4; k++) { R(c, 3 + k * 11, 2, 8, 12, '#6b4423'); R(c, 4 + k * 11, 0, 2, 4, '#3a2010'); R(c, 8 + k * 11, 0, 2, 4, '#3a2010'); } R(c, 0, H - 2, W, 2, '#8a6a4a'); }, { solid: true })); } });
+shopInterior('souvenir', { name: 'Souvenirs Dachl', keeper: 'Verkäuferin Anna', seed: 993, look: { hair: 16, hairCol: 5, beard: 0, top: 4, topCol: 0 }, goods: ['#e8b830', '#c8352d', '#f4f0e6', '#2f5fb8', '#7ad0f0'], buy: 'Andenken kaufen',
+  wall: (c) => { for (let k = 0; k < 4; k++) { const px = 36 + k * 16; E(c, px + 6, 26, 5, 5, '#c8e8f8'); R(c, px + 4, 28, 4, 2, '#e8b830'); R(c, px + 2, 31, 8, 3, '#5a3a24'); } } });
+shopInterior('apotheke', { name: 'Apotheke', keeper: 'Apothekerin Dr. Steiner', seed: 994, look: { hair: 9, hairCol: 9, beard: 0, glasses: 7, top: 9, topCol: 13, pants: 5, pantsCol: 10 }, floor: T.STONE, floorV: 1, cap: '#2a4a3a', goods: ['#ffffff', '#3f8e4b', '#c8352d', '#2f5fb8', '#ffffff'], counter: { top: '#f4f4f0', front: '#3f8e4b' }, signCol: '#6fe08a', buy: 'Beraten lassen und kaufen',
+  wall: (c) => { R(c, 8 * 16 + 2, 18, 12, 12, '#3f8e4b'); R(c, 8 * 16 + 6, 20, 4, 8, '#ffffff'); R(c, 8 * 16 + 4, 22, 8, 4, '#ffffff'); } });
+shopInterior('spar', { name: 'Supermarkt', keeper: 'Kassierer Ali', seed: 995, look: { hair: 2, hairCol: 0, beard: 1, top: 2, topCol: 0, pants: 0 }, floor: T.STONE, floorV: 0, cap: '#4a2a2a', goods: ['#e8c23a', '#3f8e4b', '#c8352d', '#2f5fb8', '#f4f0e6', '#ff7a2a'], shelves: 2, counter: { top: '#c9ccd2', front: '#c8352d' }, signCol: '#ff8a7a', buy: 'An die Kasse',
+  extras: (m) => { m.add(mkObj(1, 6, 3, 1, 24, (c, W, H) => { R(c, 0, 0, W, H - 1, '#c9ccd2'); R(c, 2, 2, W - 4, H - 6, '#7fb4e2'); for (let y = 5; y < H - 6; y += 6) for (let x = 4; x < W - 6; x += 7) R(c, x, y, 5, 4, ['#f4f0e6', '#e8c23a', '#3f8e4b'][(x + y) % 3]); R(c, W / 2 - 1, 2, 2, H - 6, '#9fc8e8'); }, { solid: true })); } });
+shopInterior('trafik', { name: 'Trafik', keeper: 'Trafikantin Gerti', seed: 996, look: { hair: 12, hairCol: 9, beard: 0, glasses: 7, top: 4, topCol: 11 }, goods: ['#f4f0e6', '#c8352d', '#e8c23a', '#2f5fb8'], shelves: 2, counter: { top: '#7a4a2a', front: '#4a2c18' }, buy: 'Zeitung, Tabak und mehr',
+  wall: (c) => { for (let k = 0; k < 5; k++) R(c, 34 + k * 9, 20, 7, 10, k % 2 ? '#f4f0e6' : '#e8e4dc'); for (let k = 0; k < 5; k++) R(c, 36 + k * 9, 22, 3, 1, '#1a1a1a'); } });
+shopInterior('cafe', { name: 'Café Konditorei', keeper: 'Konditorin Rosa', seed: 997, look: { hair: 9, hairCol: 1, beard: 0, top: 4, topCol: 12, hat: 0 }, goods: ['#7a2a2a', '#e8c23a', '#f4f0e6', '#5a3420'], shelves: 1, counter: { top: '#d9dcdf', front: '#7a2a2a', coffee: true }, buy: 'Kaffee und Mehlspeisen',
+  wall: (c) => { for (let k = 0; k < 4; k++) { R(c, 36 + k * 14, 22, 10, 6, ['#5a3420', '#e8c23a', '#f4e0c0', '#c8302a'][k]); R(c, 36 + k * 14, 21, 10, 1, '#ffffff'); } },
+  extras: (m) => { m.add(objTable(2, 6, 1, 1, { col: '#f4f0e6', round: true })); m.add(objStool(1, 6, '#7a2a2a')); m.add(objStool(3, 6, '#7a2a2a')); } });
+/* Coiffeur: Barbierstuhl, Spiegel, drehender Pole, Barbier, der mit der Schere schnippt */
+shopInterior('barbier', { name: 'Friseur & Barbier', keeper: 'Barbier Mehmet', seed: 998, look: { hair: 4, hairCol: 0, beard: 7, beardCol: 0, top: 1, topCol: 16, pants: 5, pantsCol: 2, acc: 0 }, floor: T.STONE, floorV: 1, cap: '#1a1a22', goods: ['#f4f0e6', '#7ad0f0', '#e8c23a', '#1a1a1e'], shelves: 1, counter: { top: '#2a2a2e', front: '#1a1a1e' }, signCol: '#ffd27a', buy: 'Termin: Haare oder Bart', bubble: ['note', 'dots'],
+  wall: (c) => { R(c, 8 * 16 + 6, 18, 30, 14, '#8a9096'); R(c, 8 * 16 + 7, 19, 28, 12, '#c8e0f0'); R(c, 8 * 16 + 9, 21, 10, 8, 'rgba(255,255,255,0.35)'); },
+  extras: (m) => {
+    m.add(mkObj(3, 4, 2, 1, 14, (c, W, H) => { R(c, 6, 0, 20, 14, '#c8302a'); R(c, 8, 2, 16, 10, '#e04a3a'); R(c, 4, 14, 24, 6, '#c8302a'); R(c, 12, 20, 8, 6, '#8a8e94'); R(c, 8, 26, 16, 2, '#5a5e64'); R(c, 2, 12, 4, 4, '#8a8e94'); R(c, 26, 12, 4, 4, '#8a8e94'); }, { solid: true }));
+    m.trig(3, 4, 2, 1, { label: 'Barbierstuhl', act: () => Story.shop('barbier') });
+    const pole = mkObj(1, 6, 1, 1, 22, (c, W, H) => { R(c, 6, 0, 4, H, '#c9ccd2'); }, { solid: true });
+    pole.anim = (c, t, px, py) => { c.save(); c.beginPath(); c.rect(px + 6, py + 2, 4, 18); c.clip(); for (let k = -2; k < 8; k++) { const y = py + 2 + ((k * 6 + t * 18) % 24); R(c, px + 6, y, 4, 3, k % 2 ? '#c8302a' : '#2f5fb8'); } c.restore(); };
+    m.add(pole);
+  } });
 MAP_BUILDERS.ibk = () => {
   const W = 96, H = 90;
   const m = new GMap('ibk', W, H, { name: 'Innsbruck', city: 'ibk', bg: '#2f4a2a' });
@@ -501,6 +554,7 @@ MAP_BUILDERS.ibk = () => {
     { id: 'polizei', name: 'Polizist', x: 64 * 16 + 8, y: 40 * 16 + 12, dir: 1, look: npcLook(902, { hat: 1, hatCol: 2, top: 10, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, beard: 2, glasses: 0, print: 0, acc: 0 }), talk: () => Story.police(), wander: { x: 55, y: 37, w: 16, h: 3 } },
     { id: 'kutscher', name: 'Fiakerin', x: 70 * 16 + 8, y: 40 * 16 + 12, dir: 1, look: npcLook(903, { hat: 8, hatCol: 0, top: 9, topCol: 16, beard: 0, hair: 9 }), talk: () => Story.fiaker(), keepDir: true },
     { id: 'tuer', name: 'Türsteher', x: 72 * 16 + 4, y: 64 * 16 + 14, dir: 0, look: npcLook(904, { build: 3, hair: 0, beard: 7, beardCol: 0, top: 8, topCol: 16, glasses: 4, pants: 0, pantsCol: 2, shoes: 1, shoesCol: 1 }), talk: () => Story.bouncerTalk() },
+    { id: 'jessy', name: 'Jessy', x: 61 * 16 + 8, y: 65 * 16 + 12, dir: 0, look: npcLook(990, { hair: 10, hairCol: 13, beard: 0, top: 5, topCol: 12, pants: 3, pantsCol: 2, shoes: 1, shoesCol: 4, jewel: 4, glasses: 0, hat: 0, print: 0, acc: 2, mouth: 4 }), talk: () => Story.jessy(), cond: () => { const h = hourOf(G.S.time); return h >= 22 || h < 4; }, wander: { x: 58, y: 65, w: 6, h: 1 }, bubbleRand: ['heart'] },
     { id: 'hund', name: 'Frau mit Dackel', x: 84 * 16 + 8, y: 44 * 16 + 12, dir: 0, look: npcLook(905, { hair: 10, beard: 0, top: 4, topCol: 12 }), talk: () => Story.dog(), wander: { x: 84, y: 36, w: 1, h: 17 }, dog: true },
   );
   /* Fussgänger */
