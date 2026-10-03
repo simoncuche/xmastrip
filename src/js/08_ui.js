@@ -425,6 +425,8 @@ const Phone = {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
       <div class="opt-row"><span>Musik</span><button class="btn" id="oMus">${Snd.musicOn ? 'An' : 'Aus'}</button></div>
       <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
+      <div class="opt-row"><span>Bewegungssensoren</span><button class="btn" id="oSens">${Shake.on ? 'An' : Shake.needsPermission() ? 'Erlauben' : typeof DeviceMotionEvent === 'undefined' ? 'Nicht verfügbar' : 'An'}</button></div>
+      <p class="note">Für das Zielen per Neigung beim Darts – und wer weiss, wofür sonst noch.</p>
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
       <div class="opt-row"><span>Spielstand</span><button class="btn primary" id="oSave">Speichern</button></div>
       <div class="opt-row"><span>Neues Spiel beginnen</span><button class="btn red" id="oNew">Neu starten</button></div>
@@ -434,6 +436,7 @@ const Phone = {
     b.querySelector('#oSnd').onclick = (e) => { Snd.on = !Snd.on; e.target.textContent = Snd.on ? 'An' : 'Aus'; };
     b.querySelector('#oMus').onclick = (e) => { Snd.musicOn = !Snd.musicOn; e.target.textContent = Snd.musicOn ? 'An' : 'Aus'; };
     b.querySelector('#oDeck').onclick = (e) => { G.S.flags.deck = G.S.flags.deck === 'fr' ? 'de' : 'fr'; e.target.textContent = G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'; };
+    b.querySelector('#oSens').onclick = async (e) => { const ok = await Shake.ask(); e.target.textContent = ok ? 'An' : 'Nicht erlaubt'; };
     b.querySelector('#oSave').onclick = () => saveGame();
     const nb = b.querySelector('#oNew');
     nb.onclick = () => { if (nb.dataset.sure) { clearSave(); location.reload(); } else { nb.dataset.sure = 1; nb.textContent = 'Wirklich? Nochmal tippen'; } };

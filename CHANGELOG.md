@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.11.0 – 03.10.2026
+
+- Easter Egg: Wer das Handy in Innsbruck drei Sekunden lang kräftig schüttelt, beschwört ein zufälliges Ereignis herauf – mit Vibration, Ankündigung und manchmal sogar Godzilla. Danach braucht das Handy eine Dreiviertelminute Pause. Erlebnis „Schüttelfrost“. Auf dem iPhone braucht es dafür einmal die Erlaubnis für Bewegungssensoren (Handy → Optionen oder beim Darts mit Neigung).
+
 ## 2.10.0 – 03.10.2026
 
 - Darts mit Handyneigung: Im Darts-Spiel schaltet „📱 Mit Handyneigung zielen“ die Bewegungssensoren ein (auf dem iPhone fragt der Browser einmal um Erlaubnis). Die Lage beim Einschalten ist die Mitte der Scheibe, Neigen bewegt das Fadenkreuz, Tippen wirft. Je mehr Promille, desto mehr zittert das Kreuz. „Neu ausrichten“ setzt die Mitte neu; auf Android bleibt die Einstellung für die nächsten Spiele gespeichert.

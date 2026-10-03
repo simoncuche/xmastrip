@@ -70,6 +70,7 @@ const Mini = {
       const enableTilt = async () => {
         try { if (typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') { UI.toast('Ohne Erlaubnis für Bewegungssensoren geht das Zielen per Neigung nicht.', 'warn'); return; } } } catch (e) { UI.toast('Bewegungssensoren sind hier nicht verfügbar.', 'warn'); return; }
         if (!tilt.on) window.addEventListener('deviceorientation', onOri);
+        if (typeof Shake !== 'undefined') Shake.ask();
         tilt.on = true; tilt.b0 = null; tilt.g0 = null; tilt.x = tilt.tx = CX; tilt.y = tilt.ty = CY;
         G.S.flags.dartsTilt = 1;
         if (tiltBtn) tiltBtn.textContent = '📱 Neu ausrichten (Mitte = jetzige Lage)';

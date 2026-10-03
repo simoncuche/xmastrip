@@ -476,6 +476,15 @@ const Story = {
     fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time); fl.evN[day] = n + 1;
     this.announce(e.id).then(() => this['ev_' + e.id]());
   },
+  /* Easter Egg: geschütteltes Handy beschwört ein zufälliges Ereignis herauf (zählt nicht zum Tagesplan) */
+  shakeEvent() {
+    if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
+    const pool = this.EVENTS.filter((e) => { try { return e.cond(); } catch (err) { return false; } });
+    const id = Math.random() < 0.12 || !pool.length ? 'monster' : pick(pool).id;
+    achieve('schuettler');
+    UI.toast('📳 Easter Egg! Irgendetwas hat dein Schütteln gespürt …', 'ach');
+    this.announce(id).then(() => this['ev_' + id]());
+  },
   /* Jedes Ereignis beginnt mit einer kurzen Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich
      Buchstabe für Buchstabe hin, Fanfare, Blitz – dann geht es in der Spielwelt los. Die Welt steht derweil (G.busy). */
   EV_TITLES: {

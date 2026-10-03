@@ -157,6 +157,48 @@ function wireInput() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) Snd.init(); });
 }
 window.addEventListener('load', boot);
+/* Easter Egg: Handy 3 Sekunden kräftig schütteln → zufälliges Ereignis. Android liefert die Bewegungsdaten sofort,
+   iPhones erst nach einer Erlaubnis per Tippen (Handy → Optionen → Bewegungssensoren, oder beim Darts mit Neigung). */
+const Shake = {
+  on: false, t: 0, last: 0, lastPeak: 0, fired: -1e9, fx: 0,
+  needsPermission() { return typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'; },
+  init() { if (typeof DeviceMotionEvent === 'undefined' || this.needsPermission()) return; this.listen(); },
+  async ask() {
+    if (typeof DeviceMotionEvent === 'undefined') return false;
+    try { if (this.needsPermission()) { const r = await DeviceMotionEvent.requestPermission(); if (r !== 'granted') return false; } } catch (e) { return false; }
+    this.listen(); return true;
+  },
+  listen() {
+    if (this.on) return; this.on = true;
+    window.addEventListener('devicemotion', (e) => {
+      const a = e.acceleration, g = e.accelerationIncludingGravity;
+      let m;
+      if (a && a.x != null) m = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
+      else if (g && g.x != null) m = Math.abs(Math.hypot(g.x || 0, g.y || 0, g.z || 0) - 9.81);
+      else return;
+      this.feed(m, performance.now() / 1000);
+    });
+  },
+  /* Kräftige Ausschläge (über 11 m/s²) zählen als Schütteln; Pausen über 0,35 s lassen den Zähler schnell wieder sinken */
+  feed(m, now) {
+    const gap = now - (this.last || now); this.last = now;
+    if (gap > 0.5) this.t = 0; /* keine Sensordaten mehr = Schütteln vorbei */
+    const dt = Math.min(0.2, Math.max(0, gap));
+    if (m > 11) this.lastPeak = now;
+    if (now - this.lastPeak < 0.35) this.t += dt; else this.t = Math.max(0, this.t - dt * 2);
+    if (this.t > 1 && G.mode === 'play' && !G.busy) G.fx.shake = Math.max(G.fx.shake || 0, Math.min(0.6, (this.t - 1) * 0.3));
+    if (this.t >= 3) { this.t = 0; this.trigger(); }
+  },
+  trigger() {
+    const now = performance.now();
+    if (now - this.fired < 45000) return;
+    if (!G.S || G.mode !== 'play' || G.busy || G.live || !document.getElementById('overlay').hidden) return;
+    this.fired = now;
+    try { if (navigator.vibrate) navigator.vibrate([80, 60, 180]); } catch (e) {}
+    Story.shakeEvent();
+  },
+};
+window.addEventListener('load', () => Shake.init());
 /* Homescreen-Apps und Browser halten gern eine alte Version im Cache: version.json ohne Cache lesen und zum Neuladen auffordern */
 async function checkUpdate() {
   if (!/^https?:/.test(location.protocol)) return;
