@@ -161,11 +161,19 @@ window.addEventListener('load', boot);
    iPhones erst nach einer Erlaubnis per Tippen (Handy → Optionen → Bewegungssensoren, oder beim Darts mit Neigung). */
 const Shake = {
   on: false, t: 0, last: 0, lastPeak: 0, fired: -1e9, fx: 0,
+  KEY: 'gleis4-sensoren',
   needsPermission() { return typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'; },
-  init() { if (typeof DeviceMotionEvent === 'undefined' || this.needsPermission()) return; this.listen(); },
+  init() {
+    if (typeof DeviceMotionEvent === 'undefined') return;
+    if (!this.needsPermission()) { this.listen(); return; }
+    /* iPhone: Die Erlaubnis gilt nur bis zum Neuladen. Wer sie einmal gegeben hat, bekommt sie beim ersten Tippen still erneuert. */
+    let ok = false; try { ok = localStorage.getItem(this.KEY) === '1'; } catch (e) {}
+    if (ok) { const renew = () => { this.ask(); }; window.addEventListener('pointerdown', renew, { once: true, capture: true }); }
+  },
   async ask() {
     if (typeof DeviceMotionEvent === 'undefined') return false;
     try { if (this.needsPermission()) { const r = await DeviceMotionEvent.requestPermission(); if (r !== 'granted') return false; } } catch (e) { return false; }
+    try { localStorage.setItem(this.KEY, '1'); } catch (e) {}
     this.listen(); return true;
   },
   listen() {
@@ -184,15 +192,20 @@ const Shake = {
     const gap = now - (this.last || now); this.last = now;
     if (gap > 0.5) this.t = 0; /* keine Sensordaten mehr = Schütteln vorbei */
     const dt = Math.min(0.2, Math.max(0, gap));
-    if (m > 11) this.lastPeak = now;
+    if (m > 9) this.lastPeak = now;
     if (now - this.lastPeak < 0.35) this.t += dt; else this.t = Math.max(0, this.t - dt * 2);
     if (this.t > 1 && G.mode === 'play' && !G.busy) G.fx.shake = Math.max(G.fx.shake || 0, Math.min(0.6, (this.t - 1) * 0.3));
     if (this.t >= 3) { this.t = 0; this.trigger(); }
   },
+  /* Blockierte Versuche bekommen eine kurze Rückmeldung, damit klar ist, warum nichts passiert */
+  hint(txt) { const now = performance.now(); if (now - (this._hintAt || 0) < 4000) return; this._hintAt = now; UI.toast(txt); },
   trigger() {
     const now = performance.now();
-    if (now - this.fired < 45000) return;
-    if (!G.S || G.mode !== 'play' || G.busy || G.live || !document.getElementById('overlay').hidden) return;
+    if (!G.S || G.mode !== 'play') return;
+    const wait = Math.ceil((30000 - (now - this.fired)) / 1000);
+    if (wait > 0) { this.hint(`📳 Dein Handy ist noch ganz durchgeschüttelt. Noch ${wait} Sekunden …`); return; }
+    if (G.live) { this.hint('📳 Gerade passiert schon etwas – erst mal das hier überstehen!'); return; }
+    if (G.busy || !document.getElementById('overlay').hidden) { this.hint('📳 Erst Gespräch oder Handy schliessen, dann schütteln.'); return; }
     this.fired = now;
     try { if (navigator.vibrate) navigator.vibrate([80, 60, 180]); } catch (e) {}
     Story.shakeEvent();

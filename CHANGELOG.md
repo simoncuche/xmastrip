@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.15.0 – 03.10.2026
+
+- Türszenen: Beim Durchgehen ragt die Figur nicht mehr über den Türrahmen. Sie läuft bis zur Schwelle, ist dort klein genug für die Öffnung und verschwindet darin; beim Hinausgehen tritt sie zuerst in der Türöffnung hervor. Gilt für Haustüren, Zimmer 307 und die Zugtür in Innsbruck.
+- Schütteln: Auf dem iPhone ging die Erlaubnis für die Bewegungssensoren nach jedem Neuladen verloren – jetzt wird sie beim ersten Tippen still erneuert, sobald du sie einmal gegeben hast. Wird geschüttelt, während gerade etwas passiert, ein Gespräch offen ist oder das Handy sich noch erholt, gibt es eine Rückmeldung statt Stille. Die Pause zwischen zwei Easter Eggs ist von 45 auf 30 Sekunden verkürzt, und leichteres Schütteln reicht.
+
 ## 2.14.0 – 03.10.2026
 
 - Godzilla ohne Stampfer: Keine Fuss-Schatten mehr, die vom Himmel fallen. Stattdessen jagt er dich zu Fuss durch die Stadt – erst schnell heran, dann stetig hinterher und mit der Zeit etwas schneller. Gefährlich sind nur noch zwei Dinge: ihn berühren und der Atomstrahl, der jetzt etwas öfter kommt. Seine Schritte lassen weiterhin den Boden beben, Staub aufwirbeln und Fussabdrücke zurück.

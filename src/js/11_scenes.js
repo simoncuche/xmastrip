@@ -9,6 +9,8 @@ function sceneSprite(c, st, pose, dir, x, y, s = 1, alpha = 1) {
   c.drawImage(st.sheet, POSE_I[pose] * SPR_W, dir * SPR_H, SPR_W, SPR_H, Math.round(x), Math.round(y), SPR_W * s, SPR_H * s);
   c.globalAlpha = 1;
 }
+/* Figur beim Durchqueren einer Tür nur innerhalb der Türöffnung zeichnen – nichts ragt über den Rahmen */
+function inRect(c, x, y, w, h, fn) { c.save(); c.beginPath(); c.rect(x, y, w, h); c.clip(); fn(); c.restore(); }
 function sceneHead(c, st, x, y, s = 1, dir = 0) { c.drawImage(st.sheet, 0, dir * SPR_H, SPR_W, 12, Math.round(x), Math.round(y), SPR_W * s, 12 * s); }
 function sceneSky(c, night, p = 0, dawn = false) {
   const top = night ? (dawn ? mix('#121a3a', '#f2a65a', p) : '#121a3a') : '#8fc3e8', bot = night ? (dawn ? mix('#2a3660', '#ffd9a0', p) : '#2a3660') : '#d8ecf8';
@@ -229,18 +231,26 @@ const SCENES = {
      Hinaus: Figur kommt aus der Tür, die hinter ihr zugeht. st.closing: Sperrstunde, Lichter gehen aus, Schild „Geschlossen“. */
   door(c, t, p, st) {
     const enter = !st.exit;
-    const open = enter ? clamp((p - 0.28) / 0.28, 0, 1) : clamp(1 - (p - 0.5) / 0.32, 0, 1);
+    const open = enter ? clamp((p - 0.15) / 0.25, 0, 1) : clamp(1 - (p - 0.62) / 0.25, 0, 1);
     const off = st.closing && p > 0.72;
     const g = drawFacade(c, t, st, open, off);
     const f = Math.floor(t * 8) % 2 ? 'walkA' : 'walkB';
-    /* Füsse immer auf dem Boden: von vorne (nah, gross) bis zur Schwelle (fern, kleiner) */
+    /* Füsse immer auf dem Boden: von vorne (nah, gross) bis zur Schwelle (fern, so klein, dass die Figur in die Öffnung passt).
+       Ab der Schwelle wird nur innerhalb der Türöffnung gezeichnet – die Figur verschwindet im Haus statt über den Rahmen zu ragen. */
     const floorY = g.dy + g.dh;
-    if (enter) { const q = clamp(p / 0.6, 0, 1); const q2 = clamp((p - 0.6) / 0.3, 0, 1); const y = 98 - q * 12 - q2 * 3, sc = 2 - q * 0.7 - q2 * 0.15; sceneSprite(c, st, q < 1 || q2 > 0 ? f : 'stand', 3, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc, 1 - q2); }
-    else { const q = clamp((p - 0.1) / 0.6, 0, 1); const y = floorY - 1 + q * 13, sc = 1.25 + q * 0.75; sceneSprite(c, st, q < 1 && q > 0 ? f : 'stand', 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc, p < 0.1 ? p / 0.1 : 1); }
+    if (enter) {
+      const q = clamp(p / 0.45, 0, 1), q2 = clamp((p - 0.45) / 0.4, 0, 1);
+      if (q2 <= 0) { const y = 98 - q * (98 - floorY), sc = 1.9 - q * 0.65; sceneSprite(c, st, q < 1 ? f : 'stand', 3, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); }
+      else inRect(c, g.dx, g.dy, g.dw, g.dh, () => { const y = floorY - q2 * 5, sc = 1.25 - q2 * 0.3; sceneSprite(c, st, f, 3, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc, 1 - q2); });
+    } else {
+      const q1 = clamp((p - 0.05) / 0.3, 0, 1), q = clamp((p - 0.35) / 0.45, 0, 1);
+      if (q <= 0) inRect(c, g.dx, g.dy, g.dw, g.dh, () => { const y = floorY - (1 - q1) * 5, sc = 0.95 + q1 * 0.3; sceneSprite(c, st, f, 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc, q1); });
+      else { const y = floorY + q * (98 - floorY), sc = 1.25 + q * 0.65; sceneSprite(c, st, q < 1 ? f : 'stand', 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); }
+    }
     if (st.closing) { if (p > 0.72) { R(c, 66, g.dy + 14, 28, 9, '#f4f0e6'); R(c, 79, g.dy + 10, 2, 4, '#8a8e94'); pxText(c, 'ZU', 74, g.dy + 16, '#c8352d'); } const w = pxTextW('SPERRSTUNDE'); R(c, 80 - w / 2 - 3, 4, w + 6, 9, 'rgba(0,0,0,0.6)'); pxText(c, 'SPERRSTUNDE', 80 - w / 2, 6, '#ffb53d'); if (!st._lo && p > 0.72) { st._lo = 1; Snd.tone(220, 0.08, 'square', 0.05); } }
     if (!st._snd && open > 0) { st._snd = 1; if (st.style && st.style.bell) Snd.sfx('ding'); else if (st.style && st.style.door === 'glass') Snd.noise(0.25, 0.05, 2500); else Snd.sfx('door'); }
     if (!enter && !st._snd2 && p > 0.82) { st._snd2 = 1; if (st.style && st.style.door === 'glass') Snd.noise(0.2, 0.04, 2500); else Snd.sfx('door'); }
-    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if ((enter && p < 0.6) || (!enter && p > 0.1 && p < 0.7)) Snd.sfx('step'); }
+    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if ((enter && p < 0.75) || (!enter && p > 0.05 && p < 0.8)) Snd.sfx('step'); }
     if (st.style && st.style.bass && Math.floor(t * 4) !== st._bass) { st._bass = Math.floor(t * 4); Snd.tone(55, 0.1, 'sine', 0.08 * (enter ? open : 1 - p)); }
   },
   /* Rauswurf: Tür fliegt auf, eine Pranke wirft dich auf die Strasse, die Tür knallt zu */
@@ -315,23 +325,27 @@ const SCENES = {
     for (const lx of [24, 136]) { R(c, lx - 4, 22, 8, 6, '#c9a227'); E(c, lx, 30, 6, 3, st.night ? '#ffe8a0' : '#fff4d0'); E(c, lx, 34, 14, 6, 'rgba(255,230,160,0.15)'); }
     const dx = 62, dy = 26, dw = 36, dh = 60;
     R(c, dx - 3, dy - 3, dw + 6, dh + 3, '#5a3a24'); R(c, dx, dy, dw, dh, '#f6e0a8'); R(c, dx + 4, dy + 30, dw - 8, 20, '#7a5232');
-    const open = enter ? clamp((p - 0.35) / 0.2, 0, 1) : clamp(1 - (p - 0.55) / 0.25, 0, 1);
+    const open = enter ? clamp((p - 0.36) / 0.16, 0, 1) : clamp(1 - (p - 0.62) / 0.22, 0, 1);
     const pw = Math.round(dw * (1 - open * 0.92));
     if (pw > 0) { R(c, dx, dy, pw, dh, '#8a5e3a'); if (pw > 8) { R(c, dx + 3, dy + 4, pw - 6, 24, '#9a6e46'); R(c, dx + 3, dy + 32, pw - 6, 24, '#9a6e46'); R(c, dx + pw / 2 - 6, dy + 10, 12, 6, '#c9a227'); pxText(c, '307', dx + pw / 2 - 5, dy + 10, '#3a2a10'); } if (pw > 10) R(c, dx + pw - 6, dy + 34, 3, 2, '#c9a227'); }
     if (!enter && p > 0.85 && pw > 14) { R(c, dx + pw - 9, dy + 36, 8, 10, '#c8352d'); pxText(c, 'Z', dx + pw - 7, dy + 38, '#ffffff'); }
-    R(c, dx + dw + 6, dy + 28, 7, 11, '#2a2a2e'); const green = enter ? p > 0.3 : true; E(c, dx + dw + 9.5, dy + 31, 1.5, 1.5, green ? '#3fe05a' : '#e2554a');
+    R(c, dx + dw + 6, dy + 28, 7, 11, '#2a2a2e'); const green = enter ? p > 0.32 : true; E(c, dx + dw + 9.5, dy + 31, 1.5, 1.5, green ? '#3fe05a' : '#e2554a');
     const f = Math.floor(t * 8) % 2 ? 'walkA' : 'walkB';
+    const floorY = dy + dh;
     if (enter) {
-      const q = clamp(p / 0.3, 0, 1), y = 96 - q * 10;
-      if (p < 0.55) { sceneSprite(c, st, q < 1 ? f : 'stand', 3, 80 - SPR_W, y - SPR_H * 2, 2); if (p > 0.18 && p < 0.4) R(c, dx + dw + 2, dy + 32, 6, 4, '#f4f0e6'); }
-      else { const q2 = clamp((p - 0.55) / 0.3, 0, 1); sceneSprite(c, st, f, 3, 80 - SPR_W * (2 - q2 * 0.6) / 2, 86 - q2 * 6 - SPR_H * (2 - q2 * 0.6), 2 - q2 * 0.6, 1 - q2); }
-      if (p > 0.3 && !st._beep) { st._beep = 1; Snd.tone(1600, 0.06, 'square', 0.04); Snd.tone(2000, 0.08, 'square', 0.04, 0.08); }
+      /* zur Tür gehen, Karte an den Leser, Tür auf, durch die Öffnung hinein (abgeschnitten am Rahmen) */
+      const q = clamp(p / 0.3, 0, 1), q2 = clamp((p - 0.52) / 0.35, 0, 1);
+      if (p < 0.52) { const y = 98 - q * (98 - floorY), sc = 1.9 - q * 0.6; sceneSprite(c, st, q < 1 ? f : 'stand', 3, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); if (p > 0.22 && p < 0.4) { R(c, dx + dw + 2, dy + 32, 6, 4, '#f4f0e6'); R(c, 80 + 10, floorY - 24, dx + dw + 2 - 90, 3, '#2a2a30'); } }
+      else inRect(c, dx, dy, dw, dh, () => { const sc = 1.3 - q2 * 0.3; sceneSprite(c, st, f, 3, 80 - SPR_W * sc / 2, floorY - q2 * 5 - SPR_H * sc, sc, 1 - q2); });
+      if (p > 0.32 && !st._beep) { st._beep = 1; Snd.tone(1600, 0.06, 'square', 0.04); Snd.tone(2000, 0.08, 'square', 0.04, 0.08); }
     } else {
-      const q = clamp(p / 0.55, 0, 1); sceneSprite(c, st, q < 1 ? f : 'stand', 0, 80 - SPR_W * (1.4 + q * 0.6) / 2, 82 + q * 12 - SPR_H * (1.4 + q * 0.6), 1.4 + q * 0.6, p < 0.08 ? p / 0.08 : 1);
+      const q1 = clamp(p / 0.25, 0, 1), q = clamp((p - 0.25) / 0.45, 0, 1);
+      if (q <= 0) inRect(c, dx, dy, dw, dh, () => { const sc = 1 + q1 * 0.3; sceneSprite(c, st, f, 0, 80 - SPR_W * sc / 2, floorY - (1 - q1) * 5 - SPR_H * sc, sc, q1); });
+      else { const sc = 1.3 + q * 0.6; sceneSprite(c, st, q < 1 ? f : 'stand', 0, 80 - SPR_W * sc / 2, floorY + q * (98 - floorY) - SPR_H * sc, sc); }
     }
     if (!st._snd && open > 0) { st._snd = 1; Snd.sfx('door'); }
     if (!enter && !st._snd2 && p > 0.78) { st._snd2 = 1; Snd.sfx('door'); }
-    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if ((enter && (p < 0.3 || p > 0.55)) || (!enter && p < 0.55)) Snd.sfx('step'); }
+    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if ((enter && (p < 0.3 || p > 0.52)) || (!enter && p < 0.7)) Snd.sfx('step'); }
   },
   /* Ankunft Innsbruck Hbf: der Railjet steht am Bahnsteig, die Tür zischt auf, du steigst aus */
   trainexit(c, t, p, st) {
@@ -345,13 +359,16 @@ const SCENES = {
     for (const wx of [6, 30, 112, 136]) { R(c, wx, ty + 8, 20, 14, '#3a4a5a'); R(c, wx + 1, ty + 9, 18, 12, st.night ? '#ffe8b0' : '#9ac0d8'); }
     const dx = 64, dw = 32, dh = 40, op = clamp((p - 0.12) / 0.18, 0, 1), sl = Math.round(dw / 2 * op * 0.95);
     R(c, dx, ty + 4, dw, dh, '#2a2a30'); R(c, dx + 2, ty + 6, dw - 4, dh - 4, '#f4e8c8');
-    const q = clamp((p - 0.32) / 0.55, 0, 1);
-    if (p > 0.25) { const sc = 1.3 + q * 0.8, y = ty + dh + 2 + q * 20; sceneSprite(c, st, q > 0 && q < 1 ? (Math.floor(t * 8) % 2 ? 'walkA' : 'walkB') : 'stand', 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); }
+    /* Im Wagen (abgeschnitten an der Türöffnung) nach vorne treten, dann auf den Bahnsteig hinunter */
+    const doorBot = ty + 4 + dh, f = Math.floor(t * 8) % 2 ? 'walkA' : 'walkB';
+    const q1 = clamp((p - 0.25) / 0.25, 0, 1), q = clamp((p - 0.5) / 0.4, 0, 1);
+    if (p > 0.25 && q <= 0) inRect(c, dx + 2, ty + 6, dw - 4, dh - 2, () => { const sc = 0.95 + q1 * 0.2; sceneSprite(c, st, f, 0, 80 - SPR_W * sc / 2, doorBot - 3 + q1 * 3 - SPR_H * sc, sc, q1); });
     for (const [x0, w] of [[dx, dw / 2 - sl], [dx + dw / 2 + sl, dw / 2 - sl]]) if (w > 0) { R(c, x0, ty + 4, w, dh, '#c8302a'); R(c, x0 + 2, ty + 8, Math.max(0, w - 4), 14, '#3a4a5a'); }
+    if (q > 0) { const sc = 1.15 + q * 0.75, y = doorBot + q * (95 - doorBot) - Math.sin(q * Math.PI) * 3; sceneSprite(c, st, q < 1 ? f : 'stand', 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); }
     if (op > 0 && op < 1) for (let k = 0; k < 2; k++) E(c, dx + rnd(0, dw), ty + dh + 2, 3, 1.5, 'rgba(255,255,255,0.35)');
     R(c, 0, 82, SCENE_W, 14, '#8a8e94'); R(c, 0, 82, SCENE_W, 2, '#ffd23d'); for (let x = 0; x < SCENE_W; x += 6) P(c, x + 2, 88, '#7a7e84');
     if (p > 0.12 && !st._hiss) { st._hiss = 1; Snd.noise(0.5, 0.06, 3000); Snd.tone(880, 0.08, 'square', 0.03); }
-    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if (q > 0 && q < 1) Snd.sfx('step'); }
+    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if (p > 0.25 && p < 0.9) Snd.sfx('step'); }
   },
   /* Jessy: Händchenhalten am Inn, Kuscheln im Bogen, das volle Programm (Vorhang zu) */
   jessy(c, t, p, st) {
