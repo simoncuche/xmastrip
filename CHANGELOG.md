@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.10.0 – 03.10.2026
+
+- Darts mit Handyneigung: Im Darts-Spiel schaltet „📱 Mit Handyneigung zielen“ die Bewegungssensoren ein (auf dem iPhone fragt der Browser einmal um Erlaubnis). Die Lage beim Einschalten ist die Mitte der Scheibe, Neigen bewegt das Fadenkreuz, Tippen wirft. Je mehr Promille, desto mehr zittert das Kreuz. „Neu ausrichten“ setzt die Mitte neu; auf Android bleibt die Einstellung für die nächsten Spiele gespeichert.
+- Ereignisse passieren öfter: zwei pro Tag statt einem – eines tagsüber, eines am Abend, mit mindestens zweieinhalb Stunden Abstand. Hund und Katze, Taube, Taschendieb, Krampus, Fundsache, Überfall und Polizei können sich auf einer langen Reise wiederholen.
+
 ## 2.9.0 – 03.10.2026
 
 - Godzilla allein, dafür richtig: King Kong ist gestrichen. Godzilla ist jetzt rund 90 Pixel hoch und detailliert animiert – Schritte mit angehobenem Fuss und Krallen, pendelnder Schwanz mit Platten, drei Reihen Rückenplatten, Bauchplatten und Schuppen, Arme mit Krallen, Augen, die blinzeln, Brauenwulst, Nüstern und ein Maul, das zum Brüllen aufreisst und die Zahnreihen zeigt.

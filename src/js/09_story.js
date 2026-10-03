@@ -430,36 +430,50 @@ const Story = {
   dropActor(a) { G.npcs = G.npcs.filter((n) => n !== a); },
   evCount(id) { return (G.S.flags.ev && G.S.flags.ev[id]) || 0; },
   EVENTS: [
-    { id: 'ueberfall', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 23 || h < 4; } },
-    { id: 'polizei', max: 1, cond: () => { const h = hourOf(G.S.time); const v = Story.victim(); return v && h >= 11 && h < 23 && Story.schedule(v) && !Story.away(v); } },
-    { id: 'hundkatze', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 8 && h < 20; } },
-    { id: 'taube', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 7 && h < 19 && G.S.st.wet === 0; } },
-    { id: 'krampus', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 17 && h < 22; } },
-    { id: 'portemonnaie', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 21; } },
-    { id: 'ufo', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 21 || h < 3; } },
+    { id: 'ueberfall', max: 2, night: 23, cond: () => { const h = hourOf(G.S.time); return h >= 23 || h < 4; } },
+    { id: 'polizei', max: 2, cond: () => { const h = hourOf(G.S.time); const v = Story.victim(); return v && h >= 11 && h < 23 && Story.schedule(v) && !Story.away(v); } },
+    { id: 'hundkatze', max: 3, cond: () => { const h = hourOf(G.S.time); return h >= 8 && h < 20; } },
+    { id: 'taube', max: 3, cond: () => { const h = hourOf(G.S.time); return h >= 7 && h < 19 && G.S.st.wet === 0; } },
+    { id: 'krampus', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 17 && h < 22; } },
+    { id: 'portemonnaie', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 21; } },
+    { id: 'ufo', max: 1, night: 21, cond: () => { const h = hourOf(G.S.time); return h >= 21 || h < 3; } },
     { id: 'trump', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 18; } },
-    { id: 'verfolgung', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 23 && G.S.money.eur >= 20; } },
+    { id: 'verfolgung', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 23 && G.S.money.eur >= 20; } },
   ],
   victim() { return FRIENDS.oelu && !Story.away('oelu') ? 'oelu' : (FRIENDS.didu ? 'didu' : Object.keys(FRIENDS)[0]); },
   maybeEvent() {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
     /* Tag 5: Godzilla – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
-    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; this.announce('monster').then(() => this.ev_monster()); return; }
+    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; fl.lastEv = G.S.time; this.announce('monster').then(() => this.ev_monster()); return; }
     /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
        einmal gemischt (flags.evOrder), damit jede Reise anders verläuft. Passt das nächste geplante Ereignis zur Zeit nicht
        (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
     const day = dayOf(G.S.time);
     fl.evPlan = fl.evPlan || {};
     if (!fl.evOrder) { const ids = this.EVENTS.map((e) => e.id); for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; } fl.evOrder = ids; }
-    if (fl.evPlan[day] === undefined) fl.evPlan[day] = Math.round((10 + Math.random() * 13) * 2) / 2;
-    if (hourOf(G.S.time) < fl.evPlan[day]) return;
-    if (fl.evDay === day) return; /* genau ein Ereignis pro Tag */
+    /* Zwei Ereignisse pro Tag: eines tagsüber (10–16 Uhr) und eines abends (17–23:30 Uhr), Startzeit jeweils zufällig.
+       Alte Spielstände hatten eine einzelne Zahl; null (Tests) heisst: an diesem Tag keine Ereignisse. */
+    if (fl.evPlan[day] === undefined) {
+      let eve = Math.round((17 + Math.random() * 6.5) * 2) / 2;
+      /* Ist als Nächstes ein Nacht-Ereignis dran (UFO, Überfall), wird der Abendtermin entsprechend spät gelegt */
+      const nextUp = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter((e) => e && this.evCount(e.id) < e.max).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)).slice(0, 2).find((e) => e.night);
+      if (nextUp) eve = Math.min(23.5, Math.max(eve, nextUp.night + Math.round(Math.random() * 2) / 2));
+      fl.evPlan[day] = [Math.round((10 + Math.random() * 6) * 2) / 2, eve];
+    }
+    if (typeof fl.evPlan[day] === 'number') fl.evPlan[day] = [fl.evPlan[day]];
+    const plan = fl.evPlan[day];
+    if (!plan) return;
+    fl.evN = fl.evN || {};
+    if (fl.evDay === day && !fl.evN[day]) fl.evN[day] = 1; /* Spielstände von vor 2.10 */
+    const n = fl.evN[day] || 0;
+    if (n >= plan.length || hourOf(G.S.time) < plan[n]) return;
+    if (fl.lastEv != null && G.S.time - fl.lastEv < 150) return; /* mindestens 2½ Stunden Abstand */
     const byOrder = fl.evOrder.map((id) => this.EVENTS.find((e) => e.id === id)).filter(Boolean);
     const pool = byOrder.filter((e) => this.evCount(e.id) < e.max && e.cond()).sort((a, b) => this.evCount(a.id) - this.evCount(b.id)); /* Wiederholungen erst, wenn alles einmal dran war */
     if (!pool.length) return;
     const e = pool[0];
-    fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time);
+    fl.ev = fl.ev || {}; fl.ev[e.id] = this.evCount(e.id) + 1; fl.lastEv = G.S.time; fl.evDay = dayOf(G.S.time); fl.evN[day] = n + 1;
     this.announce(e.id).then(() => this['ev_' + e.id]());
   },
   /* Jedes Ereignis beginnt mit einer kurzen Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich

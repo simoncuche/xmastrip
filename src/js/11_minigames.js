@@ -52,12 +52,39 @@ const Mini = {
       P(bx, x, y, c);
     }
     for (let i = 0; i < 20; i++) { const a = (i * 18) * Math.PI / 180; const tx = CX + Math.sin(a) * (RAD + 6) - 3, ty = CY - Math.cos(a) * (RAD + 6) - 2; pxText(bx, SEG[i], Math.round(tx - (SEG[i] > 9 ? 2 : 0)), Math.round(ty), '#f2eee4'); }
-    return this.run('Darts', opp ? `gegen ${opp.name}` : 'Training', `<canvas aria-label="Dartscheibe"></canvas><div class="mini-bar"><span id="dInfo">Tippe oder drück A, wenn das Fadenkreuz richtig steht.</span><b id="dScore">0</b></div><button class="btn primary" id="dThrow">Werfen</button>`, 160, 132, (api) => {
+    return this.run('Darts', opp ? `gegen ${opp.name}` : 'Training', `<canvas aria-label="Dartscheibe"></canvas><div class="mini-bar"><span id="dInfo">Tippe oder drück A, wenn das Fadenkreuz richtig steht.</span><b id="dScore">0</b></div><button class="btn primary" id="dThrow">Werfen</button>${'DeviceOrientationEvent' in window ? '<button class="btn" id="dTilt">📱 Mit Handyneigung zielen</button>' : ''}`, 160, 132, (api) => {
       const st = { round: 1, dart: 0, me: 0, opp: 0, darts: [], turn: 'me', t: 0, msg: '', aiT: 0, bull: false, phase: 'aim', wait: 0 };
       const amp = 22 * Mini.wob();
+      /* Zielen per Handyneigung: Lage beim Einschalten = Mitte der Scheibe; Alkohol und Müdigkeit lassen das Kreuz zittern */
+      const tilt = { on: false, b0: null, g0: null, x: CX, y: CY, tx: CX, ty: CY };
+      const onOri = (e) => {
+        if (!api.cv.isConnected) { window.removeEventListener('deviceorientation', onOri); return; }
+        if (e.beta == null || e.gamma == null) return;
+        const ang = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+        let ix = e.gamma, iy = e.beta;
+        if (ang === 90) { ix = e.beta; iy = -e.gamma; } else if (ang === -90 || ang === 270) { ix = -e.beta; iy = e.gamma; }
+        if (tilt.b0 == null) { tilt.g0 = ix; tilt.b0 = iy; }
+        tilt.tx = clamp(CX + (ix - tilt.g0) * 3.2, 4, 156); tilt.ty = clamp(CY + (iy - tilt.b0) * 3.2, 4, 128);
+      };
+      const tiltBtn = api.o.querySelector('#dTilt');
+      const enableTilt = async () => {
+        try { if (typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') { UI.toast('Ohne Erlaubnis für Bewegungssensoren geht das Zielen per Neigung nicht.', 'warn'); return; } } } catch (e) { UI.toast('Bewegungssensoren sind hier nicht verfügbar.', 'warn'); return; }
+        if (!tilt.on) window.addEventListener('deviceorientation', onOri);
+        tilt.on = true; tilt.b0 = null; tilt.g0 = null; tilt.x = tilt.tx = CX; tilt.y = tilt.ty = CY;
+        G.S.flags.dartsTilt = 1;
+        if (tiltBtn) tiltBtn.textContent = '📱 Neu ausrichten (Mitte = jetzige Lage)';
+        st.msg = 'Handy neigen zum Zielen, tippen zum Werfen.';
+      };
+      if (tiltBtn) tiltBtn.onclick = enableTilt;
+      if (G.S.flags.dartsTilt && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission !== 'function') enableTilt();
+      Mini._darts = { tilt, enableTilt }; /* für Tests */
+      const aim = () => {
+        if (tilt.on) { const w = 3.5 + Math.max(0, Mini.wob() - 1) * 7; return [tilt.x + Math.sin(st.t * 2.3) * w + Math.sin(st.t * 5.7) * w * 0.4, tilt.y + Math.sin(st.t * 1.9 + 1) * w + Math.cos(st.t * 6.1) * w * 0.3]; }
+        return [CX + Math.sin(st.t * 1.7) * amp + Math.sin(st.t * 4.1) * amp * 0.25, CY + Math.sin(st.t * 2.3 + 1) * amp * 0.8];
+      };
       const throwIt = () => {
         if (st.turn !== 'me' || st.phase !== 'aim') return;
-        const ax = CX + Math.sin(st.t * 1.7) * amp + Math.sin(st.t * 4.1) * amp * 0.25, ay = CY + Math.sin(st.t * 2.3 + 1) * amp * 0.8;
+        const [ax, ay] = aim();
         const n = 2 + G.S.st.prom * 3;
         const hx = ax + rnd(-n, n), hy = ay + rnd(-n, n);
         const s = score(hx, hy);
@@ -75,9 +102,11 @@ const Mini = {
         c.drawImage(bc, 0, 0);
         for (const d of st.darts) { R(c, d.x - 1, d.y - 1, 3, 3, d.me ? '#ffb53d' : '#7ad0f0'); R(c, d.x + 1, d.y - 4, 1, 3, '#e8e8e8'); }
         if (st.wait > 0) { st.wait -= dt; if (st.wait <= 0) { if (st.turn === 'next') { st.round++; st.darts = []; st.turn = 'me'; } else if (st.turn === 'opp') st.phase = 'ai'; } }
+        if (tilt.on) { const k = 1 - Math.pow(0.0005, dt); tilt.x += (tilt.tx - tilt.x) * k; tilt.y += (tilt.ty - tilt.y) * k; }
         if (st.turn === 'me' && st.phase === 'aim' && st.wait <= 0) {
-          const ax = CX + Math.sin(st.t * 1.7) * amp + Math.sin(st.t * 4.1) * amp * 0.25, ay = CY + Math.sin(st.t * 2.3 + 1) * amp * 0.8;
-          R(c, ax - 5, ay, 4, 1, '#ffffff'); R(c, ax + 2, ay, 4, 1, '#ffffff'); R(c, ax, ay - 5, 1, 4, '#ffffff'); R(c, ax, ay + 2, 1, 4, '#ffffff'); P(c, ax, ay, '#ff3a3a');
+          const [ax, ay] = aim();
+          for (const [col, o] of [['#101014', 1], ['#ffffff', 0]]) { R(c, ax - 7 - o, ay - o, 5 + o * 2, 1 + o * 2, col); R(c, ax + 3 - o, ay - o, 5 + o * 2, 1 + o * 2, col); R(c, ax - o, ay - 7 - o, 1 + o * 2, 5 + o * 2, col); R(c, ax - o, ay + 3 - o, 1 + o * 2, 5 + o * 2, col); }
+          c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 1; c.beginPath(); c.arc(ax + 0.5, ay + 0.5, 5, 0, Math.PI * 2); c.stroke(); P(c, ax, ay, '#ff3a3a');
         }
         if (st.phase === 'ai') {
           st.aiT -= dt;
