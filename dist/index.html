@@ -5469,7 +5469,8 @@ MAP_BUILDERS.sursee = () => {
   m.fill(75, 54, 2, 1, T.COBBLE, 1); m.fill(96, 54, 2, 1, T.COBBLE, 1);
   /* Ehret-Park mit zweitem Sure-Arm, Brücke Badstrasse, Spielplatz, Brunnen */
   m.fill(52, 55, 66, 13, T.GRASS, 2);
-  m.fill(52, 62, 80, 2, T.WATER);
+  /* zweiter Sure-Arm: durch den Ehret-Park, vor der Münstervorstadt nach Süden Richtung See */
+  m.fill(52, 62, 66, 2, T.WATER); m.fill(116, 64, 2, 16, T.WATER);
   m.fill(84, 62, 3, 2, T.BRIDGE); m.fill(84, 55, 1, 7, T.GRAVEL); m.fill(84, 64, 1, 4, T.GRAVEL);
   m.fill(53, 58, 64, 1, T.GRAVEL); m.fill(75, 55, 1, 3, T.GRAVEL); m.fill(96, 55, 1, 3, T.GRAVEL);
   m.add(mkObj(84, 61, 3, 1, 6, (c, Wd) => { R(c, 0, 0, Wd, 2, '#8a8e94'); for (let k = 0; k < Wd; k += 6) R(c, k, 0, 1, 6, '#6a6e74'); }, { solid: false }));
@@ -5490,8 +5491,7 @@ MAP_BUILDERS.sursee = () => {
   for (const [x, y, k] of [[123, 44, 'red'], [128, 45, 'yellow'], [125, 48, 'green']]) m.add(objTree(x, y, k, true));
   m.add(objBench(126, 47, 0));
   m.fill(118, 54, 14, 26, T.PAVE, 1);
-  m.fill(118, 62, 14, 2, T.WATER); m.fill(122, 62, 3, 2, T.BRIDGE);
-  m.add(objOase(119, 55, 6, 6, { door: 3, name: 'NR. 8', num: 8 }));
+  m.add(objOase(119, 55, 6, 6, { door: 3, num: 8 }));
   m.warp(122, 60, 'isa_haus', 'entry', { label: 'Münstervorstadt 8 (Isa)', guard: () => Sur.isaDoor() }); m.spawn('isa_out', 122, 61, 0);
   m.add(objOase(126, 55, 6, 6, { door: 3, num: 6 }));
   m.add(objOase(118, 65, 7, 6, { door: 3, num: 4 })); m.add(objOase(126, 65, 5, 6, { door: 2, num: 2 }));
