@@ -983,12 +983,80 @@ sRoom('surseepark', { name: 'Surseepark', sign: false, w: 30, h: 15, door: 14, b
     m.trig(1, 11, 3, 2, { label: 'Kiosk', act: () => Story.shop('kiosk_sursee') });
     m.add(srATM(9, 10)); m.trig(9, 10, 1, 1, { label: 'Bankomat', act: () => Sur.atm() });
     m.add(srEscalator(25, 11));
+    m.trig(25, 11, 2, 3, { label: 'Rolltreppe nach oben', act: () => warpTo('surseepark_og', 'esc', { label: 'Obergeschoss' }) });
+    m.spawn('esc', 24, 12, 1);
     m.add(srXmasTree(20, 11));
     m.add(objBench(17, 13, 0, '#c8a070')); m.add(objBench(6, 13, 0, '#c8a070')); m.add(objBench(22, 13, 0, '#c8a070'));
     for (const [x, y] of [[5, 11], [12, 13], [17, 11], [28, 13]]) m.add(objPlant(x, y));
     m.pedZones.push({ x: 1, y: 10, w: 28, h: 4, n: 8 }, { x: 19, y: 4, w: 5, h: 3, n: 1 }, { x: 25, y: 4, w: 4, h: 2, n: 1 });
     m.light(5 * 16, 6 * 16, 80, '#fffaf0'); m.light(24 * 16, 6 * 16, 80, '#fffaf0');
   } });
+
+/* 11b. Surseepark, Obergeschoss: Rolltreppe, Spielwaren, Buchhandlung, Glace-Bar, Kinderparadies, Lichthof mit Blick nach unten, Passerelle */
+MAP_BUILDERS.surseepark_og = () => {
+  const m = new GMap('surseepark_og', 28, 14, { name: 'Surseepark · Obergeschoss', indoor: true, wallStyle: { cap: '#5a5e64' }, bg: '#0a0a10', city: 'sursee' });
+  roomShell(m, 5, { floor: T.PLAZA, floorV: 0 });
+  m.spots = { friend1: [14, 12, 0] };
+  m.decal((c) => {
+    /* Schilder an der Rückwand */
+    pxText(c, 'SPIELWAREN', 3 * 16, 18, '#e8402e'); for (let k = 0; k < 5; k++) E(c, 3 * 16 + 4 + k * 12, 28, 3, 3, ['#e8402e', '#3a8ae0', '#f2c23a', '#3fae4a', '#e87ac0'][k]);
+    pxText(c, 'BUCHHANDLUNG', 10 * 16, 18, '#3a5a3a');
+    pxText(c, 'GLACE & KAFI', 16 * 16 + 4, 18, '#c87ab0');
+    pxText(c, 'KINDERPARADIES', 21 * 16 + 4, 18, '#2f8ec8');
+    /* Lichthof: Glasbrüstung, unten sieht man den Christbaum */
+    const X = 9 * 16, Y = 9 * 16, W = 8 * 16, H = 3 * 16;
+    R(c, X, Y, W, H, '#c9c6bc'); R(c, X + 4, Y + 4, W - 8, H - 8, '#5e5a54');
+    for (let xx = X + 4; xx < X + W - 4; xx += 8) R(c, xx, Y + 4, 1, H - 8, '#6e6a62'); for (let yy = Y + 4; yy < Y + H - 4; yy += 8) R(c, X + 4, yy, W - 8, 1, '#6e6a62');
+    R(c, X + 4, Y + 4, W - 8, 4, 'rgba(0,0,0,0.35)');
+    E(c, X + W / 2 + 16, Y + H / 2, 6, 9, '#2f6a3a'); E(c, X + W / 2 + 16, Y + H / 2 - 4, 4, 6, '#3f8a4a'); for (let k = 0; k < 6; k++) P(c, X + W / 2 + 12 + (k % 3) * 4, Y + H / 2 - 6 + Math.floor(k / 3) * 6, ['#f2c23a', '#e8402e'][k % 2]);
+    for (let k = 0; k < 6; k++) { const px = X + 12 + k * 20, py = Y + 14 + (k % 2) * 12; E(c, px, py, 2, 2, ['#3a2a20', '#c8302a', '#2f5fb8'][k % 3]); P(c, px, py - 3, '#e0b090'); }
+    P(c, X + W / 2 + 16, Y + H / 2 - 10, '#ffd23d'); R(c, X + 14, Y + 26, 14, 8, '#d8302a'); pxText(c, 'K', X + 18, Y + 27, '#ffffff');
+    R(c, X, Y, W, 2, '#e8f4fa'); R(c, X, Y + H - 2, W, 2, '#e8f4fa'); R(c, X, Y, 2, H, '#e8f4fa'); R(c, X + W - 2, Y, 2, H, '#e8f4fa');
+    R(c, X - 2, Y - 3, W + 4, 1, '#9aa0a6'); R(c, X - 2, Y + H + 2, W + 4, 1, '#9aa0a6');
+    /* Passerelle an der rechten Wand */
+    R(c, 27 * 16 - 2, 9 * 16, 2, 3 * 16, '#8ad0d8');
+  });
+  m.solid(9, 9, 8, 3, 1);
+  m.trig(9, 8, 8, 1, { label: 'Hinunterschauen', act: () => Sur.look('lichthof') });
+  m.trig(9, 12, 8, 1, { label: 'Hinunterschauen', act: () => Sur.look('lichthof') });
+  /* Rolltreppe nach unten */
+  m.add(srEscalator(1, 9));
+  m.trig(1, 9, 2, 3, { label: 'Rolltreppe nach unten', act: () => warpTo('surseepark', 'esc', { label: 'Erdgeschoss' }) });
+  m.spawn('esc', 3, 10, 2); m.spawn('entry', 3, 10, 2);
+  /* Spielwaren */
+  m.add(shelfRow(1, 3, 3, ['#e8402e', '#3a8ae0', '#f2c23a', '#3fae4a', '#e87ac0'], '#f4f4f0'));
+  m.add(mkObj(4, 3, 2, 1, 16, (c, W, H) => { R(c, 0, 4, W, H - 5, '#f4f4f0'); for (let k = 0; k < 3; k++) { E(c, 6 + k * 10, 10, 4, 4, '#f4f0e6'); R(c, 4 + k * 10, 6, 1, 2, '#e8902a'); P(c, 7 + k * 10, 9, '#1a1a1a'); } R(c, 2, 16, W - 4, 6, '#c8302a'); R(c, 4, 15, 10, 3, '#a8282a'); E(c, 8, 22, 2, 2, '#1a1a1e'); E(c, 22, 22, 2, 2, '#1a1a1e'); }));
+  m.add(objCounter(2, 6, 3, 1, { top: '#f4f4f0', front: '#e8402e', reg: true }));
+  m.trig(2, 6, 3, 1, { label: 'Spielwaren', act: () => Sur.ogShop('spielwaren') });
+  srNpc(m, 'spielwarenv', 'Verkäuferin Priska', 3, 5, 0, 3201, { hair: 16, hairCol: 2, beard: 0, top: 1, topCol: 6, pants: 0, pantsCol: 2, hat: 0, glasses: 0 }, () => Sur.ogShop('spielwaren'), ['note']);
+  /* Buchhandlung */
+  m.add(srBookshelf(9, 3, 1)); m.add(srBookshelf(10, 3, 1)); m.add(srBookshelf(11, 3, 1)); m.add(srBookshelf(12, 3, 1));
+  m.add(objTable(10, 5, 2, 1, { col: '#c8a070' }));
+  m.add(objCounter(13, 5, 2, 1, { top: '#c8a070', front: '#3a5a3a', reg: true }));
+  m.trig(13, 5, 2, 1, { label: 'Buchhandlung', act: () => Sur.ogShop('buchhandlung') });
+  srNpc(m, 'buchv', 'Buchhändler Urs', 14, 4, 0, 3202, { hair: 5, hairCol: 7, beard: 2, beardCol: 7, top: 6, topCol: 3, pants: 1, pantsCol: 2, hat: 0, glasses: 1 }, () => Sur.ogShop('buchhandlung'), ['dots']);
+  /* Glace & Café */
+  m.add(objCounter(16, 4, 4, 1, { top: '#f4f4f0', front: '#e8a0c8', reg: true }));
+  m.add(mkObj(16, 3, 2, 1, 10, (c, W) => { for (let k = 0; k < 4; k++) { R(c, 2 + k * 7, 6, 6, 5, ['#f4e8d0', '#7a4a2a', '#e8a0c8', '#c8e070', '#f2c23a', '#e8402e', '#a8d8f0', '#f4f4f0'][k]); } }));
+  m.trig(16, 4, 4, 1, { label: 'Glace & Café', act: () => Story.shop('glace_og') });
+  srNpc(m, 'glacev', 'Glace-Verkäuferin Nina', 18, 3, 0, 3203, { hair: 10, hairCol: 1, beard: 0, top: 2, topCol: 7, pants: 0, pantsCol: 2, hat: 0, glasses: 0 }, () => Story.shop('glace_og'), ['note']);
+  srTableLR(m, 17, 7, 1, { col: '#f4f4f0', items: 1, round: true }, '#e8a0c8');
+  /* Kinderparadies mit Bällebad und Rutsche */
+  m.add(mkObj(21, 3, 5, 3, 10, (c, W, H) => {
+    R(c, 0, 4, W, H - 4, '#f4f4f0'); R(c, 2, 8, W - 4, H - 12, '#3a8ae0');
+    for (let i = 0; i < 90; i++) E(c, 4 + hash(i, 81) * (W - 8), 10 + hash(i, 82) * (H - 18), 2, 2, ['#e8402e', '#f2c23a', '#3fae4a', '#e87ac0', '#f4f4f0'][i % 5]);
+    R(c, W - 18, 0, 4, 14, '#f2c23a'); for (let k = 0; k < 10; k++) R(c, W - 16 - k, 12 + k * 2, 8, 2, '#e8402e');
+    R(c, 0, H - 4, W, 4, '#2f8ec8');
+  }));
+  m.trig(21, 6, 5, 1, { label: 'Kinderparadies', act: () => Sur.kinderparadies() });
+  /* Bänke, Pflanzen, Passerelle */
+  m.add(objBench(5, 12, 0, '#c8a070')); m.add(objBench(20, 12, 0, '#c8a070'));
+  for (const [x, y] of [[8, 7], [19, 9], [26, 12]]) m.add(objPlant(x, y));
+  m.trig(26, 9, 1, 3, { label: 'Passerelle zum Parkhaus', act: () => Sur.look('passerelle') });
+  m.pedZones.push({ x: 3, y: 7, w: 22, h: 1, n: 4 }, { x: 18, y: 12, w: 8, h: 1, n: 2 });
+  m.light(7 * 16, 5 * 16, 80, '#fffaf0'); m.light(21 * 16, 5 * 16, 80, '#fffaf0'); m.light(13 * 16, 10 * 16, 60, '#fff0d0');
+  return m;
+};
 
 /* 12. Stadttheater Sursee (beim Obertor): Bühne, Zuschauerreihen, Foyer mit Kasse, Fundus hinter der Bühne */
 sRoom('theater', { name: 'Stadttheater Sursee', sign: false, w: 20, h: 13, door: 12, back: ['sursee', 'theater_out'], style: 0, cap: '#3a1a1a', floor: T.WOOD, floorV: 3, lightC: '#ffe0a0', light: false,
@@ -1420,4 +1488,4 @@ MAP_BUILDERS.inseli = () => {
   return m;
 };
 
-const SURSEE_ROOMS = ['zunftstube', 'rathaus', 'wildermann', 'muehle', 'stadtcafe', 'tnt', 'roessli', 'mosquito', 'lafuga', 'craftwerk', 'surseepark', 'theater', 'sankturbanhof', 'stadthalle', 'kulturwerk', 'isa_haus', 'polizei', 'kloster', 'inseli'];
+const SURSEE_ROOMS = ['zunftstube', 'rathaus', 'wildermann', 'muehle', 'stadtcafe', 'tnt', 'roessli', 'mosquito', 'lafuga', 'craftwerk', 'surseepark', 'surseepark_og', 'theater', 'sankturbanhof', 'stadthalle', 'kulturwerk', 'isa_haus', 'polizei', 'kloster', 'inseli'];

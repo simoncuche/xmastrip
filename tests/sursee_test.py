@@ -148,6 +148,12 @@ with sync_playwright() as p:
     run("await Sur.veloToggle();", 0.2)
     expect("G.player.velo", "Aufsteigen hat nicht geklappt")
     expect("(() => { const t = G.map.trigs.find((t) => t.label === 'Poller'); G.player.x = 57 * 16 + 8; G.player.y = 40 * 16 + 8; G.player.dir = 3; G.S.su.follow = 1; Sur.spawnFollowers(true); const k = G.npcs.find((n) => n.follower); k.x = G.player.x; k.y = G.player.y - 10; const it = findInteraction(); return it && it.trig && it.trig.label !== undefined; })()", "Begleiter verdeckt den Trigger")
+    # Surseepark: Rolltreppe ins Obergeschoss, Läden, Kinderparadies, zurück
+    run("G.S.time = 3 * 1440 + 11 * 60; G.S.su.follow = 1; enterMap('surseepark', 'entry'); await G.map.trigs.find((t) => t.label === 'Rolltreppe nach oben').act();", 2.0)
+    expect("G.map.id === 'surseepark_og'", "Rolltreppe führt nicht ins Obergeschoss")
+    run("await Sur.kinderparadies(); await Sur.look('lichthof'); await Sur.look('passerelle');", 1.5)
+    run("await G.map.trigs.find((t) => t.label === 'Rolltreppe nach unten').act();", 2.0)
+    expect("G.map.id === 'surseepark'", "Rolltreppe nach unten fehlt")
     # Feuerwehreinsatz: Notruf, Löschfahrzeug, Strahlrohr, Drehleiter, Rettung
     run("G.S.time = dayOf(G.S.time) * 1440 + 15 * 60; enterMap('sursee', 'rathausplatz'); await Story.announce('brand'); await Sur.ev_brand();", 0.5, q=[0, 0])
     expect("G.live && Sur._brand && Sur._brand.truck.go === 3", "Feuerwehreinsatz nicht gestartet")

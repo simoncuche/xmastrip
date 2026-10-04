@@ -92,6 +92,13 @@ Object.assign(ITEMS, {
   felchen: { n: 'Felchen (frisch gefangen)', t: 'souv', icon: 'fish', inv: true },
   detektor: { n: 'Metalldetektor', t: 'souv', icon: 'detector', inv: true },
   konzertticket: { n: 'Konzertticket Stadthalle', t: 'souv', icon: 'ticket', inv: true },
+  pluschgans: { n: 'Plüschgans', t: 'souv', icon: 'flower', inv: true },
+  legofeuerwehr: { n: 'Lego-Feuerwehrauto', t: 'souv', icon: 'card', inv: true },
+  plektren: { n: 'Gitarren-Plektren (für Elin)', t: 'souv', icon: 'card', inv: true },
+  kinderhelm: { n: 'Kinder-Velohelm (für Timo)', t: 'souv', icon: 'cap', inv: true },
+  krimi: { n: 'Krimi „Tod am Sempachersee“', t: 'souv', icon: 'paper', inv: true },
+  bilderbuch: { n: 'Bilderbuch „Der kleine Traktor“', t: 'souv', icon: 'paper', inv: true },
+  glace: { n: 'Glace (zwei Kugeln)', t: 'food', food: 10, mood: 8, en: 2, icon: 'cake' },
   pizza: { n: 'Pizza aus dem Holzofen', t: 'food', food: 65, mood: 10, nau: -16, icon: 'pizza' },
   pasta: { n: 'Spaghetti al ragù', t: 'food', food: 60, mood: 9, nau: -14, icon: 'pasta' },
   tiramisu: { n: 'Tiramisù della casa', t: 'food', food: 22, mood: 9, nau: -4, icon: 'cake' },
@@ -151,6 +158,9 @@ Object.assign(SHOPS, {
   migrosresto: { title: 'Migros-Restaurant', cur: 'chf', mode: 'eat', venue: 'surseepark', intro: 'Tablett nehmen, anstehen, essen. Schnell und günstig.', sections: [{ t: 'Menü', items: [it('migrosmenu', 14.9), it('roesti', 13.5), it('pommes', 5.5)] }, { t: 'Getränke', items: [it('kaffee', 3.6), it('rivella', 3.5), it('wasser', 2.5)] }] },
   sportsursee: { title: 'Sport im Surseepark', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Angelruten, Neoprenanzüge, Velohelme. „Für den See im Dezember? Mutig!“', sections: [{ t: 'Fischen', items: [it('angelkoeder', 6.5, { d: '5 Würfe mit Maden – mehr Bisse' })] }, { t: 'Kleidung', items: [it('o_beanie', 24, { n: 'Beanie mit Bommel', icon: 'cap', wear: { hat: 3, hatCol: 1 }, d: 'Rot, warm' }), it('o_jacke', 79, { n: 'Trainerjacke', icon: 'shirt', wear: { top: 10, topCol: 9 }, d: 'Blau mit Streifen' })] }] },
   elektro: { title: 'Elektronik', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Bildschirme, Kopfhörer, Drohnen. Ein Verkäufer zeigt dir begeistert einen Metalldetektor.', sections: [{ t: 'Angebote', items: [it('detektor', 129, { d: 'Für Schatzsucher · findet Münzen im Boden' })] }] },
+  spielwaren: { title: 'Spielwaren', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Regale bis zur Decke: Lego, Plüschtiere, Bausätze. Priska lächelt: „Für die Kleinen?“', sections: [{ t: 'Spielwaren', items: [it('pluschgans', 19.9), it('legofeuerwehr', 34.9), it('kinderhelm', 39.9), it('plektren', 6.5)] }] },
+  buchhandlung: { title: 'Buchhandlung', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Es riecht nach Papier. Auf dem Tisch: Lokalkrimis und Bilderbücher.', sections: [{ t: 'Bücher', items: [it('krimi', 24), it('bilderbuch', 18.9)] }] },
+  glace_og: { title: 'Glace & Café', cur: 'chf', mode: 'eat', venue: 'surseepark', intro: 'Zwölf Sorten in der Vitrine. Im Dezember? „Glace geht immer“, sagt Nina.', sections: [{ t: 'Glace und Kaffee', items: [it('glace', 5.5), it('cappuccino', 4.9), it('espresso', 3.9), it('punsch', 4.5)] }] },
   kiosk_sursee: { title: 'Kiosk', cur: 'chf', mode: 'take', venue: 'surseepark', sections: [{ t: 'Kiosk', items: [it('zigaretten', 9.8), it('feuerzeug', 2), it('zeitung', 3.5), it('schoko', 2.5), it('eistee', 2.5), it('dosenbier', 2.9)] }] },
   stadthalle_bar: { title: 'Bar in der Stadthalle', cur: 'chf', mode: 'eat', venue: 'stadthalle', intro: 'Becherpfand zwei Franken. Die Schlange ist lang, aber schnell.', sections: [{ t: 'Bar', items: [it('lager', 7.5), it('wein', 8), it('cola', 5), it('wasser', 4)] }, { t: 'Snacks', items: [it('bratwurst', 8.5), it('pommes', 6)] }] },
   kulturwerk: { title: 'Bar im Kulturwerk 118', cur: 'chf', mode: 'eat', venue: 'kulturwerk', sections: [{ t: 'Bar', items: [it('lager', 6), it('ipa', 8), it('shot', 5), it('cola', 4)] }] },
@@ -744,6 +754,8 @@ Object.assign(Sur, {
       scheune: 'Die Scheune vom Gänsehof: ein Traktor mit Frontlader, ein Ladewagen, ein Kreiselheuer und ein Schwader. Im Dezember ruhen die Maschinen.',
       kita: 'Die Kita Villa Luna beim Märtplatz: eine helle Villa mit blauen Läden, Rosenbogen über der Tür und einer Tafel voller bunter Punkte. Gummistiefel in allen Grössen vor der Tür. Hier geht Timo hin.',
       poller: this.pollerBroken() ? `Der Versenkpoller beim Untertor liegt schief. Daneben ein Hütchen und ein Zettel vom Werkhof: „Defekt. Schon wieder.“ Am Laternenpfahl führt jemand eine Strichliste: ${'|'.repeat(Math.min(30, 11 + (this.st().pollerN || 0)))}` : 'Ein Versenkpoller beim Untertor. Er fährt hoch, damit keine Autos in die Altstadt fahren. Leider merken das nicht alle Autos rechtzeitig. Und das Postauto auch nicht.',
+      lichthof: pick(['Durch die Glasbrüstung siehst du ins Erdgeschoss: der Christbaum, die Leute mit ihren Einkaufstaschen, ganz klein.', 'Unten beim Kiosk winkt jemand. Wahrscheinlich nicht dir.', 'Von hier oben sieht der Christbaum aus wie ein grüner Kreisel mit Lämpchen.']),
+      passerelle: 'Die Glas-Passerelle führt über die Strasse zum Parkhaus. Unten fährt gerade ein Postauto vorbei. Ohne Poller.',
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
       kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
@@ -1441,6 +1453,26 @@ Object.assign(Sur, {
     G.player.velo = !G.player.velo; s.veloOff = G.player.velo ? 0 : 1;
     Snd.sfx('blip');
     UI.toast(G.player.velo ? '🚲 Aufgestiegen.' : '🚶 Abgestiegen – du schiebst das Velo neben dir her. Mit A steigst du wieder auf.');
+  },
+  /* Surseepark Obergeschoss: Läden mit Reaktion der Kinder */
+  async ogShop(id) {
+    const before = { pluschgans: hasInv('pluschgans'), legofeuerwehr: hasInv('legofeuerwehr'), kinderhelm: hasInv('kinderhelm'), plektren: hasInv('plektren'), bilderbuch: hasInv('bilderbuch'), krimi: hasInv('krimi') };
+    await Story.shop(id);
+    if (!this.followOk()) return;
+    const neu = (k) => !before[k] && hasInv(k);
+    if (neu('pluschgans')) await kidSay('timo', 'Eine Gans! Papi, darf ich sie haben? Ich nenn sie … Ruedi!');
+    if (neu('legofeuerwehr')) await kidSay('timo', 'Ein Feuerwehrauto! Mit Leiter! Papi, du bist der Beste! TATÜTATA!');
+    if (neu('kinderhelm')) await kidSay('timo', 'Ein Velohelm! Jetzt darf ich schneller fahren, oder Papi?');
+    if (neu('plektren')) await kidSay('elin', 'Plektren! Danke, Papi! Jetzt klingt mein G noch besser.');
+    if (neu('bilderbuch')) await kidSay('timo', '„Der kleine Traktor“! Thierry wird so neidisch sein!');
+    if (neu('krimi')) await kidSay('elin', 'Ein Krimi? Papi, du liest doch schon einen. Den echten!');
+  },
+  async kinderparadies() {
+    if (!this.followOk()) { await Story.say(null, 'Das Kinderparadies: Bällebad und Rutsche. Ein Schild: „Nur für Kinder bis 1,20 m“. Du bist knapp zu gross.'); return; }
+    await kidSay('timo', 'BÄLLEBAD! Papi, schau! Ich bin ein Fisch!'); await kidSay('elin', 'Ich rutsch zehnmal. Nein, zwanzigmal!');
+    await Story.say(null, 'Eine halbe Stunde lang fliegen bunte Bälle durch die Luft. Du sitzt auf dem Bänkli und schaust zu.');
+    mood(8); energy(4); passTime(30);
+    await kidSay('timo', 'Papi, ich hab einen Ball in der Hose gefunden. Er ist rot.');
   },
   async sportplatz() {
     const c = await Story.ask(null, 'Der rote Allwetterplatz neben der Stadthalle: Tartanbahn, Handballtore, ein paar vergessene Hütchen.', ['Sackgumpe-Rennen mit den Kindern', 'Ein paar Runden joggen', 'Weitergehen']);

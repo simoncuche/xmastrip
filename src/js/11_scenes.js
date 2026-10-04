@@ -52,6 +52,7 @@ function transitionFor(from, to, spawn, opts = {}) {
   if (from === 'hotel_floor' && to === 'hotel_room') return { kind: 'roomdoor', exit: false, ms: 1150 };
   if (from === 'hotel_room' && to === 'hotel_floor') return { kind: 'roomdoor', exit: true, ms: 1000 };
   if (from === 'zug') return { kind: 'trainexit', ms: 1600 };
+  if ((from === 'surseepark' && to === 'surseepark_og') || (from === 'surseepark_og' && to === 'surseepark')) return { kind: 'stairs', up: to === 'surseepark_og', ms: 1200 };
   if ((from === 'luzern' && to === 'luzern_halle') || (from === 'luzern_halle' && to === 'luzern')) return { kind: 'door', exit: to === 'luzern', style: facadeFor('luzern_halle'), ms: 950 };
   const exit = !(getMap(to).indoor);
   return { kind: 'door', exit, style: facadeFor(exit ? from : venue), ms: 950 };
