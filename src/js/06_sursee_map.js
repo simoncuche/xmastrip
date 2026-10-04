@@ -730,17 +730,40 @@ MAP_BUILDERS.sursee = () => {
   for (const [ax, aw] of [[62, 3], [81, 3]]) m.add(mkObj(ax, 5, aw, 4, 10, (c, Wd, Hd) => { R(c, 0, 0, Wd, Hd - 12, '#7a7c80'); for (let i = 0; i < Wd; i += 4) P(c, i, 3 + (i % 7), '#6a6c70'); R(c, 0, Hd - 12, Wd, 12, '#e8e8e4'); R(c, 0, Hd - 12, Wd, 2, '#c9cbcc'); R(c, 3, Hd - 9, 4, 5, '#3e4c5e'); }, { solid: true }));
   m.warp(72, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 72, 10, 0);
   for (const x of [66, 79]) m.add(objLamp(x, 10, 'new'));
-  /* Kita beim Märtplatz mit Garten (Timo und Lejan) */
+  /* Kita Villa Luna beim Märtplatz mit Garten (Timo und Lejan) */
   m.add(mkObj(98, 1, 6, 5, 22, (c, Wd, Hd) => {
-    R(c, 0, 0, Wd, 26, '#8a8e94'); R(c, 0, 0, Wd, 3, '#e8402e'); R(c, 0, 3, Wd, 2, '#f2c23a'); for (let i = 0; i < 30; i++) P(c, 2 + hash(i, 91) * (Wd - 4), 6 + hash(i, 92) * 18, '#7a7e84');
-    R(c, 12, 8, 18, 10, '#4a8a3a'); for (let k = 0; k < 4; k++) R(c, 14 + k * 4, 10, 3, 6, '#6ab04a');
-    R(c, 0, 26, Wd, Hd - 26, '#f6e08a'); R(c, 0, 26, Wd, 2, '#fff2b0'); R(c, Wd - 3, 26, 3, Hd - 26, '#e0c870');
-    for (let k = 0; k < 4; k++) { const wx = 6 + k * 23; R(c, wx, 36, 16, 18, '#f4f4f0'); R(c, wx + 1, 37, 14, 16, '#a8cce4'); R(c, wx + 2, 46, 4, 4, ['#e8402e', '#3a8ae0', '#3fae4a', '#e87ac0'][k]); E(c, wx + 11, 41, 2, 2, '#f2c23a'); }
-    for (let k = 0; k < 10; k++) E(c, 6 + k * 9, Hd - 30, 2, 2, ['#e8402e', '#3a8ae0', '#3fae4a', '#f2c23a', '#e87ac0'][k % 5]);
-    R(c, 34, Hd - 22, 18, 22, '#3fae4a'); R(c, 36, Hd - 20, 14, 20, '#5ac85a'); R(c, 43, Hd - 20, 1, 20, '#2f8e3a'); E(c, 47, Hd - 10, 1, 1, '#f2c23a');
-    R(c, 26, Hd - 32, 34, 9, '#ffffff'); pxText(c, 'KITA', 30, Hd - 31, '#e8402e'); E(c, 54, Hd - 28, 3, 3, '#f2c23a');
-    for (let k = 0; k < 5; k++) R(c, 60 + k * 5, Hd - 5, 3, 5, ['#e8402e', '#3a8ae0', '#f2c23a', '#3fae4a', '#e87ac0'][k]);
-  }, { solid: true, emit: (c, Wd, Hd) => { for (let k = 0; k < 4; k++) R(c, 7 + k * 23, 37, 14, 16, '#ffe8a8'); } }));
+    /* Villa Luna nach Foto: helle Villa, blaugraue Läden, braunes Walmdach mit Quergiebel und Ochsenauge, Balkone, Holztür mit Rankenbogen, Hecke, Punkte-Tafel */
+    const wall = '#f6e2cc', wd = '#e4ccb2', sh = '#6a84ae', shD = '#4e668e', rf = '#7a5040', rfD = '#5e3a2e', rfL = '#8e6250';
+    for (let k = 0; k < 30; k++) { const ins = Math.round((30 - k) * 0.5); R(c, ins, 6 + k, Wd - ins * 2, 1, k % 3 ? rf : rfD); }
+    for (let k = 7; k < 36; k += 3) for (let xx = 6 + (k % 2) * 2; xx < Wd - 6; xx += 4) P(c, xx, k, rfL);
+    R(c, 0, 35, Wd, 3, rfD); R(c, 8, 4, 3, 8, '#8a7a6a');
+    /* Quergiebel mit Ochsenauge und Balkon */
+    const gx = 40, gw = 40;
+    c.fillStyle = wall; c.beginPath(); c.moveTo(gx + gw / 2, 2); c.lineTo(gx - 2, 24); c.lineTo(gx + gw + 2, 24); c.closePath(); c.fill(); R(c, gx, 22, gw, 22, wall);
+    for (let k = 0; k < 24; k++) { const t = k / 24; R(c, Math.round(gx + gw / 2 - t * (gw / 2 + 5)) - 1, Math.round(1 + t * 23), 3, 2, rfD); R(c, Math.round(gx + gw / 2 + t * (gw / 2 + 5)) - 1, Math.round(1 + t * 23), 3, 2, rfD); }
+    E(c, gx + gw / 2, 13, 3, 3, '#5a6a7a'); E(c, gx + gw / 2, 13, 2, 2, '#a8c0d8');
+    for (const wx of [gx + 6, gx + 24]) { R(c, wx - 3, 24, 3, 12, sh); R(c, wx + 10, 24, 3, 12, sh); R(c, wx, 24, 10, 12, '#3e4c5a'); R(c, wx + 5, 24, 1, 12, '#e8e4dc'); }
+    R(c, gx - 3, 36, gw + 6, 2, '#ece4d8'); for (let xx = gx - 2; xx < gx + gw + 3; xx += 3) R(c, xx, 31, 1, 5, '#2a2a2e'); R(c, gx - 3, 31, gw + 6, 1, '#2a2a2e');
+    for (const px of [gx + 2, gx + 14, gx + 32]) { R(c, px, 28, 4, 3, '#a8603a'); E(c, px + 2, 27, 3, 2, '#4f8040'); }
+    /* Fassade */
+    R(c, 0, 38, Wd, Hd - 38, wall); R(c, Wd - 3, 38, 3, Hd - 38, wd); R(c, 0, 38, 2, Hd - 38, '#fff0de');
+    R(c, 4, 40, 2, Hd - 46, '#7a5a48');
+    const win = (wx, wy, ww, wh, ped) => { R(c, wx - 5, wy, 4, wh, sh); R(c, wx + ww + 1, wy, 4, wh, sh); R(c, wx - 5, wy, 1, wh, shD); R(c, wx + ww + 4, wy, 1, wh, shD); R(c, wx - 1, wy - 1, ww + 2, wh + 2, '#ddd2c4'); R(c, wx, wy, ww, wh, '#3e4c5a'); R(c, wx + ww / 2, wy, 1, wh, '#e8e4dc'); R(c, wx, wy + 4, ww, 1, '#e8e4dc'); R(c, wx + 1, wy + 1, 2, 2, '#7a90a8'); if (ped) { c.fillStyle = '#ece4d8'; c.beginPath(); c.moveTo(wx - 2, wy - 2); c.lineTo(wx + ww / 2, wy - 6); c.lineTo(wx + ww + 2, wy - 2); c.closePath(); c.fill(); } };
+    win(20, 46, 10, 14); win(44, 46, 10, 16); win(70, 46, 10, 14);
+    R(c, 40, 58, 18, 2, '#2a2a2e'); for (let xx = 40; xx < 58; xx += 3) R(c, xx, 58, 1, 5, '#2a2a2e'); R(c, 40, 62, 18, 1, '#2a2a2e'); R(c, 40, 63, 18, 2, '#ddd2c4');
+    E(c, 12, 52, 3, 3, '#5a6a7a'); E(c, 12, 52, 2, 2, '#a8c0d8');
+    /* Erdgeschoss: Holztür mit Rankenbogen links, Fenster mit Giebelverdachung */
+    R(c, 8, Hd - 30, 14, 26, '#ddd2c4'); E(c, 15, Hd - 30, 7, 4, '#ddd2c4'); R(c, 10, Hd - 28, 10, 24, '#7a4a2a'); E(c, 15, Hd - 28, 5, 3, '#7a4a2a'); E(c, 15, Hd - 20, 2, 2, '#3e5a2a'); P(c, 18, Hd - 15, '#d8b040');
+    for (let k = 0; k < 16; k++) { const a = Math.PI * (k / 15); E(c, 15 - Math.cos(a) * 10, Hd - 30 - Math.sin(a) * 9, 2, 2, k % 2 ? '#4f8040' : '#6a9e4c'); } for (let k = 0; k < 6; k++) { E(c, 5, Hd - 26 + k * 4, 2, 2, '#4f8040'); }
+    for (let k = 0; k < 3; k++) R(c, 8, Hd - 4 + k, 14, 1, k % 2 ? '#a8a49a' : '#c4c0b6');
+    win(34, Hd - 28, 10, 14, true); win(58, Hd - 28, 10, 14, true); win(80, Hd - 28, 8, 14, true);
+    /* Hecke und Punkte-Tafel „Villa Luna“ */
+    for (let xx = 26; xx < Wd; xx += 5) E(c, xx, Hd - 9, 5, 7, xx % 10 ? '#4f8a3a' : '#5a9a44'); R(c, 24, Hd - 9, Wd - 24, 9, '#4a7e36');
+    for (let i = 0; i < 30; i++) P(c, 26 + hash(i, 95) * (Wd - 28), Hd - 14 + hash(i, 96) * 12, '#6aae4c');
+    R(c, 52, Hd - 18, 42, 14, '#9a9a94'); R(c, 52, Hd - 18, 42, 1, '#b8b8b2');
+    for (const [dx, dy, r, col] of [[60, -14, 3, '#e8a0c0'], [70, -10, 3, '#5a3a2a'], [78, -14, 3, '#f2e05a'], [86, -10, 3, '#e8603a'], [90, -15, 2, '#7ab0d0'], [66, -7, 2, '#3a8aa0'], [82, -6, 2, '#c84a3a'], [74, -15, 2, '#a8c0d8']]) E(c, dx, Hd + dy, r, r, col);
+    E(c, 58, Hd - 11, 6, 6, '#9ac040'); pxText(c, 'LUNA', 52, Hd - 13, '#ffffff');
+  }, { solid: true, emit: (c, Wd, Hd) => { for (const [wx, wy] of [[20, 46], [44, 46], [70, 46], [34, Hd - 28], [58, Hd - 28]]) R(c, wx, wy, 10, 14, '#ffe8a8'); } }));
   m.fill(104, 2, 6, 5, T.MEADOW);
   m.add(mkObj(104, 2, 6, 4, 8, (c, Wd, Hd) => {
     for (let xx = 0; xx < Wd; xx += 4) R(c, xx, 6, 2, 8, '#c8a070'); R(c, 0, 8, Wd, 1, '#a88050'); for (let yy = 8; yy < Hd; yy += 5) { R(c, Wd - 2, yy, 2, 4, '#c8a070'); }
@@ -748,7 +771,7 @@ MAP_BUILDERS.sursee = () => {
     R(c, 40, Hd - 34, 3, 26, '#3a8ae0'); R(c, 54, Hd - 34, 3, 26, '#3a8ae0'); R(c, 40, Hd - 34, 17, 3, '#3a8ae0'); line(c, 46, Hd - 31, 44, Hd - 18, '#5a5e64'); line(c, 51, Hd - 31, 53, Hd - 18, '#5a5e64'); R(c, 42, Hd - 18, 13, 2, '#e8402e');
     for (let k = 0; k < 6; k++) line(c, 70 + k * 2, Hd - 30 + k * 3, 82 + k * 2, Hd - 12 + k, '#f2c23a');
   }, { solid: false }));
-  m.trig(100, 5, 2, 1, { label: 'Kita', act: () => Sur.kita() }); m.fill(99, 6, 4, 3, T.PAVE, 1);
+  m.trig(98, 5, 2, 1, { label: 'Kita Villa Luna', act: () => Sur.kita() }); m.fill(98, 6, 3, 3, T.PAVE, 1);
   /* roter Allwetter-Sportplatz neben der Stadthalle: Tartan, weisse Linien, Handballtore, Zaun */
   m.fill(85, 1, 10, 8, T.PAVE, 1);
   m.decal((c) => {

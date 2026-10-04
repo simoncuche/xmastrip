@@ -76,7 +76,7 @@ Object.assign(ACH, {
   su_118: ['Kellerkonzert', 'Im Kulturwerk 118 auf der Bühne gestanden'],
   su_kloster: ['Klostergeheimnis', 'Im Kapuzinerkloster etwas Verstecktes gefunden'],
   su_rechnen: ['Zweitklass-Profi', 'Mit Elin drei Rechnungen bis 20 richtig gelöst'],
-  su_kita: ['Besuch in der Kita', 'Mit Timo seinen Freund Lejan in der Kita beim Märtplatz besucht'],
+  su_kita: ['Besuch in der Villa Luna', 'Mit Timo seinen Freund Lejan in der Kita Villa Luna besucht'],
   su_bauer: ['Landmaschinen-Profi', 'Thierrys Bauernhof-Quiz bestanden'],
   su_poller: ['Klonk!', 'Live dabei, als einer in den Poller beim Untertor gefahren ist'],
   su_feuer: ['Held von der Unterstadt', 'Mit der Feuerwehr Sursee einen Brand gelöscht und Frau Wüest gerettet'],
@@ -742,7 +742,7 @@ Object.assign(Sur, {
       stadthof: pick(['Der Stadthof am Martigny-Platz: ein heller Betonwürfel mit hohen Pfeilern, oben eine offene Pergola über der Dachterrasse. Unten Reisebüro, Coiffeur, Versicherung und Praxen.', 'Im Schaufenster vom Reisebüro hängt ein Plakat: „Innsbruck – Weihnachtsmärkte und Bergisel“. Du lachst kurz.', 'Unter den Arkaden des Stadthofs ist es windstill. Ein Velo lehnt an einem der weissen Pfeiler.']),
       homeoffice: `Isas Homeoffice: Laptop mit einem Videocall voller kleiner Gesichter, ein Headset, Post-its mit „Call 14:00!!“. Daneben ${3 + ((this.st().isaKaffee || 0) % 4)} leere Kaffeetassen.`,
       scheune: 'Die Scheune vom Gänsehof: ein Traktor mit Frontlader, ein Ladewagen, ein Kreiselheuer und ein Schwader. Im Dezember ruhen die Maschinen.',
-      kita: 'Die Kita beim Märtplatz: bunte Fenster mit Fingerfarben, Gummistiefel in allen Grössen vor der Tür. Hier geht Timo hin.',
+      kita: 'Die Kita Villa Luna beim Märtplatz: eine helle Villa mit blauen Läden, Rosenbogen über der Tür und einer Tafel voller bunter Punkte. Gummistiefel in allen Grössen vor der Tür. Hier geht Timo hin.',
       poller: this.pollerBroken() ? `Der Versenkpoller beim Untertor liegt schief. Daneben ein Hütchen und ein Zettel vom Werkhof: „Defekt. Schon wieder.“ Am Laternenpfahl führt jemand eine Strichliste: ${'|'.repeat(Math.min(30, 11 + (this.st().pollerN || 0)))}` : 'Ein Versenkpoller beim Untertor. Er fährt hoch, damit keine Autos in die Altstadt fahren. Leider merken das nicht alle Autos rechtzeitig. Und das Postauto auch nicht.',
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
@@ -1343,7 +1343,7 @@ Object.assign(Sur, {
       elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', `Die besten Pizzas der Welt sind ${papa}. Besser als in der Mühle. Aber sag das nicht dem Gino.`,
         'Wenn ich gross bin, werd ich Detektivin. Oder Gitarristin. Oder Detektivin mit Gitarre.', 'Timo hat heute wieder nur Teigwaren mit Käse gegessen. Zum Zmorge!', 'Mami trinkt so viel Kaffee, dass die Kaffeemaschine einen Namen hat. Sie heisst Bruno.',
         wk ? 'Eigentlich hätte ich jetzt Schule im St. Martin. Aber Mami sagt, Detektivarbeit ist auch Bildung.' : 'In der Pause im St. Martin spielen wir immer Detektiv. Jetzt bin ich eine echte!'],
-      timo: ['Ich geh in die Kita beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
+      timo: ['Ich geh in die Kita Villa Luna beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
         'Wenn ich gross bin, fahr ich Postauto. Und dann fahr ich auch in den Poller. KLONK!', 'Mami hat heute schon fünf Kaffee getrunken. Ich hab gezählt. Bis fünf kann ich.', 'Elin spielt Gitarre. Immer das gleiche Lied. Ich tanz trotzdem.'],
       thierry: ['Wir wohnen in Schenkon, gleich neben Sursee. Ich und Louve. Von uns aus sieht man den See!', 'Ein Kreiselheuer wirbelt das Gras durch die Luft, damit es schneller trocknet. Dann wird es Heu.', 'Ein Mähdrescher mäht das Korn und drischt es gleich. Zwei Maschinen in einer!',
         'Mit dem Schwader macht man aus dem Heu lange Reihen. Dann kommt die Ballenpresse und macht Ballen. Rund oder eckig!', 'Der Traktor vom Gänsehof hat einen Frontlader. Damit hebt er Siloballen wie nichts.', 'Mit dem Ladewagen holt man das Gras vom Feld. Mit dem Güllenfass bringt man … das riecht man dann.',
@@ -1374,8 +1374,8 @@ Object.assign(Sur, {
   },
   async kita() {
     const s = this.st(), h = hourOf(G.S.time), open = dayOf(G.S.time) % 7 > 2 && h >= 7 && h < 18;
-    if (!open) { await Story.say(null, 'Die Kita beim Märtplatz ist zu. Vor der Tür stehen kleine Gummistiefel in einer Reihe.'); if (this.followOk()) await kidSay('timo', 'Lejan ist bestimmt zu Hause. Am Montag zeig ich ihm meinen Detektivausweis!'); return; }
-    await Story.say('Kita-Betreuerin', 'Grüezi! Ah, Timos Familie. Lejan fragt schon den ganzen Tag, wo Timo ist.');
+    if (!open) { await Story.say(null, 'Die Kita Villa Luna ist zu. Vor der Tür stehen kleine Gummistiefel in einer Reihe.'); if (this.followOk()) await kidSay('timo', 'Lejan ist bestimmt zu Hause. Am Montag zeig ich ihm meinen Detektivausweis!'); return; }
+    await Story.say('Betreuerin der Villa Luna', 'Grüezi! Ah, Timos Familie. Lejan fragt schon den ganzen Tag, wo Timo ist.');
     if (this.followOk()) {
       await kidSay('timo', 'LEJAN!'); await sayP('lejan', 'TIMO! Bist du jetzt Detektiv? Hast du eine Lupe?');
       await kidSay('timo', 'Ich hab einen Papi mit einem Notizbuch. Das ist besser als eine Lupe.');
