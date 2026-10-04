@@ -177,25 +177,28 @@ MAP_BUILDERS.luzern_halle = () => {
   for (let y = 11; y < 22; y++) { m.set(0, y, T.WALL); m.set(33, y, T.WALL); }
   m.fill(0, 20, 34, 2, T.WALL);
   for (let x = 15; x <= 18; x++) { m.set(x, 20, T.STONE, 1); m.set(x, 21, T.STONE, 1); }
-  m.warp(15, 21, 'luzern', 'from_halle', { w: 4, label: 'Zum Bahnhofplatz' });
+  /* Zweites Kapitel: Nach der Heimreise ist Gleis 4 umgeschildert – auf Gleis 2 wartet die S-Bahn nach Sursee */
+  const heim = !!(G.S && G.S.chapter);
+  m.warp(15, 21, 'luzern', 'from_halle', heim ? { w: 4, label: 'Heimgehen', guard: () => Sur.leaveLuzern() } : { w: 4, label: 'Zum Bahnhofplatz' });
   m.decal((c) => R(c, 16, 13 * 16, 32 * 16, 3, 'rgba(0,0,0,0.18)'));
   /* Züge */
   m.add(objTrainExterior(1, 0, 32, { col: '#2f5fb8', label: 'S-BAHN', doors: [9, 23] }));
   const TRAIN_DOORS = [6, 14, 22];
-  const train = objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB', doors: TRAIN_DOORS.map((x) => x - 1) });
+  const train = heim ? objTrainExterior(1, 6, 32, { col: '#d8302a', label: 'S1 SURSEE', doors: TRAIN_DOORS.map((x) => x - 1) }) : objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB', doors: TRAIN_DOORS.map((x) => x - 1) });
   m.add(train);
   m.irTrain = train;
-  if (G.S && G.S.flags && G.S.flags.missed) train.gone = true; /* Yännu hat den Zug verraucht */
-  for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: 'Zugtür: Einsteigen', act: () => Story.boardTrain() });
+  if (!heim && G.S && G.S.flags && G.S.flags.missed) train.gone = true; /* Yännu hat den Zug verraucht */
+  for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: heim ? 'S-Bahn nach Sursee: Einsteigen' : 'Zugtür: Einsteigen', act: () => (heim ? Sur.boardSBahn() : Story.boardTrain()) });
   /* Abfahrtstafel, Uhr, Schilder */
   m.decal((c) => {
     const px = 20 * 16 + 2, py = 12 * 16 + 1;
     R(c, px, py, 84, 14, '#0f1a2c'); R(c, px, py, 84, 1, '#2a3d5a');
-    pxText(c, '0910 IR70 ZÜRICH HB 4', px + 3, py + 2, '#ffb53d'); pxText(c, '0914 S1 SURSEE     1', px + 3, py + 8, '#f2eee4');
+    if (heim) { pxText(c, 'S1 SURSEE          2', px + 3, py + 2, '#ffb53d'); pxText(c, 'IR70 ZÜRICH HB     4', px + 3, py + 8, '#f2eee4'); }
+    else { pxText(c, '0910 IR70 ZÜRICH HB 4', px + 3, py + 2, '#ffb53d'); pxText(c, '0914 S1 SURSEE     1', px + 3, py + 8, '#f2eee4'); }
     const qx = 31 * 16, qy = 12 * 16 + 2;
     E(c, qx + 6, qy + 6, 6, 6, '#20232a'); E(c, qx + 6, qy + 6, 5, 5, '#f4f2ea'); line(c, qx + 6, qy + 6, qx + 6, qy + 2, '#1a1a1a'); line(c, qx + 6, qy + 6, qx + 9, qy + 7, '#1a1a1a');
   });
-  for (const x of [5, 16, 27]) m.add(mkObj(x, 9, 1, 1, 20, (c, Wd, Hd) => { R(c, 7, 8, 2, Hd - 9, '#4a4e54'); R(c, 1, 0, 14, 10, '#1a3a7a'); R(c, 1, 0, 14, 1, '#ffffff'); pxText(c, '4', 6, 3, '#ffffff'); }));
+  for (const x of [5, 16, 27]) m.add(mkObj(x, 9, 1, 1, 20, (c, Wd, Hd) => { R(c, 7, 8, 2, Hd - 9, '#4a4e54'); R(c, 1, 0, 14, 10, '#1a3a7a'); R(c, 1, 0, 14, 1, '#ffffff'); pxText(c, heim ? '2' : '4', 6, 3, '#ffffff'); }));
   m.add(objCounter(2, 14, 4, 1, { top: '#d8302a', front: '#a8221e', reg: true }));
   m.trig(2, 14, 4, 1, { label: 'Bahnhofkiosk', act: () => Story.shop('kiosk_lu') });
   /* Bäckerei-Stand: Brotregal an der Wand, Markise mit Schild und Riesenbrezel, Vitrine, Brezel-Stange, Bäckerin */
@@ -217,7 +220,8 @@ MAP_BUILDERS.luzern_halle = () => {
   for (const [x, y] of [[3, 10], [12, 10], [24, 10], [31, 10]]) m.add(objBench(x, y, 0, '#6a6e74'));
   m.pedZones.push({ x: 1, y: 15, w: 32, h: 4, n: 7 }, { x: 0, y: 9, w: 34, h: 2, n: 4 }, { x: 0, y: 3, w: 34, h: 2, n: 3 });
   m.spawn('entry', 16, 19, 3);
-  m.timeScale = 0.2;
+  m.spawn('gleis', 16, 10, 0);
+  m.timeScale = heim ? 1 : 0.2;
   return m;
 };
 
