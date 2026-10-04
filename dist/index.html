@@ -4688,28 +4688,43 @@ function objDiebenturm(x, y) {
     R(c, 8, H - 34, W - 16, 8, '#2a2a2e'); pxText(c, '1681', W / 2 - 8, H - 33, '#e8dcc0');
   }, { solid: true });
 }
-/* Stadthalle (eröffnet 1988): ein Kind der Achtzigerjahre – knallgrüne Verkleidung, gelbe Rohre als Tragwerk und Geländer, blaue Akzente */
+/* Stadthalle (eröffnet 1988), nach Foto: flaches Satteldach voller dunkelblauer Solarpanels, Giebelschräge dunkeltürkis, hellgrüne
+   Rippenfassade mit schräger grüner Sockelschürze und Fensterband, vier dicke gelbe Lüftungsrohre im Bogen und ein hohes gelbes Rohr,
+   rechts der grüne Eingangsbau mit Glastüren, davor Anbauten mit grauem Flachdach */
 function objStadthalle(x, y) {
-  return mkObj(x, y, 16, 8, 22, (c, W, H) => {
-    const G1 = '#3fb04a', G2 = '#2f8f3a', G3 = '#5fc864', Y = '#f2d020', YD = '#c8a818', B = '#2f6ec8';
-    /* flaches, leicht gewölbtes Dach mit Wellblech */
-    R(c, 0, 6, W, 22, '#c9ccd2'); for (let xx = 0; xx < W; xx += 3) R(c, xx, 6, 1, 22, '#aeb2b8'); R(c, 0, 26, W, 3, '#8a8e94');
-    /* grüne Fassade mit Profilblech */
-    R(c, 0, 29, W, H - 29, G1); for (let xx = 0; xx < W; xx += 4) R(c, xx, 29, 1, H - 29, G2); R(c, 0, 29, W, 2, G3);
-    /* gelbes Rohrtragwerk: Stützen, Diagonalen und ein durchlaufendes Rohr über dem Dach */
-    for (let xx = 6; xx < W; xx += 32) { R(c, xx, 10, 4, H - 10, Y); R(c, xx + 3, 10, 1, H - 10, YD); E(c, xx + 2, 10, 3, 3, Y); }
-    R(c, 0, 12, W, 3, Y); R(c, 0, 14, W, 1, YD);
-    for (let xx = 6; xx < W - 32; xx += 32) { line(c, xx + 4, 16, xx + 32, 34, Y); line(c, xx + 4, 34, xx + 32, 16, Y); }
-    /* blaue Fensterbänder und Eingang mit Glasfront */
-    R(c, 12, 40, W - 24, 10, B); for (let xx = 14; xx < W - 14; xx += 10) R(c, xx, 42, 7, 6, '#9ac8f0');
-    R(c, W / 2 - 40, H - 38, 80, 38, '#24303c'); for (let xx = W / 2 - 40; xx < W / 2 + 40; xx += 10) R(c, xx, H - 38, 2, 38, B); R(c, W / 2 - 40, H - 22, 80, 2, B);
-    /* gelbes Vordach auf Rohrstützen */
-    R(c, W / 2 - 48, H - 44, 96, 5, Y); R(c, W / 2 - 48, H - 40, 96, 1, YD); for (const px of [W / 2 - 46, W / 2 + 42]) R(c, px, H - 40, 3, 40, Y);
-    pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 32, '#ffffff');
-    /* Konzertplakate */
-    R(c, 8, H - 34, 14, 20, '#1a1a2a'); R(c, 9, H - 33, 12, 8, '#e85a3a'); pxText(c, 'SG', 11, H - 23, '#ffd23d');
-    R(c, W - 22, H - 34, 14, 20, '#1a1a2a'); R(c, W - 21, H - 33, 12, 8, '#3a8ae8'); R(c, W - 20, H - 23, 10, 2, '#ffffff');
-  }, { solid: true, emit: (c, W, H) => { R(c, W / 2 - 40, H - 38, 80, 38, '#ffe2a0'); for (let xx = 14; xx < W - 14; xx += 10) R(c, xx, 42, 7, 6, '#ffe8b0'); pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 32, '#ffd23d'); } });
+  return mkObj(x, y, 16, 8, 30, (c, W, H) => {
+    const G1 = '#5ccc4a', G2 = '#48b03a', G3 = '#7ae068', TE = '#2f8a6a', TD = '#256e56', Y = '#f2d81c', YD = '#c8a810', YL = '#fff070';
+    const eave = 64;
+    /* Solardach */
+    R(c, 6, 2, W - 54, eave - 4, '#2c3f6a'); for (let yy = 4; yy < eave - 2; yy += 6) R(c, 6, yy, W - 54, 1, '#4a6090'); for (let xx = 8; xx < W - 48; xx += 9) R(c, xx, 2, 1, eave - 4, '#4a6090');
+    for (let i = 0; i < 18; i++) P(c, 10 + hash(i, 5) * (W - 64), 5 + hash(i, 6) * (eave - 10), '#9ab0d8');
+    R(c, 6, 2, W - 54, 2, '#e8ecf0'); R(c, 6, eave - 3, W - 54, 2, '#e8ecf0');
+    /* Giebelschräge rechts dunkeltürkis */
+    c.fillStyle = TE; c.beginPath(); c.moveTo(W - 48, 2); c.lineTo(W - 6, 20); c.lineTo(W - 6, eave + 4); c.lineTo(W - 48, eave - 2); c.closePath(); c.fill();
+    for (let k = 0; k < 6; k++) line(c, W - 46 + k * 7, 3 + k * 3, W - 46 + k * 7, eave, TD);
+    /* Fensterband unter dem Dach */
+    R(c, 6, eave - 1, W - 54, 12, G1); R(c, 18, eave + 1, W - 80, 8, '#7ac8c8'); for (let xx = 18; xx < W - 62; xx += 8) R(c, xx, eave + 1, 1, 8, '#4a9a9a');
+    /* hellgrüne Rippenfassade */
+    R(c, 6, eave + 11, W - 54, H - eave - 11, G1); for (let xx = 6; xx < W - 48; xx += 5) R(c, xx, eave + 11, 1, H - eave - 11, G2);
+    /* schräge Sockelschürze mit kleinen Fenstern */
+    for (let xx = 6; xx < W - 48; xx += 14) { c.fillStyle = G3; c.beginPath(); c.moveTo(xx, H - 34); c.lineTo(xx + 14, H - 34); c.lineTo(xx + 14, H - 24); c.lineTo(xx, H - 24); c.closePath(); c.fill(); R(c, xx, H - 34, 1, 10, G2); }
+    for (let xx = 12; xx < W - 56; xx += 14) R(c, xx, H - 20, 4, 5, '#7a3a2a');
+    /* grüner Eingangsbau rechts mit Glastüren */
+    R(c, W - 48, eave + 4, 42, H - eave - 4, G1); for (let xx = W - 48; xx < W - 6; xx += 7) R(c, xx, eave + 4, 1, H - eave - 4, G2);
+    R(c, W - 42, H - 30, 30, 30, '#3a5a4a'); for (let xx = W - 42; xx < W - 12; xx += 6) R(c, xx, H - 30, 1, 30, G2); R(c, W - 42, H - 30, 30, 2, G3);
+    /* vier dicke gelbe Lüftungsrohre im Bogen und ein hohes Rohr */
+    R(c, 52, 14, 6, H - 14, Y); R(c, 56, 14, 2, H - 14, YD); E(c, 55, 14, 3, 2, YL);
+    for (let k = 0; k < 4; k++) {
+      const bx = 64 + k * 13, top = eave + 6 + (k % 2) * 4;
+      c.strokeStyle = Y; c.lineWidth = 9; c.beginPath(); c.moveTo(bx - 8, top); c.quadraticCurveTo(bx + 4, top - 2, bx + 4, top + 12); c.lineTo(bx + 4, H - 4); c.stroke();
+      c.strokeStyle = YL; c.lineWidth = 2; c.beginPath(); c.moveTo(bx - 8, top - 3); c.quadraticCurveTo(bx + 1, top - 5, bx + 1, top + 10); c.lineTo(bx + 1, H - 6); c.stroke();
+      for (let yy = top + 14; yy < H - 4; yy += 4) R(c, bx, yy, 9, 1, YD);
+      R(c, bx - 1, H - 4, 11, 4, '#8a8e94');
+    }
+    pxText(c, 'STADTHALLE SURSEE', W - 47 - 66, eave + 15, '#1e5a1e');
+    /* Konzertplakat der Stubete Gäng neben dem Eingang */
+    R(c, W - 10, H - 30, 4, 20, '#1a1a2a'); R(c, 12, H - 32, 14, 16, '#1a1a2a'); R(c, 13, H - 31, 12, 7, '#e85a3a'); pxText(c, 'SG', 14, H - 22, '#ffd23d');
+  }, { solid: true, emit: (c, W, H) => { const eave = 64; R(c, 18, eave + 1, W - 80, 8, '#ffe8b0'); R(c, W - 42, H - 30, 30, 30, '#ffe2a0'); for (let xx = 12; xx < W - 56; xx += 14) R(c, xx, H - 20, 4, 5, '#ffd27a'); } });
 }
 /* Surseepark: Einkaufszentrum mit Glasfront und grossem Migros-M */
 function objSurseepark(x, y, w, h) {
@@ -4971,8 +4986,9 @@ MAP_BUILDERS.sursee = () => {
   m.trig(58, 19, 4, 1, { here: true, label: 'Foto: Heinibrunnen', act: () => Sur.photo('heinibrunnen'), cond: () => !Sur.hasPhoto('heinibrunnen') });
   m.trig(54, 19, 1, 1, { label: 'Vierherrenplatz', act: () => Sur.look('vierherrenplatz') });
   /* Stadthalle */
-  m.fill(64, 0, 20, 11, T.PAVE, 2);
+  m.fill(62, 0, 22, 11, T.PAVE, 2);
   m.add(objStadthalle(65, 1, 16, 8));
+  for (const [ax, aw] of [[62, 3], [81, 3]]) m.add(mkObj(ax, 5, aw, 4, 10, (c, Wd, Hd) => { R(c, 0, 0, Wd, Hd - 12, '#7a7c80'); for (let i = 0; i < Wd; i += 4) P(c, i, 3 + (i % 7), '#6a6c70'); R(c, 0, Hd - 12, Wd, 12, '#e8e8e4'); R(c, 0, Hd - 12, Wd, 2, '#c9cbcc'); R(c, 3, Hd - 9, 4, 5, '#3e4c5e'); }, { solid: true }));
   m.warp(72, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 72, 10, 0);
   for (const x of [66, 79]) m.add(objLamp(x, 10, 'new'));
   /* Theaterstrasse hinter der oberen Häuserreihe */
