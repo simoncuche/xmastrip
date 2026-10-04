@@ -49,6 +49,9 @@ h2 .tools { margin-left: auto; display: flex; gap: 8px; text-transform: none; le
 .board li:first-child { border-top: 0; }
 .board li::before { counter-increment: r; content: counter(r); font-family: var(--f-pixel); color: var(--amber); width: 16px; }
 .board li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board .devtag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 5px; font-size: 12px; font-weight: 600; vertical-align: 1px; background: #2a3f5e; color: #cfe0f4; }
+.board .devtag.os { background: none; color: var(--dim); font-weight: 400; padding: 0; }
+.board .old { margin-left: 6px; font-size: 12px; color: var(--dim); font-style: italic; }
 .board li b { font-family: var(--f-pixel); font-weight: 500; }
 .board .empty { color: var(--dim); font-size: 14px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
@@ -200,10 +203,12 @@ summary:hover { color: var(--ink); }
   function boards(rs) {
     const all = rs.flatMap((r) => r.games.map((g) => ({ r, s: g.s, cur: g === r.cur })));
     /* Laufend = aktuelles Spiel des Geräts, weder Heimreise noch Apokalypse noch Game Over */
+    /* Gerätename als Marke; ohne eingetragenen Namen das Gerät (z. B. iPhone · Safari) zur Unterscheidung */
+    const devTag = (d) => d.label ? `<small class="devtag" title="Gerät">📱 ${esc(d.label)}</small>` : d.info && d.info.os ? `<small class="devtag os">${esc([d.info.os, d.info.browser].filter(Boolean).join(' · '))}</small>` : '';
     const running = (x) => x.cur && !x.s.finished && !x.s.apoc && !x.s.over;
     const top = (title, val, fmt, filter = (x) => true, empty = 'Noch niemand.') => {
       const l = all.filter((x) => filter(x) && val(x.s) > 0).sort((a, b) => val(b.s) - val(a.s)).slice(0, 5);
-      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${x.r.d.label ? ` <small style="color:var(--dim)">· ${esc(x.r.d.label)}</small>` : ''}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : `<p class="empty">${empty}</p>`}</div>`;
+      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${devTag(x.r.d)}${x.cur ? '' : '<small class="old">früheres Spiel</small>'}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : `<p class="empty">${empty}</p>`}</div>`;
     };
     return `<h2>Ranglisten</h2><section class="boards">
       ${top('Am weitesten · laufende Spiele', (s) => progress(s) * 100000 + (s.time || 0) + 1, (v, s) => s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '', running, 'Gerade läuft kein Spiel.')}
