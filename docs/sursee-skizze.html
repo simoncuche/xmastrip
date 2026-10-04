@@ -1,0 +1,414 @@
+<title>Sursee-Krimi Skizze</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: eine Spalte wie ein Planungsbogen – Ablauf, dann drei Karten von gross nach klein, dann offene Fragen.
+   Bewusst nur dunkel, wie das Spiel selbst (Abfahrtstafel trifft Zirbenstube). */
+:root {
+  --board: #0f1a2b; --board-2: #172539; --line: #2b3e5c; --ink: #f2eee4; --dim: #a7b1c2; --amber: #ffb53d;
+  --lake: #2f6e8f; --lake-2: #3f86a8; --grass: #2f4a32; --grass-2: #3b5c3c; --roof: #8a3b2a; --street: #55606e; --rail: #c9ccd2; --sure: #4f9cc4; --q: #ff7a5a;
+  --f-pixel: 'Pixelify Sans', ui-monospace, 'Courier New', monospace;
+  --f-sign: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
+  --f-body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #070b12; color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.55; }
+.wrap { max-width: 1000px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: flex; flex-direction: column; gap: 30px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--f-sign); font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; font-size: 13px; color: var(--dim); }
+h1 { font-family: var(--f-pixel); font-weight: 700; font-size: clamp(28px, 6vw, 42px); color: var(--amber); margin: 0; line-height: 1.1; text-wrap: balance; }
+.lead { max-width: 68ch; color: var(--dim); margin: 0; }
+h2 { font-family: var(--f-sign); font-weight: 700; font-size: 20px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--amber); margin: 0 0 4px; }
+section { display: flex; flex-direction: column; gap: 12px; }
+section > p { margin: 0; max-width: 72ch; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--f-sign); font-size: 15px; }
+.flow span { background: var(--board-2); border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px; }
+.flow span.new { border-color: var(--amber); color: var(--amber); }
+.flow i { color: var(--dim); font-style: normal; }
+.map { background: var(--board); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+.map svg { display: block; width: 100%; min-width: 600px; height: auto; }
+.map svg text { font-family: var(--f-sign); }
+.cap { font-size: 13.5px; color: var(--dim); margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--dim); }
+.legend b { color: var(--ink); font-weight: 600; }
+.qs { display: grid; gap: 10px; counter-reset: q; padding: 0; margin: 0; list-style: none; }
+.qs li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; background: var(--board-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.qs li::before { counter-increment: q; content: counter(q); font-family: var(--f-pixel); font-weight: 700; color: #0f1a2b; background: var(--q); border-radius: 50%; width: 26px; height: 26px; display: grid; place-items: center; font-size: 14px; }
+.qs b { color: var(--ink); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-sign); font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.6px; font-size: 12.5px; }
+td code { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--amber); }
+.tbl { overflow-x: auto; background: var(--board); border: 1px solid var(--line); border-radius: 12px; }
+.src { font-size: 13px; color: var(--dim); }
+.case { display: grid; gap: 12px; }
+.case h3 { font-family: var(--f-sign); font-weight: 700; font-size: 16px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink); margin: 6px 0 0; }
+.case p { margin: 0; max-width: 72ch; }
+.premise { background: var(--board-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 16px; }
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.cast div { background: var(--board-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; min-width: 0; }
+.cast b { display: block; color: var(--amber); font-family: var(--f-sign); font-size: 15px; }
+.cast span { color: var(--dim); font-size: 14px; }
+.cast .sus b { color: #ff9a80; }
+.acts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: act; }
+.acts li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 12px; background: var(--board); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.acts li::before { counter-increment: act; content: "Akt " counter(act); font-family: var(--f-pixel); font-weight: 700; color: var(--amber); font-size: 15px; }
+.acts b { color: var(--ink); }
+.acts small { display: block; color: var(--dim); font-size: 13px; margin-top: 3px; }
+.chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; }
+.chain span { background: #22344f; border-radius: 6px; padding: 3px 8px; }
+.chain i { color: var(--dim); font-style: normal; }
+.src a { color: var(--dim); }
+details.spoil { background: var(--board); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+details.spoil summary { cursor: pointer; font-family: var(--f-sign); font-weight: 700; color: var(--amber); font-size: 15px; }
+details.spoil[open] summary { margin-bottom: 10px; }
+a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 21 zur Review</span>
+    <h1>Sursee-Krimi</h1>
+    <p class="lead">Nach der Heimreise aus Innsbruck ist das Spiel nicht mehr zu Ende. Am Bahnhof Luzern fährt auf Gleis 2 die S-Bahn nach Sursee, dem Sempachersee entlang. In Sursee beginnt der Detektiv-Krimi. Unten stehen die Karten aus der Vogelperspektive, Norden ist immer oben. Rote Nummern markieren Stellen, bei denen ich mir nicht sicher bin.</p>
+  </header>
+
+  <section aria-labelledby="h-ablauf">
+    <h2 id="h-ablauf">Ablauf</h2>
+    <div class="flow">
+      <span>Innsbruck</span><i>→</i><span>Heimreise im Railjet</span><i>→</i><span class="new">Luzern Hbf, Ankunft</span><i>→</i><span class="new">Gleis 2: S-Bahn nach Sursee</span><i>→</i><span class="new">Fahrt am Sempachersee</span><i>→</i><span class="new">Bahnhof Sursee</span><i>→</i><span class="new">Krimi in der Altstadt und am See</span>
+    </div>
+    <p>Heute endet das Spiel mit der Heimreise. Neu landet man danach wieder in der Bahnhofshalle Luzern, diesmal am Abend. Auf Gleis 2 steht die S-Bahn nach Sursee. Die Fahrt ist eine eigene Szene mit den echten Halten. Danach startet der Krimi in Sursee. Der heutige Abschluss bleibt als Abspann nach dem Krimi.</p>
+  </section>
+
+  <section aria-labelledby="h-strecke">
+    <h2 id="h-strecke">Karte 1 · Luzern → Sursee</h2>
+    <div class="map">
+      <svg viewBox="0 0 640 430" role="img" aria-label="Schematische Karte: Bahnstrecke von Luzern über Emmenbrücke, Rothenburg Station, Sempach-Neuenkirch und Nottwil nach Sursee, am Westufer des Sempachersees">
+        <rect width="640" height="430" fill="#14261c"/>
+        <g fill="#1b3324">
+          <ellipse cx="120" cy="330" rx="140" ry="70"/><ellipse cx="520" cy="120" rx="150" ry="80"/><ellipse cx="330" cy="40" rx="120" ry="40"/>
+        </g>
+        <!-- Sempachersee: lang gezogen von Nordwest (Sursee) nach Südost (Sempach), der Trichter läuft im Nordwesten spitz zu -->
+        <path d="M152 92 C 168 84, 196 92, 220 108 C 262 134, 300 168, 336 204 C 368 236, 392 266, 400 296 C 405 318, 392 332, 372 326 C 344 318, 318 296, 292 270 C 262 240, 232 210, 206 180 C 186 156, 166 130, 156 112 C 150 102, 148 96, 152 92 Z" fill="var(--lake)" stroke="var(--lake-2)" stroke-width="2"/>
+        <text x="290" y="226" fill="#cfe6f2" font-size="15" font-weight="600" transform="rotate(42 290 226)" text-anchor="middle">SEMPACHERSEE</text>
+        <!-- Sure: fliesst bei Oberkirch aus und durch Sursee nach Norden -->
+        <path d="M156 100 C 140 92, 128 80, 122 62 C 118 46, 120 30, 126 12" fill="none" stroke="var(--sure)" stroke-width="2.5"/>
+        <text x="130" y="30" fill="#9ccfe6" font-size="12">Sure</text>
+        <!-- Bahnlinie Westufer -->
+        <path d="M100 74 C 120 120, 160 170, 196 214 C 222 246, 246 282, 270 316 C 300 352, 380 372, 450 384 C 510 394, 560 400, 610 404" fill="none" stroke="var(--rail)" stroke-width="3" stroke-dasharray="10 5"/>
+        <g font-size="13" fill="var(--ink)">
+          <circle cx="100" cy="74" r="7" fill="var(--amber)"/><text x="70" y="62" font-weight="700" fill="var(--amber)">Sursee</text>
+          <circle cx="196" cy="214" r="5" fill="#f2eee4"/><text x="120" y="220">Nottwil</text>
+          <circle cx="270" cy="316" r="5" fill="#f2eee4"/><text x="150" y="332">Sempach-Neuenkirch</text>
+          <circle cx="450" cy="384" r="5" fill="#f2eee4"/><text x="414" y="410">Rothenburg Station</text>
+          <circle cx="560" cy="400" r="5" fill="#f2eee4"/><text x="540" y="384">Emmenbrücke</text>
+          <circle cx="610" cy="404" r="7" fill="var(--amber)"/><text x="575" y="428" font-weight="700" fill="var(--amber)">Luzern</text>
+        </g>
+        <g font-size="12" fill="#b9c7b4">
+          <text x="84" y="132">Oberkirch</text>
+          <text x="222" y="96">Schenkon</text>
+          <text x="330" y="168">Eich</text>
+          <text x="398" y="272">Sempach</text>
+        </g>
+        <g font-size="11.5" fill="#e8d6a8">
+          <text x="96" y="238">Paraplegiker-Zentrum</text>
+          <text x="404" y="290">Vogelwarte</text>
+        </g>
+        <g transform="translate(590 40)"><path d="M0 18 L8 -10 L16 18 L8 12 Z" fill="var(--dim)"/><text x="3" y="34" fill="var(--dim)" font-size="12">N</text></g>
+      </svg>
+    </div>
+    <p class="cap">Echte Halte der S-Bahn Luzern–Sursee in Fahrtrichtung: Emmenbrücke, Rothenburg Station, Sempach-Neuenkirch, Nottwil, Sursee. Ab Sempach-Neuenkirch fährt der Zug am Westufer des Sees. In Nottwil liegt das Paraplegiker-Zentrum direkt am Ufer, auf der anderen Seeseite sieht man Sempach mit der Vogelwarte. Die Fahrt wird eine animierte Szene wie die Railjet-Fahrt: Durchsagen pro Halt, am Fenster der See.</p>
+  </section>
+
+  <section aria-labelledby="h-sursee">
+    <h2 id="h-sursee">Karte 2 · Sursee, Bahnhof bis Altstadt</h2>
+    <div class="map">
+      <svg viewBox="0 0 640 480" role="img" aria-label="Skizze der Spielkarte Sursee nach dem Kartenausschnitt: Bahnhof im Westen, Bahnhofstrasse mit Surseepark, Altstadt diagonal von Nordwest nach Südost mit Oberstadt im Nordosten und Unterstadt im Südwesten, Sure entlang der Unterstadt, Stadthalle im Norden, oberes Ende im Südosten mit Weg zum See">
+        <rect width="640" height="480" fill="#1d2a22"/>
+        <!-- Grünzug entlang der Sure nördlich der Altstadt -->
+        <path d="M232 0 C 260 60, 300 120, 336 170 L 300 200 C 262 150, 222 80, 196 0 Z" fill="var(--grass-2)" opacity="0.8"/>
+        <!-- Bahnlinie und Bahnhof im Westen -->
+        <rect x="14" y="0" width="22" height="480" fill="#3a3c40"/><path d="M20 0 V480 M30 0 V480" stroke="var(--rail)" stroke-width="1.5"/>
+        <rect x="40" y="214" width="56" height="92" rx="3" fill="#cfd2d4"/><rect x="40" y="214" width="56" height="12" fill="#d8302a"/>
+        <text x="68" y="266" fill="#14181e" font-size="12.5" font-weight="700" text-anchor="middle" transform="rotate(-90 68 266)">BAHNHOF SURSEE</text>
+        <!-- Bahnhofstrasse nach Osten bis zum Nordwest-Ende der Altstadt -->
+        <path d="M96 262 C 170 258, 250 252, 330 244" stroke="var(--street)" stroke-width="15" fill="none"/>
+        <path d="M150 260 H 206" stroke="#7a8592" stroke-width="2" stroke-dasharray="2 6"/>
+        <text x="176" y="285" fill="var(--dim)" font-size="11.5" text-anchor="middle">Bahnhofstrasse · verkürzt</text>
+        <!-- Römischer Vicus (1.–3. Jh.) westlich der Altstadt, heute im Boden -->
+        <rect x="116" y="300" width="132" height="40" rx="8" fill="none" stroke="#c8a860" stroke-width="1.3" stroke-dasharray="4 4" opacity="0.8"/>
+        <g fill="#d8b860"><circle cx="132" cy="318" r="3"/><circle cx="142" cy="326" r="2.5"/><circle cx="136" cy="330" r="2"/></g>
+        <text x="194" y="317" fill="#d8c48a" font-size="10.5" font-weight="700" text-anchor="middle">Römer-Vicus</text><text x="194" y="331" fill="#b8a878" font-size="9.5" text-anchor="middle">1.–3. Jh., im Boden</text>
+        <rect x="112" y="176" width="104" height="58" rx="4" fill="#5a6676"/><text x="164" y="201" fill="var(--ink)" font-size="13" font-weight="700" text-anchor="middle">Surseepark</text><text x="164" y="217" fill="#d8dde4" font-size="10.5" text-anchor="middle">Migros · Shops · Restaurant</text>
+        <!-- Stadthalle im Norden, über die St. Urban-Strasse erreichbar -->
+        <path d="M352 228 C 360 184, 384 132, 432 96" stroke="var(--street)" stroke-width="9" fill="none"/>
+        <text x="356" y="168" fill="var(--dim)" font-size="11" transform="rotate(-64 356 168)">St. Urban-Str.</text>
+        <rect x="430" y="40" width="96" height="58" rx="4" fill="#c8b040" opacity="0.9"/><text x="478" y="66" fill="#14181e" font-size="13" font-weight="700" text-anchor="middle">Stadthalle</text><text x="478" y="82" fill="#2a2a18" font-size="10.5" text-anchor="middle">St. Urbanstrasse 5</text>
+        <!-- Konzert in der Stadthalle -->
+        <text x="534" y="62" fill="var(--amber)" font-size="16" font-weight="700">♪</text><text x="546" y="80" fill="var(--amber)" font-size="13" font-weight="700">♫</text><text x="534" y="96" fill="var(--amber)" font-size="11" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Konzert</text>
+        <!-- Sure: kommt aus Südosten (vom See her), fliesst offen der Unterstadt entlang nach Nordwesten und weiter nach Norden -->
+        <!-- Ehret-Park: unterhalb der Unterstadt, ausserhalb der Stadtmauer, an der renaturierten Sure -->
+        <path d="M352 300 C 380 318, 430 352, 480 384 C 520 408, 556 424, 586 440 C 560 462, 520 456, 486 440 C 440 418, 390 382, 352 346 C 330 326, 332 304, 352 300 Z" fill="var(--grass-2)"/>
+        <g fill="#6a9a5a"><circle cx="430" cy="392" r="6"/><circle cx="470" cy="418" r="5"/><circle cx="392" cy="356" r="5"/><circle cx="520" cy="436" r="6"/></g>
+        <path d="M640 476 C 610 462, 560 446, 520 426 C 470 400, 420 368, 380 334 C 358 314, 348 292, 344 272 C 340 252, 332 230, 318 196 C 296 146, 254 72, 214 0" fill="none" stroke="var(--sure)" stroke-width="7"/>
+        <text x="236" y="54" fill="#9ccfe6" font-size="13" font-weight="700" transform="rotate(58 236 54)">Sure</text>
+        <!-- Altstadt: diagonal NW–SO, Oberstadt (nordöstlich) und Unterstadt (südwestlich) -->
+        <path d="M334 236 C 360 200, 430 196, 486 214 C 540 234, 590 288, 596 340 C 600 380, 580 404, 548 404 C 500 400, 440 360, 392 312 C 356 280, 330 262, 334 236 Z" fill="#3b2f28" stroke="#6a5444" stroke-width="2"/>
+        <path d="M330 270 C 344 262, 352 256, 362 250 C 380 234, 420 220, 478 230 C 520 244, 548 290, 562 350" stroke="#c84a3a" stroke-width="15" fill="none" opacity="0.9"/>
+        <path d="M366 254 C 420 300, 480 344, 546 384" stroke="#3a6ad0" stroke-width="11" fill="none" opacity="0.9"/>
+        <!-- Zweiter Arm der Sure: zweigt im Südosten ab, fliesst offen durch die Unterstadt und trifft nach dem Untertor wieder auf den Arm aus dem Ehret-Park -->
+        <path d="M572 440 C 562 420, 552 404, 540 395 C 490 360, 432 318, 377 279 C 362 268, 350 256, 334 236" stroke="var(--sure)" stroke-width="4" fill="none"/>
+        <g fill="var(--roof)"><rect x="384" y="236" width="18" height="16" transform="rotate(30 393 244)"/><rect x="408" y="246" width="18" height="18" transform="rotate(32 417 255)"/><rect x="434" y="262" width="18" height="18" transform="rotate(34 443 271)"/><rect x="462" y="282" width="18" height="18" transform="rotate(36 471 291)"/><rect x="490" y="302" width="18" height="18" transform="rotate(38 499 311)"/><rect x="516" y="276" width="18" height="16" transform="rotate(50 525 284)"/><rect x="398" y="196" width="18" height="16"/><rect x="424" y="196" width="18" height="16"/><rect x="452" y="200" width="18" height="16"/></g>
+        <text x="410" y="226" fill="#ffd8d0" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke">OBERSTADT</text>
+        <text x="436" y="322" fill="#d8e4ff" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke" transform="rotate(34 436 322)">UNTERSTADT</text>
+        <path d="M340 262 C 360 290, 400 322, 448 356 C 490 384, 524 400, 552 404" stroke="#8a7a6a" stroke-width="4" fill="none"/>
+        <rect x="440" y="342" width="14" height="16" fill="#9a8a78" stroke="#e8e4dc" stroke-width="1"/><path d="M440 342 L447 334 L454 342" fill="#8a3b2a"/>
+        <text x="436" y="378" fill="#e8d6a8" font-size="10.5" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Diebenturm · Zunftstube</text>
+        <text x="476" y="340" fill="#e8d6a8" font-size="10" opacity="0.9">Hirschenplatz</text>
+        <rect x="452" y="400" width="22" height="7" rx="2" fill="#c8b89a" transform="rotate(-55 463 403)"/>
+        <text x="236" y="404" fill="#d8ead0" font-size="12.5" font-weight="700">Ehret-Park</text>
+        <text x="236" y="418" fill="#b8d0b0" font-size="10.5">Brücke Badstrasse · Spielplatz · Brunnen</text><path d="M330 404 L392 388" stroke="#b8d0b0" stroke-width="1"/>
+        <!-- Stadtcafé am Rathausplatz 13 und Bars in der Oberstadt (TNT Rock Bar, Rössli Nightbar, El Mosquito) -->
+        <g fill="#e8a03a" stroke="#f4e0b0" stroke-width="1"><circle cx="522" cy="246" r="4"/><circle cx="414" cy="234" r="3.5"/><circle cx="470" cy="238" r="3.5"/><circle cx="552" cy="300" r="3.5"/></g>
+        <text x="636" y="296" fill="var(--amber)" font-size="11" font-weight="700" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Stadtcafé · Bars</text><path d="M584 292 L556 300 M584 290 L526 248" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Altstadt-Pizzeria zur Mühle: Mühleplatz in der Unterstadt, Terrasse an der Sure -->
+        <circle cx="508" cy="372" r="6" fill="#e8402e" stroke="#f4e0b0" stroke-width="2"/><circle cx="506" cy="370" r="1.5" fill="#f4e0b0"/><circle cx="511" cy="374" r="1.5" fill="#3f8e4b"/>
+        <text x="560" y="396" fill="var(--amber)" font-size="11.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Mühle</text><path d="M558 392 L514 375" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Untertor am unteren (nordwestlichen) Ende: hier enden Oberstadt und Unterstadt, danach folgt der Martigny-Platz -->
+        <rect x="346" y="246" width="10" height="26" fill="#c8b89a" stroke="#f2eee4" stroke-width="1.5" transform="rotate(-35 351 259)"/><rect x="348" y="254" width="6" height="10" fill="#3a2a20" transform="rotate(-35 351 259)"/>
+        <text x="262" y="232" fill="var(--amber)" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Untertor</text><path d="M312 230 L346 252" stroke="var(--amber)" stroke-width="1"/>
+        <rect x="262" y="258" width="76" height="50" rx="4" fill="#6a6258"/>
+        <g fill="#e8e4dc" opacity="0.85"><path d="M270 266 h14 l-3 -5 h-8 z"/><path d="M292 266 h14 l-3 -5 h-8 z"/><path d="M314 266 h14 l-3 -5 h-8 z"/></g>
+        <text x="300" y="286" fill="var(--ink)" font-size="11" font-weight="700" text-anchor="middle">Martigny-Platz</text><text x="300" y="299" fill="#d8dde4" font-size="9.5" text-anchor="middle">Wochenmarkt</text>
+        <!-- Wilder Mann in der Unterstadt -->
+        <circle cx="368" cy="240" r="4.5" fill="var(--amber)"/><text x="322" y="198" fill="var(--amber)" font-size="11.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Wilder Mann</text><path d="M356 202 L366 236" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Vierherrenplatz: hinter dem Wilden Mann zwischen Untertor und Stadthalle; Pfarreizentrum, Wohn- und Geschäftshaus, Tiefgarage -->
+        <rect x="306" y="118" width="60" height="38" rx="4" fill="#5a6a5a"/><rect x="311" y="123" width="22" height="15" fill="#cfc8b8"/><rect x="337" y="123" width="24" height="19" fill="#a8a090"/><circle cx="320" cy="148" r="4" fill="#6a9a5a"/><circle cx="331" cy="150" r="3" fill="#6a9a5a"/>
+        <text x="336" y="112" fill="var(--ink)" font-size="11.5" font-weight="700" text-anchor="middle" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Vierherrenplatz</text>
+        <text x="336" y="168" fill="#d8dde4" font-size="9.5" text-anchor="middle" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Pfarreizentrum</text>
+        <!-- Rathaus direkt an der Oberstadt, die Kirche mit ihrer Treppe etwas dahinter (oberhalb) -->
+        <rect x="474" y="150" width="46" height="26" rx="2" fill="#e8e4dc"/><rect x="512" y="128" width="12" height="48" fill="#d8d4cc"/><path d="M512 128 L518 114 L524 128" fill="#3f6a4a"/>
+        <g stroke="#c8b89a" stroke-width="1.5"><path d="M484 178 H 506"/><path d="M482 182 H 508"/><path d="M480 186 H 510"/><path d="M478 190 H 512"/></g>
+        <text x="530" y="116" fill="var(--amber)" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">St. Georg</text>
+        <rect x="474" y="196" width="28" height="26" fill="#e8d6a8" stroke="#8a3b2a" stroke-width="2"/><path d="M474 196 L488 184 L502 196" fill="#8a3b2a"/><rect x="476" y="190" width="5" height="10" fill="#8a3b2a"/><rect x="495" y="190" width="5" height="10" fill="#8a3b2a"/>
+        <text x="560" y="254" fill="var(--amber)" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Rathaus</text><path d="M558 248 L504 214" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Marienbrunnen in der Oberstadt -->
+        <circle cx="440" cy="226" r="4" fill="#7ad0f0" stroke="#e8e4dc" stroke-width="1"/>
+        <!-- Märtplatz (Marktplatz): rechts von der Stadtkirche, etwas tiefer, hinter der oberen Häuserreihe; Autos und Chilbi mit Riesenrad und Achterbahn -->
+        <rect x="540" y="146" width="92" height="84" rx="4" fill="#4a4f58"/>
+        <g><rect x="546" y="216" width="12" height="7" rx="2" fill="#c8302a"/><rect x="562" y="216" width="12" height="7" rx="2" fill="#2f5fb8"/><rect x="578" y="216" width="12" height="7" rx="2" fill="#e8e4dc"/><rect x="594" y="216" width="12" height="7" rx="2" fill="#f0d040"/><rect x="610" y="216" width="12" height="7" rx="2" fill="#3f8e4b"/></g>
+        <g stroke="#ffd23d" stroke-width="1.3" fill="none"><circle cx="562" cy="174" r="14"/><path d="M562 160 V188 M548 174 H576 M552 164 L572 184 M572 164 L552 184"/></g><path d="M556 194 L562 180 L568 194" stroke="#c9ccd2" stroke-width="1.5" fill="none"/>
+        <path d="M582 196 C 590 160, 600 160, 606 182 C 612 202, 620 162, 628 166" stroke="#ff5aa0" stroke-width="2" fill="none"/>
+        <text x="586" y="142" fill="var(--ink)" font-size="12" font-weight="700" text-anchor="middle" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Märtplatz</text>
+        <text x="586" y="208" fill="#e8e4dc" font-size="9.5" text-anchor="middle">Chilbi</text>
+        <!-- Links der Kirche: Gasse aus der Stadt durch das Obertor, dort das Stadttheater -->
+        <path d="M462 230 C 460 214, 456 200, 453 186 C 452 160, 458 124, 472 98" stroke="var(--street)" stroke-width="8" fill="none"/>
+        <rect x="444" y="194" width="18" height="10" fill="#c8b89a" stroke="#f2eee4" stroke-width="1.5" transform="rotate(-12 453 199)"/><rect x="450" y="196" width="6" height="7" fill="#3a2a20" transform="rotate(-12 453 199)"/>
+        <text x="436" y="196" fill="var(--amber)" font-size="11.5" font-weight="700" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Obertor</text>
+        <!-- Museum Sankturbanhof an der Theaterstrasse 9, gleich beim Stadttheater -->
+        <rect x="380" y="132" width="70" height="20" rx="3" fill="#6a5a48"/><text x="415" y="146" fill="var(--ink)" font-size="10" font-weight="700" text-anchor="middle">Sankturbanhof</text>
+        <rect x="384" y="158" width="64" height="22" rx="3" fill="#7a5a8a"/><text x="416" y="173" fill="var(--ink)" font-size="10.5" font-weight="700" text-anchor="middle">Stadttheater</text>
+        <!-- Weg zum See ab dem oberen Ende -->
+        <path d="M570 400 C 590 430, 606 452, 620 476" stroke="var(--amber)" stroke-width="3" stroke-dasharray="8 6" fill="none"/>
+        <!-- Weg zum See (stark verkürzt): über den Beckenhof (Städtlipark) und das neue Quartier Münstervorstadt -->
+        <circle cx="590" cy="428" r="11" fill="var(--grass-2)"/><circle cx="584" cy="424" r="4" fill="#6a9a5a"/><circle cx="594" cy="432" r="3.5" fill="#6a9a5a"/>
+        <g fill="#8a8e94"><rect x="606" y="448" width="10" height="9"/><rect x="618" y="452" width="10" height="9"/><rect x="610" y="460" width="10" height="9"/></g>
+        <text x="572" y="420" fill="#d8ead0" font-size="11.5" font-weight="700" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Beckenhof · Städtlipark</text>
+        <text x="600" y="452" fill="#e8e4dc" font-size="11.5" font-weight="700" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Münstervorstadt</text>
+        <text x="604" y="476" fill="var(--amber)" font-size="13" font-weight="700" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">zum See</text>
+        <!-- Fragezeichen-Pins -->
+        <g font-family="Pixelify Sans, monospace" font-weight="700" font-size="12" text-anchor="middle">
+        </g>
+        <g transform="translate(380 10)"><rect width="64" height="34" rx="5" fill="#0f1a2bcc"/><path d="M14 26 L22 6 L30 26 L22 21 Z" fill="var(--dim)"/><text x="38" y="23" fill="var(--dim)" font-size="13">N</text></g>
+      </svg>
+    </div>
+    <div class="legend"><span><b style="color:#ff8a78">Rot:</b> Oberstadt</span><span><b style="color:#8ab0ff">Blau:</b> Unterstadt</span><span><b style="color:#9ccfe6">Sure:</b> zweigeteilt, ein Arm offen durch die Unterstadt, einer durch den Ehret-Park, nach dem Untertor wieder vereint</span><span><b style="color:#e8d070">Stadthalle:</b> nördlich, über die St. Urban-Strasse</span><span><b style="color:#9ccf8a">Ehret-Park:</b> unterhalb der Unterstadt, jenseits der Stadtmauer, an der Sure</span></div>
+    <p class="cap">Korrigiert nach deinen Angaben: Die Gasse der Oberstadt führt im Nordwesten durch das Untertor hinaus auf den Martigny-Platz mit dem Wochenmarkt, die Unterstadt mündet kurz davor. Der Wilde Mann steht direkt beim Untertor. Dahinter liegt der Vierherrenplatz mit dem neuen Pfarreizentrum und der Tiefgarage, danach folgt die Stadthalle. In der Mitte der Oberstadt steht das Rathaus direkt an der Gasse, die Stadtkirche St. Georg mit ihrer Treppe etwas dahinter. Rechts von der Stadtkirche, hinter der oberen Häuserreihe, liegt der Märtplatz mit den Autos. Links der Kirche führt eine Gasse durch das Obertor aus der Stadt. Direkt beim Obertor steht das Stadttheater, die Gasse führt weiter zur Stadthalle. Im Spiel steht dort eine normale Chilbi mit Riesenrad und Achterbahn, ohne Weihnachtsmotto. In der Oberstadt steht der Marienbrunnen. Die Sure ist zweigeteilt: Ein Arm fliesst offen durch die Unterstadt, der andere durch den Ehret-Park unterhalb der Unterstadt jenseits der Stadtmauer. Nach dem Untertor fliessen beide wieder zusammen. Die Stadthalle ist zugleich Konzertsaal. Beim Stadttheater steht das Museum Sankturbanhof, im Diebenturm hat die Zunft Heini von Uri ihre Zunftstube. Westlich der Altstadt liegt unter Bahnhofstrasse und Häusern der römische Vicus. Im Ehret-Park startet das Entenrennen, Ziel ist das Untertor beim Wilden Mann. Vom oberen Ende im Südosten führt der Weg zum See, stark verkürzt, über den Beckenhof mit dem Städtlipark und das neue Quartier Münstervorstadt.</p>
+  </section>
+
+  <section aria-labelledby="h-see">
+    <h2 id="h-see">Karte 3 · Am Triechter</h2>
+    <div class="map">
+      <svg viewBox="0 0 640 420" role="img" aria-label="Skizze des Triechters: trichterförmige Bucht am Nordende des Sempachersees zwischen der Halbinsel Zellmoos im Westen und der Halbinsel Schenkon im Osten, mit Suhre-Ausfluss, Quai und Bootsvermietung, Promenade mit Buvette und Strandbad">
+        <rect width="640" height="420" fill="#2a3a2a"/>
+        <!-- Wasser: der Triechter läuft nach Norden spitz zu, südlich öffnet er sich zwischen den beiden Halbinseln zum See -->
+        <path d="M304 64 C 276 86, 250 150, 236 220 C 228 264, 214 300, 186 318 C 150 336, 96 340, 40 366 L 30 420 L 640 420 L 640 318 C 600 304, 548 314, 510 314 C 478 314, 456 296, 450 268 C 442 226, 410 160, 372 110 C 354 86, 330 64, 304 64 Z" fill="var(--lake)" stroke="var(--lake-2)" stroke-width="2"/>
+        <path d="M200 330 C 300 330, 420 340, 640 370" stroke="#3f86a8" stroke-width="1" fill="none" opacity="0.6"/>
+        <text x="318" y="210" fill="#cfe6f2" font-size="17" font-weight="700" text-anchor="middle">TRIECHTER</text>
+        <text x="300" y="384" fill="#cfe6f2" font-size="14" font-weight="700">SEMPACHERSEE</text>
+        <text x="630" y="410" fill="#cfe6f2" font-size="11" text-anchor="end">Richtung Sempach ↘</text>
+        <!-- Halbinsel Zellmoos (Westen): Naturschutzgebiet mit Schilf -->
+        <path d="M40 366 C 96 340, 150 336, 186 318 C 214 300, 228 264, 236 220 C 220 210, 180 214, 140 236 C 96 260, 60 300, 0 320 L 0 380 Z" fill="#3f5a32"/>
+        <g stroke="#9ab070" stroke-width="1"><path d="M150 300 v-8 M156 302 v-9 M162 298 v-7 M170 306 v-8 M120 312 v-8 M126 314 v-9 M200 276 v-8 M206 270 v-9 M190 296 v-7 M100 322 v-8"/></g>
+        <text x="120" y="282" fill="#d8ead0" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Zellmoos</text><text x="120" y="296" fill="#b8d0b0" font-size="10.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Naturschutzgebiet</text>
+        <!-- Halbinsel Schenkon (Osten) mit der Seebadi: das Inseli -->
+        <path d="M640 318 C 600 304, 548 314, 510 314 C 478 314, 456 296, 450 268 C 470 254, 520 250, 570 262 C 600 270, 620 280, 640 284 Z" fill="var(--grass-2)" stroke="#6a9a5a"/>
+        <circle cx="484" cy="284" r="5" fill="#6a9a5a"/><circle cx="520" cy="296" r="6" fill="#6a9a5a"/>
+        <text x="520" y="290" fill="#e8d6a8" font-size="11.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Seebadi Schenkon</text>
+        <!-- Nordufer: Suhre-Ausfluss bei Seehüseren, Quai mit Bootsvermietung, Promenade mit Buvette, Strandbad -->
+        <path d="M292 70 C 284 50, 280 28, 284 0" stroke="var(--sure)" stroke-width="5" fill="none"/><text x="226" y="30" fill="#9ccfe6" font-size="11.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Suhre-Ausfluss</text><text x="226" y="44" fill="#9ccfe6" font-size="10" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Seehüseren</text>
+        <path d="M300 66 C 326 70, 352 92, 372 112" stroke="#c8b89a" stroke-width="7" fill="none"/>
+        <g><rect x="314" y="84" width="14" height="8" rx="3" fill="#f0d040"/><rect x="330" y="94" width="14" height="8" rx="3" fill="#e8402e"/><rect x="346" y="106" width="14" height="8" rx="3" fill="#7ad0f0"/></g>
+        <text x="336" y="60" fill="var(--amber)" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Quai · Bootsvermietung</text><text x="336" y="74" fill="#e8d6a8" font-size="10.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Pedalos und E-Boote</text>
+        <path d="M372 112 C 392 140, 414 176, 428 212" stroke="#d8c8a0" stroke-width="4" stroke-dasharray="2 5" fill="none"/>
+        <rect x="378" y="114" width="14" height="10" fill="#e8e4dc"/><path d="M376 114 L385 106 L394 114" fill="#c8302a"/>
+        <text x="300" y="138" fill="var(--amber)" font-size="12" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Triechter Buvette</text><path d="M372 132 L380 122" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Strandbad: Liegewiese, Sprungturm 1/2/4 m, zwei Flosse -->
+        <path d="M410 130 C 440 150, 470 200, 480 250 C 470 254, 458 260, 450 268 C 444 236, 426 190, 408 160 Z" fill="#4f7a42"/>
+        <rect x="430" y="214" width="5" height="16" fill="#e8e4dc"/><rect x="424" y="212" width="14" height="3" fill="#e8e4dc"/><rect x="408" y="232" width="10" height="6" fill="#c9a227"/><rect x="398" y="200" width="10" height="6" fill="#c9a227"/>
+        <text x="482" y="196" fill="var(--amber)" font-size="13" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Strandbad Sursee</text><text x="482" y="210" fill="#e8d6a8" font-size="10.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Liegewiese · Sprungturm · Flosse</text><path d="M480 200 L458 210" stroke="var(--amber)" stroke-width="1"/>
+        <text x="386" y="160" fill="#e8d6a8" font-size="11.5" transform="rotate(62 386 160)" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Promenade</text>
+        <!-- Gamma-Inseli: echte kleine Insel im Triechter (184 m², hohe Bäume) – Lage ungefähr -->
+        <ellipse cx="408" cy="338" rx="13" ry="8" fill="#5a7a3a" stroke="#c8b89a" stroke-width="1.5"/>
+        <g fill="#2f5a2a"><circle cx="402" cy="334" r="5"/><circle cx="411" cy="332" r="6"/><circle cx="416" cy="339" r="4"/></g>
+        <text x="428" y="344" fill="var(--amber)" font-size="13" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Gamma-Inseli</text>
+        <!-- Mariazell und der Weg von der Altstadt -->
+        <rect x="452" y="30" width="16" height="14" fill="#e8e4dc"/><path d="M452 30 L460 20 L468 30" fill="#8a3b2a"/><text x="474" y="42" fill="#e8d6a8" font-size="11.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Mariazell</text>
+        <path d="M330 0 C 326 24, 316 44, 306 62" stroke="var(--amber)" stroke-width="3" stroke-dasharray="8 6" fill="none"/>
+        <text x="342" y="16" fill="var(--amber)" font-size="12" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">via Beckenhof · Münstervorstadt</text>
+        <g font-family="Pixelify Sans, monospace" font-weight="700" font-size="12" text-anchor="middle">
+          
+        </g>
+        <g transform="translate(16 16)"><rect width="64" height="34" rx="5" fill="#0f1a2bcc"/><path d="M14 26 L22 6 L30 26 L22 21 Z" fill="var(--dim)"/><text x="38" y="23" fill="var(--dim)" font-size="13">N</text></g>
+      </svg>
+    </div>
+    <p class="cap">Der Triechter ist die trichterförmige Bucht am Nordende des Sees. Im Westen begrenzt ihn die Halbinsel Zellmoos, das grösste naturnahe Ufer am Sempachersee und ein Naturschutzgebiet. Im Osten liegt die Halbinsel von Schenkon mit der Seebadi. Etwas weiter draussen, schon ausserhalb des Triechters, liegt das Gamma-Inseli, eine echte kleine Insel von 184 m² mit hohen Bäumen. Sie entstand, als der See zwischen 1806 und 1814 um 1,7 Meter abgesenkt wurde, und war schon in der Jungsteinzeit bewohnt. Im Norden fliesst bei Seehüseren die Suhre aus. Am Nordufer folgen sich der Quai mit der Bootsvermietung, die Promenade mit der Triechter Buvette und das Strandbad Sursee mit Sprungturm. Der See selbst ist rund 7,5 Kilometer lang und höchstens 2,4 Kilometer breit.</p>
+  </section>
+
+  <section aria-labelledby="h-karten">
+    <h2 id="h-karten">Spielkarten</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Karte</th><th>Inhalt</th><th>Grösse (Kacheln)</th></tr></thead>
+        <tbody>
+          <tr><td><code>luzern_halle</code></td><td>bestehend, neu mit Gleis 2 und S-Bahn nach Sursee, Abenddekor</td><td>34 × 22</td></tr>
+          <tr><td><code>sbahn</code></td><td>Szene „S-Bahn Luzern–Sursee“, Halte und Seeblick</td><td>Szene</td></tr>
+          <tr><td><code>sursee</code></td><td>Bahnhof, Bahnhofstrasse, Surseepark, Martigny-Platz, Altstadt mit Rathaus und Kirche, Vierherrenplatz, Märtplatz, Stadttheater, Sure, Ehret-Park, Stadthalle, Beckenhof, Münstervorstadt</td><td>ca. 110 × 70</td></tr>
+          <tr><td><code>sursee_see</code></td><td>Triechter mit Quai, Bootsvermietung, Promenade, Buvette, Strandbad, Gamma-Inseli, Zellmoos, Seebadi Schenkon, Suhre-Ausfluss, Mariazell</td><td>ca. 80 × 50</td></tr>
+          <tr><td>Innenräume</td><td>Rathaus, Diebenturm mit Zunftstube, Wilder Mann, Pizzeria zur Mühle, Stadtcafé, Bars (TNT, Rössli, El Mosquito, La Fuga, Craftwerk), Surseepark (Migros, Restaurant, Läden), Stadttheater, Sankturbanhof, Stadthalle mit Bühne, Kulturwerk 118, Polizeiposten</td><td>je klein bis mittel</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-fall">
+    <h2 id="h-fall">Der Fall · Vorschlag 2</h2>
+    <div class="case">
+      <p class="premise"><b>„Gans oder gar nicht“</b> · Am Martinstag ist in Sursee etwas passiert, das es noch nie gab: Die Gansabhauet fiel aus. Die goldene Sonnenmaske gehört der Fasnachtszunft Heini von Uri, die 2026 ihr 150-Jahr-Jubiläum feiert. Sie war in der Jubiläumsausstellung im Sankturbanhof zu sehen. In der Nacht vor dem Martinstag holte die Zunft sie in ihre Zunftstube im Diebenturm. Am Morgen war sie verschwunden. Die Stadt will die Gansabhauet jetzt im Dezember nachholen, mit einer Chilbi auf dem Märtplatz. Aber nur, wenn die Maske rechtzeitig wieder auftaucht. Als du nach der Heimreise aus Innsbruck in Sursee ankommst, wissen Isa, Elin und Timo schon, wer den Fall lösen soll: du.</p>
+
+      <h3>So spielt es sich</h3>
+      <div class="cast">
+        <div><b>Frei bewegen</b><span>Ganz Sursee ist offen: Altstadt, Chilbi, See, Ehret-Park. Du kannst jederzeit Boot fahren, fischen oder auf die Achterbahn und später weitermachen.</span></div>
+        <div><b>Immer klar, was zu tun ist</b><span>Oben steht stets der nächste Schritt in einem Satz, zum Beispiel „Finde im Diebenturm drei Spuren (1/3)“. Auf der Handy-Karte ist das Ziel markiert.</span></div>
+        <div><b>Suchen, aber nicht zu schwer</b><span>Spuren liegen in kleinen Bereichen und glitzern leicht. Suchst du länger, gibt dir Elin oder Timo einen Tipp. Nach dem zweiten Tipp zeigen sie direkt hin.</span></div>
+        <div><b>Notizbuch</b><span>Im Handy sammelst du Spuren, Verdächtige und Aussagen. Am Ende klagst du mit drei Beweisen an.</span></div>
+      </div>
+
+      <h3>Die Gansabhauet im Spiel</h3>
+      <p>Echter Ablauf als Vorlage: Auslosung der Schläger beim Diebenturm, Umzug mit Stadtrat und Zunft vom Diebenturm durch die Gasse zum Rathaus. Vor dem Rathaus hängt die Gans. Mit verbundenen Augen, Sonnenmaske und rotem Mantel hat jeder Schläger einen einzigen Hieb mit dem stumpfen Dragonersäbel. Dazwischen spielen die Kinder Stangechlädere, Sackgompe und Chäszänne, wo die grässlichste Grimasse ein Stück Käse gewinnt. Am Abend zieht der Räbeliechtli-Umzug vom Untertor durch die dunkle Altstadt. Im Finale bist du selbst Schläger.</p>
+
+      <h3>Fasnacht: die Zunft Heini von Uri</h3>
+      <p>Die Fasnacht ist in Sursee eine Macht, und sie hängt direkt an der Gans: Die Zunft Heini von Uri wurde 1876 von über hundert Surseern gegründet und organisiert seit 1880 die Gansabhauet mit. Sie kleidet die Schläger in Sonnenmaske und roten Mantel und hängt die Gänse auf. Ihr Namensgeber ist der Narr von Herzog Leopold III., der 1386 mit nach Sempach zog. Laut der Sage sagte Heini seinem Herrn immer die Wahrheit, riet ihm vom Kampf ab und wurde nach Sursee zurückgeschickt, um dort den Ausgang der Schlacht abzuwarten. Jedes Jahr regiert ein neuer Heinivater die Fasnacht. Am Güdisdienstag eröffnen drei Kanonenschüsse den Umzug mit rund 50 Nummern und 1500 Mitwirkenden durch Unter- und Oberstadt, mit 10'000 bis 15'000 Zuschauern. Am Fasnachtssamstag spielen beim Monsterkonzert der Guggsurruugger, der ältesten Surseer Guuggenmusig von 1969, rund 20 Guuggen in der Altstadt. Eine Surseer Guugge heisst sogar Diebetormtöibeler, nach dem Diebenturm.</p>
+      <div class="cast">
+        <div><b>Jubiläum im Spiel</b><span>Echt: Narrennacht im Februar 2026 von der Braui über den Diebenturm zum Rathaus, Ausstellung „zünftig“ im Sankturbanhof, verlängert bis Ende November 2026. Im Spiel kommt die Maske genau aus dieser Ausstellung.</span></div>
+        <div><b>Heinivater</b><span>Dein Auftraggeber. Er öffnet dir die Zunftstube und überreicht im Finale den Zunftorden. Im Spiel ohne echten Namen.</span></div>
+        <div><b>Guuggen-Probe</b><span>Die Diebetormtöibeler proben schon für die Fasnacht 2027, unter dem Untertor und im Pfarreizentrum am Vierherrenplatz. Mitspielen als Rhythmus-Minispiel: Pauke, Trompete, Sousaphon.</span></div>
+        <div><b>Fasnachts-Fundus</b><span>In der Zunftstube hängen Larven, Grende und Zunftkostüme. Wer eine Larve trägt, ist nicht zu erkennen, und genau das nutzt der Dieb.</span></div>
+      </div>
+
+      <h3>Konzert in der Stadthalle</h3>
+      <p>Echt: Am Samstag, 12. Dezember 2026, spielt die Stubete Gäng in der Stadthalle Sursee ihre „Samichlaus Tour“, die Innerschweizer Mundart-Partyband mit neuen Show-Elementen. Im Spiel gibt es am Abend in Sursee ein Konzert in der Stadthalle: Ticket an der Abendkasse oder als Gewinn an der Chilbi, Garderobe, Bar und Merchstand, vorne die Bühne mit Lichtshow. Isa kommt mit, die Jungs stossen dazu. Beim Konzert spielst du ein Rhythmus-Minispiel: im Takt klatschen, Hände hoch, beim letzten Lied ein Meer aus Handylichtern. Von der Galerie aus siehst du über das Publikum und entdeckst dort einen Zeugen, der in der Tatnacht beim Diebenturm war.</p>
+
+      <h3>Hauptfall in sieben Schritten</h3>
+      <ol class="acts">
+        <li><span><b>Ankunft</b> · S-Bahn ab Luzern Gleis 2, Empfang am Bahnhof Sursee. Isa erzählt vom Diebstahl.<small>Ziel: „Geh mit den Kindern über die Bahnhofstrasse zum Diebenturm.“</small></span></li>
+        <li><span><b>Tatort Diebenturm</b> · Der Heinivater der Zunft Heini von Uri lässt dich in die Zunftstube. Drei Spuren liegen versteckt: eine Gänsefeder, ein Chilbi-Jeton der Achterbahn und ein nasser Quittungsfetzen vom Bootsverleih.<small>Ziel: „Finde im Diebenturm drei Spuren (0/3).“</small></span></li>
+        <li><span><b>Drei Fährten, freie Reihenfolge</b> · Chilbi: Den Jeton zum Achterbahn-Betreiber bringen, vom Riesenrad aus Lichter beim Gamma-Inseli entdecken. See: Im Logbuch des Bootsverleihs steht ein Boot, das nachts draussen war. Der alte Fischer am Quai redet erst, wenn du ihm einen Felchen fängst. Altstadt: Im Sankturbanhof zeigt das Besucherbuch der Ausstellung, wer die Maske oft angeschaut hat. Im Stadttheater beim Obertor fehlt ein roter Mantel aus dem Fundus.<small>Ziel: „Folge den drei Fährten (0/3). Reihenfolge egal.“</small></span></li>
+        <li><span><b>Louves Schatzkiste</b> · Thierry und Louve haben im Ehret-Park einen goldenen Strahl gefunden. Er ist von der Sonnenmaske abgebrochen. Jetzt ist klar, welchen Weg der Dieb genommen hat.<small>Ziel: „Zeig Isa den goldenen Strahl.“</small></span></li>
+        <li><span><b>Velo-Verfolgungsjagd</b> · Bei der Guuggen-Probe unter dem Untertor nimmt einer der Bläser die Larve nie ab. Als du näher kommst, flüchtet er auf dem Velo. Du nimmst Elins Velo und jagst ihm nach: durch die Unterstadt der Sure entlang, über die Brücke im Ehret-Park, am Beckenhof vorbei und durch die Münstervorstadt bis zum See. Unterwegs weichst du Marktständen, Enten und Kinderwagen aus.<small>Ziel: „Bleib am Velofahrer dran!“</small></span></li>
+        <li><span><b>Bootsjagd zum Gamma-Inseli</b> · Er springt am Quai in ein Elektroboot. Du nimmst das nächste, ein Kollege steuert mit. Auf dem Gamma-Inseli suchst du zwischen den Bäumen die Maske. Danach folgt die Anklage mit drei Beweisen.<small>Ziel: „Finde die Sonnenmaske auf dem Gamma-Inseli.“</small></span></li>
+        <li><span><b>Nachhol-Gansabhauet</b> · Auslosung beim Diebenturm, Umzug zum Rathaus. Die Kinder spielen Sackgompe und Chäszänne, du trittst als Schläger an. Der Heinivater macht dich zum Ehrenzünftler, die Diebetormtöibeler spielen auf. Am Abend gibt es den Räbeliechtli-Umzug und eine letzte Fahrt auf dem Riesenrad, dann der Abspann.<small>Ziel: „Hol dir beim Diebenturm deine Startnummer.“</small></span></li>
+      </ol>
+
+      <h3>Freizeit in Sursee, jederzeit</h3>
+      <div class="cast">
+        <div><b>Boote</b><span>Pedalo oder Elektroboot am Quai mieten und frei auf dem See herumfahren, bis zum Gamma-Inseli und zum Zellmoos.</span></div>
+        <div><b>Fischen</b><span>Vom Quai oder vom Boot aus. Felchen, Egli und Hecht, mit einem kleinen Rekordbuch.</span></div>
+        <div><b>Chilbi</b><span>Riesenrad mit Blick über Sursee, Achterbahn als Fahrszene, Putschibahn und Schiessbude.</span></div>
+        <div><b>Velo</b><span>Mit dem Velo bist du schneller zwischen Bahnhof, Altstadt und See.</span></div>
+        <div><b>Gansabhauet-Spiele</b><span>Sackgompe, Chäszänne und Stangechlädere mit Elin, Timo, Thierry und Louve.</span></div>
+        <div><b>Wilder Mann</b><span>Essen und Bier am Untertor, dort sitzt auch oft einer der Jungs.</span></div>
+        <div><b>Konzert</b><span>Abends in der Stadthalle, mit Isa und den Jungs.</span></div>
+        <div><b>Guuggen</b><span>Bei der Probe der Diebetormtöibeler mitspielen.</span></div>
+      </div>
+
+      <h3>Figuren</h3>
+      <div class="cast">
+        <div><b>Isa</b><span>Kennt alle in Sursee und hat den richtigen Riecher. Ihr Hinweis bringt die Wende.</span></div>
+        <div><b>Elin und Timo</b><span>Begleiten dich bei Tag, kennen jeden Schleichweg und geben Tipps beim Suchen. Beim Finale schauen sie mit Isa vom Ufer aus zu.</span></div>
+        <div><b>Thierry und Louve</b><span>Die Kleinen mit der Schatzkiste. Spielen bei den Gansabhauet-Spielen mit.</span></div>
+        <div><b>Die Jungs</b><span>Tauchen je nach Fährte auf. Yännu hat beim Diebenturm geraucht und etwas gesehen. Didu sitzt im Wilden Mann, Römu fliegt seine Drohne über das Städtli, Hoshy steuert bei der Bootsjagd mit. Lexx hilft bei der Anklage. Cuche ist als Papi oft dabei, spielst du ihn, übernimmt Lexx.</span></div>
+        <div class="sus"><b>Verdächtige (erfunden)</b><span>Der Achterbahn-Betreiber, die Kostümbildnerin im Stadttheater, ein ewiger Gansabhauet-Pechvogel, der noch nie getroffen hat, und ein Schatzsucher im Zellmoos. Die Auflösung lege ich beim Bauen fest.</span></div>
+      </div>
+
+      <details class="spoil">
+        <summary>Überraschungen (Spoiler: nur aufklappen, wenn du sie vorher kennen willst)</summary>
+        <div class="cast">
+          <div><b>Heini, der Narr</b><span>Ein Narr im Zunftkostüm taucht immer wieder irgendwo im Städtli auf. Er spricht nur in Rätseln, sagt aber wie in der Sage immer die Wahrheit. Wer seine Rätsel löst, braucht keine Tipps der Kinder.</span></div>
+          <div><b>Die Sage im Zug</b><span>Kurz vor Sempach-Neuenkirch erzählt dir in der S-Bahn ein alter Mann die Geschichte vom Narren Heini und der Schlacht bei Sempach 1386. Erst später merkst du, dass er der Heinivater ist.</span></div>
+          <div><b>Römer im Boden</b><span>Westlich der Altstadt lag im 1. bis 3. Jahrhundert ein römischer Vicus mit Handwerkern und Markt. Thierry und Louve haben einen Metalldetektor. Fünf Römermünzen sind versteckt, wer alle findet, darf sie im Sankturbanhof ausstellen.</span></div>
+          <div><b>Kulturwerk 118</b><span>Ein Konzertkeller für 200 Leute im Untergeschoss der Feuerwehr, darum die 118, die Nummer der Feuerwehr. Nach Mitternacht spielen dort plötzlich die Jungs ein Überraschungskonzert, mit Karaoke für dich.</span></div>
+          <div><b>Kapuzinerkloster</b><span>Das ehemalige Kloster von 1606 bis 1608 an der Geuenseestrasse beherbergt heute das Museum der Schweizer Kapuziner. Im stillen Klostergarten liegt ein Hinweis, den man leicht übersieht.</span></div>
+          <div><b>Zufallsereignisse wie in Innsbruck</b><span>Eine Guugge zieht unangekündigt durch die Gasse und du musst mittanzen. Eine lebende Gans büxt vom Bauernhof aus und rennt durchs Städtli. Nebel legt sich über den See. Römus Drohne landet in der Sure.</span></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-mini">
+    <h2 id="h-mini">Minispiele, Shopping, Restaurants und Bars</h2>
+    <div class="case">
+      <h3>Minispiele</h3>
+      <div class="cast">
+        <div><b>Chilbi</b><span>Schiessbude, Putschibahn, Hau den Lukas, Entenfischen, Büchsenwerfen. Achterbahn als Fahrszene mit Reaktionsspiel, Riesenrad mit Suchbild über Sursee. Dazu Magenbrot und Zuckerwatte.</span></div>
+        <div><b>Fischen</b><span>Vom Quai oder vom Boot: Wurf, Warten, Anhieb im richtigen Moment, Drill. Felchen, Egli und Hecht, mit Rekordbuch.</span></div>
+        <div><b>Pedalo</b><span>Frei herumfahren oder auf Zeit einmal ums Gamma-Inseli.</span></div>
+        <div><b>Motorboot</b><span>Elektroboot vom Bootsverleih, ohne Führerschein: freie Fahrt, Bojen-Slalom und die Bootsjagd im Fall.</span></div>
+        <div><b>Surfen</b><span>Stand-up-Paddle bei der Seebadi Schenkon: Gleichgewicht halten, Wellen von Booten abreiten.</span></div>
+        <div><b>Sprungturm</b><span>Im Strandbad vom 1-, 2- oder 4-Meter-Brett, mit Haltungsnoten wie beim Skispringen.</span></div>
+        <div><b>Velo</b><span>Zeitfahren vom Bahnhof zum See, freies Fahren und die Verfolgungsjagd durchs Städtli.</span></div>
+        <div><b>Gansabhauet</b><span>Der Hieb mit verbundenen Augen. Für die Kinder Sackgompe, Chäszänne und Stangechlädere.</span></div>
+        <div><b>Konzert</b><span>Rhythmus-Spiel in der Stadthalle: klatschen, Hände hoch, Handylichter.</span></div>
+        <div><b>Guuggenmusig</b><span>Im Takt schränzen mit Pauke, Trompete oder Sousaphon. Je sauberer, desto mehr Leute bleiben stehen.</span></div>
+      </div>
+      <h3>Shopping im Surseepark</h3>
+      <p>Grosse Migros im Erdgeschoss mit Proviant und Zutaten, oben das Migros-Restaurant. Daneben Sportgeschäft (Angelrute, Neopren, Velohelm), Elektronikmarkt (Drohne für die Luftbild-Spur), Handyshop, Schuhladen, Reisebüro und Kiosk. Jeder Laden wird wie in Innsbruck ein eigener Innenraum.</p>
+      <h3>Restaurants, Cafés und Bars, liebevoll eingerichtet</h3>
+      <div class="cast">
+        <div><b>Pizzeria zur Mühle</b><span>Am Mühleplatz in der Unterstadt, seit 1976. Ein richtiger Italiener: Holzofen mit Glut, ein Pizzaiolo, der den Teig wirbelt, karierte Tischtücher, Chianti-Flaschen, Kerzen, Terrasse direkt an der Sure.</span></div>
+        <div><b>Wilder Mann</b><span>Seit 1495 am Untertor. Dunkle Holztische und Bänke, alte Bilder von Sursee an den Wänden, Vitrinen mit Fahnen von Männerchor und Sportvereinen, Garten an der Sure. Gutbürgerlich, Fisch aus dem See, Wild im Winter.</span></div>
+        <div><b>Stadtcafé</b><span>Am Rathausplatz im ehemaligen Modehaus Heimann. Café und Bar, einfache Einrichtung, wechselnde Ausstellungen an den Wänden, Boulevard-Terrasse unter Bäumen mitten im Städtli. Treffpunkt für Zeugen und Tratsch.</span></div>
+        <div><b>Bars</b><span>TNT Rock Bar in der Oberstadt mit Rockmusik, Rössli Nightbar im Hotel Rössli, El Mosquito Bodega und Bar, die Kaffeebar La Fuga und das Craftwerk mit Bier und Cocktails. Abends sitzt dort oft einer der Jungs.</span></div>
+        <div><b>Triechter Buvette</b><span>Am See zwischen Bootsverleih und Strandbad: Getränke und Snacks mit Blick aufs Wasser.</span></div>
+        <div><b>Migros-Restaurant</b><span>Im Surseepark, schnell und günstig.</span></div>
+        <div><b>Chilbi-Stände</b><span>Bratwurst, Magenbrot, gebrannte Mandeln.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-fragen">
+    <h2 id="h-fragen">Fragen für die Review</h2>
+    <ol class="qs">
+      <li><span><b>Titel:</b> „Gans oder gar nicht“. Oder lieber „Die goldene Sonnenmaske“ oder „Die Gans von Sursee“?</span></li>
+      <li><span><b>Beute:</b> Passt die gestohlene Sonnenmaske, wegen der die Gansabhauet nachgeholt werden muss?</span></li>
+      <li><span><b>Gansabhauet-Finale:</b> Soll man die Gans herunterholen können, oder schaffen es nur ganz wenige, wie im echten Brauch?</span></li>
+      <li><span><b>Mühle:</b> Ich habe die Pizzeria am Mühleplatz im oberen Teil der Unterstadt an die Sure gesetzt. Stimmt die Lage?</span></li>
+      <li><span><b>Konzert:</b> Die echte Stubete Gäng spielt am 12. Dezember, im Spiel bist du erst nach Innsbruck in Sursee. Darf das Konzert im Spiel an diesem Abend stattfinden, mit der Stubete Gäng oder mit einer erfundenen Band?</span></li>
+      <li><span><b>Minispiele:</b> Welche Chilbi-Spiele sind dir am wichtigsten? Und fehlt noch ein Restaurant oder Laden, der unbedingt rein muss?</span></li>
+    </ol>
+  </section>
+
+  <p class="src">Quellen für Lage und Fakten: <a href="https://www.luzern.com/de/highlights/hopping/kleinstadt/sursee">Luzern Tourismus</a>, <a href="https://www.surseerwoche.ch/artikel/martigny-platz-ist-wieder-marktplatz">Surseer Woche</a>, <a href="https://wildermann-sursee.ch/standort-und-kontakt">Wirtshaus Wilder Mann</a>, <a href="https://www.stadthalle-sursee.ch/informationen/">Stadthalle Sursee</a>, <a href="https://www.korporation-sursee.ch/wasser/bootsvermietung">Korporation Sursee</a>, <a href="https://www.sempachersee-tourismus.ch/de/poi/strandbad-sursee">Sempachersee Tourismus</a>, <a href="https://en.wikipedia.org/wiki/Sempach-Neuenkirch_railway_station">Wikipedia</a>, <a href="https://www.bandsintown.com/e/107667612-stubete-gang-at-sursee-stadthalle">Bandsintown (Stubete Gäng)</a>, <a href="https://www.ticketcorner.ch/venue/stadthalle-sursee-13757/">Ticketcorner</a>, <a href="https://www.sempach.ch/geschichtesempach/4608">Stadt Sempach (Sage Heini von Uri)</a>, <a href="https://www.surseerwoche.ch/artikel/ein-jubilaeum-voller-geschichte">Surseer Woche (Jubiläum)</a>, <a href="https://www.sankturbanhof.ch/ausstellungen/jubilaeumsausstellung-150-jahre-zunft-heini-von-uri/">Sankturbanhof</a>, <a href="https://zunftheinivonuri-sursee.ch/Aktuell/Umzug/">Zunft Heini von Uri (Umzug)</a>, <a href="https://www.guggsurruugger.ch/programm">Guggsurruugger</a>, <a href="https://www.swissinfo.ch/ger/sursee-lu-feiert-den-martinstag-mit-der-gansabhauet/48971768">swissinfo (Gansabhauet)</a>, <a href="https://www.kulturwerk118.ch/verein">Kulturwerk 118</a>, <a href="https://museen-luzern.lu.ch/sursee/museum_schweizer_kapuziner">Museum Schweizer Kapuziner</a>, <a href="https://www.sursee.ch/uebersichtportrait">Stadt Sursee (Porträt)</a>.</p>
+</div>

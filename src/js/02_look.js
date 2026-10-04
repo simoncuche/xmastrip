@@ -82,7 +82,7 @@ function randomLook(r = Math.random, unlocked) {
   if (r() < 0.75) L.beardCol = Math.min(L.hairCol, 10);
   return L;
 }
-const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.') + (L.naked ? '.n' : '');
+const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.') + (L.naked ? '.n' : '') + (L.kid ? '.k' + L.kid : '');
 
 /* ---------- Porträt (64x64) ---------- */
 const HEADS = [
@@ -542,6 +542,7 @@ function getSheet(L) {
       const [fc, fx] = canvas(SPR_W, SPR_H);
       const dir = d === 2 ? 1 : d;
       drawSprite(fx, L, dir, POSES[p], 1, 1);
+      if (L.kid) kidFrame(fc, fx, L.kid);
       outlineCanvas(fc, fx);
       if (d === 2) { x.save(); x.translate(p * SPR_W + SPR_W, d * SPR_H); x.scale(-1, 1); x.drawImage(fc, 0, 0); x.restore(); }
       else x.drawImage(fc, p * SPR_W, d * SPR_H);
@@ -550,6 +551,15 @@ function getSheet(L) {
   _sprCache.set(key, s);
   if (_sprCache.size > 80) _sprCache.delete(_sprCache.keys().next().value);
   return s;
+}
+/* Kinder (Sursee): gleicher Kopf, gestauchter Körper – kid 1 = Schulkind, 2 = Kleinkind. Füsse bleiben auf derselben Höhe. */
+function kidFrame(c, x, kid) {
+  const [tc, tx] = canvas(c.width, c.height);
+  tx.drawImage(c, 0, 0);
+  x.clearRect(0, 0, c.width, c.height);
+  const body = kid === 2 ? 6 : 8, head = 13, top = c.height - 1 - body - head;
+  x.drawImage(tc, 0, 0, c.width, head, 0, top, c.width, head);
+  x.drawImage(tc, 0, head, c.width, c.height - 1 - head, 0, top + head, c.width, body);
 }
 function outlineCanvas(c, x) {
   const id = x.getImageData(0, 0, c.width, c.height), d = id.data, W = c.width, H = c.height;

@@ -3,6 +3,28 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.28.0 – 04.10.2026
+
+- Neues Kapitel „Gans oder gar nicht“: Nach der Heimreise aus Innsbruck geht es in Luzern weiter. Auf Gleis 2 fährt die S-Bahn nach Sursee, dem Sempachersee entlang (Emmenbrücke, Rothenburg Station, Sempach-Neuenkirch, Nottwil). Wer will, geht stattdessen heim und beendet das Spiel.
+- Sursee als offene Welt: Bahnhof, Surseepark, Martigny-Platz, Untertor, Oberstadt mit Rathaus und Stadtcafé, Kirche St. Georg, Obertor mit Stadttheater und Sankturbanhof, Stadthalle, Vierherrenplatz, Unterstadt mit offenem Sure-Arm und Diebenturm, Ehret-Park, Beckenhof, Münstervorstadt und am See der Triechter mit Quai, Bootsvermietung, Strandbad, Zellmoos, Seebadi Schenkon und dem Gamma-Inseli.
+- Der Fall: Die goldene Sonnenmaske der Zunft Heini von Uri ist verschwunden. Mit Isa, Elin und Timo, Cousin Thierry und Cousine Louve spürst du den Dieb auf: Spuren in der Zunftstube, drei Fährten (Chilbi, See, Altstadt), Velo-Verfolgung, Bootsjagd, Anklage und zum Schluss die nachgeholte Gansabhauet vor dem Rathaus.
+- Notizbuch im Handy mit Spuren, Verdächtigen, Beweisen und Tipps von Elin und Timo. Elin und Timo begleiten dich tagsüber.
+- Chilbi auf dem Märtplatz mit Riesenrad, Achterbahn, Schiessbude, Hau den Lukas, Entenfischen, Büchsenwerfen, Putschibahn und Magenbrot. Dazu Fischen, Pedalo, Elektroboot, Stand-up-Paddle, Sprungturm, Mietvelo, Konzert in der Stadthalle, Guuggen-Probe und Römermünzen im Vicus.
+- Lokale: Wirtshaus Wilder Mann, Pizzeria zur Mühle, Stadtcafé, TNT Rock Bar, Rössli Nightbar, El Mosquito, La Fuga, Craftwerk, Triechter Buvette, Kulturwerk 118. Die Jungs kommen nach und sitzen je nach Uhrzeit in den Bars.
+- Neue Ereignisse in Sursee: Guuggen-Überfall, Gans auf der Flucht, Nebel über Sursee, Römus Drohne.
+- Familie mit mehr Leben: Elin (2. Klasse im Schulhaus St. Martin, spielt Gitarre, liebt Papis Pizzas) übt mit dir Rechnen bis 20, Timo (Kita Villa Luna beim Märtplatz, fährt Velo, isst nur Teigwaren mit Käse) besucht seinen Freund Lejan, Thierry (wohnt mit Louve in Schenkon) weiss alles über Landmaschinen und macht ein Bauernhof-Quiz, Isa arbeitet im Homeoffice und trinkt etwas viel Kaffee (die Kaffeemaschine heisst Bruno).
+- Surseepark mit Obergeschoss: Die Rolltreppe führt hinauf zu Spielwaren, Buchhandlung, Glace & Kafi und Kinderparadies mit Bällebad, mit Blick durch den Lichthof hinunter und zur Passerelle. Elin und Timo freuen sich über Geschenke.
+- Fehler behoben: Nach dem Verlassen der Zunftstube stand man festgefahren irgendwo auf der Karte. Jetzt kommt man vor dem Waschhaus beim Diebenturm heraus, und ein festsitzender Spielstand wird beim Laden auf den nächsten freien Platz gesetzt.
+- Elin und Timo sagen „Papi“ zu dir, laufen mit mehr Abstand hinter dir her und stehen nicht mehr im Weg: Türen, Theken und Leute gehen beim Drücken von A vor. Vom Mietvelo steigst du mit A ab und wieder auf.
+- Der Poller beim Untertor: Immer wieder fährt das Postauto oder ein Auto hinein. KLONK. Der Werkhof führt eine Strichliste.
+- Feuerwehreinsatz in der Unterstadt: Ein Haus brennt, du wählst 118, das Löschfahrzeug fährt vom Depot durchs Untertor, du löschst mit dem Strahlrohr und die Drehleiter holt Frau Wüest aus dem Fenster. Einmal pro Spiel gehört der Einsatz zur Geschichte (mit einem Hinweis zum Fall), danach kann er wieder vorkommen. Dazu Heini, der Narr, mit Rätseln und wahren Tipps.
+- Häuser nach Fotos der echten Vorbilder: weisses Untertor mit hohem Dach (1674) und dem Schützenhaus mit geflammten Läden, das auf Bögen über der Sure steht; hellgraues Rathaus mit Treppengiebel, Sonnenuhr, zwei Bogentüren und Turm mit roter Zwiebelhaube, davor das flache Granitbecken mit Spiegelwasser; St. Georg; Diebenturm mit Eckquadern und geschweiftem Ziegeldach neben dem Waschhaus (dort ist die Zunftstube); grüne Stadthalle mit gelben Rohren; der Bahnhof mit Quergiebel, lila-grauen Läden, Walmdach-Flügeln, SBB-Logo, Uhr und Billettautomaten; der Surseepark mit Glaswürfel, Rippenblech-Bau, Stele und Glas-Passerelle zum Parkhaus; gegenüber der Dreiklang (Hochhaus, kleinerer Turm, Riegel) mit der Polizei dahinter; die vier olivgrünen Wohnblöcke der Oase Beckenhof in der Münstervorstadt (Nummer 2, 4, 6 und 8, Isa wohnt in der 8, mit Rasen, Bäumen, Hecken und Blumenbeeten); der quadratische Stadthof am Martigny-Platz mit hohen Betonpfeilern, Pergola rund um die Dachterrasse und Läden; barocke Häuserzeilen der Oberstadt, Wilder Mann, Murihof, Hotel Hirschen, Marienbrunnen und Heinibrunnen am Vierherrenplatz.
+- Roter Sportplatz neben der Stadthalle (Sackgumpe-Rennen mit den Kindern oder ein paar Runden gegen den Kater) und viel Wald rund um das Städtli und entlang der Sure.
+- Zwölf Fotostellen in Sursee mit echten Fakten, unter anderem Rathaus, Untertor, St. Georg, Diebenturm, Marienbrunnen, Heinibrunnen, Murihof, Sankturbanhof und Gamma-Inseli.
+- Konzert in der Stadthalle mit der Stubete Gäng.
+- Easter Egg: Wer in der Luzerner Bahnhofshalle genau hinschaut, kann Innsbruck auslassen und direkt nach Sursee fahren.
+- Tracker: Fortschritt und Abschnitte für das Kapitel Sursee, neue Ereignisse.
+
 ## 2.27.4 – 04.10.2026
 
 - Versionshistorie aufgeräumt.

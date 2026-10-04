@@ -50,7 +50,7 @@ function showTitle() {
       <button class="btn ${save && !save.finished ? '' : 'primary'}" id="tNew">Neues Spiel</button>
     </div>
     <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
-    <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
+    <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}${BUILD_VARIANT ? ` · Vorschau ${BUILD_VARIANT}` : ''}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
     <div class="changelog" id="tChangelog" hidden>${changelogHtml()}</div>
   </div>`;
   const logBtn = t.querySelector('#tLog'), logBox = t.querySelector('#tChangelog');

@@ -36,7 +36,8 @@ const Track = {
       ach: Object.keys(S.ach || {}), achTotal: Object.keys(ACH).length,
       sights: Object.keys(S.photos || {}).length, rec: S.rec || {},
       ev: Story.evSeen(), evTotal: Object.keys(Story.EV_TITLES).length,
-      finished: !!S.finished, apoc: !!(S.flags && S.flags.apocDone), over: G.mode === 'over',
+      finished: !!S.finished, apoc: !!(S.flags && S.flags.apocDone) && !S.chapter, over: G.mode === 'over', chapter: S.chapter || '',
+      su: S.su ? { faehrten: Sur.faehrtenDone(), coins: (S.su.coins || []).length, photos: Object.keys(S.su.photos || {}).length, riddles: S.su.riddles || 0 } : null,
       v: APP_VERSION, at: { '.sv': 'timestamp' },
     };
   },
