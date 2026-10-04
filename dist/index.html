@@ -10368,7 +10368,6 @@ Object.assign(Sur, {
     await Story.say(null, 'Er lässt das Sousaphon fallen, springt auf ein Velo und rast durch das Untertor davon – Richtung Unterstadt!');
     const papi = suPapi();
     await Story.say(this.followOk() ? 'me' : null, this.followOk() ? 'Elin, dein Velo! Ich bring es dir zurück!' : 'Neben dem Wilden Mann steht ein Velo. Du schwingst dich drauf.');
-    G.busy--;
     let r = await this.mini('velo', 'chase');
     if (!(r && r.ok)) {
       await kidSay('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, du schaffst das!');
@@ -10380,6 +10379,7 @@ Object.assign(Sur, {
     this.st().bootReady = 0;
     G.npcs = G.npcs.filter((n) => !n.larve);
     await warpTo('sursee_see', 'quai', { plain: true });
+    G.busy--;
   },
   async bootsjagd() {
     G.busy++;
@@ -10387,7 +10387,6 @@ Object.assign(Sur, {
     await Story.say(null, 'Am Quai springt der Mann im roten Mantel in Boot 7 und fährt los – mitten in den Triechter hinaus.');
     if (FRIENDS[helper]) await Story.say(helper, `${G.S.name}! Ich war grad hier am Quai. Rein ins Elektroboot, ich steuer – du schaust, wohin er fährt!`);
     await Story.say('Bootsvermieter Sepp', 'Nimm die Nummer 3, die ist geladen! Bezahlen kannst du später!');
-    G.busy--;
     const r = await this.mini('bootsjagd');
     if (r && r.ok) { achieve('su_boot'); await Story.say(helper, 'Er legt am Gamma-Inseli an! Wir sind direkt hinter ihm!'); }
     else await Story.say(helper, 'Er ist schneller … aber er fährt zum Gamma-Inseli. Hinterher!');
@@ -10397,6 +10396,7 @@ Object.assign(Sur, {
     await UI.fadeIn();
     await Story.say('me', 'Er ist zwischen den Bäumen verschwunden. Irgendwo hier muss die Maske sein. Ich such die Insel ab.');
     UI.toast('Such die Insel ab: unter Bäumen, im Schilf, hinter Steinen.');
+    G.busy--;
   },
   async search(k) {
     const s = this.st();
@@ -10516,6 +10516,7 @@ Object.assign(Sur, {
     await Scene.play('lift', { text: 'Zum Schluss: eine letzte Fahrt mit dem Riesenrad. Ganz oben bleibt es stehen. Unter dir leuchtet Sursee.', ms: 3200, keep: true });
     this.setStage('s_frei');
     saveGame(true);
+    await UI.fadeIn();
     G.busy--;
     await Ending.show({ sursee: true });
   },
