@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.21.0 – 04.10.2026
+
+- Schnappschüsse gehören jetzt zum jeweiligen Spiel: Ein neues Spiel startet mit leerer Galerie, alte Schnappschüsse und Fotos der Sehenswürdigkeiten aus dem vorherigen Spiel werden entfernt.
+- Flöru und Hännsu sind 40! Die beiden machen Sprüche über sich („Ich bin nicht 40. Ich bin 25 – mit 15 Jahren Erfahrung.“), die Kollegen ziehen sie auf (Lesebrille, Wärmepflaster, Sitzplätze im Club), und am Jasstisch wird auf den 40sten angestossen. Spielst du selbst einen der beiden, bekommst du die Sprüche ab.
+
 ## 2.20.0 – 04.10.2026
 
 - Jassen mit Stammtisch-Gefühl: Die Mitspieler reden in Sprechblasen – typische Jass-Sprüche („Stöck!“, „Wer nüt weist, verlürt.“, „Schiebe isch kei Schand.“), Witze mit Reaktionen und Gespräche über die Reise und die letzten Wiehnachtsreisli nach Strassburg, Turin, Dublin und Lyon, bei denen einer erzählt und ein anderer antwortet. Auf Trumpfansagen, grosse Stiche und einen Match gibt es Kommentare.

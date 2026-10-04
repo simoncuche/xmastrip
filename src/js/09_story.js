@@ -1286,8 +1286,27 @@ const Story = {
     };
     if (m === 'zug') p.push(pick(['Gleich kommt der Arlbergtunnel, über zehn Kilometer!', 'Am Vierertisch ist noch ein Platz frei. Jassen?', 'Im Speisewagen gibt\'s Gulaschsuppe. Und Bier.', `${fname(latecomer())} sitzt jetzt sechs Stunden im Taxi. Für eine Zigarette.`]));
     if (m === 'luzern' || m === 'luzern_halle') p.push(pick(['Endlich Innsbruck! Ich freu mich schon seit Wochen.', 'Hast du deinen Ausweis dabei? Ohne kommst du im Hotel nicht rein.', 'Ich hoffe, im Zug ist ein Vierertisch frei.']));
+    { const l40 = this.line40(id); if (l40 && Math.random() < 0.3) return l40; }
     const pool = p.length && Math.random() < 0.65 ? p : R[f.fn];
     return pick(pool);
+  },
+  /* Flöru und Hännsu sind 40 geworden – Sprüche von ihnen selbst und von den Kollegen (auch wenn du einer der beiden bist) */
+  line40(id) {
+    const me = G.S.name, fifty = ['floeru', 'haennsu'];
+    const own = {
+      floeru: ['Seit ich 40 bin, mach ich nach jedem Tanz drei Minuten Pause. Und nach jedem Bier fünf.', 'Mit 40 tanzt man nicht mehr – man bewegt sich rhythmisch Richtung Theke.', '40 ist das neue 30. Sagt jedenfalls nicht mein Rücken.', 'Früher hab ich bis 5 Uhr getanzt. Heute bin ich um 5 Uhr wach. Ohne Wecker.', 'Zum 40. hab ich mir Tanzschuhe mit Einlagen gekauft. Orthopädisch. Und trotzdem stylisch.'],
+      haennsu: ['Mit 40 hat man Charme, Erfahrung und eine Lesebrille. Zwei davon zeig ich gern.', 'Ich bin nicht 40. Ich bin 25 – mit 15 Jahren Erfahrung.', 'Seit ich 40 bin, zwinkere ich vorsichtiger. Wegen dem Nacken.', 'Die Bardame wollte meinen Ausweis sehen! Mit 40! … Okay, sie wollte wissen, ob es Seniorenrabatt gibt.', 'Graue Schläfen sind bei Männern ein Zeichen von Weisheit. Sagt meine Mutter.'],
+    };
+    if (own[id]) return pick(own[id]);
+    const pool = [];
+    for (const x of fifty) {
+      if (x === G.S.pid) { pool.push(`Du bist jetzt auch 40, ${me} – willkommen im Club der Lesebrillen.`, `${me}, mit 40 trinkt man nicht mehr so viel Bier. … Ach was, Prost!`, `Wie fühlt sich 40 an, ${me}? Knackt es schon beim Aufstehen?`); continue; }
+      if (!FRIENDS[x]) continue;
+      const N = fname(x);
+      pool.push(`${N} ist jetzt 40. Er hat gestern gefragt, ob es im Club Lawine Sitzplätze gibt.`, `Hast du gesehen? ${N} hat sich beim Bierpong den Rücken verrenkt. Mit 40 ist halt alles Leistungssport.`, `${N} braucht jetzt eine Lesebrille für die Jasskarten. Er sagt, die Schrift sei kleiner geworden.`, `${N} ist 40 und sagt immer noch „Das geht noch!“. Um 3 Uhr morgens. Mit Wärmepflaster.`, `Weisst du, warum ${N} so früh ins Bett will? Mit 40 heisst das nicht mehr Schlafen, sondern Regeneration.`, `Kerzen für ${N}s Geburtstagskuchen? Die Feuerwehr Innsbruck hat abgeraten.`);
+    }
+    if (fifty.every((x) => x === G.S.pid || FRIENDS[x])) pool.push(`${fname('floeru')} und ${fname('haennsu')} sind beide 40. Zusammen 80 – das ist kein Jahrgang mehr, das ist ein Jubiläum.`);
+    return pool.length ? pick(pool) : null;
   },
   /* Ein Kollege trinkt (ausgegeben oder Runde): Pegel steigt, ab 2,6 ‰ übergibt er sich und geht ins Hotel. */
   async friendDrink(id, alc) {

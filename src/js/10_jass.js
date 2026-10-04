@@ -116,6 +116,17 @@ const Jass = {
         ['In Dublin het {a} sis Portemonnaie im Pub vergässe. Zwei Mal.', 'Und beidi Mal het\'s de Barkeeper zruggbracht. Irland, gäll.'],
         ['Weisch no, wie mir z\'Turin de Zug verpasst händ?', 'Mir händ en nöd verpasst. Er isch eifach zfrüe gfahre.'],
       ];
+      /* Flöru und Hännsu sind 40 */
+      const F = fname('floeru'), Hn = fname('haennsu');
+      TRIP.push(
+        [`${F} isch jetzt 40. Er het gfrogt, öb mer mit Lesebrille jasse dörf.`, 'Dörf mer. Aber Spicke isch verbote.'],
+        [`Mit 40 zellt de ${F} d'Pünkt im Chopf – und vergisst s'Resultat.`, 'Drum schriib ich uf de Tafel, gäll.'],
+        [`Uf de 40ste vom ${F} und vom ${Hn}! 🍺`, 'Zäme 80 Johr – und immer no kei Match gmacht.'],
+        ['Wie fiiret mer en 40ste? Mit eme Wiehnachtsreisli!', 'Und mit Rückeschmerze am nächschte Morge.'],
+        [`De ${Hn} seit, mit 40 sig er wie e guete Wii.`, 'Stimmt – er wird langsam Essig.'],
+        [`De ${F} het im Club gfrogt, öb er chan sitze.`, 'Er tanzt jetzt im Sitze. Sitztanz ab 40.'],
+        [`${Hn}, mit 40 bruuchsch für d'Charte e grösseri Schrift.`, 'Oder längeri Ärm.'],
+      );
       const JASS = ['Stöck!', 'Trumpf isch Trumpf.', 'Wer nüt weist, verlürt.', 'Bock!', 'Ich ha nüt – aber das mit Stil.', 'Chasch nöd zelle?', 'D\'Nell isch mini Fründin.', 'Schiebe isch kei Schand.', 'Das isch kei Jass, das isch e Katastrophe.', 'Gopfriedstutz, scho wieder Schälle!', 'Weis doch öppis!', 'Wer de Puur het, het s\'Säge.', 'Ruhig, ich zell mit.', 'Nie de Puur verschänke!', 'Obenabe wie de Föhn!'];
       const JOKES = [
         'Mini Frau seit, ich jass z\'vill. Ich ha gseit: Trumpf. Sie isch gange.',

@@ -79,6 +79,13 @@ async function startGame(state, fresh) {
   if (!G.S.flags.met) G.S.flags.met = {};
   buildFriends();
   G.photoImg = {};
+  /* Neues Spiel: Fotos und Schnappschüsse des vorherigen Spiels entfernen. Ältere Spielstände ohne Kennung bekommen eine neue,
+     ihre ungekennzeichneten Schnappschüsse stammen aus früheren Spielen und werden ebenfalls entfernt. */
+  if (fresh || !G.S.flags.gameId) {
+    G.S.flags.gameId = 'g' + Date.now().toString(36);
+    Snap.reset();
+    if (fresh) { try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} }
+  }
   try { G.photoImg = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); } catch (e) {}
   document.getElementById('title').hidden = true;
   document.getElementById('hud').hidden = false;

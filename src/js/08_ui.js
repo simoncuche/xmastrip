@@ -465,10 +465,13 @@ const Snap = {
   MAX: 40,
   _list: null,
   key() { return SAVE_KEY + '-snaps'; },
+  /* Jedes Spiel hat eine eigene Kennung; die Galerie zeigt nur Schnappschüsse des laufenden Spiels */
+  gid() { return (G.S && G.S.flags && G.S.flags.gameId) || ''; },
   list() {
-    if (!this._list) { try { this._list = JSON.parse(localStorage.getItem(this.key()) || '[]'); } catch (e) { this._list = []; } }
+    if (!this._list) { let all = []; try { all = JSON.parse(localStorage.getItem(this.key()) || '[]'); } catch (e) {} const g = this.gid(); this._list = all.filter((s) => s.gid && s.gid === g); }
     return this._list;
   },
+  reset() { this._list = []; try { localStorage.removeItem(this.key()); } catch (e) {} },
   store() {
     const l = this.list();
     while (l.length > this.MAX) l.shift();
@@ -495,7 +498,7 @@ const Snap = {
     const { title, sub } = this.caption();
     const comp = this.compose(src, title, sub);
     let data; try { data = comp.toDataURL('image/png'); } catch (e) { UI.toast('Foto konnte nicht gespeichert werden.', 'warn'); return; }
-    const sn = { id: Date.now().toString(36), place: G.map.name, when: `${dateStr()} ${clockStr()}`, data };
+    const sn = { id: Date.now().toString(36), gid: this.gid(), place: G.map.name, when: `${dateStr()} ${clockStr()}`, data };
     this.list().push(sn);
     const ok = this.store();
     Snd.sfx('shutter');
