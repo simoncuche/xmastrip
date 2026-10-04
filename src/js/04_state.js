@@ -158,7 +158,7 @@ const ACH = {
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
   verraucht: ['Zug verraucht', 'Den Zug in Luzern beim Rauchen verpasst'],
-  flitzer: ['Flitzer-Alarm', 'Titu und Rümmel nackt durch die Gassen rennen sehen'],
+  flitzer: ['Flitzer-Alarm', 'Didu und Römu nackt durch die Gassen rennen sehen'],
   fussball: ['Stammtisch-Experte', 'Mit Hakan Yakin und Xherdan Shaqiri über Fussball diskutiert'],
   schoettli: ['Schöttli-Rundi', 'Im Railjet eine Schöttli-Runde gekippt'],
   abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],

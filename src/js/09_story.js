@@ -538,7 +538,7 @@ const Story = {
     ufo: ['Unbekanntes Flugobjekt', 'Lichter über der Maria-Theresien-Strasse'],
     trump: ['Hoher Besuch', 'Motorradeskorte und Sirenen'],
     verfolgung: ['Taschendieb', 'Halt den Dieb!'],
-    flitzer: ['Flitzer!', 'Titu und Rümmel – ohne alles durch die Gassen'],
+    flitzer: ['Flitzer!', 'Didu und Römu – ohne alles durch die Gassen'],
     monster: ['Godzilla', 'Er kommt über die Nordkette'],
     apokalypse: ['Apokalypse', 'Innsbruck geht unter – der letzte Zug wartet'],
   },
@@ -1218,38 +1218,47 @@ const Story = {
     else { UI.toast(`${fname(v)} wird abgeführt. Auf der Wache beim Bahnhof, frei ab ${clockStr(G.S.time + 180)}.`); cop.path = [{ x: cop.x + side * 220, y: cop.y }]; f.path = [{ x: f.x + side * 220, y: f.y }]; cop.onArrive = () => this.dropActor(cop); f.onArrive = () => this.dropActor(f); G.npcs = G.npcs.filter((n) => !(n.friend && n.id === v && n !== f)); }
     G.busy--;
   },
-  /* Titu und Rümmel flitzen nackt (mit Zensurbalken) durch die Gassen, ein Polizist hinterher */
+  /* Didu und Römu flitzen nackt (mit Zensurbalken) durch die Gassen, ein Polizist hinterher.
+     Spielt man selbst einen der beiden, springt ein anderer Kollege ein. */
+  flitzerIds() { return ['didu', 'roemu', 'kusi', 'coel', 'hoshy'].filter((id) => FRIENDS[id]).slice(0, 2); },
   async ev_flitzer() {
     G.busy++;
     const p = G.player;
     const side = Math.random() < 0.5 ? -1 : 1;
-    const naked = (seed, o) => Object.assign(npcLook(seed, o), { naked: 1, top: 0, print: 0, pants: 3, shoes: 4, hat: 0, glasses: 0, acc: 0, costume: 0, jewel: 0 });
-    const titu = this.tempActor({ name: 'Titu', look: naked(1301, { hair: 2, hairCol: 5, beard: 1, beardCol: 4, build: 1, height: 2, skin: 1 }), x: p.x + side * 170, y: p.y - 4, speed: 125, bubbleRand: ['!'] });
-    const ruemmel = this.tempActor({ name: 'Rümmel', look: naked(1302, { hair: 7, hairCol: 1, beard: 7, beardCol: 1, build: 3, height: 1, skin: 2 }), x: p.x + side * 200, y: p.y + 6, speed: 118, bubbleRand: ['!'] });
+    const [idA, idB] = this.flitzerIds();
+    const nA = fname(idA), nB = fname(idB);
+    const naked = (id) => Object.assign({}, FRIENDS[id].look, { naked: 1, top: 0, print: 0, pants: 3, shoes: 4, hat: 0, acc: 0, costume: 0, jewel: 0 });
+    /* Die angezogenen Doppelgänger der beiden ausblenden, solange sie nackt herumrennen */
+    const twins = G.npcs.filter((n) => n.friend && (n.id === idA || n.id === idB) && !n.hidden);
+    for (const n of twins) n.hidden = true;
+    const A = this.tempActor({ name: nA, look: naked(idA), x: p.x + side * 170, y: p.y - 4, speed: 125, bubbleRand: ['!'] });
+    const B = this.tempActor({ name: nB, look: naked(idB), x: p.x + side * 200, y: p.y + 6, speed: 118, bubbleRand: ['!'] });
     Snd.sfx('cheer'); Snd.tone(880, 0.1, 'square', 0.05); Snd.tone(990, 0.12, 'square', 0.05, 0.12);
-    UI.toast('„JUHUUUU!“ Zwei Männer rennen durch die Gasse – splitternackt. Nur ein schwarzer Balken hält die Würde aufrecht.', 'warn');
-    await Promise.all([this.walk(titu, p.x + side * 26, p.y - 4), this.walk(ruemmel, p.x + side * 44, p.y + 6)]);
-    titu.dir = dirTo(titu.x, titu.y, p.x, p.y); ruemmel.dir = dirTo(ruemmel.x, ruemmel.y, p.x, p.y);
-    await this.say(titu, `HOI ${G.S.name.toUpperCase()}! Wette verloren! Einmal nackt ums Goldene Dachl – bei zwei Grad!`);
-    await this.say(ruemmel, 'Nicht hinschauen! … Oder doch. Egal. Ich spür eh nichts mehr. NICHTS.');
-    const c = await this.ask(null, 'Titu und Rümmel hüpfen von einem Bein aufs andere. Hinten an der Gasse taucht eine Polizeimütze auf.', ['📸 Beweisfoto für die Gruppe', 'Jacke ausleihen', 'Mitrennen!', 'Kopfschüttelnd zuschauen']);
-    if (c === 0) { try { Snap.shoot(); } catch (e) {} G.fx.flash = 1; mood(10); await this.say(titu, 'Mit Zensurbalken, gäll! Meine Mutter ist in der WhatsApp-Gruppe!'); }
-    else if (c === 1) { mood(6); await this.say(ruemmel, 'Merci! Du bist ein Held! … Die ist ja noch warm. Ich geb sie dir im Gamsbock zurück. Vielleicht.'); ruemmel.look = Object.assign({}, ruemmel.look, { naked: 0, top: 8, topCol: 16, pants: 3, pantsCol: 2 }); }
+    UI.toast(`„JUHUUUU!“ ${nA} und ${nB} rennen durch die Gasse – splitternackt. Nur ein schwarzer Balken hält die Würde aufrecht.`, 'warn');
+    await Promise.all([this.walk(A, p.x + side * 26, p.y - 4), this.walk(B, p.x + side * 44, p.y + 6)]);
+    A.dir = dirTo(A.x, A.y, p.x, p.y); B.dir = dirTo(B.x, B.y, p.x, p.y);
+    await this.say(A, `HOI ${G.S.name.toUpperCase()}! Wette verloren! Einmal nackt ums Goldene Dachl – bei zwei Grad!`);
+    await this.say(B, 'Nicht hinschauen! … Oder doch. Egal. Ich spür eh nichts mehr. NICHTS.');
+    const c = await this.ask(null, `${nA} und ${nB} hüpfen von einem Bein aufs andere. Hinten an der Gasse taucht eine Polizeimütze auf.`, ['📸 Beweisfoto für die Gruppe', 'Jacke ausleihen', 'Mitrennen!', 'Kopfschüttelnd zuschauen']);
+    if (c === 0) { try { Snap.shoot(); } catch (e) {} G.fx.flash = 1; mood(10); await this.say(A, 'Mit Zensurbalken, gäll! Meine Mutter ist in der WhatsApp-Gruppe!'); }
+    else if (c === 1) { mood(6); G.S.aff[idB] = clamp((G.S.aff[idB] || 50) + 8, 0, 100); await this.say(B, 'Merci! Du bist ein Held! … Die ist ja noch warm. Ich geb sie dir im Gamsbock zurück. Vielleicht.'); B.look = Object.assign({}, B.look, { naked: 0, top: 8, topCol: 16, pants: 3, pantsCol: 2 }); }
     else if (c === 2) { energy(-12); mood(12); await this.say(null, 'Du rennst ein Stück mit. Angezogen. Die Leute schauen trotzdem nur auf die beiden anderen.'); }
     else { mood(3); await this.say('me', pick(['Ich kenn die nicht. Ich hab die noch nie gesehen.', 'Und das sind erwachsene Männer.', 'Jedes Jahr dasselbe mit den beiden.'])); }
     const cop = this.tempActor({ name: 'Polizist', look: npcLook(902, { hat: 1, hatCol: 2, top: 10, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, beard: 2, glasses: 0, print: 0, acc: 0 }), x: p.x + side * 160, y: p.y, speed: 95 });
     Snd.tone(980, 0.25, 'square', 0.05); Snd.tone(780, 0.25, 'square', 0.05, 0.3);
     await this.say(cop, 'HALT! Polizei! Bleibt\'s stehen! Ihr zwei – ANZIEHEN!');
-    await this.say(titu, 'RENN, RÜMMEL, RENN!');
+    await this.say(A, `RENN, ${nB.toUpperCase()}, RENN!`);
     const away = -side * 260;
-    titu.path = [{ x: p.x + away, y: p.y - 4 }]; titu.onArrive = () => this.dropActor(titu);
-    ruemmel.path = [{ x: p.x + away - side * 20, y: p.y + 6 }]; ruemmel.onArrive = () => this.dropActor(ruemmel);
+    A.path = [{ x: p.x + away, y: p.y - 4 }]; A.onArrive = () => this.dropActor(A);
+    B.path = [{ x: p.x + away - side * 20, y: p.y + 6 }]; B.onArrive = () => this.dropActor(B);
     await sleep(700);
     cop.path = [{ x: p.x + away + side * 30, y: p.y }]; cop.onArrive = () => this.dropActor(cop);
     await sleep(1200);
-    const f = this.friendsHere()[0];
-    if (f) await this.say(f, pick(['Waren das … Titu und Rümmel?! Das erzählen wir an der nächsten GV.', 'Ich hab nichts gesehen. Ich WILL nichts gesehen haben.', 'Zwei Grad. Respekt. Ehrlich.']));
+    const f = this.friendsHere().find((x) => x !== idA && x !== idB);
+    if (f) await this.say(f, pick([`Waren das … ${nA} und ${nB}?! Das erzählen wir an der nächsten GV.`, 'Ich hab nichts gesehen. Ich WILL nichts gesehen haben.', 'Zwei Grad. Respekt. Ehrlich.']));
     else await this.say(null, 'Irgendwo hinter der Hofburg hört man noch ein letztes „JUHUUU!“ – dann ist es still.');
+    /* Später tauchen die beiden wieder angezogen auf, als wäre nichts gewesen */
+    for (const n of twins) if (G.npcs.includes(n)) n.hidden = false;
     achieve('flitzer');
     G.busy--;
   },
@@ -2463,7 +2472,7 @@ const Story = {
         await this.say(H, 'Xherdan, du bisch denn sächzäh gsi. Du hesch das im Fernseh gluegt.');
       } else if (k === 'cl') {
         await this.say(X, 'Zweimal Champions League gwunne: 2013 mit Bayern, 2019 mit Liverpool. D\'Trophäe isch schwerer, als sie usgseht.');
-        const c2 = await this.ask(H, 'Und du, hesch au scho mal öppis gwunne?', ['„Den Jass-Abend im Stüberl!“', '„Eine Wette gegen Titu und Rümmel.“', '„Nein. Aber ich hab Talent.“']);
+        const c2 = await this.ask(H, 'Und du, hesch au scho mal öppis gwunne?', ['„Den Jass-Abend im Stüberl!“', `„Eine Wette gegen ${fname('didu')} und ${fname('roemu')}.“`, '„Nein. Aber ich hab Talent.“']);
         await this.say(X, ['Jass zellt. Jass zellt immer.', 'Die zwei wo nackt umenand rennet? Das isch kei Wette, das isch es Hobby.', 'Talent isch guet. Training isch besser.'][c2]);
       } else if (k === 'frauen') {
         await this.say(X, 'D\'Frauen-EM 2025 bi üs in de Schwiiz – das isch es Fescht gsi. Volli Stadie, mega Stimmig.');
