@@ -201,7 +201,7 @@ const Sur = {
   async tafel() {
     if (this.active()) { await Story.say(null, 'Abfahrtstafel: S1 nach Sursee, Gleis 2. IR 70 nach Zürich HB, Gleis 4.'); return; }
     this._tafel++;
-    if (this._tafel < 3 || stageAt('ride')) { await Story.say(null, `Abfahrtstafel: ${clockStr(DEP_TIME)} IR 70 nach Zürich HB, Gleis 4. ${clockStr(DEP_TIME + 4)} S1 nach Sursee, Gleis 1.${this._tafel === 2 ? ' Die Anzeige für Sursee flackert seltsam …' : ''}`); return; }
+    if (this._tafel < 3 || stageAt('ride')) { await Story.say(null, `Abfahrtstafel: ${clockStr(DEP_TIME)} IR 70 nach Zürich HB, Gleis 4. ${clockStr(DEP_TIME + 4)} S1 nach Sursee, Gleis 2.${this._tafel === 2 ? ' Die Zeile „S1 Sursee“ flackert seltsam … Schau noch einmal hin.' : ''}`); if (this._tafel === 2) Snd.sfx('blip'); return; }
     this._tafel = 0;
     Snd.sfx('ding');
     const c = await Story.ask(null, 'Psst … Die Anzeige „S1 SURSEE“ blinkt nur für dich. Innsbruck auslassen und heimlich direkt nach Sursee fahren? Dort wartet ein Fall auf dich. (Easter Egg – nach Innsbruck geht es danach nicht mehr.)', ['Ab nach Sursee!', 'Nein, Innsbruck ruft']);
