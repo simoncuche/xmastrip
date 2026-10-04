@@ -1,11 +1,17 @@
 # Baut das Spiel mit build.py und veröffentlicht dist/ auf GitHub Pages.
 # Voraussetzung: Repo-Einstellungen → Pages → Source = "GitHub Actions"
 # (configure-pages mit enablement: true versucht das beim ersten Lauf selbst zu setzen).
+# Zusätzlich wird der Branch "sursee" als Vorschau unter /sursee/ mitgebaut (eigener Speicherstand, ohne Tracking).
+# Ein Push auf "sursee" startet den Workflow "Sursee-Vorschau"; dessen Abschluss löst hier über workflow_run
+# einen Lauf vom Hauptbranch aus, damit die Umgebung github-pages das Deployment erlaubt.
 name: GitHub Pages
 
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["Sursee-Vorschau"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -22,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -30,6 +38,17 @@ jobs:
         env:
           # Optional: Firebase-URL als Repo-Variable (Settings → Secrets and variables → Actions → Variables), sonst tracking.json
           TRACK_DB: ${{ vars.TRACK_DB }}
+      - name: Vorschau vom Branch sursee unter /sursee/ bauen
+        run: |
+          if git ls-remote --exit-code --heads origin sursee > /dev/null; then
+            git fetch --depth 1 origin sursee
+            git worktree add _sursee FETCH_HEAD
+            (cd _sursee && BUILD_VARIANT=sursee NO_TRACK=1 python3 build.py)
+            mkdir -p dist/sursee
+            cp -r _sursee/dist/. dist/sursee/
+          else
+            echo "Kein Branch sursee – nur die Hauptversion."
+          fi
       - uses: actions/configure-pages@v5
         with:
           enablement: true

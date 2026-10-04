@@ -30,6 +30,8 @@ changelog = read_changelog()
 def read_tracking():
     """tracking.json → Firebase-Datenbank-URL (leer = kein Tracking). Die Umgebungsvariable TRACK_DB hat Vorrang."""
     import os
+    if os.environ.get("NO_TRACK"):
+        return ""
     url = os.environ.get("TRACK_DB", "")
     f = ROOT / "tracking.json"
     if not url and f.exists():
@@ -40,7 +42,11 @@ def read_tracking():
     return url
 
 track_db = read_tracking()
+# BUILD_VARIANT (z. B. "sursee" für die Vorschau unter /sursee/): eigener Speicherstand und Hinweis im Titel
+import os
+variant = re.sub(r"[^a-z0-9-]", "", os.environ.get("BUILD_VARIANT", "").lower())
 version_js = (f"const APP_VERSION = {json.dumps(changelog[0]['v'])};\n"
+              f"const BUILD_VARIANT = {json.dumps(variant)};\n"
               f"const TRACK_DB = {json.dumps(track_db)};\n"
               f"const APP_VERSION_DATE = {json.dumps(changelog[0]['date'])};\n"
               f"const CHANGELOG = {json.dumps(changelog, ensure_ascii=False)};\n")

@@ -43,6 +43,12 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug, Tram, Panoramalift, Übergänge bei jedem `warpTo` über `transitionFor(from, to, spawn, opts)`: `door` mit Fassade aus `FACADES`/`facadeFor` (Läden über `SHOP_SIGNS`), `stairs`, `hotellift`, `roomdoor`, `trainexit`, `thrown` (`opts.kind`), Sperrstunde (`kind: 'closing'`); `plain: true` = nur Abblenden, Jessy `jessy` mit `kind` 0–2) |
 | `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
 
+## Vorschau des Branches sursee
+
+- GitHub Pages (`.github/workflows/pages.yml`, läuft immer vom Hauptbranch) baut die Hauptversion nach `/` und den Branch `sursee` nach `/sursee/`.
+- Ein Push auf `sursee` startet `sursee-preview.yml` („Sursee-Vorschau“); dessen Abschluss löst `pages.yml` per `workflow_run` aus.
+- Die Vorschau wird mit `BUILD_VARIANT=sursee NO_TRACK=1 python3 build.py` gebaut: eigener Speicherstand (`SAVE_KEY` + `-sursee`), kein Tracking, Hinweis „Vorschau“ auf dem Titelbildschirm.
+
 ## Tracking und Tracker-Seite
 
 - Datenbank-URL in `tracking.json` (`databaseURL`) oder Umgebungsvariable `TRACK_DB` (im Workflow aus der Repo-Variable `vars.TRACK_DB`). Leer = kein Tracking. `build.py` bettet sie als `TRACK_DB` ein.

@@ -1,0 +1,25 @@
+# Prüft den Branch sursee (Build als Vorschau). Nach Abschluss baut "GitHub Pages" (vom Hauptbranch, per workflow_run)
+# die Hauptversion und diese Vorschau unter /sursee/ und veröffentlicht beides.
+name: Sursee-Vorschau
+
+on:
+  push:
+    branches: [sursee]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Vorschau bauen
+        run: python3 build.py
+        env:
+          BUILD_VARIANT: sursee
+          NO_TRACK: "1"

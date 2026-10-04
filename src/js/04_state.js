@@ -315,7 +315,7 @@ function checkThresholds() {
 function promStr(v = G.S.st.prom) { return v.toFixed(2).replace('.', ',') + ' ‰'; }
 
 /* ---- Speichern ---- */
-const SAVE_KEY = 'gleis4-innsbruck-v4';
+const SAVE_KEY = 'gleis4-innsbruck-v4' + (BUILD_VARIANT ? '-' + BUILD_VARIANT : '');
 function saveGame(silent) {
   if (!G.S || !G.player) return;
   G.S.map = G.map.id; G.S.x = Math.round(G.player.x); G.S.y = Math.round(G.player.y); G.S.dir = G.player.dir;
