@@ -162,7 +162,7 @@ summary:hover { color: var(--ink); }
   const evTotal = (s) => s.evTotal || EV_IDS.length;
   /* Fünf Abschnitte für die Fortschrittsleiste */
   const PHASES = [['Luzern', ['meet', 'board']], ['Zug', ['ride', 'arrived']], ['Hotel', ['findHotel', 'checkin', 'room']], ['Bar', ['bar']], ['Innsbruck', ['free']]];
-  const TRIP_DAYS = 10;
+  const TRIP_DAYS = 5; /* Apokalypse an Tag 5 beendet die Reise */
   const ONLINE_MS = 3 * 60000;
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

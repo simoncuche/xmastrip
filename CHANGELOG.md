@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.26.0 – 04.10.2026
+
+- Godzilla kommt jetzt zufällig wie die anderen Ereignisse, nicht mehr fix an Tag 5.
+- Die Apokalypse bricht an Tag 5 herein, sobald es dunkel wird (ab 18:30). Wer dann drinnen ist, erlebt sie beim nächsten Schritt nach draussen in der Nacht.
+- Tracker: Die Reise dauert jetzt 5 Tage, Fortschritt und Tagesleiste sind angepasst.
+
 ## 2.25.0 – 04.10.2026
 
 - Tracker: Jede Karte zeigt die 11 Ereignisse (Taschendieb, Hund gegen Katze, Taube, Krampuslauf, Fundsache, Hoher Besuch, Blaulicht, UFO, Nachtschatten, Godzilla, Apokalypse). Erlebte leuchten, mehrfach erlebte tragen eine Zahl.

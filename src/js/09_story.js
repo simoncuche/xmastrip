@@ -439,15 +439,17 @@ const Story = {
     { id: 'ufo', max: 1, night: 21, cond: () => { const h = hourOf(G.S.time); return h >= 21 || h < 3; } },
     { id: 'trump', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 18; } },
     { id: 'verfolgung', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 23 && G.S.money.eur >= 20; } },
+    { id: 'monster', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 22; } },
   ],
+  /* Apokalypse: ab Tag 5, sobald es dunkel wird (Dämmerung ab 18:30, wie in darkness()) bis zum Morgen */
+  APOC_DAY: 4, APOC_DUSK: 18.5,
+  apocDue() { const h = hourOf(G.S.time); return dayOf(G.S.time) >= this.APOC_DAY && (h >= this.APOC_DUSK || h < 6.5); },
   victim() { return FRIENDS.oelu && !Story.away('oelu') ? 'oelu' : (FRIENDS.didu ? 'didu' : Object.keys(FRIENDS)[0]); },
   maybeEvent() {
     if (G.map.id !== 'ibk' || G.busy || G.mode !== 'play' || !stageAt('free') || G.live) return;
     const fl = G.S.flags;
-    /* Tag 10: Apokalypse – einmalig ab 11 Uhr, beendet die Reise */
-    if (dayOf(G.S.time) >= 9 && hourOf(G.S.time) >= 11 && !fl.apocDone) { fl.lastEv = G.S.time; this.announce('apokalypse').then(() => this.ev_apokalypse()); return; }
-    /* Tag 5: Godzilla – unabhängig vom Tagesereignis, einmalig, nicht vor 10 Uhr */
-    if (dayOf(G.S.time) >= 4 && hourOf(G.S.time) >= 10 && !(fl.ev && fl.ev.monster)) { fl.ev = fl.ev || {}; fl.ev.monster = 1; fl.lastEv = G.S.time; this.announce('monster').then(() => this.ev_monster()); return; }
+    /* Tag 5 bei Einbruch der Dunkelheit: Apokalypse – einmalig, beendet die Reise. Godzilla kommt zufällig wie die anderen Ereignisse. */
+    if (this.apocDue() && !fl.apocDone) { fl.lastEv = G.S.time; this.announce('apokalypse').then(() => this.ev_apokalypse()); return; }
     /* Tagesplan: Jeden Tag ein Ereignis, ab einer zufälligen Uhrzeit. Welches Ereignis an welchem Tag kommt, wird pro Spiel
        einmal gemischt (flags.evOrder), damit jede Reise anders verläuft. Passt das nächste geplante Ereignis zur Zeit nicht
        (z. B. UFO nur nachts), kommt das nächste passende dran; passt keines, wird jede Minute neu geprüft. */
@@ -457,6 +459,7 @@ const Story = {
     const minCount = Math.min(...this.EVENTS.map((e) => this.evCount(e.id)));
     if (fl.evOrder && minCount > 0 && fl.evCycle !== minCount) { fl.evCycle = minCount; fl.evOrder = null; }
     if (!fl.evOrder) { const ids = this.EVENTS.map((e) => e.id); for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; } fl.evOrder = ids; }
+    for (const e of this.EVENTS) if (!fl.evOrder.includes(e.id)) fl.evOrder.splice(Math.floor(Math.random() * (fl.evOrder.length + 1)), 0, e.id);
     /* Zwei Ereignisse pro Tag: eines tagsüber (10–16 Uhr) und eines abends (17–23:30 Uhr), Startzeit jeweils zufällig.
        Alte Spielstände hatten eine einzelne Zahl; null (Tests) heisst: an diesem Tag keine Ereignisse. */
     if (fl.evPlan[day] === undefined) {
