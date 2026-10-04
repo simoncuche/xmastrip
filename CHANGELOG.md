@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.27.3 – 04.10.2026
+
+- Yännu: Auch Cuches Nachricht nach der Zugabfahrt erwähnt das Geld nicht mehr.
+
 ## 2.27.2 – 04.10.2026
 
 - Yännu: Der Einstiegstext verrät nichts mehr über das Geld im Portemonnaie.

@@ -1597,7 +1597,7 @@ const Story = {
     Snd.sfx('blip');
     await this.say(org, `📱 ${G.S.name}?! WO BISCH?! Der Zug fährt!`);
     await this.say(party, '📱 Haha, legendär. Jedes Jahr. JEDES JAHR. 😂🚬');
-    await this.say(org, '📱 Nimm ein Taxi. Du hast ja die 2000 Stutz dabei. Taxi-Tickets gibt\'s irgendwo beim Bahnhof bei der Taxizentrale. Aus der Gruppenkasse kommt NIX.');
+    await this.say(org, '📱 Nimm ein Taxi. Taxi-Tickets gibt\'s irgendwo beim Bahnhof bei der Taxizentrale. Aus der Gruppenkasse kommt NIX.');
     await this.say('me', smoking ? 'Hmpf. Die Zigarette war\'s wert. Glaub ich.' : 'Hmpf. Okay. Taxi. Wie schwer kann das sein?');
     achieve('verraucht');
     UI.hud();
