@@ -555,10 +555,18 @@ const SCENES = {
   /* Taxi durch Innsbruck */
   taxi(c, t, p, st) {
     sceneSky(c, st.night);
-    sceneMountains(c, 36, '#7a8aa0', true, 10);
+    sceneMountains(c, 36, '#7a8aa0', true, st.highway ? t * 4 : 10);
     const off = t * 70;
-    for (let i = -1; i < 10; i++) { const bx = Math.round(i * 30 - (off % 30)), k = Math.floor((i + Math.floor(off / 30)) % 7 + 7) % 7; const h = 20 + Math.floor(hash(k, 1) * 24); R(c, bx, 60 - h, 26, h, ['#c8b89a', '#a8a8b0', '#d8c0b0', '#b0b8a8'][k % 4]); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = bx + 3; wx < bx + 24; wx += 6) R(c, wx, wy, 3, 3, st.night && hash(k, wy + wx) > 0.3 ? '#ffd27a' : '#3a4a5a'); }
-    for (let i = -1; i < 6; i++) { const lx = Math.round(i * 60 - (off % 60)) + 10; R(c, lx, 40, 2, 20, '#3a3a40'); R(c, lx - 2, 38, 6, 3, st.night ? '#ffe8a0' : '#8a8a90'); if (st.night) E(c, lx + 1, 39, 10, 4, 'rgba(255,230,160,0.15)'); }
+    if (st.highway) {
+      /* Autobahn durch die Alpen: Berge, Wiesen (oder Schnee), Leitplanke, Wegweiser */
+      sceneMountains(c, 50, st.snow ? '#c8d4e0' : '#5a8a4a', st.snow, t * 14);
+      R(c, 0, 56, SCENE_W, 4, st.snow ? '#e8eef4' : '#6a9a4a');
+      for (let i = -1; i < 6; i++) { const lx = Math.round(i * 40 - (off % 40)); R(c, lx, 56, 40, 2, '#b8bcc4'); R(c, lx + 2, 58, 2, 3, '#8a8e94'); }
+      const sx = SCENE_W - ((t * 50) % (SCENE_W + 80)); R(c, sx + 18, 30, 2, 26, '#5a5e64'); R(c, sx, 22, 40, 12, '#2f7a3a'); R(c, sx, 22, 40, 1, '#ffffff'); pxText(c, st.snow ? 'ARLBERG' : 'INNSBRUCK', sx + 2, 26, '#ffffff');
+      if (st.snow) for (let k = 0; k < 30; k++) P(c, (k * 37 + t * 30) % SCENE_W, (k * 19 + t * 40) % 60, '#ffffff');
+    }
+    else for (let i = -1; i < 10; i++) { const bx = Math.round(i * 30 - (off % 30)), k = Math.floor((i + Math.floor(off / 30)) % 7 + 7) % 7; const h = 20 + Math.floor(hash(k, 1) * 24); R(c, bx, 60 - h, 26, h, ['#c8b89a', '#a8a8b0', '#d8c0b0', '#b0b8a8'][k % 4]); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = bx + 3; wx < bx + 24; wx += 6) R(c, wx, wy, 3, 3, st.night && hash(k, wy + wx) > 0.3 ? '#ffd27a' : '#3a4a5a'); }
+    if (!st.highway) for (let i = -1; i < 6; i++) { const lx = Math.round(i * 60 - (off % 60)) + 10; R(c, lx, 40, 2, 20, '#3a3a40'); R(c, lx - 2, 38, 6, 3, st.night ? '#ffe8a0' : '#8a8a90'); if (st.night) E(c, lx + 1, 39, 10, 4, 'rgba(255,230,160,0.15)'); }
     R(c, 0, 60, SCENE_W, 36, '#3a3c40'); R(c, 0, 60, SCENE_W, 2, '#8a8a90');
     for (let i = -1; i < 9; i++) R(c, Math.round(i * 20 - (off % 20)), 78, 10, 2, '#e8e4dc');
     const cx = 56, cy = 66;
@@ -665,6 +673,47 @@ const SCENES = {
       if (P5[0].me && st.declined) { R(c, 30, 30, 14, 9, '#ffffff'); R(c, 34, 39, 2, 2, '#ffffff'); pxText(c, '...', 32, 32, '#1a1a1e'); }
     }
     const stp = Math.floor(t * 7); if (stp !== st._ck) { st._ck = stp; if (stp % 2) Snd.tone(75, 0.04, 'square', 0.02); }
+  },
+  /* Yännu raucht vor dem Bahnhof Luzern – hinter der Glasfront fährt der IR 70 ab */
+  smokeout(c, t, p, st) {
+    const W = SCENE_W, H = SCENE_H;
+    for (let y = 0; y < 30; y++) R(c, 0, y, W, 1, mix('#8fc3e8', '#d8ecf8', y / 30));
+    /* Bahnhofsfassade mit grosser Glasfront */
+    R(c, 0, 8, W, 70, '#cfd2d4'); R(c, 0, 8, W, 3, '#e8eaec');
+    R(c, 52, 0, 56, 9, '#d8302a'); pxText(c, 'LUZERN', 80 - pxTextW('LUZERN') / 2, 2, '#ffffff');
+    const hm = 9, mm = 7 + Math.floor(p * 3.4); E(c, 18, 20, 6, 6, '#20232a'); E(c, 18, 20, 5, 5, '#f4f2ea');
+    line(c, 18, 20, 18 + Math.sin(hm / 12 * 6.283) * 3, 20 - Math.cos(hm / 12 * 6.283) * 3, '#1a1a1a'); line(c, 18, 20, 18 + Math.sin(mm / 60 * 6.283) * 4.5, 20 - Math.cos(mm / 60 * 6.283) * 4.5, '#1a1a1a');
+    const gx = 30, gy = 14, gw = 128, gh = 50;
+    c.save(); c.beginPath(); c.rect(gx, gy, gw, gh); c.clip();
+    R(c, gx, gy, gw, gh, '#5a6a78'); R(c, gx, gy + 34, gw, 16, '#8a8e94'); R(c, gx, gy + 34, gw, 1, '#ffd23d');
+    /* Zug: steht, dann rollt er nach links aus dem Bahnhof */
+    const q = clamp((p - 0.3) / 0.55, 0, 1), tx = gx + 4 - q * q * 240;
+    for (let k = 0; k < 3; k++) {
+      const x = tx + k * 62;
+      R(c, x, gy + 12, 60, 22, '#c8302a'); R(c, x, gy + 12, 60, 2, '#8a1a1a'); R(c, x, gy + 29, 60, 2, '#f4f4f0');
+      for (let w = 0; w < 5; w++) { R(c, x + 3 + w * 12, gy + 16, 9, 8, '#ffe8b0'); const fs = st.friends && st.friends[(k * 5 + w) % st.friends.length]; if (fs && (k * 5 + w) % 2 === 0) sceneHead(c, { sheet: fs }, x + 3 + w * 12, gy + 17, 0.5, 0); }
+    }
+    pxText(c, 'IR 70', tx + 4, gy + 31, '#ffffff');
+    for (let k = 0; k < 18; k++) R(c, gx + k * 8, gy, 1, gh, 'rgba(255,255,255,0.18)');
+    c.fillStyle = 'rgba(200,225,240,0.22)'; c.fillRect(gx, gy, gw, gh);
+    c.restore();
+    R(c, gx - 2, gy - 2, gw + 4, 2, '#5a646c'); R(c, gx - 2, gy + gh, gw + 4, 3, '#5a646c');
+    /* Platz und Aschenbecher */
+    R(c, 0, 78, W, 18, '#b8b4a8'); for (let x = 0; x < W; x += 12) R(c, x, 78, 1, 18, '#a8a498');
+    R(c, 92, 60, 8, 20, '#8a9096'); R(c, 91, 58, 10, 3, '#5a6066'); R(c, 92, 66, 8, 2, '#d8302a');
+    /* Yännu mit Zigarette */
+    const turn = p > 0.78;
+    const px = 112, py = 84 - SPR_H * 1.6;
+    sceneSprite(c, st, 'stand', turn ? 1 : 0, px, py, 1.6);
+    if (!turn) { R(c, px + 17, py + 15, 5, 1, '#f4f4f0'); P(c, px + 22, py + 15, Math.floor(t * 6) % 2 ? '#ff6a2a' : '#ffb03a'); }
+    for (let k = 0; k < 7; k++) { const ph = (t * 0.35 + k / 7) % 1, sx = px + 22 + Math.sin(t * 2 + k) * 3 + ph * 6, sy = py + 12 - ph * 40; c.fillStyle = `rgba(235,235,240,${0.55 * (1 - ph)})`; c.beginPath(); c.arc(sx, sy, 1.5 + ph * 4, 0, 6.283); c.fill(); }
+    if (p > 0.28 && !st._ding) { st._ding = 1; Snd.sfx('ding'); }
+    if (q > 0 && q < 1) { const stp = Math.floor(t * (3 + q * 9)); if (stp !== st._ck) { st._ck = stp; Snd.tone(70, 0.05, 'square', 0.03); } }
+    if (turn) {
+      R(c, px + 4, py - 14, 10, 11, '#ffffff'); pxText(c, '!', px + 7, py - 12, '#d8302a');
+      const tt = 'DE ZUG!!', w = pxTextW(tt); R(c, 80 - w / 2 - 3, 86, w + 6, 9, 'rgba(0,0,0,0.6)'); pxText(c, tt, 80 - w / 2, 88, '#ffd23d');
+      if (!st._oh) { st._oh = 1; Snd.sfx('lose'); }
+    }
   },
   train(c, t, p, st) {
     sceneSky(c, st.night);

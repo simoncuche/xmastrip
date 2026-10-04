@@ -464,10 +464,10 @@ body:not(.touch) #actLabel { bottom: calc(env(safe-area-inset-bottom, 0px) + 18p
 </div>
 <script>
 /* ---- Version (aus CHANGELOG.md) ---- */
-const APP_VERSION = "2.26.0";
+const APP_VERSION = "2.27.0";
 const TRACK_DB = "https://innsbruck-xmas-trip-default-rtdb.europe-west1.firebasedatabase.app";
 const APP_VERSION_DATE = "04.10.2026";
-const CHANGELOG = [{"v": "2.26.0", "date": "04.10.2026", "items": ["Godzilla kommt jetzt zufällig wie die anderen Ereignisse, nicht mehr fix an Tag 5.", "Die Apokalypse bricht an Tag 5 herein, sobald es dunkel wird (ab 18:30). Wer dann drinnen ist, erlebt sie beim nächsten Schritt nach draussen in der Nacht.", "Tracker: Die Reise dauert jetzt 5 Tage, Fortschritt und Tagesleiste sind angepasst."]}, {"v": "2.25.0", "date": "04.10.2026", "items": ["Tracker: Jede Karte zeigt die 11 Ereignisse (Taschendieb, Hund gegen Katze, Taube, Krampuslauf, Fundsache, Hoher Besuch, Blaulicht, UFO, Nachtschatten, Godzilla, Apokalypse). Erlebte leuchten, mehrfach erlebte tragen eine Zahl.", "Neue Rangliste „Meiste Ereignisse“, Ereignisse auch bei den beendeten Spielen und im Verlauf.", "Das Spiel zählt jedes erlebte Ereignis, auch die durch Schütteln ausgelösten."]}, {"v": "2.24.0", "date": "04.10.2026", "items": ["Tracker: Alle Ranglisten zählen nur noch offene Spiele.", "Beendete Spiele (Heimreise, Apokalypse, Game Over) stehen in einem eigenen Bereich mit Ergebnis, erreichtem Tag, Bieren, Erlebnissen und Skisprung."]}, {"v": "2.23.3", "date": "04.10.2026", "items": ["Tracker: In den Ranglisten steht der Gerätename gut sichtbar als Marke neben dem Spieler. Ohne Namen wird das Gerät angezeigt (z. B. iPhone · Safari). Ältere Spiele eines Geräts sind als „früheres Spiel“ markiert."]}, {"v": "2.23.2", "date": "04.10.2026", "items": ["Tracker: Die Rangliste „Am weitesten“ zeigt nur noch laufende Spiele. Beendete Spiele, Game Over und ältere Spiele eines Geräts fallen weg. Bei gleichem Abschnitt entscheidet die Spielzeit."]}, {"v": "2.23.1", "date": "04.10.2026", "items": ["Tracking ist aktiv: Die Spielstände gehen an die Firebase-Datenbank der Reisegruppe und erscheinen auf der Tracker-Seite."]}, {"v": "2.23.0", "date": "04.10.2026", "items": ["Neue Tracker-Seite (tracker.html): zeigt für jedes Gerät Spieler, Avatar, Fortschritt, Tag, Werte, Biere, Erlebnisse, Rekorde und den Verlauf, dazu Ranglisten. Aktualisiert sich alle 20 Sekunden.", "Das Spiel meldet seinen Stand an eine Firebase-Datenbank: beim Start, bei jedem Abschnitt, bei Erlebnissen, beim Speichern, beim Spielende und regelmässig während des Spiels.", "Ist die Datenbank nicht erreichbar, läuft das Spiel normal weiter und versucht es später erneut.", "Handy → Optionen: „Fortschritt teilen“ lässt sich ausschalten."]}, {"v": "2.22.0", "date": "04.10.2026", "items": ["Schöttli-Rundi im Zug: Kurz nach der Grenze bei Buchs SG holt Kusi Mini-Fläschli aus dem Rucksack und kommt zu dir an den Platz.", "Wahl zwischen Appenzeller, Pflümli und Kleinem Feigling. Wer ein Rivella will, wird vom ganzen Vierertisch ausgebuht.", "Animierte Szene am Vierertisch: Fläschli verteilen, dreimal klopfen, Zum Wohl, ex, schütteln. Auf Wunsch eine zweite Runde.", "Kusi steckt dir danach ein Notfall-Fläschli zu. Neues Erlebnis „Schöttli-Rundi“."]}, {"v": "2.21.0", "date": "04.10.2026", "items": ["Schnappschüsse gehören jetzt zum jeweiligen Spiel: Ein neues Spiel startet mit leerer Galerie, alte Schnappschüsse und Fotos der Sehenswürdigkeiten aus dem vorherigen Spiel werden entfernt.", "Flöru und Hännsu sind 40! Die beiden machen Sprüche über sich („Ich bin nicht 40. Ich bin 25 – mit 15 Jahren Erfahrung.“), die Kollegen ziehen sie auf (Lesebrille, Wärmepflaster, Sitzplätze im Club), und am Jasstisch wird auf den 40sten angestossen. Spielst du selbst einen der beiden, bekommst du die Sprüche ab."]}, {"v": "2.20.0", "date": "04.10.2026", "items": ["Jassen mit Stammtisch-Gefühl: Die Mitspieler reden in Sprechblasen – typische Jass-Sprüche („Stöck!“, „Wer nüt weist, verlürt.“, „Schiebe isch kei Schand.“), Witze mit Reaktionen und Gespräche über die Reise und die letzten Wiehnachtsreisli nach Strassburg, Turin, Dublin und Lyon, bei denen einer erzählt und ein anderer antwortet. Auf Trumpfansagen, grosse Stiche und einen Match gibt es Kommentare.", "Bier am Jasstisch: Jeder hat ein Glas mit Füllstand. Die Kollegen trinken und prosten sich zu, die Gläser heben sich beim Anstossen, und die Serviertochter bringt Nachschub. Mit „Schluck“ trinkst du mit – ein ausgetrunkenes Glas zählt als Bier und steigt dir in den Kopf; auch die Kollegen bekommen Promille."]}, {"v": "2.19.0", "date": "04.10.2026", "items": ["Die Bahnhof-Bäckerei in Luzern ist jetzt eine richtige Bäckerei: gestreifte Markise mit „BÄCKEREI“-Schild und Brezeln, Holzregal voller Ruchbrote, Butterzöpfe, Baguettes und Weggli, Brezeln am Haken, Brotkörbe, eine Vitrine mit Gebäck, eine Brezel-Stange – und es dampft vom frischen Brot. Bäckerin Vreni steht hinter der Theke.", "Neues Sortiment: Butterbrezel, Nussgipfel, Berliner, Weggli, Butterzopf und ganzer Laib Ruchbrot – alles auch für die Tasche. Die Brezel hat ein neues Symbol.", "Die Abfahrtstafel und die Bahnhofsuhr hängen dafür ein Stück weiter rechts."]}, {"v": "2.18.1", "date": "04.10.2026", "items": ["Versionshistorie aufgeräumt."]}, {"v": "2.18.0", "date": "03.10.2026", "items": ["Apokalypse! An Tag 10 (ab 11 Uhr) geht Innsbruck unter: Dauerbeben, blutroter Himmel, Asche und Glut, Rauchsäulen, Blitze mit Weissblitz und Donner, Lava-Risse brechen im Boden auf, Lava schiesst als Fontäne aus dem Pflaster, Häuser fangen Feuer und versinken mit Staubwolken und fliegenden Trümmern im Boden.", "Flucht zum letzten Zug: Ein Countdown läuft (Zielzeile oben und unten im Bild), ein Pfeil zeigt zum Hauptbahnhof. Vier Jungs rennen mit, springen über die Risse und rufen dir zu („LAUF!“, „SPRING!“, „NICHT IN DIE RISSE!“), drei winken schon am Bahnhof. Risse überspringst du automatisch im Rennen oder mit der Aktionstaste; wer hineinstolpert, wird herausgezogen und verliert Zeit. Blitze und Lava-Fontänen werfen dich zurück. Während der Flucht hilft Adrenalin: kein Kollaps, kein Filmriss, Rennen geht immer.", "Geschafft: Der Railjet flieht über die Brücke aus dem Lavameer, die Nordkette spuckt Feuer – dann sitzen die Jungs im Abteil, draussen zieht die Apokalypse vorbei, und alle stossen an: „PROST! AUF INNSBRUCK!“. Endbildschirm „Last Exit Innsbruck“, Erlebnisse „Last Exit Innsbruck“ und „Trittsicher“ (ohne Sturz).", "Zu spät: Der Zug rollt ohne dich davon, die Jungs schauen aus dem Fenster, die Lava steigt – Game Over."]}, {"v": "2.17.0", "date": "03.10.2026", "items": ["Kleinere Verbesserungen bei den Ereignissen."]}, {"v": "2.16.0", "date": "03.10.2026", "items": ["Freie Fotos: Der neue blaue Kamera-Knopf oben neben dem Handy (am Computer Taste P) knipst jederzeit die aktuelle Szene – auch mitten in Ereignissen wie Godzilla oder dem UFO. Blitz, Auslöser-Klick, und das Bild bekommt einen Polaroid-Rand mit Ort, Datum und Uhrzeit.", "Direkt teilen: In der Vorschau öffnet „Teilen“ das Teilen-Menü des Handys – WhatsApp, Signal, Instagram, Mail und alles andere. Das Bild wird dafür pixelscharf vergrössert. Wo Teilen nicht geht (z. B. am Computer), wird das Bild heruntergeladen.", "Galerie im Handy unter „Fotos“: alle Schnappschüsse ansehen, teilen, speichern oder löschen; auch die Fotos der Sehenswürdigkeiten haben einen Teilen-Knopf. In Minispielen (Darts, Skispringen, Rauferei …) gibt es oben ein 📷 für ein Foto des Spielfelds.", "Erlebnisse „Knipser“ und „Influencer“."]}, {"v": "2.15.0", "date": "03.10.2026", "items": ["Türszenen: Beim Durchgehen ragt die Figur nicht mehr über den Türrahmen. Sie läuft bis zur Schwelle, ist dort klein genug für die Öffnung und verschwindet darin; beim Hinausgehen tritt sie zuerst in der Türöffnung hervor. Gilt für Haustüren, Zimmer 307 und die Zugtür in Innsbruck."]}, {"v": "2.14.0", "date": "03.10.2026", "items": ["Godzilla ohne Stampfer: Keine Fuss-Schatten mehr, die vom Himmel fallen. Stattdessen jagt er dich zu Fuss durch die Stadt – erst schnell heran, dann stetig hinterher und mit der Zeit etwas schneller. Gefährlich sind nur noch zwei Dinge: ihn berühren und der Atomstrahl, der jetzt etwas öfter kommt. Seine Schritte lassen weiterhin den Boden beben, Staub aufwirbeln und Fussabdrücke zurück."]}, {"v": "2.13.0", "date": "03.10.2026", "items": ["Jeder Raumwechsel hat seine eigene Szene, passend zum Ort:", "Lokale mit eigener Fassade: Hotel Zirbe mit Sternen, Fahnen und Glastür; Tiroler Stüberl mit Laterne und Blumenkistchen; Gamsbock Bar mit Geweih und flackerndem Neon-Bierkrug; Casino mit Lauflichtern, goldenen Säulen und rotem Teppich; Club Lawine im Viaduktbogen mit Stahltür, Absperrkordel, Türsteher, Strobo und Bass; Rouge im Bogen mit rotem Samtvorhang und Rotlicht.", "Läden mit ihrem Schild, ihrer Wandfarbe und Waren im Schaufenster, Türglocke beim Eintreten; Barbier mit drehendem Pole, Apotheke mit grünem Kreuz, Markisen bei Konditorei und Boutique.", "Bahnhof Luzern mit Bahnhofsuhr, hohen Fenstern und Reisenden; Ankunft in Innsbruck: der Railjet steht am Bahnsteig, die Tür zischt auf, du steigst aus.", "Hotel: Treppenhaus mit Stufen hinauf oder hinunter; Lift mit schliessenden Türen, Stockwerksanzeige und Ding; Zimmer 307 mit Kartenleser, der grün aufleuchtet – beim Hinausgehen hängt „Bitte nicht stören“ an der Klinke.", "Rauswurf aus Club, Rouge oder Stüberl: eine Pranke wirft dich im hohen Bogen auf die Strasse, die Tür knallt zu, Sterne kreisen. Sperrstunde: die Lichter gehen aus, „Zu“ hängt an der Tür."]}, {"v": "2.12.0", "date": "03.10.2026", "items": ["Ereignisse wiederholen sich: Sind alle einmal gelaufen, beginnt eine neue Runde in neu gemischter Reihenfolge – so gehen sie auch auf einer langen Reise nie aus. Weiterhin zwei pro Tag, Godzilla bleibt einmalig an Tag 5.", "Treppen im Hotel: Kein Türbild mehr beim Treppensteigen, nur ein kurzes Abblenden mit Schritten. Die Türszene zeigt jetzt den Namen des Ortes über der Tür."]}, {"v": "2.11.0", "date": "03.10.2026", "items": ["Kleinere Verbesserungen bei den Ereignissen."]}, {"v": "2.10.0", "date": "03.10.2026", "items": ["Darts mit Handyneigung: Im Darts-Spiel schaltet „📱 Mit Handyneigung zielen“ die Bewegungssensoren ein (auf dem iPhone fragt der Browser einmal um Erlaubnis). Die Lage beim Einschalten ist die Mitte der Scheibe, Neigen bewegt das Fadenkreuz, Tippen wirft. Je mehr Promille, desto mehr zittert das Kreuz. „Neu ausrichten“ setzt die Mitte neu; auf Android bleibt die Einstellung für die nächsten Spiele gespeichert.", "Ereignisse passieren öfter: zwei pro Tag statt einem – eines tagsüber, eines am Abend, mit mindestens zweieinhalb Stunden Abstand. Hund und Katze, Taube, Taschendieb, Krampus, Fundsache, Überfall und Polizei können sich auf einer langen Reise wiederholen."]}, {"v": "2.9.0", "date": "03.10.2026", "items": ["Godzilla allein, dafür richtig: King Kong ist gestrichen. Godzilla ist jetzt rund 90 Pixel hoch und detailliert animiert – Schritte mit angehobenem Fuss und Krallen, pendelnder Schwanz mit Platten, drei Reihen Rückenplatten, Bauchplatten und Schuppen, Arme mit Krallen, Augen, die blinzeln, Brauenwulst, Nüstern und ein Maul, das zum Brüllen aufreisst und die Zahnreihen zeigt.", "Neuer Angriff: der Atomstrahl. Alle paar Sekunden glühen die Rückenplatten von hinten nach vorn blau auf, Funken sprühen, zwei gestrichelte Linien zeigen den Bereich – dann fegt der blau-weisse Strahl über den Boden, hinterlässt Brandspuren mit Glut und Feuer und leuchtet nachts die Gasse aus. Raus aus der Linie!", "Stampfer mit Druckwelle: Nach jedem Tritt läuft ein Ring über den Boden, Trümmer und Staub fliegen, der Fussabdruck zeigt Krallen. Godzilla stapft beim Gehen hörbar, der Boden bebt.", "Wirtshausrauferei im Tiroler Stüberl: Holzknecht Ferdl sitzt neu am Ecktisch. Wer sein Bier umstösst, über Knödel lästert oder das Watten verspottet, bekommt eine Schlägerei als Minispiel. Ferdl holt aus – hoch heisst ducken, tief heisst blocken; verfehlt er, wankt er und ein Schlag sitzt doppelt. Arcade-Lebensbalken, „WATSCHN!“, „WUMMS!“, fliegender Tirolerhut, Schweisstropfen und Sterne. Die Jungs und die Stammgäste feuern an, ein Kumpel wirft einmal pro Kampf einen Bierkrug. Leicht angetrunken schlägst du härter, betrunken triffst du daneben. Danach wirft Resi dich raus: Hausverbot bis zum nächsten Morgen. Erlebnisse „Wirtshausrauferei“ und „Veilchen“."]}, {"v": "2.8.0", "date": "03.10.2026", "items": ["Türen statt Schwarzbild: Beim Betreten eines Gebäudes geht der Spieler zur Haustür, sie schwingt auf, warmes Licht fällt heraus und er verschwindet darin; beim Verlassen kommt er aus der offenen Tür, die hinter ihm zufällt. Mit Schritten, Türgeräusch und dem Namen des Ortes über der Tür.", "Das Alien will zum Piloten (Römu) statt zum Kassier gebracht werden – und würde ihn am liebsten gleich mitnehmen.", "Blackjack: Mehrere Runden hintereinander mit gleichem Einsatz, neuem Einsatz oder Schluss; Croupière Lisa zählt Runden und Bilanz mit.", "Jessys Dienstleistungen sind animiert: Händchenhalten am nächtlichen Inn mit Herzen und Laternen, Kuscheln unter der Decke in Bogen 12 mit Lichterkette und Schnarchen, und beim vollen Programm bleibt der Vorhang zu – Schuhe vor der Tür, „Nicht stören“, flackerndes Licht.", "Das Frühstücksbuffet im Hotel Zirbe ist gedeckt: Brotkorb, Gipfeli, Käse und Schinken, Eier, Früchte, Säfte, Müesli und Kaffeekanne."]}, {"v": "2.7.0", "date": "03.10.2026", "items": ["Homescreen-Icon: Wer das Spiel auf den Startbildschirm legt, bekommt jetzt einen Pixel-Bierkrug statt des Buchstabens „W“ (Web-Manifest, Apple-Touch-Icon). Dazu prüft das Spiel beim Start, ob eine neue Version online ist, und bietet das Neuladen an – so bleibt keine alte Version im Cache hängen.", "Ereignisse beginnen mit einer Ankündigungs-Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich hin, Fanfare, Blitz – dann geht es in der Welt los (auch bei Godzilla & King Kong).", "Drei neue Läden in der Maria-Theresien-Strasse, alle betretbar: Mode Alpin (Après-Ski-, Winter-, Sport- und Fan-Set), Boutique Maximilian (Sakko-, Hemd-, Rocker- und Polo-Set) und der Kostümverleih Maskerade.", "Kostüme für den Avatar: Pirat, Cowboy, Bär, Kuh, Pinguin, Dino, Ritter, Superheld, Weihnachtsmann und Elch – mit Haube, Ohren, Hörnern, Geweih, Zacken, Umhang, Maske, Augenklappe und Zipfelmütze auf Spielfigur und Porträt. Einmal gekauft, lassen sie sich im Kleiderschrank jederzeit an- und ablegen. Erlebnis „Maskerade“.", "Querformat: Die Anzeigen (Uhr, Ort, Geld, Werte, Ziel) stehen klein in der rechten oberen Ecke, Meldungen sind schmal und links oben statt über die ganze Breite.", "Casino: Die Konditorei-Schirme stehen seit 2.6.0 nicht mehr vor der Tür; wer sie noch sieht, spielt eine alte Version – der neue Update-Hinweis hilft beim Neuladen."]}, {"v": "2.6.0", "date": "03.10.2026", "items": ["Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.", "Skisprung-Minispiel „Gästespringen“ bei Trainer Sepp (25 € Leihgebühr, Tageslicht, nüchtern): Start antippen, Anlauf mit Tempoanzeige, am Schanzentisch im richtigen Moment abspringen, im Flug die Haltung mit ◀ ▶ im grünen Bereich halten (Wind, Böen und Alkohol machen es wackelig), kurz vor dem Boden Telemark drücken. Weite, Haltungsnoten von fünf Punktrichtern und Gesamtpunkte; Sturz bei zu viel Schräglage. Erlebnisse „Bergisel“, „Adlerflug“, „K-Punkt“ (120 m), „Schanzenrekord“ (über 138 m), „Bauchlandung“ und „Kulturbanause“; weitester Sprung im Handy-Status.", "Casino: Die Sonnenschirme der Konditorei standen vor dem Casino-Eingang und blockierten die Tür. Jetzt stehen sie vor der Konditorei."]}, {"v": "2.5.0", "date": "03.10.2026", "items": ["Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.", "Die Verfolgungsjagd mit dem Taschendieb ist härter: Er rennt so schnell wie du, schlägt im Zickzack neun Haken, spurtet kurz, wenn du ihm auf die Pelle rückst, und lässt sich nicht mehr gleich beim Rempler fassen. Erst nach 15 Sekunden geht ihm die Luft aus – dann heisst es Haken abschneiden.", "Jeder Laden hat jetzt einen eigenen Innenraum: Skiständer und Turnschuhwand im Sportgeschäft, Schaufensterpuppen, Hutwand und Umkleide beim Trachtenhändler, Postkartenständer im Souvenirladen, weisse Apotheke mit grünem Kreuz und Wartebank, drei Regalgänge und Kühlschrank im Supermarkt, Vitrine und runde Tischchen in der Konditorei.", "Der Coiffeur hat drei Barbiersessel mit Spiegeln; du setzt dich in den nächsten freien.", "Beim Barbier gibt es neu „Glatze rasieren“ (15 €) und „Bart abrasieren“ (12 €): Maschine bzw. Messer, Haare fliegen, und der Avatar ist danach sofort kahl oder glatt rasiert. Erlebnis „Blank“."]}, {"v": "2.4.0", "date": "03.10.2026", "items": ["Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.", "Coiffeur: Barbierstuhl, Spiegel, drehender Barber-Pole. Beim Haarschnitt oder Bart setzt du dich in den Stuhl, Mehmet kommt mit der Schere, es schnippt und die Haare fliegen – dann darfst du den neuen Look wählen.", "Apotheke, Trafik und Supermarkt verkaufen Kondome (3er-Pack, in der Tasche mit Zähler). Apothekenartikel landen wie bisher in der Tasche.", "Jessy steht nachts (22–4 Uhr) in den Viaduktbögen und bietet Händchenhalten, Kuscheln oder das volle Programm an – aber nur mit Gummi, auch beim Händchenhalten. Erlebnis „Safer Sex“, die Jungs reden danach darüber."]}, {"v": "2.3.0", "date": "03.10.2026", "items": ["Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.", "Hinweise bleiben länger stehen (8 Sekunden) und lassen sich antippen, um sie zu schliessen."]}, {"v": "2.2.0", "date": "03.10.2026", "items": ["Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.", "Bevor man vor Müdigkeit im Stehen einschläft, gibt es eine letzte Chance: Tasche öffnen und etwas essen oder trinken, Kaffee an der Theke, Taxi ins Hotel oder im Zimmer gleich ins Bett."]}, {"v": "2.1.2", "date": "03.10.2026", "items": ["Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft."]}, {"v": "2.1.1", "date": "03.10.2026", "items": ["Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5."]}, {"v": "2.1.0", "date": "03.10.2026", "items": ["Die Ereignisse spielen jetzt direkt in der Spielwelt: Das UFO sinkt neben dir herab, der Lichtkegel leuchtet auf den Platz, das grüne Alien steigt aus und kommt zu dir. Trumps Kolonne mit Polizeimotorrad fährt auf der nächsten Strasse vor, er und die Secret-Service-Männer steigen aus und gehen zu dir. Der Taschendieb rennt mit deinem Portemonnaie quer über die Karte und du musst ihn selbst einholen (rennen!). Godzilla und King Kong stapfen als Riesen über die Karte, ihre Fussschatten fallen um dich herum – 30 Sekunden ausweichen in der echten Stadt.", "Godzilla und King Kong kommen jetzt an Tag 5.", "Neue Hautfarbe „Alien-Grün“ im Editor."]}, {"v": "2.0.0", "date": "03.10.2026", "items": ["Höchstens ein Zufallsereignis pro Tag.", "Neue Ereignisse: ein UFO landet nachts auf dem Platz und ein Alien will zum Anführer (Geschenk: leuchtender Stein); Donald Trump trifft mit Wagenkolonne und Secret Service ein; ein Taschendieb klaut das Portemonnaie – Verfolgungsjagd als Minispiel (über Hindernisse springen, einholen).", "Tag 10: Godzilla und King Kong überfallen Innsbruck. Ausweich-Minispiel gegen die Tritte; wer erwischt wird, wacht im Spital auf (Selbstbehalt, ein Tag weg).", "Heimreise: Am Hauptbahnhof mit dem Railjet zurück nach Luzern beendet das Spiel endgültig, mit Statistik und Abschluss des Spielstands. Hinweise darauf im Ziel, im Reiseplan und am Bahnhof. Keine Zeitbegrenzung.", "Casino Innsbruck bei der Triumphpforte (15–3 Uhr, Dresscode): Roulette mit drehendem Kessel (Rot/Schwarz, Gerade/Ungerade, Plein 35:1) und Blackjack gegen die Bank (Karte, Halten, Verdoppeln), Casinobar. Erlebnisse „Spieler“, „Plein!“, „Siebzehn und vier“."]}, {"v": "1.10.0", "date": "03.10.2026", "items": ["Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse."]}, {"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
+const CHANGELOG = [{"v": "2.27.0", "date": "04.10.2026", "items": ["Eigene Story für Yännu: Er hat als Einziger 2000 Franken dabei, begrüsst die Jungs am Torbogen, kauft am Kiosk Zigaretten und raucht vor dem Bahnhof eine – während der IR 70 hinter der Glasfront abfährt.", "Danach Taxizentrale in der Bahnhofshalle (Taxi-Ticket Luzern → Innsbruck) und Taxistand auf dem Bahnhofplatz finden. Viereinhalb Stunden Taxi mit Fahrer Hakan über Walensee und Arlberg, Ankunft am Innsbrucker Hauptbahnhof. Ab dort läuft die Story wie gewohnt.", "Neues Ereignis „Flitzer!“: Titu und Rümmel rennen nackt (mit Zensurbalken) durch die Gassen, die Polizei hinterher.", "Im Rouge sitzen Hakan Yakin und Xherdan Shaqiri am Tisch: Gespräche über die EM 2008, die Champions League, die Frauen-EM 2025, FCL gegen FCB und ein Fussball-Quiz um eine Runde.", "Neue Erlebnisse: „Zug verraucht“, „Flitzer-Alarm“, „Stammtisch-Experte“."]}, {"v": "2.26.0", "date": "04.10.2026", "items": ["Godzilla kommt jetzt zufällig wie die anderen Ereignisse, nicht mehr fix an Tag 5.", "Die Apokalypse bricht an Tag 5 herein, sobald es dunkel wird (ab 18:30). Wer dann drinnen ist, erlebt sie beim nächsten Schritt nach draussen in der Nacht.", "Tracker: Die Reise dauert jetzt 5 Tage, Fortschritt und Tagesleiste sind angepasst."]}, {"v": "2.25.0", "date": "04.10.2026", "items": ["Tracker: Jede Karte zeigt die 11 Ereignisse (Taschendieb, Hund gegen Katze, Taube, Krampuslauf, Fundsache, Hoher Besuch, Blaulicht, UFO, Nachtschatten, Godzilla, Apokalypse). Erlebte leuchten, mehrfach erlebte tragen eine Zahl.", "Neue Rangliste „Meiste Ereignisse“, Ereignisse auch bei den beendeten Spielen und im Verlauf.", "Das Spiel zählt jedes erlebte Ereignis, auch die durch Schütteln ausgelösten."]}, {"v": "2.24.0", "date": "04.10.2026", "items": ["Tracker: Alle Ranglisten zählen nur noch offene Spiele.", "Beendete Spiele (Heimreise, Apokalypse, Game Over) stehen in einem eigenen Bereich mit Ergebnis, erreichtem Tag, Bieren, Erlebnissen und Skisprung."]}, {"v": "2.23.3", "date": "04.10.2026", "items": ["Tracker: In den Ranglisten steht der Gerätename gut sichtbar als Marke neben dem Spieler. Ohne Namen wird das Gerät angezeigt (z. B. iPhone · Safari). Ältere Spiele eines Geräts sind als „früheres Spiel“ markiert."]}, {"v": "2.23.2", "date": "04.10.2026", "items": ["Tracker: Die Rangliste „Am weitesten“ zeigt nur noch laufende Spiele. Beendete Spiele, Game Over und ältere Spiele eines Geräts fallen weg. Bei gleichem Abschnitt entscheidet die Spielzeit."]}, {"v": "2.23.1", "date": "04.10.2026", "items": ["Tracking ist aktiv: Die Spielstände gehen an die Firebase-Datenbank der Reisegruppe und erscheinen auf der Tracker-Seite."]}, {"v": "2.23.0", "date": "04.10.2026", "items": ["Neue Tracker-Seite (tracker.html): zeigt für jedes Gerät Spieler, Avatar, Fortschritt, Tag, Werte, Biere, Erlebnisse, Rekorde und den Verlauf, dazu Ranglisten. Aktualisiert sich alle 20 Sekunden.", "Das Spiel meldet seinen Stand an eine Firebase-Datenbank: beim Start, bei jedem Abschnitt, bei Erlebnissen, beim Speichern, beim Spielende und regelmässig während des Spiels.", "Ist die Datenbank nicht erreichbar, läuft das Spiel normal weiter und versucht es später erneut.", "Handy → Optionen: „Fortschritt teilen“ lässt sich ausschalten."]}, {"v": "2.22.0", "date": "04.10.2026", "items": ["Schöttli-Rundi im Zug: Kurz nach der Grenze bei Buchs SG holt Kusi Mini-Fläschli aus dem Rucksack und kommt zu dir an den Platz.", "Wahl zwischen Appenzeller, Pflümli und Kleinem Feigling. Wer ein Rivella will, wird vom ganzen Vierertisch ausgebuht.", "Animierte Szene am Vierertisch: Fläschli verteilen, dreimal klopfen, Zum Wohl, ex, schütteln. Auf Wunsch eine zweite Runde.", "Kusi steckt dir danach ein Notfall-Fläschli zu. Neues Erlebnis „Schöttli-Rundi“."]}, {"v": "2.21.0", "date": "04.10.2026", "items": ["Schnappschüsse gehören jetzt zum jeweiligen Spiel: Ein neues Spiel startet mit leerer Galerie, alte Schnappschüsse und Fotos der Sehenswürdigkeiten aus dem vorherigen Spiel werden entfernt.", "Flöru und Hännsu sind 40! Die beiden machen Sprüche über sich („Ich bin nicht 40. Ich bin 25 – mit 15 Jahren Erfahrung.“), die Kollegen ziehen sie auf (Lesebrille, Wärmepflaster, Sitzplätze im Club), und am Jasstisch wird auf den 40sten angestossen. Spielst du selbst einen der beiden, bekommst du die Sprüche ab."]}, {"v": "2.20.0", "date": "04.10.2026", "items": ["Jassen mit Stammtisch-Gefühl: Die Mitspieler reden in Sprechblasen – typische Jass-Sprüche („Stöck!“, „Wer nüt weist, verlürt.“, „Schiebe isch kei Schand.“), Witze mit Reaktionen und Gespräche über die Reise und die letzten Wiehnachtsreisli nach Strassburg, Turin, Dublin und Lyon, bei denen einer erzählt und ein anderer antwortet. Auf Trumpfansagen, grosse Stiche und einen Match gibt es Kommentare.", "Bier am Jasstisch: Jeder hat ein Glas mit Füllstand. Die Kollegen trinken und prosten sich zu, die Gläser heben sich beim Anstossen, und die Serviertochter bringt Nachschub. Mit „Schluck“ trinkst du mit – ein ausgetrunkenes Glas zählt als Bier und steigt dir in den Kopf; auch die Kollegen bekommen Promille."]}, {"v": "2.19.0", "date": "04.10.2026", "items": ["Die Bahnhof-Bäckerei in Luzern ist jetzt eine richtige Bäckerei: gestreifte Markise mit „BÄCKEREI“-Schild und Brezeln, Holzregal voller Ruchbrote, Butterzöpfe, Baguettes und Weggli, Brezeln am Haken, Brotkörbe, eine Vitrine mit Gebäck, eine Brezel-Stange – und es dampft vom frischen Brot. Bäckerin Vreni steht hinter der Theke.", "Neues Sortiment: Butterbrezel, Nussgipfel, Berliner, Weggli, Butterzopf und ganzer Laib Ruchbrot – alles auch für die Tasche. Die Brezel hat ein neues Symbol.", "Die Abfahrtstafel und die Bahnhofsuhr hängen dafür ein Stück weiter rechts."]}, {"v": "2.18.1", "date": "04.10.2026", "items": ["Versionshistorie aufgeräumt."]}, {"v": "2.18.0", "date": "03.10.2026", "items": ["Apokalypse! An Tag 10 (ab 11 Uhr) geht Innsbruck unter: Dauerbeben, blutroter Himmel, Asche und Glut, Rauchsäulen, Blitze mit Weissblitz und Donner, Lava-Risse brechen im Boden auf, Lava schiesst als Fontäne aus dem Pflaster, Häuser fangen Feuer und versinken mit Staubwolken und fliegenden Trümmern im Boden.", "Flucht zum letzten Zug: Ein Countdown läuft (Zielzeile oben und unten im Bild), ein Pfeil zeigt zum Hauptbahnhof. Vier Jungs rennen mit, springen über die Risse und rufen dir zu („LAUF!“, „SPRING!“, „NICHT IN DIE RISSE!“), drei winken schon am Bahnhof. Risse überspringst du automatisch im Rennen oder mit der Aktionstaste; wer hineinstolpert, wird herausgezogen und verliert Zeit. Blitze und Lava-Fontänen werfen dich zurück. Während der Flucht hilft Adrenalin: kein Kollaps, kein Filmriss, Rennen geht immer.", "Geschafft: Der Railjet flieht über die Brücke aus dem Lavameer, die Nordkette spuckt Feuer – dann sitzen die Jungs im Abteil, draussen zieht die Apokalypse vorbei, und alle stossen an: „PROST! AUF INNSBRUCK!“. Endbildschirm „Last Exit Innsbruck“, Erlebnisse „Last Exit Innsbruck“ und „Trittsicher“ (ohne Sturz).", "Zu spät: Der Zug rollt ohne dich davon, die Jungs schauen aus dem Fenster, die Lava steigt – Game Over."]}, {"v": "2.17.0", "date": "03.10.2026", "items": ["Kleinere Verbesserungen bei den Ereignissen."]}, {"v": "2.16.0", "date": "03.10.2026", "items": ["Freie Fotos: Der neue blaue Kamera-Knopf oben neben dem Handy (am Computer Taste P) knipst jederzeit die aktuelle Szene – auch mitten in Ereignissen wie Godzilla oder dem UFO. Blitz, Auslöser-Klick, und das Bild bekommt einen Polaroid-Rand mit Ort, Datum und Uhrzeit.", "Direkt teilen: In der Vorschau öffnet „Teilen“ das Teilen-Menü des Handys – WhatsApp, Signal, Instagram, Mail und alles andere. Das Bild wird dafür pixelscharf vergrössert. Wo Teilen nicht geht (z. B. am Computer), wird das Bild heruntergeladen.", "Galerie im Handy unter „Fotos“: alle Schnappschüsse ansehen, teilen, speichern oder löschen; auch die Fotos der Sehenswürdigkeiten haben einen Teilen-Knopf. In Minispielen (Darts, Skispringen, Rauferei …) gibt es oben ein 📷 für ein Foto des Spielfelds.", "Erlebnisse „Knipser“ und „Influencer“."]}, {"v": "2.15.0", "date": "03.10.2026", "items": ["Türszenen: Beim Durchgehen ragt die Figur nicht mehr über den Türrahmen. Sie läuft bis zur Schwelle, ist dort klein genug für die Öffnung und verschwindet darin; beim Hinausgehen tritt sie zuerst in der Türöffnung hervor. Gilt für Haustüren, Zimmer 307 und die Zugtür in Innsbruck."]}, {"v": "2.14.0", "date": "03.10.2026", "items": ["Godzilla ohne Stampfer: Keine Fuss-Schatten mehr, die vom Himmel fallen. Stattdessen jagt er dich zu Fuss durch die Stadt – erst schnell heran, dann stetig hinterher und mit der Zeit etwas schneller. Gefährlich sind nur noch zwei Dinge: ihn berühren und der Atomstrahl, der jetzt etwas öfter kommt. Seine Schritte lassen weiterhin den Boden beben, Staub aufwirbeln und Fussabdrücke zurück."]}, {"v": "2.13.0", "date": "03.10.2026", "items": ["Jeder Raumwechsel hat seine eigene Szene, passend zum Ort:", "Lokale mit eigener Fassade: Hotel Zirbe mit Sternen, Fahnen und Glastür; Tiroler Stüberl mit Laterne und Blumenkistchen; Gamsbock Bar mit Geweih und flackerndem Neon-Bierkrug; Casino mit Lauflichtern, goldenen Säulen und rotem Teppich; Club Lawine im Viaduktbogen mit Stahltür, Absperrkordel, Türsteher, Strobo und Bass; Rouge im Bogen mit rotem Samtvorhang und Rotlicht.", "Läden mit ihrem Schild, ihrer Wandfarbe und Waren im Schaufenster, Türglocke beim Eintreten; Barbier mit drehendem Pole, Apotheke mit grünem Kreuz, Markisen bei Konditorei und Boutique.", "Bahnhof Luzern mit Bahnhofsuhr, hohen Fenstern und Reisenden; Ankunft in Innsbruck: der Railjet steht am Bahnsteig, die Tür zischt auf, du steigst aus.", "Hotel: Treppenhaus mit Stufen hinauf oder hinunter; Lift mit schliessenden Türen, Stockwerksanzeige und Ding; Zimmer 307 mit Kartenleser, der grün aufleuchtet – beim Hinausgehen hängt „Bitte nicht stören“ an der Klinke.", "Rauswurf aus Club, Rouge oder Stüberl: eine Pranke wirft dich im hohen Bogen auf die Strasse, die Tür knallt zu, Sterne kreisen. Sperrstunde: die Lichter gehen aus, „Zu“ hängt an der Tür."]}, {"v": "2.12.0", "date": "03.10.2026", "items": ["Ereignisse wiederholen sich: Sind alle einmal gelaufen, beginnt eine neue Runde in neu gemischter Reihenfolge – so gehen sie auch auf einer langen Reise nie aus. Weiterhin zwei pro Tag, Godzilla bleibt einmalig an Tag 5.", "Treppen im Hotel: Kein Türbild mehr beim Treppensteigen, nur ein kurzes Abblenden mit Schritten. Die Türszene zeigt jetzt den Namen des Ortes über der Tür."]}, {"v": "2.11.0", "date": "03.10.2026", "items": ["Kleinere Verbesserungen bei den Ereignissen."]}, {"v": "2.10.0", "date": "03.10.2026", "items": ["Darts mit Handyneigung: Im Darts-Spiel schaltet „📱 Mit Handyneigung zielen“ die Bewegungssensoren ein (auf dem iPhone fragt der Browser einmal um Erlaubnis). Die Lage beim Einschalten ist die Mitte der Scheibe, Neigen bewegt das Fadenkreuz, Tippen wirft. Je mehr Promille, desto mehr zittert das Kreuz. „Neu ausrichten“ setzt die Mitte neu; auf Android bleibt die Einstellung für die nächsten Spiele gespeichert.", "Ereignisse passieren öfter: zwei pro Tag statt einem – eines tagsüber, eines am Abend, mit mindestens zweieinhalb Stunden Abstand. Hund und Katze, Taube, Taschendieb, Krampus, Fundsache, Überfall und Polizei können sich auf einer langen Reise wiederholen."]}, {"v": "2.9.0", "date": "03.10.2026", "items": ["Godzilla allein, dafür richtig: King Kong ist gestrichen. Godzilla ist jetzt rund 90 Pixel hoch und detailliert animiert – Schritte mit angehobenem Fuss und Krallen, pendelnder Schwanz mit Platten, drei Reihen Rückenplatten, Bauchplatten und Schuppen, Arme mit Krallen, Augen, die blinzeln, Brauenwulst, Nüstern und ein Maul, das zum Brüllen aufreisst und die Zahnreihen zeigt.", "Neuer Angriff: der Atomstrahl. Alle paar Sekunden glühen die Rückenplatten von hinten nach vorn blau auf, Funken sprühen, zwei gestrichelte Linien zeigen den Bereich – dann fegt der blau-weisse Strahl über den Boden, hinterlässt Brandspuren mit Glut und Feuer und leuchtet nachts die Gasse aus. Raus aus der Linie!", "Stampfer mit Druckwelle: Nach jedem Tritt läuft ein Ring über den Boden, Trümmer und Staub fliegen, der Fussabdruck zeigt Krallen. Godzilla stapft beim Gehen hörbar, der Boden bebt.", "Wirtshausrauferei im Tiroler Stüberl: Holzknecht Ferdl sitzt neu am Ecktisch. Wer sein Bier umstösst, über Knödel lästert oder das Watten verspottet, bekommt eine Schlägerei als Minispiel. Ferdl holt aus – hoch heisst ducken, tief heisst blocken; verfehlt er, wankt er und ein Schlag sitzt doppelt. Arcade-Lebensbalken, „WATSCHN!“, „WUMMS!“, fliegender Tirolerhut, Schweisstropfen und Sterne. Die Jungs und die Stammgäste feuern an, ein Kumpel wirft einmal pro Kampf einen Bierkrug. Leicht angetrunken schlägst du härter, betrunken triffst du daneben. Danach wirft Resi dich raus: Hausverbot bis zum nächsten Morgen. Erlebnisse „Wirtshausrauferei“ und „Veilchen“."]}, {"v": "2.8.0", "date": "03.10.2026", "items": ["Türen statt Schwarzbild: Beim Betreten eines Gebäudes geht der Spieler zur Haustür, sie schwingt auf, warmes Licht fällt heraus und er verschwindet darin; beim Verlassen kommt er aus der offenen Tür, die hinter ihm zufällt. Mit Schritten, Türgeräusch und dem Namen des Ortes über der Tür.", "Das Alien will zum Piloten (Römu) statt zum Kassier gebracht werden – und würde ihn am liebsten gleich mitnehmen.", "Blackjack: Mehrere Runden hintereinander mit gleichem Einsatz, neuem Einsatz oder Schluss; Croupière Lisa zählt Runden und Bilanz mit.", "Jessys Dienstleistungen sind animiert: Händchenhalten am nächtlichen Inn mit Herzen und Laternen, Kuscheln unter der Decke in Bogen 12 mit Lichterkette und Schnarchen, und beim vollen Programm bleibt der Vorhang zu – Schuhe vor der Tür, „Nicht stören“, flackerndes Licht.", "Das Frühstücksbuffet im Hotel Zirbe ist gedeckt: Brotkorb, Gipfeli, Käse und Schinken, Eier, Früchte, Säfte, Müesli und Kaffeekanne."]}, {"v": "2.7.0", "date": "03.10.2026", "items": ["Homescreen-Icon: Wer das Spiel auf den Startbildschirm legt, bekommt jetzt einen Pixel-Bierkrug statt des Buchstabens „W“ (Web-Manifest, Apple-Touch-Icon). Dazu prüft das Spiel beim Start, ob eine neue Version online ist, und bietet das Neuladen an – so bleibt keine alte Version im Cache hängen.", "Ereignisse beginnen mit einer Ankündigungs-Sequenz: Kinobalken fahren ein, „EREIGNIS“ blinkt, der Titel tippt sich hin, Fanfare, Blitz – dann geht es in der Welt los (auch bei Godzilla & King Kong).", "Drei neue Läden in der Maria-Theresien-Strasse, alle betretbar: Mode Alpin (Après-Ski-, Winter-, Sport- und Fan-Set), Boutique Maximilian (Sakko-, Hemd-, Rocker- und Polo-Set) und der Kostümverleih Maskerade.", "Kostüme für den Avatar: Pirat, Cowboy, Bär, Kuh, Pinguin, Dino, Ritter, Superheld, Weihnachtsmann und Elch – mit Haube, Ohren, Hörnern, Geweih, Zacken, Umhang, Maske, Augenklappe und Zipfelmütze auf Spielfigur und Porträt. Einmal gekauft, lassen sie sich im Kleiderschrank jederzeit an- und ablegen. Erlebnis „Maskerade“.", "Querformat: Die Anzeigen (Uhr, Ort, Geld, Werte, Ziel) stehen klein in der rechten oberen Ecke, Meldungen sind schmal und links oben statt über die ganze Breite.", "Casino: Die Konditorei-Schirme stehen seit 2.6.0 nicht mehr vor der Tür; wer sie noch sieht, spielt eine alte Version – der neue Update-Hinweis hilft beim Neuladen."]}, {"v": "2.6.0", "date": "03.10.2026", "items": ["Ausflug zum Bergisel: An der Tram-Haltestelle beim Hauptbahnhof (grünes H) fährt die Tram für 3 € zur Bergiselschanze – mit animierter Fahrt durch Wilten. Oben: Schanzenstadion mit Tribünen, Flutlicht und Fahnen, Kassa, Panoramalift auf den Zaha-Hadid-Turm (Glaskabine, Café im Turm, Rundblick über Innsbruck), Andreas-Hofer-Denkmal, Tirol Panorama mit Riesenrundgemälde, Foto-Spot und Krähen im Schnee.", "Skisprung-Minispiel „Gästespringen“ bei Trainer Sepp (25 € Leihgebühr, Tageslicht, nüchtern): Start antippen, Anlauf mit Tempoanzeige, am Schanzentisch im richtigen Moment abspringen, im Flug die Haltung mit ◀ ▶ im grünen Bereich halten (Wind, Böen und Alkohol machen es wackelig), kurz vor dem Boden Telemark drücken. Weite, Haltungsnoten von fünf Punktrichtern und Gesamtpunkte; Sturz bei zu viel Schräglage. Erlebnisse „Bergisel“, „Adlerflug“, „K-Punkt“ (120 m), „Schanzenrekord“ (über 138 m), „Bauchlandung“ und „Kulturbanause“; weitester Sprung im Handy-Status.", "Casino: Die Sonnenschirme der Konditorei standen vor dem Casino-Eingang und blockierten die Tür. Jetzt stehen sie vor der Konditorei."]}, {"v": "2.5.0", "date": "03.10.2026", "items": ["Anstossen am Stammtisch braucht ein Bier in der Hand: aus der Tasche oder frisch bestellt (4,80 € in der Bar, 4,40 € im Stüberl). Das Bier zählt zu deinem Promillegehalt, und die Jungs am Tisch trinken mit.", "Die Verfolgungsjagd mit dem Taschendieb ist härter: Er rennt so schnell wie du, schlägt im Zickzack neun Haken, spurtet kurz, wenn du ihm auf die Pelle rückst, und lässt sich nicht mehr gleich beim Rempler fassen. Erst nach 15 Sekunden geht ihm die Luft aus – dann heisst es Haken abschneiden.", "Jeder Laden hat jetzt einen eigenen Innenraum: Skiständer und Turnschuhwand im Sportgeschäft, Schaufensterpuppen, Hutwand und Umkleide beim Trachtenhändler, Postkartenständer im Souvenirladen, weisse Apotheke mit grünem Kreuz und Wartebank, drei Regalgänge und Kühlschrank im Supermarkt, Vitrine und runde Tischchen in der Konditorei.", "Der Coiffeur hat drei Barbiersessel mit Spiegeln; du setzt dich in den nächsten freien.", "Beim Barbier gibt es neu „Glatze rasieren“ (15 €) und „Bart abrasieren“ (12 €): Maschine bzw. Messer, Haare fliegen, und der Avatar ist danach sofort kahl oder glatt rasiert. Erlebnis „Blank“."]}, {"v": "2.4.0", "date": "03.10.2026", "items": ["Alle Läden sind betretbar: Sport Gipfel, Trachten Holzer, Souvenirs, Apotheke, Supermarkt, Trafik, Konditorei und der Coiffeur haben eigene Innenräume mit Regalen, Theke, Kasse und Verkäufer. Gekauft wird an der Theke, der Ausgang führt zur richtigen Haustür zurück.", "Coiffeur: Barbierstuhl, Spiegel, drehender Barber-Pole. Beim Haarschnitt oder Bart setzt du dich in den Stuhl, Mehmet kommt mit der Schere, es schnippt und die Haare fliegen – dann darfst du den neuen Look wählen.", "Apotheke, Trafik und Supermarkt verkaufen Kondome (3er-Pack, in der Tasche mit Zähler). Apothekenartikel landen wie bisher in der Tasche.", "Jessy steht nachts (22–4 Uhr) in den Viaduktbögen und bietet Händchenhalten, Kuscheln oder das volle Programm an – aber nur mit Gummi, auch beim Händchenhalten. Erlebnis „Safer Sex“, die Jungs reden danach darüber."]}, {"v": "2.3.0", "date": "03.10.2026", "items": ["Trinkspiel Bierpong gegen jeden Kollegen in der Gamsbock Bar oder im Club: zielen, Kraft wählen, werfen. Jeder Treffer lässt den anderen trinken, der Verlierer trinkt die restlichen Becher. Alles zählt zum Promillegehalt, bei dir wie beim Kollegen. Erlebnis „Pong-König“.", "Hinweise bleiben länger stehen (8 Sekunden) und lassen sich antippen, um sie zu schliessen."]}, {"v": "2.2.0", "date": "03.10.2026", "items": ["Übergeben ist jetzt deutlich sichtbar: zwei Schwälle Brocken aus dem Mund, „BLÖÄÄRGH!“ über dem Kopf, Erschütterung und eine grosse Pfütze vor den Füssen – beim Spieler wie bei den Kollegen.", "Bevor man vor Müdigkeit im Stehen einschläft, gibt es eine letzte Chance: Tasche öffnen und etwas essen oder trinken, Kaffee an der Theke, Taxi ins Hotel oder im Zimmer gleich ins Bett."]}, {"v": "2.1.2", "date": "03.10.2026", "items": ["Jeden Tag ein Ereignis zu zufälliger Uhrzeit; die Reihenfolge der Ereignisse wird in jedem neuen Spiel neu gemischt, sodass jede Reise anders verläuft."]}, {"v": "2.1.1", "date": "03.10.2026", "items": ["Ereignisse finden an zufälligen Tagen statt: Pro Tag wird einmal gewürfelt, ob etwas passiert (etwa jeder zweite Tag) und ab welcher Uhrzeit. Godzilla und King Kong bleiben fix an Tag 5."]}, {"v": "2.1.0", "date": "03.10.2026", "items": ["Die Ereignisse spielen jetzt direkt in der Spielwelt: Das UFO sinkt neben dir herab, der Lichtkegel leuchtet auf den Platz, das grüne Alien steigt aus und kommt zu dir. Trumps Kolonne mit Polizeimotorrad fährt auf der nächsten Strasse vor, er und die Secret-Service-Männer steigen aus und gehen zu dir. Der Taschendieb rennt mit deinem Portemonnaie quer über die Karte und du musst ihn selbst einholen (rennen!). Godzilla und King Kong stapfen als Riesen über die Karte, ihre Fussschatten fallen um dich herum – 30 Sekunden ausweichen in der echten Stadt.", "Godzilla und King Kong kommen jetzt an Tag 5.", "Neue Hautfarbe „Alien-Grün“ im Editor."]}, {"v": "2.0.0", "date": "03.10.2026", "items": ["Höchstens ein Zufallsereignis pro Tag.", "Neue Ereignisse: ein UFO landet nachts auf dem Platz und ein Alien will zum Anführer (Geschenk: leuchtender Stein); Donald Trump trifft mit Wagenkolonne und Secret Service ein; ein Taschendieb klaut das Portemonnaie – Verfolgungsjagd als Minispiel (über Hindernisse springen, einholen).", "Tag 10: Godzilla und King Kong überfallen Innsbruck. Ausweich-Minispiel gegen die Tritte; wer erwischt wird, wacht im Spital auf (Selbstbehalt, ein Tag weg).", "Heimreise: Am Hauptbahnhof mit dem Railjet zurück nach Luzern beendet das Spiel endgültig, mit Statistik und Abschluss des Spielstands. Hinweise darauf im Ziel, im Reiseplan und am Bahnhof. Keine Zeitbegrenzung.", "Casino Innsbruck bei der Triumphpforte (15–3 Uhr, Dresscode): Roulette mit drehendem Kessel (Rot/Schwarz, Gerade/Ungerade, Plein 35:1) und Blackjack gegen die Bank (Karte, Halten, Verdoppeln), Casinobar. Erlebnisse „Spieler“, „Plein!“, „Siebzehn und vier“."]}, {"v": "1.10.0", "date": "03.10.2026", "items": ["Versteckte Zufallsereignisse in Innsbruck (ab der Stufe „frei“, mit Abstand von mindestens 40 Spielminuten): nächtlicher Überfall in den Bögen (weglaufen, Jungs rufen oder zahlen), Ölu wird von der Polizei abgeführt (Organmandat zahlen, Lexx als Anwalt holen oder ihn verleugnen – dann sitzt er drei Stunden auf der Wache), Hund jagt Katze über den Platz mit Wette, Taubenvolltreffer, Krampuslauf am Abend, gefundenes Portemonnaie. Sechs neue Erlebnisse."]}, {"v": "1.9.1", "date": "03.10.2026", "items": ["Joystick ohne Pfeile: nur noch Ring und Knopf."]}, {"v": "1.9.0", "date": "03.10.2026", "items": ["Handy → Status zeigt bei jedem der Jungs, wo er gerade ist (Bar, Stüberl, Club, Rouge, Hotel, Frühstück, Stadt, Taxi) und seinen Pegel. Auf der Karte stehen weisse Kreise mit der Anzahl Jungs pro Ort.", "Die Jungs haben jetzt einen Pegel: Wer ihnen Bier ausgibt oder Runden schmeisst, macht sie angeheitert, dann sturzbetrunken; ab 2,6 ‰ übergibt sich der Kollege, der Wirt schimpft, ein anderer bringt ihn ins Hotel, wo er bis zum Morgen bleibt. Neues Erlebnis „Abgefüllt“.", "Runde für alle direkt im Gespräch mit einem Kollegen (Bier, Zirbenschnaps oder Shots je nach Lokal).", "Am Bankomat lassen sich die restlichen Franken in Euro wechseln (Kurs 1,04, 2 € Gebühr)."]}, {"v": "1.8.1", "date": "03.10.2026", "items": ["Nachts verdeckten die leuchtenden Fenster der Häuser die Spielfigur. Die Fenster gehören jetzt zum Gebäude und strahlen, wer davor steht, an.", "Zweiter Bankomat bei der BANK an der Maria-Theresien-Strasse (neben dem Barbier), beide Bankomaten auf der Handy-Karte, Tageslimit 1.000 €, Abhebung bis 500 € auf einmal, Hinweis im Ziel, wenn das Geld knapp wird."]}, {"v": "1.8.0", "date": "03.10.2026", "items": ["Neues Lokal in den Viaduktbögen: „Rouge · Tabledance“ (21–5 Uhr) mit Türsteher Rocky, Eintritt 20 €, Bühne mit Chantal und Vanessa, Bar mit gesalzenen Preisen, Piccolo oder Champagnerflasche für die Bühne, Privattanz, eigene Lounge-Musik. Hännsu sitzt nach Mitternacht dort. Zwei neue Erlebnisse, Taxi-Ziel und Kartenpunkt.", "Startbildschirm ohne Abfahrtstafel.", "Joystick deutlich sichtbarer: feste Basis unten links mit Knopf und Pfeilen, aktiver Stick mit gelbem Knopf."]}, {"v": "1.7.2", "date": "03.10.2026", "items": ["Torbogen: Das Ziel nennt jetzt namentlich, wer noch begrüsst werden muss (z. B. „Begrüss Coel und Römu“), die Betreffenden winken dauerhaft mit „!“, Intro und Reiseplan erklären die Regel.", "Ankunft Innsbruck: Die Jungs warten neben der Tür und an den Bistrotischen statt davor und sind durchlässig – der Weg zur Zugtür ist frei."]}, {"v": "1.7.1", "date": "03.10.2026", "items": ["Fahrkartenkontrolle: Die Zugbegleiterin ist jetzt eine sichtbare Figur. Sie betritt den Wagen, läuft durch den Gang zu dir, stellt sich neben dich für die Kontrolle und geht danach weiter."]}, {"v": "1.7.0", "date": "03.10.2026", "items": ["Animierte Szenen statt Schwarzblende mit Text: Brunnenbad mit Wasserstrahlen und Polizist, Fiaker-Rundfahrt mit trabendem Pferd durch die Altstadt, Schlafen mit Zzz, laufender Wanduhr und Morgenlicht, Duschen hinter dem Vorhang mit Dampf und Seifenblasen, WC mit Besetzt-Schild und Spülung, Nordkettenbahn-Gondel über dem Hang, Stadtturm mit Stufenzähler, Taxi durch die Stadt, Zugfahrt mit Landschaft."]}, {"v": "1.6.6", "date": "03.10.2026", "items": ["Tanzfläche neu: vier Spuren über die ganze Breite, die Pfeiltasten liegen exakt unter den fallenden Balken, Tänzer halbtransparent im Hintergrund.", "Ton auf dem Handy robuster: Audio wird bei jeder Berührung und nach dem Entsperren wieder freigegeben, iPhone-Stummschalter-Trick, Hinweis und Status unter Optionen."]}, {"v": "1.6.5", "date": "03.10.2026", "items": ["Tanzen ist fairer: grössere Trefferfenster (passend zur Touch-Latenz), hörbarer Metronom-Takt mit Akzent auf der Eins, Einzähler vor der ersten Note, langsamer fallende Pfeile, weniger Zwischenschläge, verpasste Noten werden angezeigt. „Gut“ gibt 75 statt 60 Punkte."]}, {"v": "1.6.4", "date": "03.10.2026", "items": ["Die Spielfigur verschwindet nicht mehr hinter Fassaden, wenn sie in einer Tür steht oder dicht an Gebäuden, Bäumen und Möbeln vorbeigeht."]}, {"v": "1.6.3", "date": "03.10.2026", "items": ["Railjet: Der Vorraum hat jetzt eine sichtbare Ausstiegstür (zwei Glasflügel, grüne Öffner). Bei der Ankunft warten die Jungs davor."]}, {"v": "1.6.2", "date": "03.10.2026", "items": ["Handy: Die Reiter (Ziele, Karte, Tasche, Fotos, Status, Optionen) sind immer sichtbar und brechen auf schmalen Bildschirmen um. Vorher konnten sie bei langem Inhalt verschwinden."]}, {"v": "1.6.1", "date": "03.10.2026", "items": ["Begrüssungsregel am Torbogen wieder wie vorher: Partylöwe, Fotograf und Kassier begrüssen, insgesamt mindestens vier – dann geht die Gruppe gemeinsam zum Gleis."]}, {"v": "1.6.0", "date": "03.10.2026", "items": ["Beim Start ist zufällig ein Spieler vorgeschlagen; ein Tipp auf einen anderen Namen wechselt.", "Luzern: Alle elf Jungs müssen beim Torbogen begrüsst werden. Fortschritt steht im Ziel (z. B. 4/11), Ungrüsste winken mit „!“, nach jedem Gespräch zeigt ein Hinweis, wer noch fehlt."]}, {"v": "1.5.3", "date": "03.10.2026", "items": ["Bahnhof Luzern: Alle drei Glastüren führen in die Halle, nicht nur die linke."]}, {"v": "1.5.2", "date": "03.10.2026", "items": ["Kusi ist glatt rasiert, Römu trägt keine Brille mehr."]}, {"v": "1.5.1", "date": "03.10.2026", "items": ["Jeder Kollege hat jetzt ein eigenes Gesicht: Kopfform, Ohren, Augen, Brauen, Nase, Mund, Statur und Grösse sind fest hinterlegt.", "Bei „Wer bist du?“ zeigt jeder Name sein Porträt; beim Anwählen wird der komplette Look übernommen, nicht nur die Kleider."]}, {"v": "1.5.0", "date": "03.10.2026", "items": ["Startbildschirm im Weihnachtslook: Titel zuoberst über der Abfahrtstafel, Lichterkette, Schneefall, Rot-Grün-Akzente.", "Didu: kürzeres Haar in Kupfer-Orange. Yännu: grimmiger Blick und grössere Nase. Cuche: Cap mit kurzem Schirm.", "Alle Kollegen haben helle Haut und braune Augen.", "Neue Kopfbedeckung „Cap, kurzer Schirm“."]}, {"v": "1.4.0", "date": "03.10.2026", "items": ["Versionsnummer und Versionshistorie im Spiel: auf dem Startbildschirm und im Handy unter Optionen."]}, {"v": "1.3.0", "date": "03.10.2026", "items": ["Alle zwölf Kollegen haben ihr festes Aussehen (Frisur, Haarfarbe, Bart, Brille, Kleidung, Schuhe).", "Neue Kopfbedeckung „Baskenmütze“ und neue Brille „Rund, braun“.", "Wer im Editor einen Namen wählt, startet mit dessen Look und kann ihn anpassen.", "Charakter-Editor springt nach einer Auswahl nicht mehr nach oben."]}, {"v": "1.2.0", "date": "03.10.2026", "items": ["Tasche: In Bars und Restaurants kauft der Preis-Knopf zum sofortigen Konsum, der 🎒-Knopf legt Essen und Getränke in die Tasche. Take-away-Läden legen alles in die Tasche.", "Alles Essbare, Trinkbare und jedes Medikament ist im Handy jederzeit konsumierbar und verändert die Werte (Promille, Sättigung, Energie …).", "Der Ausflug beginnt am Freitag, 11. Dezember 2026. Datum im HUD, im Handy und auf dem Startbildschirm.", "Titel „Wiehnachtsreisli 2026 nach Innsbruck“."]}, {"v": "1.1.0", "date": "03.10.2026", "items": ["Du bist für die Fahrkarten zuständig: Geld vom Kassier, Gruppenbillett am Automaten in der Bahnhofshalle kaufen. Ohne Billett steigt niemand ein.", "Abfahrt um 9:10 ist verbindlich: Countdown-Durchsagen, verpasster Zug heisst Game Over und Neustart.", "Yännu raucht noch eine, verpasst den Zug und kommt in der Gamsbock Bar per Taxi nach.", "Der Zug in der Halle hat sichtbare Einstiegstüren.", "Veröffentlichung auf GitHub Pages."]}, {"v": "1.0.0", "date": "03.10.2026", "items": ["Erste Fassung: Charakter-Editor, Luzern, Zugfahrt mit Jass, Innsbruck mit Altstadt, Hotel Zirbe, Gamsbock Bar, Stüberl, Club Lawine, Läden, Nordkette, Taxi, Minispiele und Körperwerte."]}];
 /* ---- 00_util.js ---- */
 'use strict';
 /* ============ Grundwerkzeuge ============ */
@@ -839,7 +839,7 @@ function randomLook(r = Math.random, unlocked) {
   if (r() < 0.75) L.beardCol = Math.min(L.hairCol, 10);
   return L;
 }
-const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.');
+const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.') + (L.naked ? '.n' : '');
 
 /* ---------- Porträt (64x64) ---------- */
 const HEADS = [
@@ -1328,6 +1328,8 @@ function drawSprite(x, L, dir, pose, OX, OY) {
   let pantsC = lc(L, 'pantsCol'), shoeC = lc(L, 'shoesCol'), hatC = lc(L, 'hatCol');
   const CS = COSTUMES[L.costume | 0];
   if (CS) { topC = CS.topC; pantsC = CS.pantsC; shoeC = CS.shoeC; if (CS.hatC) hatC = CS.hatC; }
+  /* Flitzer (Ereignis): alles Haut, nur ein schwarzer Zensurbalken (siehe drawCostumeSprite) */
+  if (L.naked) { topC = skin; pantsC = skin; shoeC = skinD; }
   const sitting = pose === 'sit', bend = pose === 'bend';
   const walkA = pose === 'walkA', walkB = pose === 'walkB';
   const bob = walkA || walkB ? -1 : 0;
@@ -1480,6 +1482,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
 }
 /* Kostüm-Extras auf der Spielfigur: Haube mit Ohren, Flecken, Bauch, Zacken, Umhang, Maske, Augenklappe, Zipfelmütze */
 function drawCostumeSprite(r, p, L, dir, hy, tTop, legsTop, tx0, tx1) {
+  if (L.naked) { const x0 = dir === 1 ? tx0 + 2 : tx0, x1 = dir === 1 ? tx1 - 1 : tx1; r(x0 - 1, legsTop - 1, x1 - x0 + 3, 3, '#141418'); r(x0, legsTop, 1, 1, '#3a3a40'); }
   const K = L.costume | 0; if (!K) return; const cs = COSTUMES[K];
   const side = dir === 1, back = dir === 3;
   const bh = legsTop - tTop;
@@ -1939,6 +1942,7 @@ const ITEMS = {
   edelweiss: { n: 'Edelweiss-Anstecker', t: 'souv', icon: 'flower', inv: true },
   muenze: { n: 'Glücksmünze', t: 'souv', icon: 'coin', inv: true },
   billett: { n: 'Gruppenbillett Luzern–Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
+  taxiticket: { n: 'Taxi-Ticket Luzern → Innsbruck', t: 'ticket', icon: 'ticket', inv: true },
   pong: { n: 'Bierpong-Becher', t: 'drink', alc: 0.09, mood: 3, en: -1, icon: 'beer' },
   kondom: { n: 'Kondome (3er-Pack)', t: 'tool', icon: 'kondom', inv: true, uses: 3 },
   meteorit: { n: 'Leuchtender Stein vom Alien', t: 'souv', icon: 'globe', inv: true },
@@ -2014,6 +2018,9 @@ const ACH = {
   dusche: ['Frisch gemacht', 'Im Hotel geduscht'],
   rouge: ['Rotlicht', 'Im Rouge in den Viaduktbögen gewesen'],
   champagner: ['Grosszügig', 'Im Rouge eine Flasche für die Bühne spendiert'],
+  verraucht: ['Zug verraucht', 'Den Zug in Luzern beim Rauchen verpasst'],
+  flitzer: ['Flitzer-Alarm', 'Titu und Rümmel nackt durch die Gassen rennen sehen'],
+  fussball: ['Stammtisch-Experte', 'Mit Hakan Yakin und Xherdan Shaqiri über Fussball diskutiert'],
   schoettli: ['Schöttli-Rundi', 'Im Railjet eine Schöttli-Runde gekippt'],
   abgefuellt: ['Abgefüllt', 'Einen Kollegen bis zum Übergeben abgefüllt'],
   ueberfall: ['Nachtschatten', 'Einen nächtlichen Überfall überstanden'],
@@ -3155,6 +3162,19 @@ MAP_BUILDERS.luzern = () => {
   m.add(objBikes(31, 9)); m.add(objBikes(33, 9));
   for (const x of [9, 10, 11]) m.add(objBollard(x, 9));
   m.add(objLitfass(22, 9));
+  /* Aschenbecher-Säule neben dem Bahnhofseingang (Raucherecke) */
+  m.add(mkObj(18, 9, 1, 1, 14, (c, W, H) => {
+    E(c, 8, H - 2, 5, 2, 'rgba(0,0,0,0.25)'); R(c, 4, 6, 8, H - 8, '#8a9096'); R(c, 4, 6, 2, H - 8, '#b0b6bc'); R(c, 10, 6, 2, H - 8, '#6a7076');
+    R(c, 3, 4, 10, 3, '#5a6066'); R(c, 4, 4, 8, 1, '#c8ccd0'); for (const k of [5, 7, 9, 11]) P(c, k, 5, '#e8e4dc'); P(c, 6, 5, '#ff8a3a');
+    R(c, 4, 12, 8, 2, '#d8302a'); R(c, 4, 14, 8, 1, '#f4f0e6');
+  }, { solid: true }));
+  m.trig(18, 9, 1, 1, { label: 'Aschenbecher: Eine rauchen', act: () => Story.luSmoke() });
+  /* Taxistand auf dem Bahnhofplatz (Richtung KKL) */
+  for (const y of [12, 14]) { m.add(objCar(32, y, '#1e1e22')); m.solid(32, y, 2, 1); m.trig(32, y, 2, 1, { label: 'Taxistand', act: () => Story.taxiLU() }); }
+  m.add(mkObj(34, 11, 1, 1, 18, (c, Wd, Hd) => { R(c, 7, 6, 2, Hd - 7, '#3a3c40'); R(c, 1, 0, 14, 8, '#f0d040'); R(c, 1, 0, 14, 1, '#fff4a0'); pxText(c, 'TAXI', 1, 2, '#1a1a1a'); }, { solid: true }));
+  m.trig(34, 11, 1, 1, { label: 'Taxistand', act: () => Story.taxiLU() });
+  for (const y of [12, 14]) m.add(mkObj(32, y, 2, 1, 10, (c, W, H) => { R(c, 11, H - 25, 10, 5, '#f0d040'); R(c, 11, H - 25, 10, 1, '#fff4a0'); R(c, 12, H - 23, 8, 1, '#1a1a1a'); }));
+  m.npcDefs.push({ id: 'hakan_taxi', name: 'Taxifahrer Hakan', x: 31 * 16 + 8, y: 13 * 16 + 12, dir: 2, look: npcLook(1201, { hair: 2, hairCol: 0, beard: 3, beardCol: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, hat: 0, glasses: 0, build: 3 }), talk: () => Story.taxiLU(), keepDir: true, bubbleRand: ['dots'] });
   /* Kapellbrücke & Wasserturm */
   m.add(mkObj(0, 21, 11, 1, 12, (c, W, H) => {
     R(c, 0, H - 10, W, 6, '#7a5434'); R(c, 0, H - 10, W, 1, '#a07450');
@@ -3261,6 +3281,8 @@ MAP_BUILDERS.luzern_halle = () => {
   const TRAIN_DOORS = [6, 14, 22];
   const train = objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB', doors: TRAIN_DOORS.map((x) => x - 1) });
   m.add(train);
+  m.irTrain = train;
+  if (G.S && G.S.flags && G.S.flags.missed) train.gone = true; /* Yännu hat den Zug verraucht */
   for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: 'Zugtür: Einsteigen', act: () => Story.boardTrain() });
   /* Abfahrtstafel, Uhr, Schilder */
   m.decal((c) => {
@@ -3282,6 +3304,11 @@ MAP_BUILDERS.luzern_halle = () => {
   m.npcDefs.push({ id: 'baeckerin', name: 'Bäckerin Vreni', x: 11 * 16, y: 13 * 16 + 13, dir: 0, look: npcLook(1104, { hair: 9, hairCol: 5, beard: 0, top: 4, topCol: 13, hat: 0, glasses: 0, mouth: 0, build: 2 }), talk: () => Story.shop('baeckerei_lu'), keepDir: true, bubbleRand: ['dots', 'heart'] });
   for (const x of [22, 24]) m.add(mkObj(x, 14, 1, 1, 12, (c, W, H) => { R(c, 2, 0, 12, H - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }));
   m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.ticketMachine() });
+  /* Taxizentrale: Taxi-Tickets zum Fixpreis (für Yännu, wenn der Zug weg ist) */
+  m.add(objCounter(28, 14, 3, 1, { top: '#f0d040', front: '#b89418', reg: true }));
+  m.trig(28, 14, 3, 1, { label: 'Taxizentrale', act: () => Story.taxiTicketLU() });
+  m.decal((c) => { const sx = 28 * 16 + 2, sy = 12 * 16 + 2; R(c, sx, sy, 42, 11, '#1a1a1e'); R(c, sx, sy, 42, 1, '#f0d040'); pxText(c, 'TAXI', sx + 3, sy + 3, '#f0d040'); pxText(c, '24H', sx + 25, sy + 3, '#e8e4dc'); });
+  m.npcDefs.push({ id: 'taxidisp', name: 'Taxizentrale', x: 29 * 16 + 8, y: 13 * 16 + 13, dir: 0, look: npcLook(1202, { hair: 16, hairCol: 4, beard: 0, top: 1, topCol: 4, hat: 0, glasses: 1 }), talk: () => Story.taxiTicketLU(), keepDir: true, bubbleRand: ['dots'] });
   for (const [x, y] of [[8, 17], [20, 17], [27, 17]]) m.add(objBench(x, y, 0, '#6a6e74'));
   for (const [x, y] of [[1, 18], [32, 18]]) m.add(objPlant(x, y));
   for (const [x, y] of [[3, 10], [12, 10], [24, 10], [31, 10]]) m.add(objBench(x, y, 0, '#6a6e74'));
@@ -4118,6 +4145,10 @@ MAP_BUILDERS.rouge = () => {
   m.add(objTable(2, 7, 1, 1, { col: '#2a1a20', round: true })); m.add(objTable(12, 10, 1, 1, { col: '#2a1a20', round: true }));
   m.add(objPlant(14, 1)); m.add(objPlant(1, 1));
   m.trig(5, 5, 6, 1, { label: 'An die Bühne', act: () => Story.stageFront() });
+  /* Am Tisch rechts: Hakan Yakin und Xherdan Shaqiri diskutieren über Fussball */
+  m.npcDefs.push({ id: 'yakin', name: 'Hakan Yakin', x: 11 * 16 + 8, y: 9 * 16 + 12, dir: 0, pose: 'sit', look: npcLook(1401, { skin: 4, hair: 2, hairCol: 0, beard: 1, beardCol: 0, build: 1, height: 1, top: 9, topCol: 16, pants: 5, pantsCol: 2, hat: 0, glasses: 0, print: 0, acc: 3, costume: 0 }), talk: () => Story.fussballTisch(), keepDir: true, sitIdle: true, drinkIdle: true, bubbleRand: ['dots', 'beer'] });
+  m.npcDefs.push({ id: 'shaqiri', name: 'Xherdan Shaqiri', x: 13 * 16 + 8, y: 9 * 16 + 12, dir: 0, pose: 'sit', look: npcLook(1402, { skin: 5, hair: 4, hairCol: 0, beard: 7, beardCol: 0, build: 3, height: 0, top: 6, topCol: 0, pants: 4, pantsCol: 2, hat: 0, glasses: 0, print: 0, acc: 0, costume: 0 }), talk: () => Story.fussballTisch(), keepDir: true, sitIdle: true, drinkIdle: true, bubbleRand: ['dots', 'note'] });
+  m.trig(12, 10, 1, 1, { label: 'Zu Hakan und Xherdan setzen', act: () => Story.fussballTisch() });
   doorBottom(m, 7, 2, 'ibk', 'rouge_out', 'Ausgang');
   m.spawn('entry', 7, 10, 3);
   m.light(2 * 16 + 8, 7 * 16, 30, '#ff8ac0'); m.light(12 * 16 + 8, 9 * 16, 30, '#ff8ac0');
@@ -5586,16 +5617,22 @@ const T2P = (tx, ty) => ({ x: tx * 16 + 8, y: ty * 16 + 12 });
 const DEP_TIME = 9 * 60 + 10;
 const TICKET_PRICE = 468; /* 12 × 39.00 CHF */
 const TICKET_CASH = 500;  /* was der Kassier für das Billett herausrückt */
-const latecomer = () => who('smoke'); /* der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat */
+/* Der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat. Spielt man selbst Yännu, verpasst man ihn selbst:
+   Zigaretten kaufen, vor dem Bahnhof rauchen, Zug weg, Taxi-Ticket in der Halle, Taxistand auf dem Bahnhofplatz. */
+const playerIsLate = () => G.S.pid === 'yaennu';
+const latecomer = () => (playerIsLate() ? G.S.pid : who('smoke'));
+const LATE_CHF = 2000;        /* Yännu hat als Einziger 2000 Franken dabei */
+const TAXI_LU_PRICE = 1480;   /* Taxi-Ticket Luzern → Innsbruck, Fixpreis */
 /* Am Torbogen müssen der Partylöwe (Proviant), der Fotograf (Tipp) und der Kassier (Geld fürs Billett) begrüsst werden,
    dazu insgesamt mindestens vier. meetNeed() liefert, wer noch fehlt. */
 const listNames = (ids) => { const n = ids.map(fname); return n.length <= 1 ? n.join('') : n.slice(0, -1).join(', ') + ' und ' + n[n.length - 1]; };
 const moreStr = (k) => (k === 1 ? 'einen weiteren Kollegen' : `${k} weitere Kollegen`);
 function meetNeed() {
   const met = G.S.flags.met || {};
-  const req = [who('party'), who('foto')].concat(playerIsKassier() ? [] : [who('kassier')]);
+  const late = playerIsLate();
+  const req = late ? [who('party'), who('kassier')] : [who('party'), who('foto')].concat(playerIsKassier() ? [] : [who('kassier')]);
   const missing = req.filter((x) => !met[x]);
-  const more = Math.max(0, 4 - Object.keys(met).length - missing.length);
+  const more = Math.max(0, (late ? 2 : 4) - Object.keys(met).length - missing.length);
   return { req, missing, more };
 }
 /* Jemand aus der Gruppe, der eine Rolle spricht – aber nie der Nachzügler selbst. */
@@ -5621,7 +5658,7 @@ const hoursStr = (k) => { const o = OPEN[k]; const f = (v) => pad2(Math.floor(v 
 /* ============ Läden ============ */
 const it = (id, price, o = {}) => Object.assign({ id, price }, o);
 const SHOPS = {
-  kiosk_lu: { title: 'Bahnhofkiosk', cur: 'chf', mode: 'take', sections: [{ t: 'Für die Reise', items: [it('dosenbier', 3.2), it('sixpack', 13.9), it('gipfeli', 2.5), it('sandwich', 6.9), it('wasser', 2.8), it('energy', 3.5), it('chips', 3.9), it('schoko', 2.9)] }] },
+  kiosk_lu: { title: 'Bahnhofkiosk', cur: 'chf', mode: 'take', sections: [{ t: 'Für die Reise', items: [it('zigaretten', 9.8), it('dosenbier', 3.2), it('sixpack', 13.9), it('gipfeli', 2.5), it('sandwich', 6.9), it('wasser', 2.8), it('energy', 3.5), it('chips', 3.9), it('schoko', 2.9)] }] },
   baeckerei_lu: { title: 'Bahnhof-Bäckerei', cur: 'chf', mode: 'eat', intro: 'Es duftet nach frischem Brot. Bäckerin Vreni hat gerade die Brezeln aus dem Ofen geholt – „Für die Reise? Nehmt e paar mit!“', sections: [{ t: 'Brezeln & Gebäck', items: [it('brezel', 3.2), it('butterbrezel', 4.2), it('gipfeli', 2.2), it('nussgipfel', 3.4), it('berliner', 2.9), it('weggli', 1.3)] }, { t: 'Brot', items: [it('zopf', 3.8), it('ruchbrot', 5.9)] }, { t: 'Für unterwegs', items: [it('sandwich', 7.5), it('kaffee', 4.6)] }] },
   speisewagen: { title: 'Speisewagen', mode: 'eat', intro: 'Der Kellner balanciert drei Tassen gleichzeitig, während der Zug durch eine Kurve fährt.', sections: [{ t: 'Getränke', items: [it('bier', 4.9), it('radler', 4.5), it('wein', 5.2), it('kaffee', 3.4), it('wasser', 2.9)] }, { t: 'Speisen', items: [it('gulasch', 6.9), it('wuerstel', 5.9), it('toast', 5.5), it('schoko', 2.5)] }] },
   bar: { title: 'Gamsbock Bar', mode: 'eat', venue: 'bar', intro: 'Sepp poliert ein Glas. „Was darf\'s sein?“', sections: [
@@ -5715,7 +5752,12 @@ const Story = {
         if (n.more) parts.push(moreStr(n.more));
         return `Torbogen: Begrüss ${parts.join(' – dazu ')} · Abfahrt 9:10!`;
       }
-      case 'board': return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
+      case 'board':
+        if (playerIsLate()) {
+          if (G.S.flags.missed) return hasInv('taxiticket') ? 'Taxistand finden und ab nach Innsbruck!' : 'Zug weg! Taxi-Ticket nach Innsbruck besorgen – irgendwo beim Bahnhof gibt es eine Taxizentrale';
+          return hasInv('zigaretten') ? 'Vor dem Bahnhof eine rauchen – beim Aschenbecher neben dem Eingang' : 'Zigaretten kaufen – am Kiosk';
+        }
+        return hasInv('billett') ? 'Gleis 4: Steig in den IR nach Zürich – Abfahrt 9:10!' : 'Billettautomat in der Bahnhofshalle: Gruppenbillett kaufen – Abfahrt 9:10!';
       case 'ride': return 'Railjet nach Innsbruck · Wagen 3, Vierertisch';
       case 'arrived': return 'Innsbruck Hbf! Aussteigen – Zugtür im Vorraum links vom Speisewagen';
       case 'findHotel': return 'Finde das Hotel Zirbe (Altstadt, Gasse beim Goldenen Dachl)';
@@ -5738,8 +5780,22 @@ const Story = {
       }
     }
   },
-  objectiveTag() { return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
+  objectiveTag() { if (G.S.stage === 'board' && playerIsLate()) return G.S.flags.missed ? 'TAXI' : 'RAUCHEN'; return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
   steps() {
+    if (playerIsLate()) return this.lateSteps().concat(this.stepsBase().slice(3));
+    return this.stepsBase();
+  },
+  lateSteps() {
+    const f = G.S.flags;
+    return [
+      { t: 'Die Jungs beim Torbogen treffen', d: `Bahnhofplatz Luzern – ${fname(who('party'))} und ${fname(who('kassier'))} begrüssen`, done: stageAt('board') },
+      { t: 'Zigaretten kaufen', d: 'Am Kiosk – das Päckli ist leer', done: !!f.smoked || hasInv('zigaretten') || stageAt('findHotel') },
+      { t: 'Vor dem Bahnhof eine rauchen', d: 'Aschenbecher neben dem Bahnhofseingang', done: !!f.smoked || stageAt('findHotel') },
+      { t: 'Taxi-Ticket nach Innsbruck kaufen', d: 'Taxizentrale – irgendwo am Bahnhof', done: hasInv('taxiticket') || stageAt('findHotel') },
+      { t: 'Taxistand finden und nach Innsbruck fahren', d: 'Rund 290 Kilometer, Fixpreis', done: stageAt('findHotel') },
+    ];
+  },
+  stepsBase() {
     return [
       { t: 'Die Jungs beim Torbogen treffen', d: `Bahnhofplatz Luzern – ${playerIsKassier() ? `${fname(who('party'))} und ${fname(who('foto'))}` : `${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}`} begrüssen, insgesamt mindestens vier`, done: stageAt('board') },
       { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
@@ -5842,7 +5898,7 @@ const Story = {
       for (const n of G.npcs) if (n.friend && meetNeed().missing.includes(n.id)) { n.bubbleRand = ['!']; n.bubble = '!'; n.bubbleT = 99; }
       return;
     }
-    if (m.id === 'luzern_halle' && s === 'board') {
+    if (m.id === 'luzern_halle' && s === 'board' && !G.S.flags.missed) {
       let k = 0;
       for (const id of ids) { const x = 11 + (k % 6), y = 9 + Math.floor(k / 6); add(id, x, y, 3, 'stand'); k++; }
       return;
@@ -5908,12 +5964,12 @@ const Story = {
   minute() {
     const h = Math.floor(hourOf(G.S.time));
     const m = G.map;
-    if (!stageAt('ride')) {
-      if (G.S.time >= DEP_TIME) { this.missedTrain(); return; }
+    if (!stageAt('ride') && !(playerIsLate() && G.S.flags.missed)) {
+      if (G.S.time >= DEP_TIME) { if (playerIsLate() && G.S.stage === 'board') this.trainGone(); else this.missedTrain(); return; }
       const left = DEP_TIME - Math.floor(G.S.time);
       if ([10, 5, 2].includes(left) && !G.S.flags['dep' + left]) {
         G.S.flags['dep' + left] = 1; Snd.sfx('ding');
-        UI.toast(`🔊 Noch ${left} Minuten bis zur Abfahrt des IR 70 auf Gleis 4${hasInv('billett') ? '' : ' – und du hast noch kein Billett'}!`, 'warn');
+        UI.toast(`🔊 Noch ${left} Minuten bis zur Abfahrt des IR 70 auf Gleis 4${playerIsLate() ? '' : hasInv('billett') ? '' : ' – und du hast noch kein Billett'}!`, 'warn');
       }
     }
     if (h !== this._lastHour) {
@@ -5952,6 +6008,7 @@ const Story = {
     { id: 'trump', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 18; } },
     { id: 'verfolgung', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 23 && G.S.money.eur >= 20; } },
     { id: 'monster', max: 1, cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 22; } },
+    { id: 'flitzer', max: 2, cond: () => { const h = hourOf(G.S.time); return h >= 11 && h < 24; } },
   ],
   /* Apokalypse: ab Tag 5, sobald es dunkel wird (Dämmerung ab 18:30, wie in darkness()) bis zum Morgen */
   APOC_DAY: 4, APOC_DUSK: 18.5,
@@ -5998,7 +6055,7 @@ const Story = {
   },
   /* Easter Egg: geschütteltes Handy beschwört ein zufälliges Ereignis herauf (zählt nicht zum Tagesplan) */
   /* Feste Reihenfolge für das Schüttel-Easter-Egg: jedes Ereignis genau einmal, Godzilla als Finale, dann von vorne */
-  SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'monster', 'apokalypse'],
+  SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'flitzer', 'monster', 'apokalypse'],
   shakeEvent(force) {
     if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
     const fl = G.S.flags, n = this.SHAKE_ORDER.length;
@@ -6024,6 +6081,7 @@ const Story = {
     ufo: ['Unbekanntes Flugobjekt', 'Lichter über der Maria-Theresien-Strasse'],
     trump: ['Hoher Besuch', 'Motorradeskorte und Sirenen'],
     verfolgung: ['Taschendieb', 'Halt den Dieb!'],
+    flitzer: ['Flitzer!', 'Titu und Rümmel – ohne alles durch die Gassen'],
     monster: ['Godzilla', 'Er kommt über die Nordkette'],
     apokalypse: ['Apokalypse', 'Innsbruck geht unter – der letzte Zug wartet'],
   },
@@ -6703,6 +6761,41 @@ const Story = {
     else { UI.toast(`${fname(v)} wird abgeführt. Auf der Wache beim Bahnhof, frei ab ${clockStr(G.S.time + 180)}.`); cop.path = [{ x: cop.x + side * 220, y: cop.y }]; f.path = [{ x: f.x + side * 220, y: f.y }]; cop.onArrive = () => this.dropActor(cop); f.onArrive = () => this.dropActor(f); G.npcs = G.npcs.filter((n) => !(n.friend && n.id === v && n !== f)); }
     G.busy--;
   },
+  /* Titu und Rümmel flitzen nackt (mit Zensurbalken) durch die Gassen, ein Polizist hinterher */
+  async ev_flitzer() {
+    G.busy++;
+    const p = G.player;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const naked = (seed, o) => Object.assign(npcLook(seed, o), { naked: 1, top: 0, print: 0, pants: 3, shoes: 4, hat: 0, glasses: 0, acc: 0, costume: 0, jewel: 0 });
+    const titu = this.tempActor({ name: 'Titu', look: naked(1301, { hair: 2, hairCol: 5, beard: 1, beardCol: 4, build: 1, height: 2, skin: 1 }), x: p.x + side * 170, y: p.y - 4, speed: 125, bubbleRand: ['!'] });
+    const ruemmel = this.tempActor({ name: 'Rümmel', look: naked(1302, { hair: 7, hairCol: 1, beard: 7, beardCol: 1, build: 3, height: 1, skin: 2 }), x: p.x + side * 200, y: p.y + 6, speed: 118, bubbleRand: ['!'] });
+    Snd.sfx('cheer'); Snd.tone(880, 0.1, 'square', 0.05); Snd.tone(990, 0.12, 'square', 0.05, 0.12);
+    UI.toast('„JUHUUUU!“ Zwei Männer rennen durch die Gasse – splitternackt. Nur ein schwarzer Balken hält die Würde aufrecht.', 'warn');
+    await Promise.all([this.walk(titu, p.x + side * 26, p.y - 4), this.walk(ruemmel, p.x + side * 44, p.y + 6)]);
+    titu.dir = dirTo(titu.x, titu.y, p.x, p.y); ruemmel.dir = dirTo(ruemmel.x, ruemmel.y, p.x, p.y);
+    await this.say(titu, `HOI ${G.S.name.toUpperCase()}! Wette verloren! Einmal nackt ums Goldene Dachl – bei zwei Grad!`);
+    await this.say(ruemmel, 'Nicht hinschauen! … Oder doch. Egal. Ich spür eh nichts mehr. NICHTS.');
+    const c = await this.ask(null, 'Titu und Rümmel hüpfen von einem Bein aufs andere. Hinten an der Gasse taucht eine Polizeimütze auf.', ['📸 Beweisfoto für die Gruppe', 'Jacke ausleihen', 'Mitrennen!', 'Kopfschüttelnd zuschauen']);
+    if (c === 0) { try { Snap.shoot(); } catch (e) {} G.fx.flash = 1; mood(10); await this.say(titu, 'Mit Zensurbalken, gäll! Meine Mutter ist in der WhatsApp-Gruppe!'); }
+    else if (c === 1) { mood(6); await this.say(ruemmel, 'Merci! Du bist ein Held! … Die ist ja noch warm. Ich geb sie dir im Gamsbock zurück. Vielleicht.'); ruemmel.look = Object.assign({}, ruemmel.look, { naked: 0, top: 8, topCol: 16, pants: 3, pantsCol: 2 }); }
+    else if (c === 2) { energy(-12); mood(12); await this.say(null, 'Du rennst ein Stück mit. Angezogen. Die Leute schauen trotzdem nur auf die beiden anderen.'); }
+    else { mood(3); await this.say('me', pick(['Ich kenn die nicht. Ich hab die noch nie gesehen.', 'Und das sind erwachsene Männer.', 'Jedes Jahr dasselbe mit den beiden.'])); }
+    const cop = this.tempActor({ name: 'Polizist', look: npcLook(902, { hat: 1, hatCol: 2, top: 10, topCol: 10, pants: 5, pantsCol: 8, shoes: 3, shoesCol: 1, beard: 2, glasses: 0, print: 0, acc: 0 }), x: p.x + side * 160, y: p.y, speed: 95 });
+    Snd.tone(980, 0.25, 'square', 0.05); Snd.tone(780, 0.25, 'square', 0.05, 0.3);
+    await this.say(cop, 'HALT! Polizei! Bleibt\'s stehen! Ihr zwei – ANZIEHEN!');
+    await this.say(titu, 'RENN, RÜMMEL, RENN!');
+    const away = -side * 260;
+    titu.path = [{ x: p.x + away, y: p.y - 4 }]; titu.onArrive = () => this.dropActor(titu);
+    ruemmel.path = [{ x: p.x + away - side * 20, y: p.y + 6 }]; ruemmel.onArrive = () => this.dropActor(ruemmel);
+    await sleep(700);
+    cop.path = [{ x: p.x + away + side * 30, y: p.y }]; cop.onArrive = () => this.dropActor(cop);
+    await sleep(1200);
+    const f = this.friendsHere()[0];
+    if (f) await this.say(f, pick(['Waren das … Titu und Rümmel?! Das erzählen wir an der nächsten GV.', 'Ich hab nichts gesehen. Ich WILL nichts gesehen haben.', 'Zwei Grad. Respekt. Ehrlich.']));
+    else await this.say(null, 'Irgendwo hinter der Hofburg hört man noch ein letztes „JUHUUU!“ – dann ist es still.');
+    achieve('flitzer');
+    G.busy--;
+  },
   async ev_hundkatze() {
     G.busy++;
     const p = G.player;
@@ -6945,13 +7038,27 @@ const Story = {
       await this.say(id, 'Hoi! Ich hab Reiseproviant geholt. Da, ein Dosenbier für dich – aber erst im Zug aufmachen!');
     } else if (id === foto) {
       await this.say(id, 'Schau dir das Licht über dem See an! Mach doch auch ein Foto – von der Kapellbrücke und vom Torbogen. Stell dich einfach davor.');
+    } else if (id === org && playerIsLate()) {
+      await this.say(id, `Hoi ${G.S.name}! Das Gruppenbillett kauf ich heute selber – bei dir landet das Geld sonst im Zigarettenautomaten. Hotel Zirbe ist reserviert. Und du bist um 9:10 auf Gleis 4. PÜNKTLICH.`);
+      await this.say('me', 'Logisch. Ich bin doch immer pünktlich. Fast immer. Meistens.');
     } else if (id === org && !playerIsKassier()) {
       await this.say(id, `Hoi ${G.S.name}! Die Hotelreservation hab ich: Hotel Zirbe in der Altstadt. Aber das Gruppenbillett kaufst du – du bist heute für die Fahrkarten zuständig.`);
       if (!fl.gotCash) { fl.gotCash = 1; addMoney('chf', TICKET_CASH); Snd.sfx('coin'); await this.say(id, `Hier, ${TICKET_CASH} Franken aus der Gruppenkasse. Der Automat ist in der Bahnhofshalle. Und bitte: vor 9:10!`); UI.toast(`+${TICKET_CASH} CHF aus der Gruppenkasse`); }
     } else await this.say(id, this.line(id));
+    const done = meetNeed();
+    if (playerIsLate() && !done.missing.length && !done.more) {
+      await this.say(org, `Alle da! Ich hol das Gruppenbillett, wir gehen schon mal auf Gleis 4. ${G.S.name}: Der IR nach Zürich fährt um 9:10 – nicht um 9:11!`);
+      await this.say('me', 'Ich rauch nur noch schnell eine. Bin gleich da!');
+      await this.say(party, 'Das sagst du jedes Jahr. Und jedes Jahr …');
+      for (const n of G.npcs) if (n.friend) n.hidden = true;
+      this.setStage('board');
+      G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
+      UI.toast(hasInv('zigaretten') ? 'Die Jungs gehen zum Gleis. Zeit für eine Zigarette – vor dem Bahnhof beim Aschenbecher.' : 'Die Jungs gehen zum Gleis. Dein Päckli ist leer – Zigaretten gibt es am Kiosk.');
+      return;
+    }
     const need = [party, foto].concat(playerIsKassier() ? [] : [org]);
     const metCount = Object.keys(fl.met).length;
-    if (need.every((x) => fl.met[x]) && metCount >= 4) {
+    if (!playerIsLate() && need.every((x) => fl.met[x]) && metCount >= 4) {
       const lead = playerIsKassier() ? party : org;
       const late = latecomer();
       await this.say(lead, `Alle da! ${G.S.name}, du holst das Gruppenbillett am Automaten in der Halle. Wir gehen schon mal auf Gleis 4 – der IR nach Zürich fährt um 9:10, pünktlich!`);
@@ -7006,6 +7113,101 @@ const Story = {
     await this.say(null, `Der Automat rattert, dann rutscht ein langes Papier heraus: Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen${c === 1 ? ', 1. Klasse' : ''}, gültig heute.`);
     UI.toast(`Gruppenbillett eingepackt. Jetzt zu den Jungs auf Gleis 4 – Abfahrt ${clockStr(DEP_TIME)}!`);
   },
+  /* ---------- Yännu: Zug verraucht, Taxi nach Innsbruck ---------- */
+  /* Der IR 70 fährt ohne Yännu ab – beim Rauchen oder weil er getrödelt hat. Die Jungs sind im Zug, er braucht ein Taxi. */
+  async trainGone(smoking) {
+    const fl = G.S.flags;
+    if (fl.missed) return;
+    fl.missed = 1; fl.late = 1;
+    G.S.time = Math.max(G.S.time, DEP_TIME + 1);
+    const halle = BUILT.luzern_halle; if (halle && halle.irTrain) halle.irTrain.gone = true;
+    if (G.map.id === 'luzern_halle') G.npcs = G.npcs.filter((n) => !n.friend);
+    const org = who('kassier'), party = who('party');
+    Snd.sfx('ding');
+    UI.toast('🔊 IR 70 nach Zürich HB, Abfahrt Gleis 4 – die Türen schliessen.', 'warn');
+    if (!smoking) G.busy++;
+    await sleep(600);
+    await this.say(null, smoking ? 'Hinter der Glasfront rollt ein roter Zug an. Langsam. Dann schneller. Elf Gesichter kleben an den Fenstern und schauen dich an.' : 'Durch die Glasfront siehst du, wie der IR 70 aus dem Bahnhof rollt. Ohne dich.');
+    Snd.sfx('blip');
+    await this.say(org, `📱 ${G.S.name}?! WO BISCH?! Der Zug fährt!`);
+    await this.say(party, '📱 Haha, legendär. Jedes Jahr. JEDES JAHR. 😂🚬');
+    await this.say(org, '📱 Nimm ein Taxi. Du hast ja die 2000 Stutz dabei. Taxi-Tickets gibt\'s irgendwo beim Bahnhof bei der Taxizentrale. Aus der Gruppenkasse kommt NIX.');
+    await this.say('me', smoking ? 'Hmpf. Die Zigarette war\'s wert. Glaub ich.' : 'Hmpf. Okay. Taxi. Wie schwer kann das sein?');
+    achieve('verraucht');
+    UI.hud();
+    if (!smoking) G.busy--;
+    saveGame(true);
+  },
+  /* Aschenbecher vor dem Bahnhof Luzern: für Yännu die Zigarette, während der Zug abfährt */
+  async luSmoke() {
+    if (!playerIsLate() || G.S.stage !== 'board' || G.S.flags.missed) { await this.smoke(); return; }
+    if (!hasInv('zigaretten')) {
+      await this.say('me', 'Päckli leer. Ausgerechnet heute. Am Kiosk gibt\'s neue – schnell!');
+      UI.toast('Zigaretten gibt es am Kiosk: draussen auf dem Platz oder in der Bahnhofshalle.');
+      return;
+    }
+    G.busy++;
+    takeUse('zigaretten');
+    const p = G.player; p.dir = 0;
+    Snd.sfx('lighter');
+    for (let i = 0; i < 10; i++) setTimeout(() => addPart({ x: p.x + 4, y: p.y - 18, vx: rnd(-4, 4), vy: -10, life: 2, kind: 'smoke' }), i * 250);
+    await this.say('me', 'Sooo. Eine noch. Die letzte vor sechs Stunden Zug. Ohne mich fahren die eh nicht ab.');
+    G.S.flags.smoked = 1;
+    achieve('rauch');
+    G.S.st.smell = Math.min(100, G.S.st.smell + 50); mood(6);
+    await Scene.play('smokeout', { ms: 7000, friends: Object.keys(FRIENDS).map((id) => getSheet(FRIENDS[id].look)), text: 'Du ziehst genüsslich an der Zigarette … und hinter der Glasfront rollt der IR 70 aus dem Bahnhof.' });
+    await this.trainGone(true);
+    G.busy--;
+  },
+  /* Taxizentrale in der Bahnhofshalle: Taxi-Ticket Luzern → Innsbruck zum Fixpreis */
+  async taxiTicketLU() {
+    const D = 'Taxizentrale Luzern';
+    if (!playerIsLate() || !G.S.flags.missed) { await this.say(D, 'Taxizentrale Luzern, grüezi! Ah, Sie fahren mit dem Zug? Dann brauchen Sie uns heute nicht. Gute Reise!'); return; }
+    if (stageAt('findHotel')) { await this.say(D, 'Sie sind doch schon in Innsbruck?'); return; }
+    if (hasInv('taxiticket')) { await this.say(D, 'Ihr Ticket haben Sie schon. Der Taxistand ist draussen auf dem Bahnhofplatz – Richtung KKL. Gute Fahrt!'); return; }
+    await this.say(D, 'Grüezi! Nach Innsbruck? Mit dem Taxi? … Das sind fast 300 Kilometer. Gut, wir machen das. Fixpreis, Vorauszahlung.');
+    const c = await this.ask(D, 'Taxi-Ticket Luzern → Innsbruck. Welche Kategorie?', [
+      { t: 'Taxi-Ticket Luzern → Innsbruck, Fixpreis', r: fmtChf(TAXI_LU_PRICE) },
+      { t: 'Limousine mit Champagner', r: fmtChf(2900) },
+      { t: 'Abbrechen' },
+    ]);
+    if (c === 2) return;
+    if (c === 1) { Snd.sfx('error'); await this.say('me', `${fmtChf(2900)}? Ich hab ${fmtChf(G.S.money.chf)}. Und Champagner trink ich eh nicht. Ich nehm das normale.`); return; }
+    if (!pay('chf', TAXI_LU_PRICE)) { Snd.sfx('error'); await this.say(D, `Das reicht leider nicht. Das Ticket kostet ${fmtChf(TAXI_LU_PRICE)}.`); return; }
+    addInv('taxiticket');
+    Snd.sfx('coin');
+    await this.say(D, 'Merci vielmal. Hier Ihr Taxi-Ticket. Fahrer Hakan holt Sie am Taxistand ab – der ist draussen auf dem Bahnhofplatz.');
+    await this.say('me', `${fmtChf(TAXI_LU_PRICE)}. Für das Geld hätte ich 150 Päckli Zigaretten bekommen.`);
+    UI.toast('🎫 Taxi-Ticket Luzern → Innsbruck. Jetzt den Taxistand finden!');
+  },
+  /* Taxistand auf dem Bahnhofplatz Luzern */
+  async taxiLU() {
+    const T = 'Taxifahrer Hakan';
+    if (!playerIsLate() || !G.S.flags.missed) { await this.say(T, 'Taxi? Euer Zug fährt doch auf Gleis 4. Mit dem Zug bist du schneller in Innsbruck – und billiger!'); return; }
+    if (!hasInv('taxiticket')) { await this.say(T, 'Nach Innsbruck?! Fast 300 Kilometer? Nur mit Taxi-Ticket von der Taxizentrale – Vorauszahlung, Chef. Die Zentrale ist im Bahnhof drin.'); return; }
+    G.busy++;
+    takeInv('taxiticket');
+    await this.say(T, 'Ah, Innsbruck! Steig ein. Ich bin Hakan. Ich fahre seit 22 Jahren Taxi und ich erzähl dir jetzt meine ganze Familie.');
+    await Scene.play('taxi', { highway: true, text: '🚕 Luzern → Zürich → Walensee. Hakan erzählt von seinem Cousin, seinem Schwager und seiner Tante in Izmir.', ms: 3600, keep: true });
+    passTime(85);
+    await Scene.play('taxi', { highway: true, snow: true, text: '🚕 Stau vor dem Arlberg. Hakan zeigt dir 400 Hochzeitsfotos auf dem Handy.', ms: 3600, keep: true });
+    passTime(95);
+    await Scene.play('taxi', { highway: true, snow: true, text: '🚕 Raststätte bei Landeck: Kaffee, Kaugummi, Zigarette. Dann das Inntal hinunter.', ms: 3600, keep: true });
+    passTime(85);
+    this.setStage('findHotel');
+    G.S.flags.lateArrived = 1;
+    G.S.flags.taxiLU = 1;
+    achieve('nachzuegler');
+    enterMap('ibk', 'hbf');
+    await UI.fadeIn();
+    await this.say(T, 'Innsbruck Hauptbahnhof! Viereinhalb Stunden. Grüss mir die Jungs – und rauch das nächste Mal VOR dem Bahnhof, nicht während der Zug fährt!');
+    const org = who('kassier');
+    Snd.sfx('blip');
+    await this.say(org, `📱 Wir sind schon im Hotel Zirbe – Altstadt, Gasse gleich südlich vom Goldenen Dachl. Check ein und dann ab in die Gamsbock Bar an der Maria-Theresien-Strasse. Der Letzte zahlt die erste Runde. Also du. 🍺`);
+    UI.toast('Tipp: Im Handy unter „Karte“ siehst du die Stadt.');
+    G.busy--;
+    saveGame(true);
+  },
   async missedTrain() {
     if (G.busy || G.mode !== 'play') return;
     G.busy++;
@@ -7024,7 +7226,8 @@ const Story = {
   async boardTrain() {
     const s = G.S.stage;
     if (s === 'meet') { await this.say(null, 'Du solltest zuerst die Jungs beim Torbogen treffen.'); return; }
-    if (s !== 'board') { await this.say(null, 'Der Zug ist schon weg.'); return; }
+    if (s !== 'board' || G.S.flags.missed) { await this.say(null, 'Der Zug ist schon weg.'); return; }
+    if (playerIsLate()) { await this.say('me', 'Zuerst noch eine rauchen – sechs Stunden ohne Zigi überleb ich nicht. Der Aschenbecher steht draussen vor dem Bahnhof. Geht ja schnell.'); return; }
     if (!hasInv('billett')) {
       Snd.sfx('error');
       await this.say(voice('kassier'), `Halt, ${G.S.name}! Hast du das Gruppenbillett? Ohne Billett steigt hier keiner ein. Der Automat ist in der Halle – lauf!`);
@@ -7419,7 +7622,11 @@ const Story = {
     const party = who('party'), org = playerIsKassier() ? who('party') : who('kassier');
     const lawyer = FRIENDS.lexx ? 'lexx' : who('jass');
     await sleep(300);
-    await this.say(party, `Da isch er ja! ${G.S.name}, endlich! Wir dachten schon, du hast dich am Goldenen Dachl verlaufen.`);
+    if (G.S.flags.taxiLU) {
+      await this.say(party, `DA ISCH ER JA! ${G.S.name}, de Taxikönig vo Luzern! Wie isch de Hakan so?`);
+      await this.say('me', 'Er hat drei Brüder, elf Cousins und eine Tante in Izmir. Ich weiss jetzt alles. ALLES.');
+      await this.say(voice('kassier'), `Und was hat der Spass gekostet? … ${fmtChf(TAXI_LU_PRICE)}?! Aus der Gruppenkasse kommt davon nichts, ${G.S.name}. Null.`);
+    } else await this.say(party, `Da isch er ja! ${G.S.name}, endlich! Wir dachten schon, du hast dich am Goldenen Dachl verlaufen.`);
     await this.say(who('kicker'), 'Der Letzte zahlt die erste Runde! So sind die Regeln.');
     const c = await this.ask(null, 'Alle schauen dich erwartungsvoll an.', [{ t: 'Runde für alle bezahlen', r: '28,80 €' }, { t: '„Das ist eine Lüge!“' }]);
     if (c === 0 && pay('eur', 28.8)) { await this.round('beer'); }
@@ -7768,6 +7975,70 @@ const Story = {
     const chats = ['„Woher kommst du? Aus Luzern? Da war ich mal auf dem Pilatus!“', '„Der DJ heute ist der Wahnsinn, oder?“', '„Innsbruck im Winter ist noch schöner. Alles weiss.“', '„Ich hab heute meinen Job gekündigt. Prost!“', '„Hast du Feuer? Ah, danke.“'];
     if (friendId) await this.say(friendId, pick(['Das tut gut. Weisst du, wieso Rauchen draussen netter ist? Hier redet man mit den Leuten.', 'Eine noch, dann geh ich tanzen. Versprochen.', 'Sag\'s nicht meiner Mutter.']));
     else await this.say('Jemand im Raucherhof', pick(chats));
+  },
+  /* Rouge: Hakan Yakin und Xherdan Shaqiri am Tisch – Fussball, die Frauen-Nati und ein Quiz um eine Runde */
+  async fussballTisch() {
+    const H = G.npcs.find((n) => n.id === 'yakin') || 'Hakan Yakin', X = G.npcs.find((n) => n.id === 'shaqiri') || 'Xherdan Shaqiri';
+    const fl = G.S.flags;
+    const p = G.player; p.dir = 3;
+    if (!fl.fussballMet) {
+      fl.fussballMet = 1;
+      await this.say(H, `Hoi! Du bisch au us de Schwiiz, gäll? Hock ab, ${G.S.name}. Mir diskutiered grad, wer de besser Zähner gsi isch.`);
+      await this.say(X, 'Ich natürlich. Fallrückzieher gäge Polen, EM 2016. Lueg der das no hüt uf YouTube a.');
+      await this.say(H, 'Und ich ha a de EM 2008 drü Goal gmacht. Drü. Im eigete Land.');
+    } else await this.say(H, pick(['Da isch er wieder! Hock ab.', 'Na, wieder Luscht uf Fussball?', 'Mir sind no bim gliiche Thema. Mir sind immer bim gliiche Thema.']));
+    for (;;) {
+      const opts = [
+        { t: 'EM 2008: das 2:0 gegen Portugal', k: 'em08' },
+        { t: 'Champions League', k: 'cl' },
+        { t: 'Die Frauen-Nati und die Frauen-EM 2025', k: 'frauen' },
+        { t: 'FC Luzern oder FC Basel?', k: 'club' },
+        { t: 'Fussball-Quiz um eine Runde', k: 'quiz' },
+        { t: 'Tschüss, Jungs', k: 'bye' },
+      ];
+      const c = await this.ask(null, 'Am Tisch wird Fussball geredet. Wo steigst du ein?', opts);
+      const k = opts[c].k;
+      if (k === 'bye') { await this.say(X, pick(['Ciao! Und gang mal wieder is Joggeli.', 'Hopp Schwiiz!', 'Bis spöter – mir hocked no echli.'])); return; }
+      passTime(10); mood(3); achieve('fussball');
+      if (k === 'em08') {
+        await this.say(H, 'Basel, 15. Juni 2008. 71. Minute: eis. 83. Minute: Penalty, zwei. Zwei zu null gäge Portugal – de erst Sieg vo de Schwiiz a re EM überhaupt.');
+        await this.say(X, 'Und trotzdem usgschide. Das muesch au chönne.');
+        await this.say(H, 'Xherdan, du bisch denn sächzäh gsi. Du hesch das im Fernseh gluegt.');
+      } else if (k === 'cl') {
+        await this.say(X, 'Zweimal Champions League gwunne: 2013 mit Bayern, 2019 mit Liverpool. D\'Trophäe isch schwerer, als sie usgseht.');
+        const c2 = await this.ask(H, 'Und du, hesch au scho mal öppis gwunne?', ['„Den Jass-Abend im Stüberl!“', '„Eine Wette gegen Titu und Rümmel.“', '„Nein. Aber ich hab Talent.“']);
+        await this.say(X, ['Jass zellt. Jass zellt immer.', 'Die zwei wo nackt umenand rennet? Das isch kei Wette, das isch es Hobby.', 'Talent isch guet. Training isch besser.'][c2]);
+      } else if (k === 'frauen') {
+        await this.say(X, 'D\'Frauen-EM 2025 bi üs in de Schwiiz – das isch es Fescht gsi. Volli Stadie, mega Stimmig.');
+        await this.say(H, 'Viertelfinal gäge Spanie in Bern, 0:2. Gäge d\'Weltmeisterinne, wo sogar zwei Penaltys verschosse händ. Und de Final in Basel im Joggeli: England gäge Spanie.');
+        const c2 = await this.ask(null, 'Beide schauen dich an. Deine Meinung zum Frauenfussball?', ['„Mega! Ich war an einem Spiel – Hühnerhaut.“', '„Ist das nicht langsamer?“', '„Die Frauen-Nati holt den nächsten Titel!“']);
+        if (c2 === 0) { mood(6); await this.say(X, 'Gäll! Und d\'Stimmig isch familiärer. Kei Pyro, aber Hühnerhut.'); }
+        else if (c2 === 1) { await this.say(H, 'Langsamer? Lueg der Spanie a: Passspiel, Technik, Taktik – da chönnt sich mänge Super-League-Club öppis abluege.'); await this.say(X, 'Und d\'Schwiizerinne händ sich gäge die gwehrt wie Löie. Respekt.'); await this.say('me', 'Okay, okay. Ich nimm alles zrugg.'); }
+        else { mood(4); await this.say(H, 'Mir wünsche\'s ne. Das Turnier het viel uslöst – meh Meitli im Verein als je.'); }
+      } else if (k === 'club') {
+        await this.say(H, 'Ich ha für beidi gspielt! In Luzern 29 Goal i 90 Spiel. D\'Fans z\'Luzern händ mi gärn gha.');
+        await this.say(X, 'Basel. Meister und Cup 2025, s\'Double. 18 Liga-Goal vo mir. Nur so näbebi.');
+        const c2 = await this.ask(null, 'Jetzt musst du dich entscheiden.', ['„FCL – immer!“', '„FCB – Joggeli forever!“', '„Ich bin für den Jass-Club.“']);
+        await this.say(c2 === 0 ? X : H, ['Luzerner… das hani mer dänkt. Prost trotzdem.', 'Guete Gschmack. De Hakan isch au mal Basler gsi.', 'Diplomatisch. Du wirsch mal Verbandspräsident.'][c2]);
+      } else if (k === 'quiz') {
+        const Q = [
+          ['Gegen wen gelang Xherdan der Fallrückzieher an der EM 2016?', ['Polen', 'Albanien', 'Frankreich'], 0],
+          ['Wie viele Tore schoss Hakan an der EM 2008?', ['Eins', 'Zwei', 'Drei'], 2],
+          ['Wo war der Final der Frauen-EM 2025?', ['Bern', 'Zürich', 'Basel'], 2],
+          ['Mit welchem Club gewann Xherdan 2019 die Champions League?', ['Bayern', 'Liverpool', 'Inter'], 1],
+        ];
+        const set = Q.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+        let right = 0;
+        for (const [q, a, ok] of set) {
+          const ans = await this.ask(X, q, a);
+          if (ans === ok) { right++; Snd.sfx('ok'); await this.say(H, pick(['Richtig!', 'Stimmt genau.', 'Bravo, Experte!'])); }
+          else { Snd.sfx('error'); await this.say(H, `Nei – ${a[ok]}.`); }
+        }
+        if (right >= 2) { await this.say(X, `${right} vo 3! Okay, d\'Rundi gaht uf üs.`); consume('bier'); Snd.sfx('clink'); mood(8); G.S.flags.quizWin = 1; }
+        else if (pay('eur', 19.5)) { await this.say(H, `${right} vo 3. Das isch es Eigegoal. Du zahlsch d\'Rundi.`); UI.toast('Drei Bier im Rouge: 19,50 €'); consume('bier'); Snd.sfx('clink'); }
+        else await this.say(H, 'Kei Geld meh? Denn trinke mer uf Pump. Bis zum nächste Mal.');
+      }
+    }
   },
   async coatcheck() {
     if (G.S.flags.coat === dayOf(G.S.time - 300)) { await this.say('Garderobe', 'Deine Jacke hängt bei Nummer 107.'); return; }
@@ -10063,10 +10334,18 @@ const SCENES = {
   /* Taxi durch Innsbruck */
   taxi(c, t, p, st) {
     sceneSky(c, st.night);
-    sceneMountains(c, 36, '#7a8aa0', true, 10);
+    sceneMountains(c, 36, '#7a8aa0', true, st.highway ? t * 4 : 10);
     const off = t * 70;
-    for (let i = -1; i < 10; i++) { const bx = Math.round(i * 30 - (off % 30)), k = Math.floor((i + Math.floor(off / 30)) % 7 + 7) % 7; const h = 20 + Math.floor(hash(k, 1) * 24); R(c, bx, 60 - h, 26, h, ['#c8b89a', '#a8a8b0', '#d8c0b0', '#b0b8a8'][k % 4]); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = bx + 3; wx < bx + 24; wx += 6) R(c, wx, wy, 3, 3, st.night && hash(k, wy + wx) > 0.3 ? '#ffd27a' : '#3a4a5a'); }
-    for (let i = -1; i < 6; i++) { const lx = Math.round(i * 60 - (off % 60)) + 10; R(c, lx, 40, 2, 20, '#3a3a40'); R(c, lx - 2, 38, 6, 3, st.night ? '#ffe8a0' : '#8a8a90'); if (st.night) E(c, lx + 1, 39, 10, 4, 'rgba(255,230,160,0.15)'); }
+    if (st.highway) {
+      /* Autobahn durch die Alpen: Berge, Wiesen (oder Schnee), Leitplanke, Wegweiser */
+      sceneMountains(c, 50, st.snow ? '#c8d4e0' : '#5a8a4a', st.snow, t * 14);
+      R(c, 0, 56, SCENE_W, 4, st.snow ? '#e8eef4' : '#6a9a4a');
+      for (let i = -1; i < 6; i++) { const lx = Math.round(i * 40 - (off % 40)); R(c, lx, 56, 40, 2, '#b8bcc4'); R(c, lx + 2, 58, 2, 3, '#8a8e94'); }
+      const sx = SCENE_W - ((t * 50) % (SCENE_W + 80)); R(c, sx + 18, 30, 2, 26, '#5a5e64'); R(c, sx, 22, 40, 12, '#2f7a3a'); R(c, sx, 22, 40, 1, '#ffffff'); pxText(c, st.snow ? 'ARLBERG' : 'INNSBRUCK', sx + 2, 26, '#ffffff');
+      if (st.snow) for (let k = 0; k < 30; k++) P(c, (k * 37 + t * 30) % SCENE_W, (k * 19 + t * 40) % 60, '#ffffff');
+    }
+    else for (let i = -1; i < 10; i++) { const bx = Math.round(i * 30 - (off % 30)), k = Math.floor((i + Math.floor(off / 30)) % 7 + 7) % 7; const h = 20 + Math.floor(hash(k, 1) * 24); R(c, bx, 60 - h, 26, h, ['#c8b89a', '#a8a8b0', '#d8c0b0', '#b0b8a8'][k % 4]); for (let wy = 64 - h; wy < 56; wy += 6) for (let wx = bx + 3; wx < bx + 24; wx += 6) R(c, wx, wy, 3, 3, st.night && hash(k, wy + wx) > 0.3 ? '#ffd27a' : '#3a4a5a'); }
+    if (!st.highway) for (let i = -1; i < 6; i++) { const lx = Math.round(i * 60 - (off % 60)) + 10; R(c, lx, 40, 2, 20, '#3a3a40'); R(c, lx - 2, 38, 6, 3, st.night ? '#ffe8a0' : '#8a8a90'); if (st.night) E(c, lx + 1, 39, 10, 4, 'rgba(255,230,160,0.15)'); }
     R(c, 0, 60, SCENE_W, 36, '#3a3c40'); R(c, 0, 60, SCENE_W, 2, '#8a8a90');
     for (let i = -1; i < 9; i++) R(c, Math.round(i * 20 - (off % 20)), 78, 10, 2, '#e8e4dc');
     const cx = 56, cy = 66;
@@ -10173,6 +10452,47 @@ const SCENES = {
       if (P5[0].me && st.declined) { R(c, 30, 30, 14, 9, '#ffffff'); R(c, 34, 39, 2, 2, '#ffffff'); pxText(c, '...', 32, 32, '#1a1a1e'); }
     }
     const stp = Math.floor(t * 7); if (stp !== st._ck) { st._ck = stp; if (stp % 2) Snd.tone(75, 0.04, 'square', 0.02); }
+  },
+  /* Yännu raucht vor dem Bahnhof Luzern – hinter der Glasfront fährt der IR 70 ab */
+  smokeout(c, t, p, st) {
+    const W = SCENE_W, H = SCENE_H;
+    for (let y = 0; y < 30; y++) R(c, 0, y, W, 1, mix('#8fc3e8', '#d8ecf8', y / 30));
+    /* Bahnhofsfassade mit grosser Glasfront */
+    R(c, 0, 8, W, 70, '#cfd2d4'); R(c, 0, 8, W, 3, '#e8eaec');
+    R(c, 52, 0, 56, 9, '#d8302a'); pxText(c, 'LUZERN', 80 - pxTextW('LUZERN') / 2, 2, '#ffffff');
+    const hm = 9, mm = 7 + Math.floor(p * 3.4); E(c, 18, 20, 6, 6, '#20232a'); E(c, 18, 20, 5, 5, '#f4f2ea');
+    line(c, 18, 20, 18 + Math.sin(hm / 12 * 6.283) * 3, 20 - Math.cos(hm / 12 * 6.283) * 3, '#1a1a1a'); line(c, 18, 20, 18 + Math.sin(mm / 60 * 6.283) * 4.5, 20 - Math.cos(mm / 60 * 6.283) * 4.5, '#1a1a1a');
+    const gx = 30, gy = 14, gw = 128, gh = 50;
+    c.save(); c.beginPath(); c.rect(gx, gy, gw, gh); c.clip();
+    R(c, gx, gy, gw, gh, '#5a6a78'); R(c, gx, gy + 34, gw, 16, '#8a8e94'); R(c, gx, gy + 34, gw, 1, '#ffd23d');
+    /* Zug: steht, dann rollt er nach links aus dem Bahnhof */
+    const q = clamp((p - 0.3) / 0.55, 0, 1), tx = gx + 4 - q * q * 240;
+    for (let k = 0; k < 3; k++) {
+      const x = tx + k * 62;
+      R(c, x, gy + 12, 60, 22, '#c8302a'); R(c, x, gy + 12, 60, 2, '#8a1a1a'); R(c, x, gy + 29, 60, 2, '#f4f4f0');
+      for (let w = 0; w < 5; w++) { R(c, x + 3 + w * 12, gy + 16, 9, 8, '#ffe8b0'); const fs = st.friends && st.friends[(k * 5 + w) % st.friends.length]; if (fs && (k * 5 + w) % 2 === 0) sceneHead(c, { sheet: fs }, x + 3 + w * 12, gy + 17, 0.5, 0); }
+    }
+    pxText(c, 'IR 70', tx + 4, gy + 31, '#ffffff');
+    for (let k = 0; k < 18; k++) R(c, gx + k * 8, gy, 1, gh, 'rgba(255,255,255,0.18)');
+    c.fillStyle = 'rgba(200,225,240,0.22)'; c.fillRect(gx, gy, gw, gh);
+    c.restore();
+    R(c, gx - 2, gy - 2, gw + 4, 2, '#5a646c'); R(c, gx - 2, gy + gh, gw + 4, 3, '#5a646c');
+    /* Platz und Aschenbecher */
+    R(c, 0, 78, W, 18, '#b8b4a8'); for (let x = 0; x < W; x += 12) R(c, x, 78, 1, 18, '#a8a498');
+    R(c, 92, 60, 8, 20, '#8a9096'); R(c, 91, 58, 10, 3, '#5a6066'); R(c, 92, 66, 8, 2, '#d8302a');
+    /* Yännu mit Zigarette */
+    const turn = p > 0.78;
+    const px = 112, py = 84 - SPR_H * 1.6;
+    sceneSprite(c, st, 'stand', turn ? 1 : 0, px, py, 1.6);
+    if (!turn) { R(c, px + 17, py + 15, 5, 1, '#f4f4f0'); P(c, px + 22, py + 15, Math.floor(t * 6) % 2 ? '#ff6a2a' : '#ffb03a'); }
+    for (let k = 0; k < 7; k++) { const ph = (t * 0.35 + k / 7) % 1, sx = px + 22 + Math.sin(t * 2 + k) * 3 + ph * 6, sy = py + 12 - ph * 40; c.fillStyle = `rgba(235,235,240,${0.55 * (1 - ph)})`; c.beginPath(); c.arc(sx, sy, 1.5 + ph * 4, 0, 6.283); c.fill(); }
+    if (p > 0.28 && !st._ding) { st._ding = 1; Snd.sfx('ding'); }
+    if (q > 0 && q < 1) { const stp = Math.floor(t * (3 + q * 9)); if (stp !== st._ck) { st._ck = stp; Snd.tone(70, 0.05, 'square', 0.03); } }
+    if (turn) {
+      R(c, px + 4, py - 14, 10, 11, '#ffffff'); pxText(c, '!', px + 7, py - 12, '#d8302a');
+      const tt = 'DE ZUG!!', w = pxTextW(tt); R(c, 80 - w / 2 - 3, 86, w + 6, 9, 'rgba(0,0,0,0.6)'); pxText(c, tt, 80 - w / 2, 88, '#ffd23d');
+      if (!st._oh) { st._oh = 1; Snd.sfx('lose'); }
+    }
   },
   train(c, t, p, st) {
     sceneSky(c, st.night);
@@ -10305,6 +10625,7 @@ async function startGame(state, fresh) {
     if (fresh) { try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} }
   }
   try { G.photoImg = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); } catch (e) {}
+  if (fresh && playerIsLate()) G.S.money.chf = LATE_CHF; /* Yännu hat als Einziger 2000 Franken dabei */
   document.getElementById('title').hidden = true;
   document.getElementById('hud').hidden = false;
   document.getElementById('touch').hidden = false;
@@ -10320,7 +10641,9 @@ async function startGame(state, fresh) {
   if (fresh) {
     G.busy++;
     await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
-    await Story.say(null, playerIsKassier()
+    await Story.say(null, playerIsLate()
+      ? `Du bist ${G.S.name}, der Raucher. Heute geht's mit den Jungs nach Innsbruck – und du hast als Einziger ${LATE_CHF} Franken dabei. Die Jungs warten beim Torbogen: Begrüss ${fname(who('party'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Das Billett kauft ${fname(who('kassier'))}. Um 9:10 fährt der Zug auf Gleis 4. Nur: Dein Päckli ist leer, und ohne Zigarette steigst du in keinen Zug.`
+      : playerIsKassier()
       ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen – begrüss vor allem ${fname(who('party'))} (Proviant) und ${fname(who('foto'))} (Fototipp), die winken mit einem „!“. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
       : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen – begrüss dort ${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);
     if (Input.touch) await Story.say(null, 'Zieh mit dem Daumen links auf dem Bildschirm, um zu gehen. Weit ziehen heisst rennen. Mit A sprichst du mit Leuten und benutzt Dinge. Oben rechts ist dein Handy.');

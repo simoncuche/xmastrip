@@ -82,7 +82,7 @@ function randomLook(r = Math.random, unlocked) {
   if (r() < 0.75) L.beardCol = Math.min(L.hairCol, 10);
   return L;
 }
-const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.');
+const lookKey = (L) => LOOK_OPTS.map((o) => L[o.k] | 0).join('.') + (L.naked ? '.n' : '');
 
 /* ---------- Porträt (64x64) ---------- */
 const HEADS = [
@@ -571,6 +571,8 @@ function drawSprite(x, L, dir, pose, OX, OY) {
   let pantsC = lc(L, 'pantsCol'), shoeC = lc(L, 'shoesCol'), hatC = lc(L, 'hatCol');
   const CS = COSTUMES[L.costume | 0];
   if (CS) { topC = CS.topC; pantsC = CS.pantsC; shoeC = CS.shoeC; if (CS.hatC) hatC = CS.hatC; }
+  /* Flitzer (Ereignis): alles Haut, nur ein schwarzer Zensurbalken (siehe drawCostumeSprite) */
+  if (L.naked) { topC = skin; pantsC = skin; shoeC = skinD; }
   const sitting = pose === 'sit', bend = pose === 'bend';
   const walkA = pose === 'walkA', walkB = pose === 'walkB';
   const bob = walkA || walkB ? -1 : 0;
@@ -723,6 +725,7 @@ function drawSprite(x, L, dir, pose, OX, OY) {
 }
 /* Kostüm-Extras auf der Spielfigur: Haube mit Ohren, Flecken, Bauch, Zacken, Umhang, Maske, Augenklappe, Zipfelmütze */
 function drawCostumeSprite(r, p, L, dir, hy, tTop, legsTop, tx0, tx1) {
+  if (L.naked) { const x0 = dir === 1 ? tx0 + 2 : tx0, x1 = dir === 1 ? tx1 - 1 : tx1; r(x0 - 1, legsTop - 1, x1 - x0 + 3, 3, '#141418'); r(x0, legsTop, 1, 1, '#3a3a40'); }
   const K = L.costume | 0; if (!K) return; const cs = COSTUMES[K];
   const side = dir === 1, back = dir === 3;
   const bh = legsTop - tTop;

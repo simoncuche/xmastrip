@@ -65,6 +65,19 @@ MAP_BUILDERS.luzern = () => {
   m.add(objBikes(31, 9)); m.add(objBikes(33, 9));
   for (const x of [9, 10, 11]) m.add(objBollard(x, 9));
   m.add(objLitfass(22, 9));
+  /* Aschenbecher-Säule neben dem Bahnhofseingang (Raucherecke) */
+  m.add(mkObj(18, 9, 1, 1, 14, (c, W, H) => {
+    E(c, 8, H - 2, 5, 2, 'rgba(0,0,0,0.25)'); R(c, 4, 6, 8, H - 8, '#8a9096'); R(c, 4, 6, 2, H - 8, '#b0b6bc'); R(c, 10, 6, 2, H - 8, '#6a7076');
+    R(c, 3, 4, 10, 3, '#5a6066'); R(c, 4, 4, 8, 1, '#c8ccd0'); for (const k of [5, 7, 9, 11]) P(c, k, 5, '#e8e4dc'); P(c, 6, 5, '#ff8a3a');
+    R(c, 4, 12, 8, 2, '#d8302a'); R(c, 4, 14, 8, 1, '#f4f0e6');
+  }, { solid: true }));
+  m.trig(18, 9, 1, 1, { label: 'Aschenbecher: Eine rauchen', act: () => Story.luSmoke() });
+  /* Taxistand auf dem Bahnhofplatz (Richtung KKL) */
+  for (const y of [12, 14]) { m.add(objCar(32, y, '#1e1e22')); m.solid(32, y, 2, 1); m.trig(32, y, 2, 1, { label: 'Taxistand', act: () => Story.taxiLU() }); }
+  m.add(mkObj(34, 11, 1, 1, 18, (c, Wd, Hd) => { R(c, 7, 6, 2, Hd - 7, '#3a3c40'); R(c, 1, 0, 14, 8, '#f0d040'); R(c, 1, 0, 14, 1, '#fff4a0'); pxText(c, 'TAXI', 1, 2, '#1a1a1a'); }, { solid: true }));
+  m.trig(34, 11, 1, 1, { label: 'Taxistand', act: () => Story.taxiLU() });
+  for (const y of [12, 14]) m.add(mkObj(32, y, 2, 1, 10, (c, W, H) => { R(c, 11, H - 25, 10, 5, '#f0d040'); R(c, 11, H - 25, 10, 1, '#fff4a0'); R(c, 12, H - 23, 8, 1, '#1a1a1a'); }));
+  m.npcDefs.push({ id: 'hakan_taxi', name: 'Taxifahrer Hakan', x: 31 * 16 + 8, y: 13 * 16 + 12, dir: 2, look: npcLook(1201, { hair: 2, hairCol: 0, beard: 3, beardCol: 0, top: 9, topCol: 16, pants: 5, pantsCol: 2, hat: 0, glasses: 0, build: 3 }), talk: () => Story.taxiLU(), keepDir: true, bubbleRand: ['dots'] });
   /* Kapellbrücke & Wasserturm */
   m.add(mkObj(0, 21, 11, 1, 12, (c, W, H) => {
     R(c, 0, H - 10, W, 6, '#7a5434'); R(c, 0, H - 10, W, 1, '#a07450');
@@ -171,6 +184,8 @@ MAP_BUILDERS.luzern_halle = () => {
   const TRAIN_DOORS = [6, 14, 22];
   const train = objTrainExterior(1, 6, 32, { col: '#c8302a', label: 'IR 70 ZÜRICH HB', doors: TRAIN_DOORS.map((x) => x - 1) });
   m.add(train);
+  m.irTrain = train;
+  if (G.S && G.S.flags && G.S.flags.missed) train.gone = true; /* Yännu hat den Zug verraucht */
   for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: 'Zugtür: Einsteigen', act: () => Story.boardTrain() });
   /* Abfahrtstafel, Uhr, Schilder */
   m.decal((c) => {
@@ -192,6 +207,11 @@ MAP_BUILDERS.luzern_halle = () => {
   m.npcDefs.push({ id: 'baeckerin', name: 'Bäckerin Vreni', x: 11 * 16, y: 13 * 16 + 13, dir: 0, look: npcLook(1104, { hair: 9, hairCol: 5, beard: 0, top: 4, topCol: 13, hat: 0, glasses: 0, mouth: 0, build: 2 }), talk: () => Story.shop('baeckerei_lu'), keepDir: true, bubbleRand: ['dots', 'heart'] });
   for (const x of [22, 24]) m.add(mkObj(x, 14, 1, 1, 12, (c, W, H) => { R(c, 2, 0, 12, H - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }));
   m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.ticketMachine() });
+  /* Taxizentrale: Taxi-Tickets zum Fixpreis (für Yännu, wenn der Zug weg ist) */
+  m.add(objCounter(28, 14, 3, 1, { top: '#f0d040', front: '#b89418', reg: true }));
+  m.trig(28, 14, 3, 1, { label: 'Taxizentrale', act: () => Story.taxiTicketLU() });
+  m.decal((c) => { const sx = 28 * 16 + 2, sy = 12 * 16 + 2; R(c, sx, sy, 42, 11, '#1a1a1e'); R(c, sx, sy, 42, 1, '#f0d040'); pxText(c, 'TAXI', sx + 3, sy + 3, '#f0d040'); pxText(c, '24H', sx + 25, sy + 3, '#e8e4dc'); });
+  m.npcDefs.push({ id: 'taxidisp', name: 'Taxizentrale', x: 29 * 16 + 8, y: 13 * 16 + 13, dir: 0, look: npcLook(1202, { hair: 16, hairCol: 4, beard: 0, top: 1, topCol: 4, hat: 0, glasses: 1 }), talk: () => Story.taxiTicketLU(), keepDir: true, bubbleRand: ['dots'] });
   for (const [x, y] of [[8, 17], [20, 17], [27, 17]]) m.add(objBench(x, y, 0, '#6a6e74'));
   for (const [x, y] of [[1, 18], [32, 18]]) m.add(objPlant(x, y));
   for (const [x, y] of [[3, 10], [12, 10], [24, 10], [31, 10]]) m.add(objBench(x, y, 0, '#6a6e74'));
@@ -1028,6 +1048,10 @@ MAP_BUILDERS.rouge = () => {
   m.add(objTable(2, 7, 1, 1, { col: '#2a1a20', round: true })); m.add(objTable(12, 10, 1, 1, { col: '#2a1a20', round: true }));
   m.add(objPlant(14, 1)); m.add(objPlant(1, 1));
   m.trig(5, 5, 6, 1, { label: 'An die Bühne', act: () => Story.stageFront() });
+  /* Am Tisch rechts: Hakan Yakin und Xherdan Shaqiri diskutieren über Fussball */
+  m.npcDefs.push({ id: 'yakin', name: 'Hakan Yakin', x: 11 * 16 + 8, y: 9 * 16 + 12, dir: 0, pose: 'sit', look: npcLook(1401, { skin: 4, hair: 2, hairCol: 0, beard: 1, beardCol: 0, build: 1, height: 1, top: 9, topCol: 16, pants: 5, pantsCol: 2, hat: 0, glasses: 0, print: 0, acc: 3, costume: 0 }), talk: () => Story.fussballTisch(), keepDir: true, sitIdle: true, drinkIdle: true, bubbleRand: ['dots', 'beer'] });
+  m.npcDefs.push({ id: 'shaqiri', name: 'Xherdan Shaqiri', x: 13 * 16 + 8, y: 9 * 16 + 12, dir: 0, pose: 'sit', look: npcLook(1402, { skin: 5, hair: 4, hairCol: 0, beard: 7, beardCol: 0, build: 3, height: 0, top: 6, topCol: 0, pants: 4, pantsCol: 2, hat: 0, glasses: 0, print: 0, acc: 0, costume: 0 }), talk: () => Story.fussballTisch(), keepDir: true, sitIdle: true, drinkIdle: true, bubbleRand: ['dots', 'note'] });
+  m.trig(12, 10, 1, 1, { label: 'Zu Hakan und Xherdan setzen', act: () => Story.fussballTisch() });
   doorBottom(m, 7, 2, 'ibk', 'rouge_out', 'Ausgang');
   m.spawn('entry', 7, 10, 3);
   m.light(2 * 16 + 8, 7 * 16, 30, '#ff8ac0'); m.light(12 * 16 + 8, 9 * 16, 30, '#ff8ac0');

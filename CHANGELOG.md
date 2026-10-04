@@ -3,6 +3,14 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.27.0 – 04.10.2026
+
+- Eigene Story für Yännu: Er hat als Einziger 2000 Franken dabei, begrüsst die Jungs am Torbogen, kauft am Kiosk Zigaretten und raucht vor dem Bahnhof eine – während der IR 70 hinter der Glasfront abfährt.
+- Danach Taxizentrale in der Bahnhofshalle (Taxi-Ticket Luzern → Innsbruck) und Taxistand auf dem Bahnhofplatz finden. Viereinhalb Stunden Taxi mit Fahrer Hakan über Walensee und Arlberg, Ankunft am Innsbrucker Hauptbahnhof. Ab dort läuft die Story wie gewohnt.
+- Neues Ereignis „Flitzer!“: Titu und Rümmel rennen nackt (mit Zensurbalken) durch die Gassen, die Polizei hinterher.
+- Im Rouge sitzen Hakan Yakin und Xherdan Shaqiri am Tisch: Gespräche über die EM 2008, die Champions League, die Frauen-EM 2025, FCL gegen FCB und ein Fussball-Quiz um eine Runde.
+- Neue Erlebnisse: „Zug verraucht“, „Flitzer-Alarm“, „Stammtisch-Experte“.
+
 ## 2.26.0 – 04.10.2026
 
 - Godzilla kommt jetzt zufällig wie die anderen Ereignisse, nicht mehr fix an Tag 5.
