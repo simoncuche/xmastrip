@@ -293,7 +293,7 @@ function srCandle(c, x, y) { R(c, x, y, 2, 4, '#f4ecd8'); P(c, x, y - 1, '#ffb03
 /* =================================================================== */
 /* 1. Zunftstube der Zunft Heini von Uri: erster Stock des angebauten oberen Waschhauses beim Diebenturm,
    Fenster mit Blick auf den Turm (1681 als Gefängnis- und Pulverturm gebaut) */
-sRoom('zunftstube', { name: 'Zunftstube · Waschhaus beim Diebenturm', sign: false, w: 18, h: 12, door: 8, back: ['sursee', 'zunftstube_out'], style: 6, cap: '#4a4038', floor: T.STONE, floorV: 1, music: 'stube', ambient: 0.18, lightC: '#ffcf80',
+sRoom('zunftstube', { name: 'Zunftstube · Waschhaus beim Diebenturm', sign: false, w: 18, h: 12, door: 8, back: ['sursee', 'diebenturm_out'], style: 6, cap: '#4a4038', floor: T.STONE, floorV: 1, music: 'stube', ambient: 0.18, lightC: '#ffcf80',
   spots: { heinivater: [12, 6, 1], elin: [6, 8, 3], timo: [7, 8, 3], friend: [3, 7, 2] },
   wall: (c) => {
     /* Jubiläumsfoto 1876–2026 */

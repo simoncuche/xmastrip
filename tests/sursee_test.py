@@ -50,6 +50,12 @@ with sync_playwright() as p:
 
     pg.evaluate("async () => { const S2 = newState(randomLook(rng(9), {}), 'Hoshy'); S2.pid = 'hoshy'; await startGame(S2, true); G.S.stage = 'free'; G.S.time = 2 * 1440 + 13 * 60; enterMap('ibk', 'hbf'); }")
     time.sleep(0.6)
+    # Alle Ausgänge müssen auf existierende Ankunftspunkte zeigen
+    bad = pg.evaluate("""() => { const bad = []; for (const id of Object.keys(MAP_BUILDERS)) { let m; try { m = getMap(id); } catch (e) { bad.push(id + ': ' + e.message); continue; }
+      for (const t of m.trigs) { if (!t.warp || typeof t.warp[1] !== 'string' || !MAP_BUILDERS[t.warp[0]]) continue; if (!getMap(t.warp[0]).spawns[t.warp[1]]) bad.push(`${id} → ${t.warp[0]}:${t.warp[1]}`); } }
+      return bad; }""")
+    if bad:
+        raise SystemExit("FEHLER: Ausgänge ohne Ankunftspunkt: " + ", ".join(bad))
     # Heimreise → Luzern, Gleis 2
     run("await Story.goHome();", 1.0)
     expect("G.S.stage === 'heim' && G.map.id === 'luzern_halle' && !G.S.finished", "Nicht in Luzern angekommen")

@@ -126,6 +126,16 @@ function enterMap(id, spawn, opts = {}) {
   if (!G.player) G.player = new Actor({ look: G.S.look, name: G.S.name, solid: true });
   G.player.look = G.S.look;
   if (sp) { G.player.x = sp.x; G.player.y = sp.y; G.player.dir = sp.dir ?? G.player.dir; }
+  /* Sicherheitsnetz: fehlender Ankunftspunkt oder gespeicherte Position in einer Wand → nächster freier Platz */
+  if (!sp || typeof spawn !== 'string') {
+    if (!sp) { const d = m.spawns.entry || Object.values(m.spawns)[0]; if (typeof spawn === 'string') console.warn('Ankunftspunkt fehlt:', id, spawn); if (d) { G.player.x = d.x; G.player.y = d.y; G.player.dir = d.dir ?? 0; } }
+    const tx = Math.floor(G.player.x / TS), ty = Math.floor((G.player.y - 2) / TS);
+    if (m.isSolid(tx, ty)) {
+      let found = null;
+      for (let r = 1; r < 30 && !found; r++) for (let dy = -r; dy <= r && !found; dy++) for (let dx = -r; dx <= r; dx++) { if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue; if (m.in(tx + dx, ty + dy) && !m.isSolid(tx + dx, ty + dy)) { found = [tx + dx, ty + dy]; break; } }
+      if (found) { G.player.x = found[0] * TS + 8; G.player.y = found[1] * TS + 14; }
+    }
+  }
   G.player.pose = 'stand'; G.player.anim = null;
   G.npcs = []; G.peds = []; G.parts = []; G.birds = [];
   if (G.live) { const l = G.live; G.live = null; if (l.onLeave) l.onLeave(); }
