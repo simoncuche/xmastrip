@@ -3,17 +3,20 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.18.1 – 04.10.2026
+
+- Versionshistorie aufgeräumt.
+
 ## 2.18.0 – 03.10.2026
 
-- Apokalypse! An Tag 10 (ab 11 Uhr), als letztes Schüttel-Easter-Egg nach Godzilla oder sofort mit 7 Sekunden Schütteln geht Innsbruck unter: Dauerbeben, blutroter Himmel, Asche und Glut, Rauchsäulen, Blitze mit Weissblitz und Donner, Lava-Risse brechen im Boden auf, Lava schiesst als Fontäne aus dem Pflaster, Häuser fangen Feuer und versinken mit Staubwolken und fliegenden Trümmern im Boden.
+- Apokalypse! An Tag 10 (ab 11 Uhr) geht Innsbruck unter: Dauerbeben, blutroter Himmel, Asche und Glut, Rauchsäulen, Blitze mit Weissblitz und Donner, Lava-Risse brechen im Boden auf, Lava schiesst als Fontäne aus dem Pflaster, Häuser fangen Feuer und versinken mit Staubwolken und fliegenden Trümmern im Boden.
 - Flucht zum letzten Zug: Ein Countdown läuft (Zielzeile oben und unten im Bild), ein Pfeil zeigt zum Hauptbahnhof. Vier Jungs rennen mit, springen über die Risse und rufen dir zu („LAUF!“, „SPRING!“, „NICHT IN DIE RISSE!“), drei winken schon am Bahnhof. Risse überspringst du automatisch im Rennen oder mit der Aktionstaste; wer hineinstolpert, wird herausgezogen und verliert Zeit. Blitze und Lava-Fontänen werfen dich zurück. Während der Flucht hilft Adrenalin: kein Kollaps, kein Filmriss, Rennen geht immer.
 - Geschafft: Der Railjet flieht über die Brücke aus dem Lavameer, die Nordkette spuckt Feuer – dann sitzen die Jungs im Abteil, draussen zieht die Apokalypse vorbei, und alle stossen an: „PROST! AUF INNSBRUCK!“. Endbildschirm „Last Exit Innsbruck“, Erlebnisse „Last Exit Innsbruck“ und „Trittsicher“ (ohne Sturz).
 - Zu spät: Der Zug rollt ohne dich davon, die Jungs schauen aus dem Fenster, die Lava steigt – Game Over.
-- Schütteln: Nach 3 Sekunden ist das nächste Easter Egg vorgemerkt und kommt, sobald du aufhörst. Wer weiterschüttelt, bekommt einen Hinweis – und bei 7 Sekunden die Apokalypse.
 
 ## 2.17.0 – 03.10.2026
 
-- Schüttel-Easter-Egg in fester Reihenfolge: Taschendieb, Hund gegen Katze, Taube, Krampus, Fundsache, Trump, Polizei, UFO, Überfall – und als Finale Godzilla. Jedes Ereignis kommt genau einmal dran, erst danach beginnt die Liste von vorne. Der Hinweis zeigt, wo du stehst (z. B. „Easter Egg 3/10“). Der Fortschritt wird mit dem Spielstand gespeichert.
+- Kleinere Verbesserungen bei den Ereignissen.
 
 ## 2.16.0 – 03.10.2026
 
@@ -25,7 +28,6 @@ Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeig
 ## 2.15.0 – 03.10.2026
 
 - Türszenen: Beim Durchgehen ragt die Figur nicht mehr über den Türrahmen. Sie läuft bis zur Schwelle, ist dort klein genug für die Öffnung und verschwindet darin; beim Hinausgehen tritt sie zuerst in der Türöffnung hervor. Gilt für Haustüren, Zimmer 307 und die Zugtür in Innsbruck.
-- Schütteln: Auf dem iPhone ging die Erlaubnis für die Bewegungssensoren nach jedem Neuladen verloren – jetzt wird sie beim ersten Tippen still erneuert, sobald du sie einmal gegeben hast. Wird geschüttelt, während gerade etwas passiert, ein Gespräch offen ist oder das Handy sich noch erholt, gibt es eine Rückmeldung statt Stille. Die Pause zwischen zwei Easter Eggs ist von 45 auf 30 Sekunden verkürzt, und leichteres Schütteln reicht.
 
 ## 2.14.0 – 03.10.2026
 
@@ -47,7 +49,7 @@ Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeig
 
 ## 2.11.0 – 03.10.2026
 
-- Easter Egg: Wer das Handy in Innsbruck drei Sekunden lang kräftig schüttelt, beschwört ein zufälliges Ereignis herauf – mit Vibration, Ankündigung und manchmal sogar Godzilla. Danach braucht das Handy eine Dreiviertelminute Pause. Erlebnis „Schüttelfrost“. Auf dem iPhone braucht es dafür einmal die Erlaubnis für Bewegungssensoren (Handy → Optionen oder beim Darts mit Neigung).
+- Kleinere Verbesserungen bei den Ereignissen.
 
 ## 2.10.0 – 03.10.2026
 
