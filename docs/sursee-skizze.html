@@ -49,7 +49,7 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 2 zur Review</span>
+    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 3 zur Review</span>
     <h1>Sursee-Krimi</h1>
     <p class="lead">Nach der Heimreise aus Innsbruck ist das Spiel nicht mehr zu Ende. Am Bahnhof Luzern fährt auf Gleis 2 die S-Bahn nach Sursee, dem Sempachersee entlang. In Sursee beginnt der Detektiv-Krimi. Unten stehen die Karten aus der Vogelperspektive, Norden ist immer oben. Rote Nummern markieren Stellen, bei denen ich mir nicht sicher bin.</p>
   </header>
@@ -123,24 +123,33 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
         <text x="404" y="168" fill="var(--dim)" font-size="11" transform="rotate(-50 404 168)">St. Urban-Str.</text>
         <rect x="430" y="40" width="96" height="58" rx="4" fill="#c8b040" opacity="0.9"/><text x="478" y="66" fill="#14181e" font-size="13" font-weight="700" text-anchor="middle">Stadthalle</text><text x="478" y="82" fill="#2a2a18" font-size="10.5" text-anchor="middle">St. Urbanstrasse 5</text>
         <!-- Sure: kommt aus Südosten (vom See her), fliesst offen der Unterstadt entlang nach Nordwesten und weiter nach Norden -->
-        <path d="M640 452 C 610 432, 580 412, 556 396 C 500 360, 440 318, 380 268 C 350 244, 330 214, 314 186 C 290 140, 250 70, 214 0" fill="none" stroke="var(--sure)" stroke-width="7"/>
+        <!-- Ehret-Park: unterhalb der Unterstadt, ausserhalb der Stadtmauer, an der renaturierten Sure -->
+        <path d="M352 300 C 380 318, 430 352, 480 384 C 520 408, 556 424, 586 440 C 560 462, 520 456, 486 440 C 440 418, 390 382, 352 346 C 330 326, 332 304, 352 300 Z" fill="var(--grass-2)"/>
+        <g fill="#6a9a5a"><circle cx="430" cy="392" r="6"/><circle cx="470" cy="418" r="5"/><circle cx="392" cy="356" r="5"/><circle cx="520" cy="436" r="6"/></g>
+        <path d="M640 476 C 610 462, 560 446, 520 426 C 470 400, 420 368, 380 334 C 358 314, 348 292, 344 272 C 340 252, 332 230, 318 196 C 296 146, 254 72, 214 0" fill="none" stroke="var(--sure)" stroke-width="7"/>
         <text x="236" y="54" fill="#9ccfe6" font-size="13" font-weight="700" transform="rotate(58 236 54)">Sure</text>
         <!-- Altstadt: diagonal NW–SO, Oberstadt (nordöstlich) und Unterstadt (südwestlich) -->
         <path d="M334 236 C 360 200, 430 196, 486 214 C 540 234, 590 288, 596 340 C 600 380, 580 404, 548 404 C 500 400, 440 360, 392 312 C 356 280, 330 262, 334 236 Z" fill="#3b2f28" stroke="#6a5444" stroke-width="2"/>
         <path d="M342 236 C 380 222, 430 220, 478 230 C 520 244, 548 290, 562 350" stroke="#c84a3a" stroke-width="15" fill="none" opacity="0.9"/>
         <path d="M368 262 C 420 300, 480 344, 546 384" stroke="#3a6ad0" stroke-width="11" fill="none" opacity="0.9"/>
-        <path d="M552 400 C 490 362, 428 318, 366 276" stroke="var(--sure)" stroke-width="5" fill="none"/>
         <g fill="var(--roof)"><rect x="384" y="236" width="18" height="16" transform="rotate(30 393 244)"/><rect x="408" y="246" width="18" height="18" transform="rotate(32 417 255)"/><rect x="434" y="262" width="18" height="18" transform="rotate(34 443 271)"/><rect x="462" y="282" width="18" height="18" transform="rotate(36 471 291)"/><rect x="490" y="302" width="18" height="18" transform="rotate(38 499 311)"/><rect x="516" y="276" width="18" height="16" transform="rotate(50 525 284)"/><rect x="494" y="254" width="18" height="16" transform="rotate(42 503 262)"/><rect x="398" y="196" width="18" height="16"/><rect x="424" y="196" width="18" height="16"/><rect x="452" y="200" width="18" height="16"/></g>
         <text x="410" y="226" fill="#ffd8d0" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke">OBERSTADT</text>
         <text x="436" y="322" fill="#d8e4ff" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke" transform="rotate(34 436 322)">UNTERSTADT</text>
+        <path d="M340 262 C 360 290, 400 322, 448 356 C 490 384, 524 400, 552 404" stroke="#8a7a6a" stroke-width="4" fill="none"/>
+        <rect x="440" y="342" width="14" height="16" fill="#9a8a78" stroke="#e8e4dc" stroke-width="1"/><path d="M440 342 L447 334 L454 342" fill="#8a3b2a"/>
+        <text x="436" y="378" fill="#e8d6a8" font-size="10.5" text-anchor="end" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Diebenturm</text>
+        <text x="476" y="340" fill="#e8d6a8" font-size="10" opacity="0.9">Hirschenplatz</text>
+        <rect x="452" y="400" width="22" height="7" rx="2" fill="#c8b89a" transform="rotate(-55 463 403)"/>
+        <text x="236" y="404" fill="#d8ead0" font-size="12.5" font-weight="700">Ehret-Park</text>
+        <text x="236" y="418" fill="#b8d0b0" font-size="10.5">Brücke Badstrasse · Spielplatz · Brunnen</text><path d="M330 404 L392 388" stroke="#b8d0b0" stroke-width="1"/>
         <!-- Untertor am unteren (nordwestlichen) Ende, Martigny-Platz davor -->
         <rect x="354" y="250" width="14" height="22" fill="#c8b89a" stroke="#f2eee4" stroke-width="1.5" transform="rotate(30 361 261)"/>
-        <text x="302" y="314" fill="var(--amber)" font-size="12.5" font-weight="700">Untertor</text><path d="M330 304 L356 270" stroke="var(--amber)" stroke-width="1"/>
-        <rect x="244" y="300" width="70" height="56" rx="4" fill="#4a4f58"/>
-        <g><rect x="252" y="306" width="12" height="7" rx="2" fill="#c8302a"/><rect x="268" y="306" width="12" height="7" rx="2" fill="#2f5fb8"/><rect x="284" y="306" width="12" height="7" rx="2" fill="#e8e4dc"/><rect x="252" y="342" width="12" height="7" rx="2" fill="#f0d040"/><rect x="268" y="342" width="12" height="7" rx="2" fill="#3f8e4b"/></g>
-        <text x="279" y="332" fill="var(--ink)" font-size="11.5" font-weight="700" text-anchor="middle">Martigny-Platz</text>
+        <text x="262" y="232" fill="var(--amber)" font-size="12.5" font-weight="700" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Untertor</text><path d="M312 230 L354 256" stroke="var(--amber)" stroke-width="1"/>
+        <rect x="236" y="318" width="70" height="56" rx="4" fill="#4a4f58"/>
+        <g><rect x="244" y="324" width="12" height="7" rx="2" fill="#c8302a"/><rect x="260" y="324" width="12" height="7" rx="2" fill="#2f5fb8"/><rect x="276" y="324" width="12" height="7" rx="2" fill="#e8e4dc"/><rect x="244" y="360" width="12" height="7" rx="2" fill="#f0d040"/><rect x="260" y="360" width="12" height="7" rx="2" fill="#3f8e4b"/></g>
+        <text x="271" y="350" fill="var(--ink)" font-size="11.5" font-weight="700" text-anchor="middle">Martigny-Platz</text>
         <!-- Wilder Mann in der Unterstadt -->
-        <circle cx="478" cy="336" r="4.5" fill="var(--amber)"/><text x="416" y="372" fill="var(--amber)" font-size="11.5">Wilder Mann</text><path d="M452 362 L476 340" stroke="var(--amber)" stroke-width="1"/>
+        <circle cx="384" cy="270" r="4.5" fill="var(--amber)"/><text x="322" y="198" fill="var(--amber)" font-size="11.5" stroke="#1d2a22" stroke-width="3" paint-order="stroke">Wilder Mann</text><path d="M360 202 L382 266" stroke="var(--amber)" stroke-width="1"/>
         <!-- Rathaus und Kirche am oberen (südöstlichen) Ende -->
         <rect x="536" y="356" width="24" height="28" fill="#e8d6a8" stroke="#8a3b2a" stroke-width="2"/><path d="M536 356 L548 344 L560 356" fill="#8a3b2a"/>
         <text x="520" y="424" fill="var(--amber)" font-size="12.5" font-weight="700">Rathaus</text>
@@ -152,14 +161,13 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
         <!-- Fragezeichen-Pins -->
         <g font-family="Pixelify Sans, monospace" font-weight="700" font-size="12" text-anchor="middle">
           <circle cx="548" cy="394" r="10" fill="var(--q)"/><text x="548" y="398" fill="#0f1a2b">1</text>
-          <circle cx="230" cy="328" r="10" fill="var(--q)"/><text x="230" y="332" fill="#0f1a2b">2</text>
-          <circle cx="262" cy="110" r="10" fill="var(--q)"/><text x="262" y="114" fill="#0f1a2b">3</text>
+          <circle cx="236" cy="316" r="10" fill="var(--q)"/><text x="236" y="320" fill="#0f1a2b">2</text>
         </g>
         <g transform="translate(560 120)"><rect width="64" height="34" rx="5" fill="#0f1a2bcc"/><path d="M14 26 L22 6 L30 26 L22 21 Z" fill="var(--dim)"/><text x="38" y="23" fill="var(--dim)" font-size="13">N</text></g>
       </svg>
     </div>
-    <div class="legend"><span><b style="color:#ff8a78">Rot:</b> Oberstadt</span><span><b style="color:#8ab0ff">Blau:</b> Unterstadt</span><span><b style="color:#9ccfe6">Sure:</b> fliesst offen der Unterstadt entlang nach Nordwesten</span><span><b style="color:#e8d070">Stadthalle:</b> nördlich, über die St. Urban-Strasse</span></div>
-    <p class="cap">Korrigiert nach deinem Kartenausschnitt. Die Altstadt liegt diagonal von Nordwest nach Südost. Weil die Sure nach Nordwesten fliesst, ist dort das untere Ende mit dem Untertor und das obere Ende im Südosten. Von dort geht der Weg zum See.</p>
+    <div class="legend"><span><b style="color:#ff8a78">Rot:</b> Oberstadt</span><span><b style="color:#8ab0ff">Blau:</b> Unterstadt</span><span><b style="color:#9ccfe6">Sure:</b> fliesst ausserhalb der Mauer durch den Ehret-Park zum Untertor und weiter nach Norden</span><span><b style="color:#e8d070">Stadthalle:</b> nördlich, über die St. Urban-Strasse</span><span><b style="color:#9ccf8a">Ehret-Park:</b> unterhalb der Unterstadt, jenseits der Stadtmauer, an der Sure</span></div>
+    <p class="cap">Korrigiert nach deinem Kartenausschnitt und deinem Hinweis zum Ehret-Park. Das Entenrennen startet dort bei der Brücke Badstrasse und endet beim Untertor am Wilden Mann, deshalb liegt der Wilde Mann jetzt am Untertor. Die Altstadt liegt diagonal von Nordwest nach Südost. Weil die Sure nach Nordwesten fliesst, ist dort das untere Ende mit dem Untertor und das obere Ende im Südosten. Von dort geht der Weg zum See.</p>
   </section>
 
   <section aria-labelledby="h-see">
@@ -224,7 +232,6 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     <ol class="qs">
       <li><span><b>Rathaus und Kirche (1):</b> Ich habe beide ans obere Ende im Südosten gesetzt, wo Oberstadt und Unterstadt zusammenlaufen. Stimmt das, oder steht das Rathaus eher in der Mitte?</span></li>
       <li><span><b>Martigny-Platz (2):</b> Er liegt laut Quellen westlich vor dem Untertor. Ist das der Platz mit den Autos, den du meinst?</span></li>
-      <li><span><b>„Erdpark“ (3):</b> Ist das der Grünzug entlang der Sure nördlich der Altstadt, Richtung Stadthalle? Oder ein anderer Park?</span></li>
       <li><span><b>„Nutzgebäude“:</b> Welches Gebäude meinst du? Den Namen oder die Adresse reicht mir.</span></li>
       <li><span><b>Weg zum See:</b> Vom oberen Ende über die Luzernstrasse Richtung See, stark verkürzt. Passt das?</span></li>
       <li><span><b>Inseli:</b> Die Halbinsel der Seebadi Schenkon, oder eine andere kleine Insel?</span></li>
