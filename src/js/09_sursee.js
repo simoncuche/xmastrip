@@ -24,6 +24,8 @@ const SU_P = {
 };
 const suP = (k) => SU_P[k];
 const sayP = (k, text) => UI.say(SU_P[k], text);
+/* Elin und Timo: vor Ort, wenn sie dich begleiten – sonst per Handy */
+const kidSay = (k, text) => (Sur.followOk() ? UI.say(SU_P[k], text) : UI.say(SU_P[k], '📱 ' + text));
 const askP = (k, text, opts) => UI.ask(SU_P[k], text, opts);
 /* Wer begleitet als „Papi“? Cuche – oder Lexx, wenn man Cuche spielt */
 const playerIsCuche = () => G.S.pid === 'cuche';
@@ -243,17 +245,28 @@ const Sur = {
     const s = this.st();
     s.met.isa = 1;
     const papi = suPapi();
-    await sayP('elin', 'DA IST ER! Mami, er ist da!');
-    await sayP('timo', `Hoi ${G.S.name}! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!`);
+    const h = hourOf(G.S.time), night = h >= 20 || h < 7;
+    if (night) {
+      G.npcs = G.npcs.filter((n) => !n.follower);
+      await sayP('isa', `${playerIsCuche() ? 'Da bist du ja, Schatz' : `Willkommen in Sursee, ${G.S.name}`}! Elin und Timo schlafen schon – sie wollten unbedingt wach bleiben, für den Detektiv. Morgen ab acht sind sie dabei.`);
+    } else {
+      await sayP('elin', 'DA IST ER! Mami, er ist da!');
+      await sayP('timo', `Hoi ${G.S.name}! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!`);
+    }
     await sayP('isa', `${playerIsCuche() ? 'Da bist du ja endlich' : `Willkommen in Sursee, ${G.S.name}`}! Also, hör zu. Die goldene Sonnenmaske der Zunft Heini von Uri ist weg. Die Zunft feiert dieses Jahr 150 Jahre, die Maske war in der Jubiläumsausstellung im Sankturbanhof.`);
     await sayP('isa', 'In der Nacht vor dem Martinstag haben sie die Maske in die Zunftstube im Diebenturm gebracht. Am Morgen war sie verschwunden – und die Gansabhauet fiel zum ersten Mal überhaupt aus.');
     await sayP('isa', 'Die Stadt holt sie jetzt nach, mit Chilbi auf dem Märtplatz. Aber ohne Sonnenmaske keine Gansabhauet. Der Heinivater wartet in der Zunftstube im Diebenturm. Unterstadt, beim Hirschenplatz.');
     if (!playerIsCuche() && FRIENDS[papi]) await Story.say(papi, 'Ich bring die Taschen heim. Elin und Timo zeigen dir den Weg. Du schaffst das, Sherlock.');
-    await sayP('elin', 'Wir kommen mit! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
     s.follow = 1;
     Story.dropActor(G.npcs.find((n) => n.id === 'su_isa'));
-    UI.toast('Isa geht heim in die Münstervorstadt. Elin und Timo bleiben bei dir.');
-    this.spawnFollowers(true);
+    if (night) {
+      await sayP('isa', 'Der Diebenturm ist in der Unterstadt, beim Hirschenplatz – der Heinivater wartet dort, auch spät noch. Und das Gästebett bei uns in der Münstervorstadt ist frisch bezogen.');
+      UI.toast('Isa geht heim in die Münstervorstadt. Morgen früh begleiten dich Elin und Timo.');
+    } else {
+      await sayP('elin', 'Wir kommen mit! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
+      UI.toast('Isa geht heim in die Münstervorstadt. Elin und Timo bleiben bei dir.');
+      this.spawnFollowers(true);
+    }
     G.busy--;
     this.prog();
     UI.toast('📓 Im Handy gibt es jetzt das Notizbuch mit Spuren, Fährten und Tipps.');
@@ -268,7 +281,7 @@ const Sur = {
     switch (st) {
       case 'heim': return 'Zurück in Luzern · Gleis 2: S-Bahn nach Sursee – oder durch die Halle heimgehen (beendet das Spiel)';
       case 'sbahn': { const b = sbState(); return b.tm >= SB_END ? 'Sursee! Aussteigen – Tür in der Mitte des Wagens' : `S-Bahn nach Sursee · nächster Halt: ${b.next.n}`; }
-      case 's_ankunft': return 'Geh mit Elin und Timo zum Diebenturm in der Unterstadt (Zunftstube, beim Hirschenplatz)';
+      case 's_ankunft': return `Geh${this.followOk() ? ' mit Elin und Timo' : ''} zum Diebenturm in der Unterstadt (Zunftstube, beim Hirschenplatz)`;
       case 's_tatort': return `Zunftstube im Diebenturm: Finde drei Spuren (${Object.keys(s.clues).length}/3)`;
       case 's_faehrten': {
         const open = [];
@@ -625,7 +638,7 @@ Object.assign(Sur, {
     await sayP('heinivater', `Da seid ihr! Ich bin der Heinivater der Zunft Heini von Uri. Sie müssen ${G.S.name} sein – Isa hat Sie angekündigt. Willkommen in der Zunftstube.`);
     await sayP('heinivater', 'Hier, in dieser Vitrine, lag die Sonnenmaske. Seit 1880 tragen unsere Schläger an der Gansabhauet die Maske und den roten Mantel. Die Zunft kleidet sie ein und hängt die Gans auf. Und jetzt? Leer.');
     await sayP('heinivater', 'Die Polizei haben wir nicht geholt. Das regeln wir unter uns – und mit Ihnen. Suchen Sie den Raum ab. Wenn etwas glitzert, schauen Sie genau hin.');
-    await sayP('elin', 'Drei Spuren! Ich spür das. Drei.');
+    await kidSay('elin', 'Drei Spuren! Ich spür das. Drei.');
     this.setStage('s_tatort');
     G.busy--;
     saveGame(true);
@@ -638,13 +651,13 @@ Object.assign(Sur, {
     await Story.say(null, `<em>${n}</em> – ${d}`);
     this.note('clue_' + id, `Spur: ${n}`);
     const k = Object.keys(s.clues).length;
-    if (k < 3) { await sayP(k === 1 ? 'timo' : 'elin', k === 1 ? 'Eine! Noch zwei!' : 'Noch eine Spur! Schau überall, wo es glitzert.'); return; }
+    if (k < 3) { await kidSay(k === 1 ? 'timo' : 'elin', k === 1 ? 'Eine! Noch zwei!' : 'Noch eine Spur! Schau überall, wo es glitzert.'); return; }
     achieve('su_spuren');
     await sayP('heinivater', 'Eine Gänsefeder, ein Achterbahn-Jeton und ein Quittungsfetzen von der Bootsvermietung. Das sind drei Fährten: Chilbi, See – und die Altstadt, denn die Maske kam aus dem Sankturbanhof, und der rote Mantel …');
     await sayP('heinivater', 'Ach ja: Auch ein roter Mantel fehlt. Nicht unserer – einer aus dem Fundus des Stadttheaters. Die Kostümbildnerin Bea hat es gemeldet.');
     await sayP('heinivater', 'Verdächtige gibt es genug. Roli von der Achterbahn. Bea vom Theater. Kari, der Schatzsucher im Zellmoos. Und Ruedi Pfister – unser ewiger Pechvogel. Zwanzig Jahre Schläger, nie getroffen.');
     for (const sp of SU_SUSPECTS) this.note('sus_' + sp.k, `Verdächtig: ${sp.n}`);
-    await sayP('timo', 'Ich schreib alle auf! Das Notizbuch ist im Handy.');
+    await kidSay('timo', 'Ich schreib alle auf! Das Notizbuch ist im Handy.');
     this.setStage('s_faehrten');
     UI.toast('Drei Fährten: Chilbi auf dem Märtplatz · See (Bootsvermietung am Quai) · Altstadt (Sankturbanhof und Stadttheater). Reihenfolge egal.');
     saveGame(true);
@@ -824,7 +837,7 @@ Object.assign(Sur, {
     this.prog();
     if (n < 3) { UI.toast(`Fährten: ${n}/3`); saveGame(true); return; }
     achieve('su_faehrten');
-    await sayP('elin', 'Alle drei Fährten! R. P., roter Mantel, Sousaphon, Gamma-Inseli … Mami muss das hören!');
+    await kidSay('elin', 'Alle drei Fährten! R. P., roter Mantel, Sousaphon, Gamma-Inseli … Mami muss das hören!');
     Snd.sfx('blip');
     await sayP('isa', '📱 Thierry und Louve rufen die ganze Zeit an! Sie haben im Ehret-Park etwas Goldenes gefunden. Beim Spielplatz!');
     this.setStage('s_strahl');
@@ -884,16 +897,16 @@ Object.assign(Sur, {
     G.busy++;
     await Story.say('me', 'Schönes Sousaphon. Sagen Sie … Pech gehabt in letzter Zeit? Mit einer Maske vielleicht? Einer goldenen?');
     await Story.say('Sousaphonist mit Larve', '…');
-    await sayP('elin', 'Er hat einen roten Mantel unter der Jacke!');
+    if (this.followOk()) await sayP('elin', 'Er hat einen roten Mantel unter der Jacke!');
     Snd.sfx('whoosh');
     await Story.say('Sousaphonist mit Larve', 'PECH GEHABT!');
     await Story.say(null, 'Er lässt das Sousaphon fallen, springt auf ein Velo und rast durch das Untertor davon – Richtung Unterstadt!');
     const papi = suPapi();
-    await Story.say(this.st().follow ? 'me' : null, this.st().follow ? 'Elin, dein Velo! Ich bring es dir zurück!' : 'Neben dem Wilden Mann steht ein Velo. Du schwingst dich drauf.');
+    await Story.say(this.followOk() ? 'me' : null, this.followOk() ? 'Elin, dein Velo! Ich bring es dir zurück!' : 'Neben dem Wilden Mann steht ein Velo. Du schwingst dich drauf.');
     G.busy--;
     let r = await this.mini('velo', 'chase');
     if (!(r && r.ok)) {
-      await sayP('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, du schaffst das!');
+      await kidSay('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, du schaffst das!');
       r = await this.mini('velo', 'chase');
     }
     if (r && r.ok) { achieve('su_velo'); await Story.say('me', 'Er fährt zum See! Ich bleib dran!'); }

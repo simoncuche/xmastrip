@@ -631,6 +631,22 @@ MAP_BUILDERS.sursee_see = () => {
   }, { solid: true }));
   m.trig(48, 16, 3, 1, { label: 'Fernrohr: Blick aufs Gamma-Inseli', act: () => Sur.look('inseli') });
   m.add(mkObj(48, 16, 1, 1, 12, (c) => { R(c, 7, 6, 2, 8, '#4a4e54'); R(c, 3, 2, 10, 5, '#2f5fb8'); R(c, 11, 3, 3, 3, '#8ac0e0'); }, { solid: true }));
+  /* Bojen für den Slalom, Segelboot und Schwäne draussen auf dem See */
+  for (const [x, y, col] of [[44, 24, '#e8302a'], [50, 27, '#ffd23d'], [56, 24, '#e8302a'], [62, 28, '#ffd23d'], [48, 32, '#e8302a']]) m.add(mkObj(x, y, 1, 1, 6, (c) => { E(c, 8, 13, 4, 2, 'rgba(255,255,255,0.4)'); R(c, 5, 4, 6, 9, col); R(c, 5, 4, 6, 2, '#ffffff'); R(c, 7, 0, 2, 4, '#3a3a40'); }, { solid: false }));
+  const segel = mkObj(30, 38, 1, 1, 0, () => {}, { solid: false });
+  segel.anim = (c, t, px, py) => { const x = px + Math.sin(t * 0.05) * 240, y = py + Math.cos(t * 0.07) * 20; c.fillStyle = '#f4f0e6'; c.beginPath(); c.moveTo(x, y - 30); c.lineTo(x + 16, y - 4); c.lineTo(x, y - 4); c.closePath(); c.fill(); c.fillStyle = '#e8d8c0'; c.beginPath(); c.moveTo(x - 1, y - 26); c.lineTo(x - 10, y - 4); c.lineTo(x - 1, y - 4); c.closePath(); c.fill(); R(c, x, y - 31, 1, 28, '#5a3a24'); c.fillStyle = '#8a3b2a'; c.beginPath(); c.moveTo(x - 12, y - 3); c.lineTo(x + 18, y - 3); c.lineTo(x + 14, y + 2); c.lineTo(x - 9, y + 2); c.closePath(); c.fill(); R(c, x - 14, y + 3, 34, 1, 'rgba(255,255,255,0.4)'); };
+  m.add(segel);
+  const schwaene = mkObj(66, 34, 1, 1, 0, () => {}, { solid: false });
+  schwaene.anim = (c, t, px, py) => { for (let k = 0; k < 3; k++) { const x = px + k * 14 + Math.sin(t * 0.2 + k) * 10, y = py + k * 6 + Math.cos(t * 0.15 + k) * 4; E(c, x, y, 6, 3, '#f8f8f4'); R(c, x + 4, y - 9, 2, 8, '#f8f8f4'); E(c, x + 5, y - 9, 2, 2, '#f8f8f4'); R(c, x + 7, y - 9, 2, 1, '#e8702a'); P(c, x + 7, y - 8, '#1a1a1a'); R(c, x - 7, y + 3, 14, 1, 'rgba(255,255,255,0.35)'); } };
+  m.add(schwaene);
+  /* Gegenufer im Süden: Hügel mit Dörfern, weit weg */
+  m.fill(0, 54, W, 6, T.MEADOW);
+  m.add(mkObj(0, 54, W, 6, 20, (c, Wd, Hd) => {
+    for (let x = 0; x < Wd; x++) { const h = 22 + Math.abs(Math.sin(x * 0.01)) * 14 + Math.sin(x * 0.033) * 5; R(c, x, Hd - 96 + 40 - h * 0.6, 1, 96, '#5a7a48'); }
+    for (let x = 0; x < Wd; x += 3) { const y = Hd - 70 + Math.sin(x * 0.02) * 6; E(c, x, y, 3, 4, '#3e6b32'); }
+    for (let k = 0; k < 14; k++) { const x = 40 + k * 100 + (k % 3) * 17, y = Hd - 62; R(c, x, y, 8, 5, '#e8e0cc'); R(c, x - 1, y - 2, 10, 2, '#8a3b2a'); if (k % 4 === 1) { R(c, x + 3, y - 10, 2, 8, '#e8e0cc'); R(c, x + 3, y - 12, 2, 2, '#4f7a58'); } }
+    R(c, 0, 0, Wd, 22, 'rgba(0,0,0,0)');
+  }, { solid: true }));
   /* Fussgänger und Spawns */
   m.pedZones.push({ x: 24, y: 15, w: 30, h: 2, n: 5 }, { x: 56, y: 10, w: 15, h: 6, n: 3 }, { x: 0, y: 6, w: 92, h: 2, n: 3 });
   m.npcDefs.push(

@@ -152,16 +152,18 @@ summary:hover { color: var(--ink); }
 /*CONFIG*/
 /*LOOK*/
 (() => {
-  const STAGES = [['meet', 'Treffpunkt Luzern'], ['board', 'Billett & Perron'], ['ride', 'Im Railjet'], ['arrived', 'Ankunft Innsbruck'], ['findHotel', 'Hotel suchen'], ['checkin', 'Check-in'], ['room', 'Hotelzimmer'], ['bar', 'Gamsbock Bar'], ['free', 'Innsbruck frei']];
+  const STAGES = [['meet', 'Treffpunkt Luzern'], ['board', 'Billett & Perron'], ['ride', 'Im Railjet'], ['arrived', 'Ankunft Innsbruck'], ['findHotel', 'Hotel suchen'], ['checkin', 'Check-in'], ['room', 'Hotelzimmer'], ['bar', 'Gamsbock Bar'], ['free', 'Innsbruck frei'],
+    ['heim', 'Zurück in Luzern'], ['sbahn', 'S-Bahn nach Sursee'], ['s_ankunft', 'Ankunft Sursee'], ['s_tatort', 'Tatort Diebenturm'], ['s_faehrten', 'Drei Fährten'], ['s_strahl', 'Louves Schatzkiste'], ['s_probe', 'Guuggen-Probe'], ['s_boot', 'Bootsjagd'], ['s_gans', 'Gansabhauet'], ['s_frei', 'Sursee frei']];
+  const SU_ST = ['heim', 'sbahn', 's_ankunft', 's_tatort', 's_faehrten', 's_strahl', 's_probe', 's_boot', 's_gans', 's_frei'];
   const STAGE_N = Object.fromEntries(STAGES);
   /* Ereignisse: Titel aus dem Spielcode (EV_TITLES, von build.py eingesetzt), Symbole nur für die Anzeige */
-  const EV_ICON = { ueberfall: '🌒', polizei: '🚨', hundkatze: '🐕', taube: '🕊️', krampus: '👹', portemonnaie: '👛', ufo: '🛸', trump: '🏍️', verfolgung: '🏃', flitzer: '🙈', monster: '🦖', apokalypse: '🌋' };
+  const EV_ICON = { ueberfall: '🌒', polizei: '🚨', hundkatze: '🐕', taube: '🕊️', krampus: '👹', portemonnaie: '👛', ufo: '🛸', trump: '🏍️', verfolgung: '🏃', flitzer: '🙈', monster: '🦖', apokalypse: '🌋', guuggen: '🥁', gans: '🦢', nebel: '🌫️', drohne: '🚁' };
   const EV_SHORT = { ufo: 'UFO' };
   const EV_IDS = Object.keys(EV_TITLES);
   const evDone = (s) => EV_IDS.filter((id) => s.ev && s.ev[id] > 0).length;
   const evTotal = (s) => s.evTotal || EV_IDS.length;
   /* Fünf Abschnitte für die Fortschrittsleiste */
-  const PHASES = [['Luzern', ['meet', 'board']], ['Zug', ['ride', 'arrived']], ['Hotel', ['findHotel', 'checkin', 'room']], ['Bar', ['bar']], ['Innsbruck', ['free']]];
+  const PHASES = [['Luzern', ['meet', 'board']], ['Zug', ['ride', 'arrived']], ['Hotel', ['findHotel', 'checkin', 'room']], ['Bar', ['bar']], ['Innsbruck', ['free']], ['Sursee', SU_ST]];
   const TRIP_DAYS = 5; /* Apokalypse an Tag 5 beendet die Reise */
   const ONLINE_MS = 3 * 60000;
   const $ = (s) => document.querySelector(s);
@@ -184,13 +186,15 @@ summary:hover { color: var(--ink); }
   const clock = (ts) => ts ? new Date(ts).toLocaleString('de-CH', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
   const money = (v, cur) => `${(v || 0).toLocaleString('de-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ${cur}`;
   const prom = (v) => `${(v || 0).toFixed(2).replace('.', ',')} ‰`;
-  /* Fortschritt 0–100: Anreise bis zur Bar 25 %, danach die Tage in Innsbruck */
+  /* Fortschritt 0–100: Anreise bis zur Bar 15 %, die Tage in Innsbruck bis 55 %, danach der Fall in Sursee */
   const progress = (s) => {
     if (!s) return 0;
     if (s.finished || s.apoc) return 100;
+    const su = SU_ST.indexOf(s.stage);
+    if (su >= 0) return Math.min(99, Math.round(55 + su / (SU_ST.length - 1) * 44));
     const i = Math.max(0, s.stageIdx == null ? STAGES.findIndex((x) => x[0] === s.stage) : s.stageIdx);
-    if (s.stage !== 'free') return Math.round(i / 8 * 25);
-    return Math.min(99, Math.round(25 + Math.min(s.day || 0, TRIP_DAYS - 1) / (TRIP_DAYS - 1) * 74));
+    if (s.stage !== 'free') return Math.round(i / 8 * 15);
+    return Math.min(55, Math.round(15 + Math.min(s.day || 0, TRIP_DAYS - 1) / (TRIP_DAYS - 1) * 40));
   };
   const portraits = {};
   const portrait = (look, key) => {
@@ -280,7 +284,8 @@ summary:hover { color: var(--ink); }
     const track = PHASES.map((p, i) => `<span class="${done || i < pi ? 'done' : i === pi ? 'cur' : ''}" title="${p[0]}"></span>`).join('');
     const days = s.stage === 'free' || done ? `<div class="days" aria-label="Tag ${(s.day || 0) + 1} von ${TRIP_DAYS}">${Array.from({ length: TRIP_DAYS }, (_, i) => `<i class="${done || i < Math.min(s.day || 0, TRIP_DAYS - 1) ? 'done' : i === Math.min(s.day || 0, TRIP_DAYS - 1) ? 'cur' : ''}">${i + 1}</i>`).join('')}</div>` : '';
     const badges = [
-      s.finished ? '<span class="badge fin">🏁 Heimreise</span>' : '',
+      s.finished ? '<span class="badge fin">🏁 Spiel beendet</span>' : '',
+      s.chapter && !s.finished ? '<span class="badge">🪶 Kapitel Sursee</span>' : '',
       s.apoc ? '<span class="badge apo">🌋 Apokalypse überlebt</span>' : '',
       s.over && !s.finished ? '<span class="badge over">Game Over</span>' : '',
       `<span class="badge">${progress(s)} %</span>`,
@@ -330,7 +335,7 @@ summary:hover { color: var(--ink); }
       </div>
       <details data-k="${esc(r.id)}-log"><summary>Verlauf (${log.length})</summary>${log.length ? `<ul class="log">${log.map((e) => `<li><small>${esc(clock(e.at))}</small><span>${esc(EV[e.e] || e.e)}: ${esc(e.e === 'stage' ? STAGE_N[e.v] || e.v : e.v)}${e.when ? ` <small>· im Spiel ${esc(e.when)}</small>` : ''}</span></li>`).join('')}</ul>` : '<p class="empty" style="color:var(--dim);font-size:13px">Noch keine Einträge.</p>'}</details>
       ${(s.ach || []).length ? `<details data-k="${esc(r.id)}-ach"><summary>Erlebnisse (${s.ach.length}/${s.achTotal || '?'})</summary><div class="chips">${s.ach.map((a) => `<span>${esc(a)}</span>`).join('')}</div></details>` : ''}
-      ${others.length ? `<details data-k="${esc(r.id)}-games"><summary>Frühere Spiele auf diesem Gerät (${others.length})</summary><ul class="games">${others.map((g) => `<li><span>${esc(g.s.name)} · ${g.s.finished ? 'Heimreise' : g.s.apoc ? 'Apokalypse' : esc(STAGE_N[g.s.stage] || g.s.stage)}${g.s.stage === 'free' ? `, Tag ${(g.s.day || 0) + 1}` : ''}</span><small>${esc(clock(g.s.at))}</small></li>`).join('')}</ul></details>` : ''}
+      ${others.length ? `<details data-k="${esc(r.id)}-games"><summary>Frühere Spiele auf diesem Gerät (${others.length})</summary><ul class="games">${others.map((g) => `<li><span>${esc(g.s.name)} · ${g.s.finished ? 'Beendet' : g.s.apoc ? 'Apokalypse' : esc(STAGE_N[g.s.stage] || g.s.stage)}${g.s.stage === 'free' ? `, Tag ${(g.s.day || 0) + 1}` : ''}</span><small>${esc(clock(g.s.at))}</small></li>`).join('')}</ul></details>` : ''}
     </article>`;
   }
   function setStatus(kind, text) { const el = $('#status'); el.className = 'pill ' + kind; el.querySelector('span').textContent = text; }

@@ -3,6 +3,17 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.28.0 – 04.10.2026
+
+- Neues Kapitel „Gans oder gar nicht“: Nach der Heimreise aus Innsbruck geht es in Luzern weiter. Auf Gleis 2 fährt die S-Bahn nach Sursee, dem Sempachersee entlang (Emmenbrücke, Rothenburg Station, Sempach-Neuenkirch, Nottwil). Wer will, geht stattdessen heim und beendet das Spiel.
+- Sursee als offene Welt: Bahnhof, Surseepark, Martigny-Platz, Untertor, Oberstadt mit Rathaus und Stadtcafé, Kirche St. Georg, Obertor mit Stadttheater und Sankturbanhof, Stadthalle, Vierherrenplatz, Unterstadt mit offenem Sure-Arm und Diebenturm, Ehret-Park, Beckenhof, Münstervorstadt und am See der Triechter mit Quai, Bootsvermietung, Strandbad, Zellmoos, Seebadi Schenkon und dem Gamma-Inseli.
+- Der Fall: Die goldene Sonnenmaske der Zunft Heini von Uri ist verschwunden. Mit Isa, Elin und Timo, Cousin Thierry und Cousine Louve spürst du den Dieb auf: Spuren in der Zunftstube, drei Fährten (Chilbi, See, Altstadt), Velo-Verfolgung, Bootsjagd, Anklage und zum Schluss die nachgeholte Gansabhauet vor dem Rathaus.
+- Notizbuch im Handy mit Spuren, Verdächtigen, Beweisen und Tipps von Elin und Timo. Elin und Timo begleiten dich tagsüber.
+- Chilbi auf dem Märtplatz mit Riesenrad, Achterbahn, Schiessbude, Hau den Lukas, Entenfischen, Büchsenwerfen, Putschibahn und Magenbrot. Dazu Fischen, Pedalo, Elektroboot, Stand-up-Paddle, Sprungturm, Mietvelo, Konzert in der Stadthalle, Guuggen-Probe und Römermünzen im Vicus.
+- Lokale: Wirtshaus Wilder Mann, Pizzeria zur Mühle, Stadtcafé, TNT Rock Bar, Rössli Nightbar, El Mosquito, La Fuga, Craftwerk, Triechter Buvette, Kulturwerk 118. Die Jungs kommen nach und sitzen je nach Uhrzeit in den Bars.
+- Neue Ereignisse in Sursee: Guuggen-Überfall, Gans auf der Flucht, Nebel über Sursee, Römus Drohne. Dazu Heini, der Narr, mit Rätseln und wahren Tipps.
+- Tracker: Fortschritt und Abschnitte für das Kapitel Sursee, neue Ereignisse.
+
 ## 2.27.4 – 04.10.2026
 
 - Versionshistorie aufgeräumt.
