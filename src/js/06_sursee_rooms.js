@@ -1207,7 +1207,7 @@ function srBookshelf(x, y, w, col = '#5a3a24') {
 
 /* 16. Isas Wohnung in der Münstervorstadt: Wohnzimmer, Küche, Esstisch, Kinderecke, Gästezimmer, Bad */
 sRoom('isa_haus', { name: 'Bei Isa', sign: false, w: 22, h: 14, door: 9, back: ['sursee', 'isa_out'], style: 0, cap: '#4a4038', floor: T.WOOD, floorV: 0, lightC: '#fff0d0', light: false,
-  spots: { isa: [3, 5, 0], elin: [12, 5, 0], timo: [14, 5, 1], cuche: [6, 5, 2], thierry: [10, 5, 1], louve: [3, 9, 3] },
+  spots: { isa: [3, 10, 0], elin: [12, 5, 0], timo: [14, 5, 1], cuche: [6, 5, 2], thierry: [10, 5, 1], louve: [5, 10, 3] },
   wall: (c) => {
     /* Küche: Hängeschränke, Fliesenspiegel */
     R(c, 16, 30, 4 * 16, 18, '#e8ecee'); for (let x = 16; x < 5 * 16; x += 4) R(c, x, 30, 1, 18, '#c9d1d6'); for (let y = 30; y < 48; y += 4) R(c, 16, y, 4 * 16, 1, '#c9d1d6');
@@ -1241,6 +1241,15 @@ sRoom('isa_haus', { name: 'Bei Isa', sign: false, w: 22, h: 14, door: 9, back: [
     m.add(mkObj(1, 3, 3, 1, 6, (c, W, H) => { R(c, 0, 0, W, H - 1, '#f4f0e6'); R(c, 0, 0, W, 3, '#8a6a4a'); R(c, 4, 1, 12, 6, '#c9ccd2'); R(c, 6, 2, 8, 4, '#a8b0b8'); R(c, 9, -2, 2, 3, '#a8b0b8'); for (const [bx, by] of [[24, 2], [32, 2], [24, 6], [32, 6]]) E(c, bx, by, 2, 1, '#2a2a2e'); R(c, 38, 1, 8, 6, '#e8c890'); for (let k = 0; k < W; k += 16) { R(c, k + 2, 10, 12, H - 13, '#ece8dc'); R(c, k + 7, 12, 2, 1, '#8a8e94'); } }));
     m.add(mkObj(4, 3, 1, 1, 20, (c, W, H) => { R(c, 1, 0, 14, H - 1, '#f4f4f0'); R(c, 1, 0, 14, 1, '#ffffff'); R(c, 1, 12, 14, 1, '#c9d1d6'); R(c, 12, 4, 1, 6, '#8a8e94'); R(c, 12, 15, 1, 8, '#8a8e94'); srDrawing(c, 2, 2, 1); R(c, 4, 15, 6, 6, '#fff8d0'); P(c, 6, 17, '#e8402e'); P(c, 3, 23, '#3a8ae0'); P(c, 9, 25, '#f2c23a'); }));
     m.trig(4, 3, 1, 1, { label: 'Kühlschrank', act: () => Sur.fridge() });
+    /* Kaffeemaschine „Bruno“ (Isa trinkt etwas viel Kaffee) */
+    m.add(mkObj(1, 4, 1, 1, 12, (c, W, H) => { R(c, 2, H - 14, 12, 13, '#3a3a40'); R(c, 3, H - 13, 10, 4, '#5a5e64'); R(c, 6, H - 8, 4, 3, '#1a1a1e'); R(c, 6, H - 5, 4, 3, '#f4f0e6'); R(c, 7, H - 4, 2, 1, '#6a4428'); E(c, 11, H - 11, 1, 1, '#3aff6a'); pxText(c, 'B', 4, H - 13, '#f2c23a'); }));
+    m.trig(1, 4, 1, 1, { label: 'Kaffeemaschine Bruno', act: () => Sur.kaffee(false) });
+    /* Isas Homeoffice: Pult mit Laptop, Headset und vielen Kaffeetassen */
+    m.add(mkObj(2, 11, 3, 1, 10, (c, W, H) => { R(c, 0, 4, W, 6, '#c8a070'); R(c, 0, 4, W, 1, '#e8c890'); R(c, 2, 10, 2, H - 10, '#8a6a4a'); R(c, W - 4, 10, 2, H - 10, '#8a6a4a'); R(c, 14, -4, 18, 9, '#2a2a2e'); R(c, 15, -3, 16, 7, '#4a6a8a'); for (let k = 0; k < 6; k++) R(c, 16 + (k % 3) * 5, -2 + Math.floor(k / 3) * 3, 4, 2, ['#e0b090', '#c89070', '#f0c8a0'][k % 3]); R(c, 12, 5, 22, 2, '#5a5e64'); for (let k = 0; k < 4; k++) { R(c, 2 + k * 3, 1, 3, 4, '#f4f4f0'); P(c, 3 + k * 3, 1, '#6a4428'); } E(c, 40, 3, 4, 2, '#2a2a2e'); R(c, 36, 0, 8, 1, '#2a2a2e'); R(c, 6, 6, 5, 3, '#f2e05a'); }, { emit: (c) => R(c, 15, -3, 16, 7, '#9ac8f0') }));
+    m.trig(2, 11, 3, 1, { label: 'Isas Homeoffice', act: () => Sur.look('homeoffice') });
+    /* Elins Gitarre */
+    m.add(mkObj(13, 3, 1, 1, 14, (c, W, H) => { E(c, 8, H - 6, 5, 5, '#c87a3a'); E(c, 8, H - 12, 4, 4, '#c87a3a'); E(c, 8, H - 7, 2, 2, '#3a2418'); R(c, 7, H - 26, 2, 14, '#6a4428'); R(c, 6, H - 28, 4, 3, '#3a2418'); P(c, 7, H - 20, '#f2c23a'); P(c, 8, H - 17, '#e87ac0'); line(c, 5, H, 8, H - 4, '#2a2a2e'); line(c, 11, H, 8, H - 4, '#2a2a2e'); }));
+    m.trig(13, 3, 1, 1, { label: 'Elins Gitarre', act: () => Sur.gitarre() });
     m.add(objPlant(5, 3));
     /* Esstisch mit Adventskranz */
     const tab = srWrap(objTable(2, 7, 3, 2, { col: '#c8a070' }), 6, (c, W, H, e) => { srAdventWreath(c, W / 2, e + 13); for (const gx of [8, 36]) { R(c, gx, e + 20, 5, 3, '#f4f4f0'); } R(c, 6, e + 6, 6, 3, '#f4f4f0'); });

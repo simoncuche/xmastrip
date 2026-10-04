@@ -729,6 +729,25 @@ MAP_BUILDERS.sursee = () => {
   for (const [ax, aw] of [[62, 3], [81, 3]]) m.add(mkObj(ax, 5, aw, 4, 10, (c, Wd, Hd) => { R(c, 0, 0, Wd, Hd - 12, '#7a7c80'); for (let i = 0; i < Wd; i += 4) P(c, i, 3 + (i % 7), '#6a6c70'); R(c, 0, Hd - 12, Wd, 12, '#e8e8e4'); R(c, 0, Hd - 12, Wd, 2, '#c9cbcc'); R(c, 3, Hd - 9, 4, 5, '#3e4c5e'); }, { solid: true }));
   m.warp(72, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 72, 10, 0);
   for (const x of [66, 79]) m.add(objLamp(x, 10, 'new'));
+  /* Kita beim Märtplatz mit Garten (Timo und Lejan) */
+  m.add(mkObj(98, 1, 6, 5, 22, (c, Wd, Hd) => {
+    R(c, 0, 0, Wd, 26, '#8a8e94'); R(c, 0, 0, Wd, 3, '#e8402e'); R(c, 0, 3, Wd, 2, '#f2c23a'); for (let i = 0; i < 30; i++) P(c, 2 + hash(i, 91) * (Wd - 4), 6 + hash(i, 92) * 18, '#7a7e84');
+    R(c, 12, 8, 18, 10, '#4a8a3a'); for (let k = 0; k < 4; k++) R(c, 14 + k * 4, 10, 3, 6, '#6ab04a');
+    R(c, 0, 26, Wd, Hd - 26, '#f6e08a'); R(c, 0, 26, Wd, 2, '#fff2b0'); R(c, Wd - 3, 26, 3, Hd - 26, '#e0c870');
+    for (let k = 0; k < 4; k++) { const wx = 6 + k * 23; R(c, wx, 36, 16, 18, '#f4f4f0'); R(c, wx + 1, 37, 14, 16, '#a8cce4'); R(c, wx + 2, 46, 4, 4, ['#e8402e', '#3a8ae0', '#3fae4a', '#e87ac0'][k]); E(c, wx + 11, 41, 2, 2, '#f2c23a'); }
+    for (let k = 0; k < 10; k++) E(c, 6 + k * 9, Hd - 30, 2, 2, ['#e8402e', '#3a8ae0', '#3fae4a', '#f2c23a', '#e87ac0'][k % 5]);
+    R(c, 34, Hd - 22, 18, 22, '#3fae4a'); R(c, 36, Hd - 20, 14, 20, '#5ac85a'); R(c, 43, Hd - 20, 1, 20, '#2f8e3a'); E(c, 47, Hd - 10, 1, 1, '#f2c23a');
+    R(c, 26, Hd - 32, 34, 9, '#ffffff'); pxText(c, 'KITA', 30, Hd - 31, '#e8402e'); E(c, 54, Hd - 28, 3, 3, '#f2c23a');
+    for (let k = 0; k < 5; k++) R(c, 60 + k * 5, Hd - 5, 3, 5, ['#e8402e', '#3a8ae0', '#f2c23a', '#3fae4a', '#e87ac0'][k]);
+  }, { solid: true, emit: (c, Wd, Hd) => { for (let k = 0; k < 4; k++) R(c, 7 + k * 23, 37, 14, 16, '#ffe8a8'); } }));
+  m.fill(104, 2, 6, 5, T.MEADOW);
+  m.add(mkObj(104, 2, 6, 4, 8, (c, Wd, Hd) => {
+    for (let xx = 0; xx < Wd; xx += 4) R(c, xx, 6, 2, 8, '#c8a070'); R(c, 0, 8, Wd, 1, '#a88050'); for (let yy = 8; yy < Hd; yy += 5) { R(c, Wd - 2, yy, 2, 4, '#c8a070'); }
+    R(c, 6, Hd - 22, 22, 14, '#e8d090'); R(c, 6, Hd - 22, 22, 2, '#c8a070'); for (let i = 0; i < 8; i++) R(c, 8 + i * 2.5, Hd - 16 + (i % 3), 2, 2, ['#e8402e', '#3a8ae0', '#f2c23a'][i % 3]);
+    R(c, 40, Hd - 34, 3, 26, '#3a8ae0'); R(c, 54, Hd - 34, 3, 26, '#3a8ae0'); R(c, 40, Hd - 34, 17, 3, '#3a8ae0'); line(c, 46, Hd - 31, 44, Hd - 18, '#5a5e64'); line(c, 51, Hd - 31, 53, Hd - 18, '#5a5e64'); R(c, 42, Hd - 18, 13, 2, '#e8402e');
+    for (let k = 0; k < 6; k++) line(c, 70 + k * 2, Hd - 30 + k * 3, 82 + k * 2, Hd - 12 + k, '#f2c23a');
+  }, { solid: false }));
+  m.trig(100, 5, 2, 1, { label: 'Kita', act: () => Sur.kita() }); m.fill(99, 6, 4, 3, T.PAVE, 1);
   /* roter Allwetter-Sportplatz neben der Stadthalle: Tartan, weisse Linien, Handballtore, Zaun */
   m.fill(85, 1, 10, 8, T.PAVE, 1);
   m.decal((c) => {
@@ -813,6 +832,19 @@ MAP_BUILDERS.sursee = () => {
     }
     R(c, 2, fy + fh + 1, 2, Hd - fy - fh - 1, '#d4ccb8');
   }, { solid: true }));
+  /* Versenkpoller beim Untertor (fährt hoch, wenn ein Auto kommt; meistens zu spät bemerkt) */
+  const pol = mkObj(57, 38, 1, 2, 12, () => {}, { solid: false });
+  pol.anim = (c, t, px, py) => {
+    const broken = Sur.active() && Sur.pollerBroken() && !(G.live && Sur._poller.up < 1), up = broken ? 0 : (G.live ? Sur._poller.up : 0);
+    for (const k of [0, 1]) {
+      const x = px + 8, y = py + 12 + 10 + k * 16;
+      E(c, x, y, 5, 2, '#6a6e74'); E(c, x, y, 3, 1, '#e8c23a');
+      if (broken && k === 0) { line(c, x - 1, y, x + 9, y - 6, '#9a9ea4'); line(c, x, y + 1, x + 10, y - 5, '#7a7e84'); R(c, x + 5, y - 4, 2, 2, '#c8302a'); }
+      else if (up > 0) { const hh = Math.round(up * 13); R(c, x - 3, y - hh, 6, hh, '#9a9ea4'); R(c, x - 3, y - hh, 2, hh, '#c4c8cc'); if (hh > 6) { R(c, x - 3, y - hh + 2, 6, 2, '#c8302a'); R(c, x - 3, y - hh + 4, 6, 1, '#f4f4f0'); } E(c, x, y - hh, 3, 1, '#d8dce0'); }
+    }
+    if (broken) { const x = px + 3, y = py + 12 + 26; c.fillStyle = '#f08a20'; c.beginPath(); c.moveTo(x, y - 9); c.lineTo(x - 3, y); c.lineTo(x + 3, y); c.closePath(); c.fill(); R(c, x - 2, y - 5, 4, 1, '#f4f4f0'); }
+  };
+  m.add(pol); m.trig(57, 38, 1, 2, { label: 'Poller', act: () => Sur.look('poller') });
   m.trig(53, 37, 3, 4, { here: true, label: 'Foto: Untertor', act: () => Sur.photo('untertor'), cond: () => !Sur.hasPhoto('untertor') });
   altHouse(m, 56, 30, 6, 7, 4, { wall: '#f6f4ee', roof: '#7a3a2a', trim: '#c8402a', shutter: '#b8302a', flowers: false, doors: [{ dx: 2, type: 'arch' }], sign: { text: 'WILDER MANN', bg: '#f6f4ee', fg: '#3a2a1a', lit: true, y: 63 }, awning: { cols: [0, 1, 3, 4, 5], col: '#b8302a' }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4,
     extra: (c, W, H, fy0) => { /* Quergiebel mit Fenster unter dem Dach */ for (let k = 0; k < 20; k++) { const ww = 6 + k * 2.2; R(c, W / 2 - ww / 2, fy0 - 20 + k, ww, 1, '#f6f4ee'); P(c, W / 2 - ww / 2 - 1, fy0 - 20 + k, '#7a3a2a'); P(c, W / 2 + ww / 2, fy0 - 20 + k, '#7a3a2a'); } R(c, W / 2 - 4, fy0 - 10, 8, 8, '#3e4c5e'); R(c, W / 2 - 6, fy0 - 10, 2, 8, '#b8302a'); R(c, W / 2 + 4, fy0 - 10, 2, 8, '#b8302a'); } });
@@ -935,7 +967,7 @@ MAP_BUILDERS.sursee = () => {
   m.fill(19, 14, 2, 10, T.GRAVEL);
   m.fill(6, 4, 16, 11, T.MEADOW);
   house(m, 7, 3, 6, 5, 5, { wall: '#efe4c8', roof: '#7a3a2a', floors: 3, shutter: '#3f6b45', flowers: true, doors: [{ dx: 2, col: '#5a3a24' }] });
-  m.add(objScheune(14, 3, 6, 5));
+  m.add(objScheune(14, 3, 6, 5)); m.trig(15, 7, 4, 1, { label: 'Scheune mit Landmaschinen', act: () => Sur.scheune() });
   m.add(objGehege(8, 10, 8, 4)); m.trig(8, 14, 8, 1, { label: 'Gänsegehege', act: () => Sur.look('gehege') });
   m.fill(6, 14, 13, 2, T.GRAVEL);
   for (const [x, y, k] of [[4, 6, 'green'], [22, 6, 'autumn'], [24, 12, 'green'], [5, 16, 'yellow'], [26, 18, 'green'], [23, 21, 'red']]) m.add(objTree(x, y, k, true));

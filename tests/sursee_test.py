@@ -120,9 +120,20 @@ with sync_playwright() as p:
     expect("G.map.id === %s" % json.dumps(rooms[-1] if rooms else 'sursee'), "Innenräume nicht geladen")
     # Ereignisse in Sursee
     run("enterMap('sursee', 'rathausplatz');", 0.3)
-    for ev in ["guuggen", "gans", "nebel", "drohne"]:
+    for ev in ["guuggen", "gans", "nebel", "drohne", "poller"]:
         run(f"await Story.announce('{ev}'); await Sur.ev_{ev}();", 1.5)
+        if ev == "poller":
+            pg.evaluate("() => { Sur._poller.v.x = 55 * 16; Sur._poller.up = 1; G.player.x = 56 * 16; G.player.y = 39 * 16; }")
+            time.sleep(2.5)
         pg.evaluate("() => { G.live = null; }")
+    expect("G.S.su.pollerN >= 1", "Poller-Ereignis nicht ausgelöst")
+    # Familie: Rechnen mit Elin, Kita mit Lejan (Montag), Gitarre, Kaffee, Bauernhof-Quiz, Sprüche
+    run("G.S.time = 3 * 1440 + 10 * 60 + 20; G.S.su.follow = 1; enterMap('sursee', 'chilbi'); await Sur.rechnen(); await Sur.kita();", 1.5)
+    expect("G.npcs.some((n) => n.id === 'su_lejan') && G.S.ach.su_kita", "Kita/Lejan fehlt")
+    run("await Sur.kidTalk('elin'); await Sur.kidTalk('timo'); await Sur.cousinsTalk('louve');", 1.0, q=[1, 1])
+    run("await Sur.bauernQuiz(); await Sur.scheune(); await Sur.look('poller');", 1.5)
+    run("G.S.time = 3 * 1440 + 19 * 60; enterMap('isa_haus', 'entry'); await Sur.gitarre(); await Sur.kaffee(false); await Sur.look('homeoffice');", 3.5)
+    expect("Sur.isaWhere().map === 'isa_haus' && G.S.su.isaKaffee >= 1", "Isa/Homeoffice falsch")
     # Feuerwehreinsatz: Notruf, Löschfahrzeug, Strahlrohr, Drehleiter, Rettung
     run("G.S.time = dayOf(G.S.time) * 1440 + 15 * 60; enterMap('sursee', 'rathausplatz'); await Story.announce('brand'); await Sur.ev_brand();", 0.5, q=[0, 0])
     expect("G.live && Sur._brand && Sur._brand.truck.go === 3", "Feuerwehreinsatz nicht gestartet")

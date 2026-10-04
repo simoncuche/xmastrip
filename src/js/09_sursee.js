@@ -22,6 +22,7 @@ const SU_P = {
   narr: { name: 'Heini, der Narr', bg: '#7a5a1a', look: { skin: 2, build: 0, height: 1, head: 3, ears: 2, hair: 7, hairCol: 7, eyes: 1, eyeCol: 3, brows: 4, nose: 3, mouth: 2, beard: 0, beardCol: 0, mark: 5, glasses: 0, jewel: 3, hat: 0, hatCol: 0, top: 4, topCol: 4, print: 1, pants: 4, pantsCol: 11, shoes: 4, shoesCol: 4, acc: 0, costume: 0 } },
   riesenrad: { name: 'Riesenrad-Frau Nelly', bg: '#5a2a5a', look: { skin: 2, build: 1, height: 1, head: 0, ears: 0, hair: 9, hairCol: 13, eyes: 1, eyeCol: 0, brows: 2, nose: 0, mouth: 4, beard: 0, beardCol: 0, mark: 0, glasses: 1, jewel: 4, hat: 0, hatCol: 0, top: 3, topCol: 11, print: 0, pants: 0, pantsCol: 2, shoes: 0, shoesCol: 0, acc: 5, costume: 0 } },
 };
+SU_P.lejan = { name: 'Lejan', bg: '#4a6a2a', look: Object.assign({}, SU_P.timo.look, { hair: 6, hairCol: 1, skin: 2, topCol: 3, kid: 2 }) };
 const suP = (k) => SU_P[k];
 const sayP = (k, text) => UI.say(SU_P[k], text);
 /* Elin und Timo: vor Ort, wenn sie dich begleiten – sonst per Handy */
@@ -74,6 +75,10 @@ Object.assign(ACH, {
   su_kinder: ['Kinderspiele', 'Sackgumpe, Chäszänne oder Stangechlädere gewonnen'],
   su_118: ['Kellerkonzert', 'Im Kulturwerk 118 auf der Bühne gestanden'],
   su_kloster: ['Klostergeheimnis', 'Im Kapuzinerkloster etwas Verstecktes gefunden'],
+  su_rechnen: ['Zweitklass-Profi', 'Mit Elin drei Rechnungen bis 20 richtig gelöst'],
+  su_kita: ['Besuch in der Kita', 'Mit Timo seinen Freund Lejan in der Kita beim Märtplatz besucht'],
+  su_bauer: ['Landmaschinen-Profi', 'Thierrys Bauernhof-Quiz bestanden'],
+  su_poller: ['Klonk!', 'Live dabei, als einer in den Poller beim Untertor gefahren ist'],
   su_feuer: ['Held von der Unterstadt', 'Mit der Feuerwehr Sursee einen Brand gelöscht und Frau Wüest gerettet'],
   su_fotos: ['Sursee im Kasten', 'Alle Sehenswürdigkeiten von Sursee fotografiert'],
   su_velofahrer: ['Gümmeler', 'Mit dem Mietvelo durch Sursee gefahren'],
@@ -381,14 +386,15 @@ const Sur = {
   /* ---------- Wo sind Isa, die Kinder und die Jungs? ---------- */
   isaWhere() {
     const h = hourOf(G.S.time);
-    if (h >= 9 && h < 18) return { t: 'im Stadtcafé am Rathausplatz', map: 'stadtcafe', x: 89, y: 36 };
+    if ((h >= 10 && h < 11) || (h >= 15 && h < 16)) return { t: 'im Stadtcafé am Rathausplatz (Kaffeepause)', map: 'stadtcafe', x: 89, y: 36 };
+    if (h >= 8 && h < 18 && dayOf(G.S.time) % 7 > 2) return { t: 'zu Hause in der Münstervorstadt (Homeoffice)', map: 'isa_haus', x: 122, y: 60 };
     return { t: 'zu Hause in der Münstervorstadt', map: 'isa_haus', x: 122, y: 60 };
   },
   jungsDa() { const s = this.st(); return !s.direct && suAt('s_tatort') && (s.jungsAt != null && G.S.time >= s.jungsAt); },
   friendLoc(id) {
     if (!this.jungsDa() || !FRIENDS[id]) return null;
     const h = hourOf(G.S.time), fn = FRIENDS[id].fn;
-    if (id === suPapi() && !playerIsCuche()) return h >= 9 && h < 18 ? 'stadtcafe' : 'isa_haus';
+    if (id === suPapi() && !playerIsCuche()) return this.isaWhere().map;
     if (h >= 3 && h < 9) return null;
     const night = h >= 22 || h < 3;
     const T = {
@@ -427,6 +433,7 @@ const Sur = {
       person('roli', 106, 13, 0, { bubbleRand: ['dots', '!'] });
       person('riesenrad', 116, 14, 0, { talk: () => this.riesenrad(), label: 'Riesenrad', bubbleRand: ['note'] });
       if ((st === 's_strahl' && h >= 8 && h < 20) || (suAt('s_ankunft') && h >= 9 && h < 17)) { const hot = st === 's_strahl' && !hasInv('strahl'); person('thierry', 66, 59, 0, { bubbleRand: hot ? ['!'] : ['note'] }); person('louve', 68, 59, 1, { bubbleRand: hot ? ['!'] : ['heart'] }); }
+      if (dayOf(G.S.time) % 7 > 2 && h >= 8 && h < 17) person('lejan', 106, 4, 0, { talk: () => this.kita(), label: 'Reden: Lejan', bubbleRand: ['!', 'note'] });
       if (st === 's_probe' && h >= 16 && h < 23) this.spawnGuuggen();
       if (st === 's_gans' && h >= 10 && h < 16) person('heinivater', 82, 51, 0, { bubbleRand: ['!'] });
       if (suAt('s_ankunft')) this.spawnNarr(m);
@@ -465,6 +472,7 @@ const Sur = {
     if (m.id === 'zunftstube' && G.S.stage === 's_ankunft') setTimeout(() => this.tatortStart(), 600);
     if (m.id === 'sursee_see' && G.S.stage === 's_boot' && !s.bootReady) { s.bootReady = 1; setTimeout(() => this.bootsjagd(), 500); }
     if (m.id === 'inseli') s.photosInseli = 1;
+    if (m.id === 'muehle' && this.followOk()) setTimeout(() => { UI.toast(`💬 Timo: „Teigwaren mit Käse! Ohne Sauce! Nur Käse! Und noch mehr Käse!“`); setTimeout(() => UI.toast(`💬 Elin: „Pizza Margherita. Aber ${playerIsCuche() ? 'deine' : 'Papis'} Pizza ist besser. Psst, nicht dem Gino sagen.“`), 2600); }, 900);
   },
   minute() {
     const s = this.st();
@@ -507,6 +515,7 @@ const Sur = {
       if (d < 2) { a.moving = false; if (!p.moving) a.dir = dirTo(a.x, a.y, p.x, p.y); continue; }
       const sp = Math.min(d, (d > 40 ? 140 : 70) * dt * (p.velo ? 1.8 : 1));
       a.x += dx / d * sp; a.y += dy / d * sp; a.dir = dirTo(0, 0, dx, dy); a.moving = true; a.walkT += dt;
+      a.velo = a.id === 'su_timo' && !!p.velo;
       if (d > 120) { a.x = tgt.x; a.y = tgt.y; }
     }
   },
@@ -615,16 +624,23 @@ Object.assign(Sur, {
       s_boot: 'Zum See! Schnell!',
       s_gans: 'Morgen holen wir die Gansabhauet nach. Ich bin so stolz auf dich. Die Kinder auch.',
     };
-    const opts = ['Wie geht es dir?', 'Wo finde ich was?', 'Tschüss'];
+    const opts = ['Wie geht es dir?', 'Wo finde ich was?', 'Einen Kaffee zusammen?', 'Tschüss'];
     const c = await askP('isa', lines[st] || (playerIsCuche() ? 'Schön, dass du da bist. Gehen wir später zusammen an die Chilbi?' : 'Fühl dich wie zu Hause. Das Gästebett ist frisch bezogen.'), opts);
-    if (c === 0) await sayP('isa', pick(['Gut! Seit die Maske weg ist, ist das ganze Städtli in Aufruhr. Endlich passiert mal was.', 'Müde. Die Kinder reden von nichts anderem mehr als von Detektiven.', 'Gespannt, ob du den Fall löst. Ich wette auf dich.']));
+    if (c === 0) await sayP('isa', pick(['Gut! Seit die Maske weg ist, ist das ganze Städtli in Aufruhr. Endlich passiert mal was.', 'Müde. Die Kinder reden von nichts anderem mehr als von Detektiven.', 'Gespannt, ob du den Fall löst. Ich wette auf dich.',
+      'Homeoffice ist super: Um zehn ein Call, um elf ein Call, um zwei … ein Call. Dazwischen Wäsche.', 'Meine liebste Arbeitskollegin? Die Kaffeemaschine. Elin hat sie Bruno getauft.', 'Ich hab heute schon vier Kaffee getrunken. Oder fünf. Timo hat mitgezählt, aber er kann nur bis fünf.',
+      'Elin übt jeden Abend Gitarre. Drei Akkorde. Immer dieselben drei. Ich kann sie im Schlaf.', 'Timo will nur noch Teigwaren mit Käse. Ich hab ihm Broccoli versteckt. Er hat ihn gefunden.']));
+    if (c === 2) await this.kaffee(true);
     if (c === 1) await sayP('isa', 'Bars sind in der Oberstadt: TNT, El Mosquito, Craftwerk. In der Unterstadt das Rössli und La Fuga. Essen: Mühle oder Wilder Mann. Einkaufen im Surseepark beim Bahnhof. Und zum See geht\'s hinten raus über den Beckenhof und die Münstervorstadt.');
   },
   async kidTalk(k) {
     const st = G.S.stage;
-    const c = await askP(k, k === 'elin' ? pick(['Ich schreib alles ins Notizbuch!', 'Detektive brauchen Zvieri. Nur so als Tipp.', 'Wenn wir die Maske finden, darf ich sie dann mal anprobieren?']) : pick(['Ich glaub, der Täter ist der Achterbahn-Mann. Der hat eine Sonnenbrille. Im Dezember!', 'Darf ich nachher auf die Putschibahn?', 'Ich bin der Assistent. Assistent Timo.']), ['Hast du einen Tipp?', 'Lauft mal kurz alleine heim', 'Weiter']);
-    if (c === 0) await this.giveHint(true);
-    if (c === 1) { this.st().follow = 0; G.npcs = G.npcs.filter((n) => !n.follower); UI.toast('Elin und Timo gehen heim. Bei Isa in der Münstervorstadt holst du sie wieder ab.'); }
+    const opts = k === 'elin' ? ['Hast du einen Tipp?', 'Erzähl mal was!', 'Rechnen üben', 'Lauft mal kurz alleine heim', 'Weiter'] : ['Hast du einen Tipp?', 'Erzähl mal was!', 'Lauft mal kurz alleine heim', 'Weiter'];
+    const c = await askP(k, k === 'elin' ? pick(['Ich schreib alles ins Notizbuch!', 'Detektive brauchen Zvieri. Nur so als Tipp.', 'Wenn wir die Maske finden, darf ich sie dann mal anprobieren?']) : pick(['Ich glaub, der Täter ist der Achterbahn-Mann. Der hat eine Sonnenbrille. Im Dezember!', 'Darf ich nachher auf die Putschibahn?', 'Ich bin der Assistent. Assistent Timo.']), opts);
+    const pick2 = opts[c];
+    if (pick2 === 'Hast du einen Tipp?') await this.giveHint(true);
+    if (pick2 === 'Erzähl mal was!') await sayP(k, this.kidFact(k));
+    if (pick2 === 'Rechnen üben') await this.rechnen();
+    if (pick2 === 'Lauft mal kurz alleine heim') { this.st().follow = 0; G.npcs = G.npcs.filter((n) => !n.follower); UI.toast('Elin und Timo gehen heim. Bei Isa in der Münstervorstadt holst du sie wieder ab.'); }
   },
   async cousinsTalk(k) {
     if (G.S.stage === 's_strahl' && !hasInv('strahl')) return this.schatzkiste();
@@ -635,7 +651,13 @@ Object.assign(Sur, {
       UI.toast('Metalldetektor erhalten. Römer-Vicus westlich der Altstadt: fünf Münzen sind versteckt.');
       return;
     }
-    await sayP(k, k === 'thierry' ? pick(['Ich bin ein Schatzsucher!', 'Ich kann schon bis hundert zählen. Fast.', 'Gänse sind lustig. Die machen so: GAAA!']) : pick(['Meine Schatzkiste ist geheim.', 'Ich hab einen Stein gefunden, der aussieht wie ein Herz.', 'Spielst du mit uns Fangis?']));
+    if (k === 'thierry') {
+      const c = await askP('thierry', pick(['Ich bin ein Schatzsucher!', 'Ich kann schon bis hundert zählen. Fast.', 'Gänse sind lustig. Die machen so: GAAA!', 'Weisst du, was ein Kreiselheuer ist? Ich schon!']), ['Erzähl was vom Bauernhof!', 'Bauernhof-Quiz', 'Tschüss']);
+      if (c === 0) await sayP('thierry', this.kidFact('thierry'));
+      if (c === 1) await this.bauernQuiz();
+      return;
+    }
+    await sayP(k, pick(['Meine Schatzkiste ist geheim.', 'Ich hab einen Stein gefunden, der aussieht wie ein Herz.', 'Spielst du mit uns Fangis?', this.kidFact('louve'), this.kidFact('louve')]));
   },
   async friendTalk(id) {
     const s = this.st();
@@ -718,6 +740,10 @@ Object.assign(Sur, {
       billettautomat: 'Ein Billettautomat der SBB. „Sursee → Luzern, 2. Klasse“ blinkt auf dem Bildschirm. Ein anderes Mal.',
       dreiklang: pick(['Der Dreiklang gegenüber vom Surseepark: drei helle Bauten – ein Hochhaus, ein kleinerer Turm und dazwischen ein langer, flacher Riegel. Unten Läden und Büros, oben Wohnungen mit Blick über das Städtli.', 'Vom Hochhaus des Dreiklangs sieht man bestimmt bis zum Sempachersee. Der Lift ist leider nur für Bewohner.', 'Zwischen den drei Bauten zieht der Wind durch. Ein Velokurier flitzt vorbei.']),
       stadthof: pick(['Der Stadthof am Martigny-Platz: ein heller Betonwürfel mit hohen Pfeilern, oben eine offene Pergola über der Dachterrasse. Unten Reisebüro, Coiffeur, Versicherung und Praxen.', 'Im Schaufenster vom Reisebüro hängt ein Plakat: „Innsbruck – Weihnachtsmärkte und Bergisel“. Du lachst kurz.', 'Unter den Arkaden des Stadthofs ist es windstill. Ein Velo lehnt an einem der weissen Pfeiler.']),
+      homeoffice: `Isas Homeoffice: Laptop mit einem Videocall voller kleiner Gesichter, ein Headset, Post-its mit „Call 14:00!!“. Daneben ${3 + ((this.st().isaKaffee || 0) % 4)} leere Kaffeetassen.`,
+      scheune: 'Die Scheune vom Gänsehof: ein Traktor mit Frontlader, ein Ladewagen, ein Kreiselheuer und ein Schwader. Im Dezember ruhen die Maschinen.',
+      kita: 'Die Kita beim Märtplatz: bunte Fenster mit Fingerfarben, Gummistiefel in allen Grössen vor der Tür. Hier geht Timo hin.',
+      poller: this.pollerBroken() ? `Der Versenkpoller beim Untertor liegt schief. Daneben ein Hütchen und ein Zettel vom Werkhof: „Defekt. Schon wieder.“ Am Laternenpfahl führt jemand eine Strichliste: ${'|'.repeat(Math.min(30, 11 + (this.st().pollerN || 0)))}` : 'Ein Versenkpoller beim Untertor. Er fährt hoch, damit keine Autos in die Altstadt fahren. Leider merken das nicht alle Autos rechtzeitig. Und das Postauto auch nicht.',
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
       kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
@@ -1239,6 +1265,7 @@ Object.assign(Sur, {
     if (!pay('chf', 15)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
     s.velo = 1; G.player.velo = true; achieve('su_velofahrer');
     UI.toast('🚲 Velo gemietet! In Häusern stellst du es automatisch ab.');
+    if (this.followOk()) await kidSay('timo', 'VELO! Ich fahr mit meinem eigenen! Ohne Stützräder! Schau, Elin, ohne Hände! … Fast.');
   },
   async chilbi(kind) {
     if (!isOpen('chilbi')) { await Story.say(null, 'Die Chilbi ist zu. Offen 10–24 Uhr.'); return; }
@@ -1309,6 +1336,99 @@ Object.assign(Sur, {
     await Story.say(null, `Eine römische Münze! Grün angelaufen, mit einem Kaiserkopf. (${n}/5)`);
     if (n >= 5) { achieve('su_roemer'); await Story.say(null, 'Alle fünf! Bring sie dem Museum Sankturbanhof – die Vitrine mit den leeren Münzplätzen wartet. (Die Münzen liegen jetzt dort, mit deinem Namen.)'); }
   },
+  /* ---------- Familie: Sprüche, Rechnen, Kita, Gitarre, Kaffee, Bauernhof-Quiz ---------- */
+  kidFact(k) {
+    const papa = playerIsCuche() ? 'deine' : 'Papis', wk = dayOf(G.S.time) % 7 > 2 && hourOf(G.S.time) < 12;
+    const F = {
+      elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', `Die besten Pizzas der Welt sind ${papa}. Besser als in der Mühle. Aber sag das nicht dem Gino.`,
+        'Wenn ich gross bin, werd ich Detektivin. Oder Gitarristin. Oder Detektivin mit Gitarre.', 'Timo hat heute wieder nur Teigwaren mit Käse gegessen. Zum Zmorge!', 'Mami trinkt so viel Kaffee, dass die Kaffeemaschine einen Namen hat. Sie heisst Bruno.',
+        wk ? 'Eigentlich hätte ich jetzt Schule im St. Martin. Aber Mami sagt, Detektivarbeit ist auch Bildung.' : 'In der Pause im St. Martin spielen wir immer Detektiv. Jetzt bin ich eine echte!'],
+      timo: ['Ich geh in die Kita beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
+        'Wenn ich gross bin, fahr ich Postauto. Und dann fahr ich auch in den Poller. KLONK!', 'Mami hat heute schon fünf Kaffee getrunken. Ich hab gezählt. Bis fünf kann ich.', 'Elin spielt Gitarre. Immer das gleiche Lied. Ich tanz trotzdem.'],
+      thierry: ['Wir wohnen in Schenkon, gleich neben Sursee. Ich und Louve. Von uns aus sieht man den See!', 'Ein Kreiselheuer wirbelt das Gras durch die Luft, damit es schneller trocknet. Dann wird es Heu.', 'Ein Mähdrescher mäht das Korn und drischt es gleich. Zwei Maschinen in einer!',
+        'Mit dem Schwader macht man aus dem Heu lange Reihen. Dann kommt die Ballenpresse und macht Ballen. Rund oder eckig!', 'Der Traktor vom Gänsehof hat einen Frontlader. Damit hebt er Siloballen wie nichts.', 'Mit dem Ladewagen holt man das Gras vom Feld. Mit dem Güllenfass bringt man … das riecht man dann.',
+        'Ein Melkroboter melkt die Kühe, wann sie wollen. Auch um drei Uhr in der Nacht!'],
+      louve: ['Wir wohnen in Schenkon. Thierry ist mein Bruder. Er redet die ganze Zeit von Traktoren. DIE GANZE ZEIT.', 'Im Sommer gehen wir in die Seebadi Schenkon. Ich kann schon tauchen!', 'Thierry hat seinem Velo einen Anhänger gebaut. Er sagt, das ist ein Ladewagen.'],
+    };
+    return pick(F[k] || ['…']);
+  },
+  async rechnen() {
+    const task = () => {
+      const plus = Math.random() < 0.5;
+      let a, b, r;
+      if (plus) { a = 1 + Math.floor(Math.random() * 15); b = 1 + Math.floor(Math.random() * (20 - a)); r = a + b; } else { a = 5 + Math.floor(Math.random() * 16); b = 1 + Math.floor(Math.random() * a); r = a - b; }
+      const opts = new Set([r]); for (const d of [1, -1, 2, -2, 3, 10, -10]) { if (opts.size >= 4) break; const v = r + d; if (v >= 0 && v <= 20) opts.add(v); }
+      return { q: `${a} ${plus ? '+' : '−'} ${b}`, r, opts: shuffle([...opts]) };
+    };
+    await sayP('elin', 'Okay! Ich bin die Lehrerin. Drei Rechnungen. Plus und Minus bis 20. Ohne Finger!');
+    let ok = 0;
+    for (let i = 0; i < 3; i++) {
+      const t = task();
+      const c = await askP('elin', `Rechnung ${i + 1}: Wie viel ist ${t.q}?`, t.opts.map(String));
+      if (t.opts[c] === t.r) { ok++; await sayP('elin', pick(['Richtig! Goldsternli!', 'Stimmt! Du bist fast so schnell wie ich.', 'Bravo! Die Lehrerin vom St. Martin wär stolz.'])); }
+      else await sayP('elin', `Nöö. ${t.q} gibt ${t.r}. Zähl nochmal mit den Fingern. Aber heimlich.`);
+    }
+    if (ok === 3) { achieve('su_rechnen'); mood(6); await sayP('elin', 'Drei von drei! Du darfst in die zweite Klasse. Ich mal dir ein Goldsternli auf die Hand.'); }
+    else await sayP('elin', `${ok} von 3. Morgen üben wir nochmal. Timo, du bist der Nächste!`);
+    if (this.followOk() && ok < 3) await kidSay('timo', 'Ich weiss eins: Eins plus eins gibt … KÄSE!');
+  },
+  async kita() {
+    const s = this.st(), h = hourOf(G.S.time), open = dayOf(G.S.time) % 7 > 2 && h >= 7 && h < 18;
+    if (!open) { await Story.say(null, 'Die Kita beim Märtplatz ist zu. Vor der Tür stehen kleine Gummistiefel in einer Reihe.'); if (this.followOk()) await kidSay('timo', 'Lejan ist bestimmt zu Hause. Am Montag zeig ich ihm meinen Detektivausweis!'); return; }
+    await Story.say('Kita-Betreuerin', 'Grüezi! Ah, Timos Familie. Lejan fragt schon den ganzen Tag, wo Timo ist.');
+    if (this.followOk()) {
+      await kidSay('timo', 'LEJAN!'); await sayP('lejan', 'TIMO! Bist du jetzt Detektiv? Hast du eine Lupe?');
+      await kidSay('timo', 'Ich hab einen Papi mit einem Notizbuch. Das ist besser als eine Lupe.');
+      await sayP('lejan', 'Ich hab heute Teigwaren mit Käse gegessen!'); await kidSay('timo', 'ICH AUCH! Gestern! Und vorgestern!');
+      achieve('su_kita'); mood(5);
+      if (!s.lejanTip && suAt('s_faehrten') && !suAt('s_gans')) { s.lejanTip = 1; await sayP('lejan', 'Mein Papi hat gesagt, an der Chilbi hat einer ganz viele Jetons von der Achterbahn verloren. Ein Mann mit einem roten Mantel.'); this.note('lejan', 'Lejan (Kita): An der Chilbi hat ein Mann im roten Mantel viele Achterbahn-Jetons verloren.'); }
+    } else await sayP('lejan', 'Wo ist Timo? Ich hab ihm ein Bild gemalt. Ein Postauto, das in einen Poller fährt!');
+  },
+  async gitarre() {
+    const h = hourOf(G.S.time), home = h >= 18 || h < 8 || this.followOk();
+    if (!home) { await Story.say(null, 'Elins Gitarre lehnt am Regal. Kleine Gitarre, grosse Pläne. Auf dem Hals kleben Sternli-Kleber.'); return; }
+    await sayP('elin', 'Hörst du mir zu? Ich spiel dir mein Lied vor. Es hat drei Akkorde!');
+    for (const [k, f] of [[0, 196], [1, 262], [2, 294], [3, 196]]) { Snd.tone(f, 0.5, 'triangle', 0.08, k * 0.55); Snd.tone(f * 1.25, 0.5, 'triangle', 0.05, k * 0.55 + 0.02); Snd.tone(f * 1.5, 0.5, 'triangle', 0.05, k * 0.55 + 0.04); }
+    await sleep(2400);
+    await sayP('elin', 'G, C, D und nochmal G! Im St. Martin spiel ich das am Weihnachtssingen.');
+    if (h < 20 || this.followOk()) await kidSay('timo', 'Ich tanz dazu! Wie ein Traktor!');
+    mood(6);
+  },
+  async kaffee(withIsa) {
+    const s = this.st(); s.isaKaffee = (s.isaKaffee || 0) + 1;
+    consume('kaffee'); Snd.sfx('gulp');
+    const n = 3 + s.isaKaffee;
+    if (withIsa || this.isaWhere().map === G.map.id) await sayP('isa', pick([`Für mich ist das heute der ${n}. Kaffee. Zähl nicht mit, Timo!`, 'Ohne Kaffee kein Homeoffice. Ohne Homeoffice kein Kaffee. Ein Teufelskreis. Ein schöner.', 'Bruno, die Kaffeemaschine, ist das zuverlässigste Teammitglied, das ich habe.']));
+    else UI.toast('☕ Bruno, die Kaffeemaschine, brummt zufrieden.');
+  },
+  async bauernQuiz() {
+    const Q = [
+      ['Wozu braucht man einen Kreiselheuer?', 'Gras zum Trocknen wenden und verteilen', ['Kühe kämmen', 'Schnee räumen']],
+      ['Was macht ein Schwader?', 'Heu zu langen Reihen zusammenrechen', ['Butter machen', 'Gänse zählen']],
+      ['Womit holt man Gras vom Feld?', 'Mit dem Ladewagen', ['Mit dem Postauto', 'Mit dem Pedalo']],
+      ['Was macht ein Mähdrescher?', 'Getreide mähen und dreschen', ['Gras mähen und duschen', 'Milch abfüllen']],
+      ['Was hebt der Frontlader vorne am Traktor?', 'Ballen und schwere Lasten', ['Den Bauern ins Bett', 'Die Kühe zum Melken']],
+      ['Was macht ein Melkroboter?', 'Die Kühe melken, wann sie wollen', ['Gänse füttern', 'Traktor fahren']],
+      ['Was macht die Ballenpresse?', 'Heu oder Stroh zu Ballen pressen', ['Äpfel zu Saft pressen', 'Hosen bügeln']],
+    ];
+    await sayP('thierry', 'Bauernhof-Quiz! Drei Fragen. Ich weiss ALLES über Landmaschinen.');
+    let ok = 0;
+    for (const [q, r, w] of shuffle(Q.slice()).slice(0, 3)) {
+      const opts = shuffle([r, ...w]);
+      const c = await askP('thierry', q, opts);
+      if (opts[c] === r) { ok++; await sayP('thierry', pick(['Richtig! Du könntest Bauer werden.', 'Genau! Das hat mir der Bauer vom Gänsehof gezeigt.', 'Stimmt! Ich hab das schon mit drei gewusst.'])); }
+      else await sayP('thierry', `Falsch! ${r}. Das weiss doch jedes Kind. Also ich.`);
+    }
+    if (ok === 3) { achieve('su_bauer'); mood(5); await sayP('thierry', 'Alles richtig! Du darfst mal mit mir Traktor fahren. Also, auf dem Spielplatz. Auf dem Wipptraktor.'); }
+    else await sayP('louve', 'Thierry, lass ihn. Nicht jeder muss wissen, was ein Schwader ist.');
+  },
+  async scheune() {
+    await Story.say(null, 'Die Scheune vom Gänsehof: ein Traktor mit Frontlader, ein Ladewagen, ein Kreiselheuer und ein Schwader. Im Dezember ruhen die Maschinen.');
+    await UI.say(SU_P.thierry, '📱 Bist du beim Gänsehof? Schau den Kreiselheuer an! Der hat sechs Kreisel! SECHS! … Ruf zurück, wenn du ein Quiz willst.');
+  },
+  /* ---------- Der Poller beim Untertor ---------- */
+  pollerBroken() { return this.st().pollerDay === dayOf(G.S.time); },
+  _poller: { up: 0 },
   async sportplatz() {
     const c = await Story.ask(null, 'Der rote Allwetterplatz neben der Stadthalle: Tartanbahn, Handballtore, ein paar vergessene Hütchen.', ['Sackgumpe-Rennen mit den Kindern', 'Ein paar Runden joggen', 'Weitergehen']);
     if (c === 0) {
@@ -1367,6 +1487,7 @@ Object.assign(Sur, {
     { id: 'gans', cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 17; } },
     { id: 'nebel', cond: () => { const h = hourOf(G.S.time); return h >= 6 && h < 11; } },
     { id: 'drohne', cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 16 && !!FRIENDS.roemu && !Sur.st().direct; } },
+    { id: 'poller', cond: () => { const h = hourOf(G.S.time); return h >= 7 && h < 21 && !Sur.pollerBroken(); } },
     { id: 'brand', cond: () => { const h = hourOf(G.S.time); return h >= 8 && h < 23 && !!Sur.st().brandDone; } },
   ],
   maybeEvent() {
@@ -1556,6 +1677,56 @@ Object.assign(Sur, {
       },
       lights: () => { const L = []; const burn = B.fl.reduce((u, v) => u + v, 0); if (burn > 0) L.push({ x: HX + 32, y: HB - 26, r: 40 + burn * 8, c: '#ff8a3a' }); L.push({ x: B.truck.x, y: B.truck.y - 20, r: 26, c: Math.floor(G.t * 6) % 2 ? '#3a8aff' : '#ff5a5a' }); return L; },
       hudText: () => B.phase === 'alarm' ? (B.t < B.truck.go ? 'Feuer in der Unterstadt! Die Feuerwehr wird alarmiert …' : 'Das Löschfahrzeug ist unterwegs – lauf in die Unterstadt!') : B.phase === 'loeschen' ? `Löschen! Vor dem Haus A drücken · Flammen: ${B.fl.filter((v) => v > 0).length}/8` : 'Die Drehleiter fährt aus …',
+    };
+  },
+  /* Das Postauto (oder ein Auto) fährt beim Untertor in den Versenkpoller */
+  async ev_poller() {
+    const s = this.st(), p = G.player, bus = Math.random() < 0.6;
+    const V = { x: 20 * 16, y: 38.6 * 16, v: 70, hit: false, t: 0, back: 0 }, PX = 57 * 16 + 8;
+    this._poller.up = 0; this._poller.v = V;
+    const near = () => Math.hypot(p.x - PX, p.y - V.y) < 230;
+    G.live = {
+      update: (dt) => {
+        V.t += dt;
+        if (!V.hit) {
+          V.x += V.v * dt;
+          if (V.x > 49 * 16) this._poller.up = Math.min(1, this._poller.up + dt * 1.5);
+          if (V.x + 26 >= PX - 6 && this._poller.up >= 1) {
+            V.hit = true; Snd.sfx('hit'); Snd.tone(70, 0.4, 'square', 0.12); G.fx.shake = Math.max(G.fx.shake || 0, 0.5);
+            s.pollerDay = dayOf(G.S.time); s.pollerN = (s.pollerN || 0) + 1;
+            (async () => {
+              G.busy++;
+              try {
+                if (near()) {
+                  achieve('su_poller');
+                  await Story.say(bus ? 'Postauto-Chauffeur' : 'Fahrer mit Zürcher Nummer', bus ? pick(['Jetzt chunnt dä Poller scho wieder ufe! Ich bi doch s Postauto!', 'Das isch dä dritt Poller die Wuche. Ich glaub, dä mag mi nöd.', 'Dä Poller isch neu? Dä Poller isch IMMER neu!']) : pick(['Das Navi hat gesagt: geradeaus!', 'Wieso steht da plötzlich ein Pfosten? Der war doch eben noch im Boden!', 'Ich wollte nur kurz in die Altstadt parkieren …']));
+                  if (this.followOk()) { await kidSay('timo', 'KLONK! Nochmal! Nochmal!'); await kidSay('elin', 'Mami sagt, dieser Poller hat mehr Unfälle als die Achterbahn.'); }
+                  await Story.say('Mann vom Werkhof', pick(['(stellt ein Hütchen hin) Ich hab mir schon einen Stempel machen lassen: „Poller defekt“.', '(seufzt) Wir bestellen die Poller inzwischen im Zehnerpack.', '(notiert) Poller beim Untertor. Wieder. Ich nehm gleich zwei mit.']));
+                } else UI.toast(bus ? '💥 KLONK! Beim Untertor ist das Postauto in den Poller gefahren. Schon wieder.' : '💥 KLONK! Beim Untertor ist ein Auto in den Poller gefahren. Schon wieder.');
+              } finally { G.busy--; }
+            })();
+          }
+        } else if (!G.busy) {
+          V.back += dt; V.x -= 40 * dt;
+          if (V.back > 5) { G.live = null; UI.toast(`🚧 Poller-Strichliste beim Untertor: ${11 + s.pollerN} Treffer. Der Werkhof ist unterwegs.`); }
+        }
+      },
+      draw: (c, cx, cy, tt) => {
+        const x = Math.round(V.x - cx), y = Math.round(V.y - cy);
+        E(c, x, y + 2, bus ? 26 : 16, 3, 'rgba(0,0,0,0.25)');
+        if (bus) {
+          R(c, x - 26, y - 22, 52, 20, '#f2c200'); R(c, x - 26, y - 22, 52, 2, '#fff2a0'); R(c, x - 24, y - 18, 40, 6, '#2a3a4a'); for (let k = 0; k < 5; k++) R(c, x - 24 + k * 8, y - 18, 1, 6, '#f2c200');
+          R(c, x + 18, y - 18, 6, 12, '#2a3a4a'); R(c, x - 20, y - 10, 34, 3, '#c8302a'); pxText(c, 'POSTAUTO', x - 18, y - 9, '#ffffff');
+          for (const wx of [-16, 14]) { E(c, x + wx, y - 2, 4, 4, '#1a1a1e'); E(c, x + wx, y - 2, 2, 2, '#8a8e94'); }
+          if (V.hit) R(c, x + 24, y - 12, 2, 4, '#5a5e64');
+        } else {
+          R(c, x - 16, y - 12, 32, 10, '#e8e4dc'); R(c, x - 10, y - 18, 18, 7, '#e8e4dc'); R(c, x - 8, y - 17, 6, 5, '#7ac0e0'); R(c, x + 1, y - 17, 6, 5, '#7ac0e0'); R(c, x + 14, y - 9, 2, 2, '#ffe080');
+          for (const wx of [-10, 10]) { E(c, x + wx, y - 2, 3, 3, '#1a1a1e'); }
+          pxText(c, 'ZH', x - 13, y - 9, '#2a2a2e');
+        }
+        if (V.hit && Math.floor(tt * 4) % 2 && V.back < 1) pxText(c, 'KLONK!', x + 10, y - 34, '#c8302a');
+      },
+      hudText: () => (V.hit ? 'KLONK! Der Poller beim Untertor …' : (bus ? 'Das Postauto fährt Richtung Untertor …' : 'Ein Auto fährt Richtung Untertor …')),
     };
   },
   /* Römus Drohne stürzt ab */

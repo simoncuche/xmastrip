@@ -553,6 +553,7 @@ const Story = {
     nebel: ['Nebel über Sursee', 'Der See schickt seinen Dezembernebel'],
     drohne: ['Absturz!', 'Römus Drohne verliert die Kontrolle'],
     brand: ['Feuer!', 'In der Unterstadt von Sursee brennt ein Haus'],
+    poller: ['Klonk!', 'Beim Untertor fährt wieder einer in den Poller'],
   },
   /* Zähler erlebter Ereignisse; ältere Spielstände übernehmen die Zähler des Tagesplans und die Apokalypse */
   evSeen() {
