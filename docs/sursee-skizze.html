@@ -43,13 +43,30 @@ th { font-family: var(--f-sign); font-weight: 600; color: var(--dim); text-trans
 td code { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--amber); }
 .tbl { overflow-x: auto; background: var(--board); border: 1px solid var(--line); border-radius: 12px; }
 .src { font-size: 13px; color: var(--dim); }
+.case { display: grid; gap: 12px; }
+.case h3 { font-family: var(--f-sign); font-weight: 700; font-size: 16px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink); margin: 6px 0 0; }
+.case p { margin: 0; max-width: 72ch; }
+.premise { background: var(--board-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 16px; }
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.cast div { background: var(--board-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; min-width: 0; }
+.cast b { display: block; color: var(--amber); font-family: var(--f-sign); font-size: 15px; }
+.cast span { color: var(--dim); font-size: 14px; }
+.cast .sus b { color: #ff9a80; }
+.acts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: act; }
+.acts li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 12px; background: var(--board); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.acts li::before { counter-increment: act; content: "Akt " counter(act); font-family: var(--f-pixel); font-weight: 700; color: var(--amber); font-size: 15px; }
+.acts b { color: var(--ink); }
+.acts small { display: block; color: var(--dim); font-size: 13px; margin-top: 3px; }
+.chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; }
+.chain span { background: #22344f; border-radius: 6px; padding: 3px 8px; }
+.chain i { color: var(--dim); font-style: normal; }
 .src a { color: var(--dim); }
 a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 </style>
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 16 zur Review</span>
+    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 17 zur Review</span>
     <h1>Sursee-Krimi</h1>
     <p class="lead">Nach der Heimreise aus Innsbruck ist das Spiel nicht mehr zu Ende. Am Bahnhof Luzern fährt auf Gleis 2 die S-Bahn nach Sursee, dem Sempachersee entlang. In Sursee beginnt der Detektiv-Krimi. Unten stehen die Karten aus der Vogelperspektive, Norden ist immer oben. Rote Nummern markieren Stellen, bei denen ich mir nicht sicher bin.</p>
   </header>
@@ -259,10 +276,66 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     </div>
   </section>
 
+  <section aria-labelledby="h-fall">
+    <h2 id="h-fall">Der Fall · Vorschlag</h2>
+    <div class="case">
+      <p class="premise"><b>„Die Ente Nr. 1256“</b> · Am Abend nach der Heimreise holen Isa, Elin und Timo dich am Bahnhof Sursee ab, mit Thierry und Louve. Auf dem Märtplatz läuft die Chilbi. In der Nacht verschwindet aus der Ausstellung im Sankturbanhof das alte Surseer Stadtsiegel, das ganze Städtli redet davon. Am nächsten Morgen fischen Elin und Timo beim Untertor eine Gummiente aus der Sure: Nummer 1256, das Jahr, in dem Sursee zum ersten Mal Stadt genannt wurde. In ihrem Bauch steckt ein Zettel mit einem Rätsel. Jemand verschickt Nachrichten über die Sure.</p>
+
+      <h3>Die Idee dahinter</h3>
+      <p>Die Sure fliesst in zwei Armen durch die Unterstadt und durch den Ehret-Park und trifft sich beim Untertor wieder. Die Diebe nutzen das: Wer im Ehret-Park eine Ente ins Wasser setzt, kann sie beim Wilden Mann wieder herausfischen, ohne gesehen zu werden. So hat die echte Karte von Sursee eine Rolle im Fall. Das Siegel selbst ist erfunden.</p>
+
+      <h3>Mitspielende</h3>
+      <div class="cast">
+        <div><b>Du</b><span>Detektiv, allein unterwegs, mit Notizbuch im Handy. Spielst du Cuche, sagen die Kinder „Papi“.</span></div>
+        <div><b>Isa</b><span>Kennt in Sursee alle. Sie erkennt die Handschrift auf dem Rätselzettel und liefert den entscheidenden Hinweis.</span></div>
+        <div><b>Elin und Timo</b><span>Junior-Detektive bei Tageslicht: finden die Ente, kennen jeden Schleichweg im Städtli, sind beim Finale vom Ufer aus dabei.</span></div>
+        <div><b>Thierry und Louve</b><span>Die Kleinen. Sie haben im Ehret-Park einen „glänzigen Schatz“ gefunden und in ihrer Schatzkiste versteckt. Das ist die Wende im Fall.</span></div>
+        <div><b>Die Jungs</b><span>Kommen je nach Spur dazu, siehe unten.</span></div>
+      </div>
+
+      <h3>Verdächtige (erfunden)</h3>
+      <div class="cast">
+        <div class="sus"><b>Rocco Gantenbein</b><span>Betreibt die Achterbahn auf der Chilbi. Hat Schulden und ist nachts noch auf dem Platz.</span></div>
+        <div class="sus"><b>Fredi Fässler</b><span>Regisseur im Stadttheater. Probt „Die Hexe vom Diebenturm“ und sucht echte Requisiten.</span></div>
+        <div class="sus"><b>Dr. Vreni Blum</b><span>Führt durch den Sankturbanhof. Ist besessen von den Jungsteinzeit-Funden auf dem Gamma-Inseli.</span></div>
+        <div class="sus"><b>Mänu Zeller</b><span>Schatzsucher mit Metalldetektor, verbotenerweise im Zellmoos unterwegs.</span></div>
+      </div>
+
+      <h3>Ablauf</h3>
+      <ol class="acts">
+        <li><span><b>Ankunft und Chilbi</b> · S-Bahn ab Luzern Gleis 2 am Sempachersee entlang, Empfang am Bahnhof, Weg über die Bahnhofstrasse ins Städtli. Mit den Kindern aufs Riesenrad: Von oben siehst du ein Licht im eigentlich geschlossenen Diebenturm.<small>Bahnhof · Surseepark · Martigny-Platz · Märtplatz</small></span></li>
+        <li><span><b>Der Diebstahl</b> · Am Morgen ist das Siegel weg. Tatort im Sankturbanhof, erste Befragungen, die Ente Nr. 1256 beim Untertor. Das Rätsel führt zu „wo die vier Herren tagen“.<small>Sankturbanhof · Untertor · Wilder Mann · Vierherrenplatz</small></span></li>
+        <li><span><b>Spuren im Städtli</b> · Weitere Enten, Fussspuren am Sure-Arm in der Unterstadt, ein Theaterprogramm im Diebenturm. Isa erkennt die Handschrift. Verhöre im Rathaus und im Stadttheater beim Obertor.<small>Unterstadt · Diebenturm · Rathaus · Stadttheater · Ehret-Park</small></span></li>
+        <li><span><b>Die Wende</b> · Louve zeigt stolz ihren Schatz: das Siegel. Die Diebe hatten es im Brunnen im Ehret-Park zwischengelagert. Jetzt weisst du, dass zwei zusammenarbeiten und wann sie es holen wollten. Du legst ihnen eine falsche Ente in die Sure.<small>Ehret-Park · Brücke Badstrasse</small></span></li>
+        <li><span><b>Jagd über die Chilbi</b> · Nachts tappt einer in die Falle und flüchtet über den Märtplatz, mitten durch die Achterbahn. Er entkommt Richtung Beckenhof und Münstervorstadt zum See.<small>Märtplatz · Beckenhof · Münstervorstadt</small></span></li>
+        <li><span><b>Finale am Triechter</b> · Mit dem Elektroboot vom Quai hinaus zum Gamma-Inseli, wo die Ware übergeben werden soll. Die Kinder schauen mit Isa vom Strandbad aus zu. Danach kommt die Anklage: Du nennst Täter und Beweise.<small>Quai · Triechter · Gamma-Inseli</small></span></li>
+        <li><span><b>Abspann</b> · Ehrung im Rathaus, Elin, Timo, Thierry und Louve werden Junior-Detektive. Ein Bier im Wilden Mann mit den Jungs, letzte Fahrt auf dem Riesenrad über Sursee.<small>Rathaus · Wilder Mann · Märtplatz</small></span></li>
+      </ol>
+
+      <h3>Wer von den Jungs wann dazukommt</h3>
+      <div class="cast">
+        <div><b>Cuche</b><span>Der Papi von Elin und Timo, oft dabei, rechnet jede Spur durch. Spielst du ihn selbst, übernimmt Lexx seine Rolle.</span></div>
+        <div><b>Yännu</b><span>Hat nachts beim Diebenturm geraucht und etwas gesehen. Sagt es aber erst nach der dritten Zigarette.</span></div>
+        <div><b>Lexx</b><span>Der Anwalt hilft beim Verhör und weiss, was die Polizei darf.</span></div>
+        <div><b>Römu</b><span>Der Pilot macht mit der Drohne ein Luftbild vom Städtli. Das ist die Karte aus dieser Skizze.</span></div>
+        <div><b>Didu</b><span>Sitzt im Wilden Mann und hat beim Untertor jemanden Enten fischen sehen.</span></div>
+        <div><b>Hoshy</b><span>Steuert beim Finale das Elektroboot zum Gamma-Inseli.</span></div>
+        <div><b>Kusi</b><span>Lenkt einen Verdächtigen auf der Chilbi ab, frech wie immer.</span></div>
+      </div>
+
+      <h3>Spielmechanik</h3>
+      <div class="chain"><span>Notizbuch mit Spuren und Verdächtigen</span><i>+</i><span>Verhöre mit Fragenwahl</span><i>+</i><span>Spuren kombinieren</span><i>+</i><span>Enten aus der Sure fischen</span><i>+</i><span>Riesenrad-Ausblick</span><i>+</i><span>Verfolgung über die Chilbi</span><i>+</i><span>Bootsfahrt zum Gamma-Inseli</span><i>→</i><span>Anklage: Täter und Beweise nennen</span></div>
+      <p>Wer falsch anklagt, darf noch einmal suchen, verliert aber Zeit und Ansehen bei der Polizei. Die Lösung bleibt hier noch offen, damit du sie selbst entdecken kannst, wenn du willst.</p>
+    </div>
+  </section>
+
   <section aria-labelledby="h-fragen">
     <h2 id="h-fragen">Fragen für die Review</h2>
     <ol class="qs">
-      <li><span><b>Krimi:</b> Spielst du allein als Detektiv, oder ist die Gruppe dabei? Hast du schon eine Idee für den Fall?</span></li>
+      <li><span><b>Gefällt dir der Fall?</b> Der Titel „Die Ente Nr. 1256“, das Siegel als Beute und die Idee mit den Enten über die Sure.</span></li>
+      <li><span><b>Täter:</b> Soll ich die Lösung festlegen und dir verraten, oder willst du sie beim Spielen selbst herausfinden?</span></li>
+      <li><span><b>Familie:</b> Passen die Rollen von Isa, Elin, Timo, Thierry und Louve? Gibt es etwas, das sie besonders gern machen und das in die Geschichte soll?</span></li>
+      <li><span><b>Länge:</b> Etwa zwei Spieltage in Sursee mit sieben Akten. Ist das gut, oder soll es kürzer oder länger werden?</span></li>
     </ol>
   </section>
 
