@@ -5062,13 +5062,24 @@ MAP_BUILDERS.sursee = () => {
   for (let x = 96; x < 125; x += 4) m.light(x * 16, 16 * 16, 34, ['#ff8ad0', '#ffd27a', '#80e0ff'][x % 3]);
   /* Obere Häuserreihe der Oberstadt (Fassaden zur Gasse) */
   m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], drawH: 78, roofH: 34, wall: '#f6f4ee', roof: '#8a4a32', dormers: 1, untertor: true })); m.solid(53, 31, 3, 6);
+  /* Schützenhaus am Untertor, nach Foto: Walmdach, Fachwerk-Obergeschoss mit rot-weiss geflammten Läden, Bogenhalle unten */
   m.add(mkObj(53, 41, 4, 4, 26, (c, Wd, Hd) => {
-    for (let k = 0; k < 22; k++) R(c, 2 + k * 0.6, k, Wd - 4 - k * 1.2, 1, k % 3 ? '#6a3a2a' : '#5a3424');
-    R(c, 2, 22, Wd - 4, Hd - 22, '#f4efe2');
-    for (let xx = 2; xx < Wd - 2; xx += 10) R(c, xx, 22, 2, Hd - 38, '#a8301e'); R(c, 2, 22, Wd - 4, 2, '#a8301e'); R(c, 2, 38, Wd - 4, 2, '#a8301e'); R(c, 2, Hd - 18, Wd - 4, 2, '#a8301e');
-    for (let xx = 4; xx < Wd - 6; xx += 10) { line(c, xx, 24, xx + 8, 38, '#a8301e'); R(c, xx + 2, 27, 5, 7, '#3e4c5e'); for (let k = 0; k < 7; k++) P(c, xx + 1, 27 + k, k % 2 ? '#c8302a' : '#f4f0e6'); }
-    for (let k = 0; k < 3; k++) { const ax = 6 + k * 18; R(c, ax, Hd - 16, 14, 16, '#3a3430'); E(c, ax + 7, Hd - 16, 7, 4, '#3a3430'); }
-    pxText(c, 'SCHÜTZENHAUS', 3, 41, '#7a3a2a');
+    for (let k = 0; k < 18; k++) R(c, 1 + k * 0.7, k, Wd - 2 - k * 1.4, 1, k % 3 ? '#7a4a34' : '#6a3e2a');
+    for (let k = 2; k < 18; k += 3) for (let xx = 3 + k * 0.5; xx < Wd - 3 - k * 0.5; xx += 4) P(c, xx, k, '#8a5a40');
+    R(c, 0, 17, Wd, 2, '#5a3424');
+    const fy = 19, fh = 26, beam = '#8a3a26';
+    R(c, 2, fy, Wd - 4, fh, '#f4efe2');
+    R(c, 2, fy, Wd - 4, 1, beam); R(c, 2, fy + fh - 2, Wd - 4, 2, beam);
+    for (let k = 0; k < 4; k++) {
+      const wx = 4 + k * 15;
+      R(c, wx, fy + 1, 1, fh - 3, beam); R(c, wx + 14, fy + 1, 1, fh - 3, beam);
+      R(c, wx + 5, fy + 6, 5, 12, '#3e4c5e'); R(c, wx + 5, fy + 11, 5, 1, '#e8e4d8'); R(c, wx + 7, fy + 6, 1, 12, '#e8e4d8'); R(c, wx + 4, fy + 18, 7, 1, '#d8d0bc');
+      /* geflammte Läden links und rechts */
+      for (const sx of [wx + 1, wx + 10]) for (let yy = 0; yy < 14; yy++) for (let xx = 0; xx < 4; xx++) P(c, sx + xx, fy + 5 + yy, ((xx + yy + (sx > wx + 5 ? 0 : 2)) >> 1) % 2 ? '#c8302a' : '#f6f2ea');
+    }
+    R(c, 2, fy + fh, Wd - 4, Hd - fy - fh, '#ece6d6'); R(c, 2, fy + fh, Wd - 4, 1, '#c8c0aa');
+    for (let k = 0; k < 3; k++) { const ax = 6 + k * 19; R(c, ax, Hd - 22, 15, 22, '#3a3430'); E(c, ax + 7.5, Hd - 22, 7.5, 5, '#3a3430'); R(c, ax + 1, Hd - 3, 13, 3, '#4a443e'); }
+    R(c, 2, fy + fh + 1, 2, Hd - fy - fh - 1, '#d4ccb8');
   }, { solid: true }));
   m.trig(53, 37, 3, 4, { here: true, label: 'Foto: Untertor', act: () => Sur.photo('untertor'), cond: () => !Sur.hasPhoto('untertor') });
   altHouse(m, 56, 30, 6, 7, 4, { wall: '#f6f4ee', roof: '#7a3a2a', trim: '#c8402a', shutter: '#b8302a', flowers: false, doors: [{ dx: 2, type: 'arch' }], sign: { text: 'WILDER MANN', bg: '#f6f4ee', fg: '#3a2a1a', lit: true, y: 63 }, awning: { cols: [0, 1, 3, 4, 5], col: '#b8302a' }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4,
