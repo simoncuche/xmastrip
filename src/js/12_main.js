@@ -104,7 +104,7 @@ async function startGame(state, fresh) {
     G.busy++;
     await UI.card(`${dateLong()} · ${clockStr()} Uhr · Bahnhofplatz Luzern`, 1800);
     await Story.say(null, playerIsLate()
-      ? `Du bist ${G.S.name}, der Raucher. Heute geht's mit den Jungs nach Innsbruck – und du hast als Einziger ${LATE_CHF} Franken dabei. Die Jungs warten beim Torbogen: Begrüss ${fname(who('party'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Das Billett kauft ${fname(who('kassier'))}. Um 9:10 fährt der Zug auf Gleis 4. Nur: Dein Päckli ist leer, und ohne Zigarette steigst du in keinen Zug.`
+      ? `Du bist ${G.S.name}, der Raucher. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen: Begrüss ${fname(who('party'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Das Billett kauft ${fname(who('kassier'))}. Um 9:10 fährt der Zug auf Gleis 4. Nur: Dein Päckli ist leer, und ohne Zigarette steigst du in keinen Zug.`
       : playerIsKassier()
       ? `Du bist ${G.S.name}, der Kassier. Die Gruppenkasse ist bei dir – und du kaufst das Gruppenbillett am Automaten im Bahnhof. Die Jungs warten beim Torbogen – begrüss vor allem ${fname(who('party'))} (Proviant) und ${fname(who('foto'))} (Fototipp), die winken mit einem „!“. Um 9:10 fährt der Zug auf Gleis 4, und zwar pünktlich.`
       : `Du bist ${G.S.name}, ${CREW.find((c) => c.id === G.S.pid).role}. Heute geht's mit den Jungs nach Innsbruck! Sie warten beim Torbogen – begrüss dort ${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}, die winken mit einem „!“. Du bist für die Fahrkarten zuständig: ${fname(who('kassier'))} gibt dir das Geld, du kaufst das Gruppenbillett am Automaten. Um 9:10 fährt der Zug auf Gleis 4 – wer zu spät kommt, bleibt in Luzern.`);

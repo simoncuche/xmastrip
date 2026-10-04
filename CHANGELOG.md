@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.27.2 – 04.10.2026
+
+- Yännu: Der Einstiegstext verrät nichts mehr über das Geld im Portemonnaie.
+
 ## 2.27.1 – 04.10.2026
 
 - Flitzer: Jetzt rennen Didu und Römu nackt durch die Gassen. Spielt man einen der beiden, springt ein anderer Kollege ein.
