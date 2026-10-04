@@ -17,7 +17,7 @@ Object.assign(FACADES, {
   stadthalle: { name: 'STADTHALLE SURSEE', wall: '#d8d0b8', door: 'glass', sign: ['#c8b040', '#2a2a18'], inner: 'strobe', bass: true },
   kulturwerk: { name: 'KULTURWERK 118', wall: '#e8e4dc', door: 'metal', sign: ['#1a1a1e', '#ff3a3a'], inner: '#ff6a5a', bass: true },
   surseepark: { name: 'SURSEEPARK', wall: '#c9ccd2', door: 'glass', sign: ['#2a2e34', '#ffffff'], inner: '#fff4d0', shop: true, goods: ['#ff7a1a', '#e8c23a', '#3f8e4b', '#c8352d'] },
-  isa_haus: { name: 'BEI ISA', wall: '#e4e0d8', door: 'glass', sign: ['#2a2e34', '#f4e8c0'], inner: '#ffe8b8', plants: true },
+  isa_haus: { name: 'NR. 8', wall: '#e4e0d8', door: 'glass', sign: ['#2a2e34', '#f4e8c0'], inner: '#ffe8b8', plants: true },
   polizei: { name: 'POLIZEI', wall: '#d8dce0', door: 'glass', sign: ['#1a3a7a', '#ffffff'], inner: '#eef4fa' },
   kloster: { name: 'KAPUZINERKLOSTER', wall: '#efe6d2', door: 'wood', doorCol: '#5a3a24', sign: ['#5a3a24', '#f4e8c0'], inner: '#fff0d0', flowers: true },
 });

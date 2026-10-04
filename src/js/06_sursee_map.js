@@ -321,6 +321,7 @@ function objOase(x, y, w, h, o = {}) {
     }
     R(c, 0, H - 3, W, 3, '#7a7e78');
     if (o.door != null) { const dx = o.door * 16; R(c, dx, H - 17, 16, 17, band); R(c, dx + 2, H - 15, 12, 15, '#3a4a46'); R(c, dx + 3, H - 14, 10, 14, '#7a96ac'); R(c, dx + 8, H - 14, 1, 14, '#3a4a46'); }
+    if (o.num != null && !o.name) { const dx = (o.door ?? 0) * 16 + 18; R(c, dx, H - 16, 9, 9, '#1f4fa0'); R(c, dx + 1, H - 15, 7, 7, '#2a5fb8'); pxText(c, String(o.num), dx + 2, H - 14, '#ffffff'); }
     if (o.name) { const tw = pxTextW(o.name) + 6, nx = Math.max(2, Math.round((o.door ?? 0) * 16 + 8 - tw / 2)); R(c, nx - 1, H - 28, tw + 2, 9, '#2a2e2a'); R(c, nx, H - 27, tw, 7, '#f4f2ea'); pxText(c, o.name, nx + 3, H - 26, '#2a3a2a'); }
   }, { solid: true, emit: (c, W, H) => { const fl = Math.floor((H - 38) / 17); for (let f = 0; f < fl; f++) for (let xx = 4; xx < W - 10; xx += 14) if (hash(xx, f, x + y) > 0.5) R(c, xx + 3, 34 + 2 + f * 17 + 2, 4, 11, '#ffd890'); } });
 }
@@ -953,10 +954,10 @@ MAP_BUILDERS.sursee = () => {
   m.add(objBench(126, 47, 0));
   m.fill(118, 54, 14, 26, T.PAVE, 1);
   m.fill(118, 62, 14, 2, T.WATER); m.fill(122, 62, 3, 2, T.BRIDGE);
-  m.add(objOase(119, 55, 6, 6, { door: 3, name: 'BEI ISA' }));
-  m.warp(122, 60, 'isa_haus', 'entry', { label: 'Bei Isa', guard: () => Sur.isaDoor() }); m.spawn('isa_out', 122, 61, 0);
-  m.add(objOase(126, 55, 6, 6));
-  m.add(objOase(118, 65, 7, 6)); m.add(objOase(126, 65, 5, 6));
+  m.add(objOase(119, 55, 6, 6, { door: 3, name: 'NR. 8', num: 8 }));
+  m.warp(122, 60, 'isa_haus', 'entry', { label: 'Münstervorstadt 8 (Isa)', guard: () => Sur.isaDoor() }); m.spawn('isa_out', 122, 61, 0);
+  m.add(objOase(126, 55, 6, 6, { door: 3, num: 6 }));
+  m.add(objOase(118, 65, 7, 6, { door: 3, num: 4 })); m.add(objOase(126, 65, 5, 6, { door: 2, num: 2 }));
   m.add(mkObj(125, 71, 1, 1, 12, (c) => { R(c, 7, 4, 2, 10, '#5a5e64'); R(c, 0, 0, 16, 6, '#1a3a7a'); pxText(c, 'MÜV', 1, 1, '#ffffff'); }, { solid: false }));
   m.trig(125, 72, 1, 1, { label: 'Quartier Münstervorstadt', act: () => Sur.look('muenstervorstadt') });
   m.fill(127, 71, 3, 9, T.GRAVEL);

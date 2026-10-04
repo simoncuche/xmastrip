@@ -305,11 +305,11 @@ const Sur = {
     s.follow = 1;
     Story.dropActor(G.npcs.find((n) => n.id === 'su_isa'));
     if (night) {
-      await sayP('isa', 'Der Diebenturm ist in der Unterstadt, beim Hirschenplatz – der Heinivater wartet dort, auch spät noch. Und das Gästebett bei uns in der Münstervorstadt ist frisch bezogen.');
-      UI.toast('Isa geht heim in die Münstervorstadt. Morgen früh begleiten dich Elin und Timo.');
+      await sayP('isa', 'Der Diebenturm ist in der Unterstadt, beim Hirschenplatz – der Heinivater wartet dort, auch spät noch. Und das Gästebett bei uns in der Münstervorstadt 8 ist frisch bezogen.');
+      UI.toast('Isa geht heim in die Münstervorstadt 8. Morgen früh begleiten dich Elin und Timo.');
     } else {
       await sayP('elin', 'Wir kommen mit! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
-      UI.toast('Isa geht heim in die Münstervorstadt. Elin und Timo bleiben bei dir.');
+      UI.toast('Isa geht heim in die Münstervorstadt 8. Elin und Timo bleiben bei dir.');
       this.spawnFollowers(true);
     }
     G.busy--;
@@ -342,7 +342,7 @@ const Sur = {
       default: {
         const tips = [];
         if (G.S.money.chf < 15) tips.push('Kaum Franken – Bankomat am Bahnhof oder im Surseepark');
-        else if (G.S.st.energy < 25) tips.push('Müde – Gästebett bei Isa in der Münstervorstadt');
+        else if (G.S.st.energy < 25) tips.push('Müde – Gästebett bei Isa, Münstervorstadt 8');
         else if (G.S.st.food < 25) tips.push('Hunger! Pizza in der Mühle oder Egli im Wilden Mann');
         else if (hourOf(G.S.time) >= 19 && hourOf(G.S.time) < 23 && !G.S.ach.su_konzert) tips.push('Heute Abend Konzert in der Stadthalle');
         else if (s.coins.length < 5 && hasInv('detektor')) tips.push(`Römermünzen im Vicus (${s.coins.length}/5)`);
@@ -377,7 +377,7 @@ const Sur = {
       { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 72, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
       { x: 110, y: 16, n: 'Chilbi', c: N }, { x: 62, y: 49, n: 'Rössli', c: N }, { x: 71, y: 49, n: 'La Fuga', c: A }, { x: 81, y: 49, n: 'Diebenturm', c: V },
       { x: 101, y: 49, n: 'Mühle', c: A }, { x: 65, y: 57, n: 'Spielplatz', c: S }, { x: 85, y: 62, n: 'Ehret-Park', c: V }, { x: 127, y: 41, n: 'Beckenhof', c: V },
-      { x: 122, y: 60, n: 'Bei Isa', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 12, y: 20, n: 'Römer-Vicus', c: V }, { x: 22, y: 55, n: 'Polizei', c: S }, { x: 27, y: 49, n: 'Dreiklang', c: V },
+      { x: 122, y: 60, n: 'Nr. 8 (Isa)', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 12, y: 20, n: 'Römer-Vicus', c: V }, { x: 22, y: 55, n: 'Polizei', c: S }, { x: 27, y: 49, n: 'Dreiklang', c: V },
     ];
     if (id === 'sursee_see') return [{ x: 32, y: 14, n: 'Bootsvermietung', c: A }, { x: 39, y: 18, n: 'Fischer', c: S }, { x: 47, y: 12, n: 'Buvette', c: A }, { x: 63, y: 19, n: 'Sprungturm', c: V }, { x: 79, y: 18, n: 'SUP', c: S }, { x: 7, y: 26, n: 'Zellmoos', c: V }, { x: 45, y: 48, n: 'Gamma-Inseli', c: V }, { x: 84, y: 3, n: 'Mariazell', c: V }, { x: 40, y: 1, n: 'Stadt', c: V }];
     return [];
@@ -387,8 +387,8 @@ const Sur = {
   isaWhere() {
     const h = hourOf(G.S.time);
     if ((h >= 10 && h < 11) || (h >= 15 && h < 16)) return { t: 'im Stadtcafé am Rathausplatz (Kaffeepause)', map: 'stadtcafe', x: 89, y: 36 };
-    if (h >= 8 && h < 18 && dayOf(G.S.time) % 7 > 2) return { t: 'zu Hause in der Münstervorstadt (Homeoffice)', map: 'isa_haus', x: 122, y: 60 };
-    return { t: 'zu Hause in der Münstervorstadt', map: 'isa_haus', x: 122, y: 60 };
+    if (h >= 8 && h < 18 && dayOf(G.S.time) % 7 > 2) return { t: 'zu Hause in der Münstervorstadt 8 (Homeoffice)', map: 'isa_haus', x: 122, y: 60 };
+    return { t: 'zu Hause in der Münstervorstadt 8', map: 'isa_haus', x: 122, y: 60 };
   },
   jungsDa() { const s = this.st(); return !s.direct && suAt('s_tatort') && (s.jungsAt != null && G.S.time >= s.jungsAt); },
   friendLoc(id) {
@@ -405,7 +405,7 @@ const Sur = {
     };
     return T[fn] || 'wildermann';
   },
-  LOC: { wildermann: ['im Wilden Mann', 58, 36], muehle: ['in der Pizzeria zur Mühle', 101, 49], stadtcafe: ['im Stadtcafé', 89, 36], tnt: ['in der TNT Rock Bar', 63, 36], roessli: ['in der Rössli Nightbar', 62, 49], craftwerk: ['im Craftwerk', 107, 36], lafuga: ['im La Fuga', 71, 49], chilbi: ['an der Chilbi', 108, 20], martigny: ['auf dem Martigny-Platz (mit Drohne)', 46, 43], quai: ['am Quai beim See', 128, 77], diebenturm: ['beim Diebenturm, eine rauchen', 81, 50], isa_haus: ['bei Isa zu Hause', 122, 60] },
+  LOC: { wildermann: ['im Wilden Mann', 58, 36], muehle: ['in der Pizzeria zur Mühle', 101, 49], stadtcafe: ['im Stadtcafé', 89, 36], tnt: ['in der TNT Rock Bar', 63, 36], roessli: ['in der Rössli Nightbar', 62, 49], craftwerk: ['im Craftwerk', 107, 36], lafuga: ['im La Fuga', 71, 49], chilbi: ['an der Chilbi', 108, 20], martigny: ['auf dem Martigny-Platz (mit Drohne)', 46, 43], quai: ['am Quai beim See', 128, 77], diebenturm: ['beim Diebenturm, eine rauchen', 81, 50], isa_haus: ['bei Isa zu Hause (Münstervorstadt 8)', 122, 60] },
   whereIs(id) {
     if (!this.here()) return { t: G.S.stage === 'sbahn' ? 'in Luzern geblieben' : 'auf Gleis 4 in Luzern', x: null };
     const l = this.friendLoc(id);
@@ -640,7 +640,7 @@ Object.assign(Sur, {
     if (pick2 === 'Hast du einen Tipp?') await this.giveHint(true);
     if (pick2 === 'Erzähl mal was!') await sayP(k, this.kidFact(k));
     if (pick2 === 'Rechnen üben') await this.rechnen();
-    if (pick2 === 'Lauft mal kurz alleine heim') { this.st().follow = 0; G.npcs = G.npcs.filter((n) => !n.follower); UI.toast('Elin und Timo gehen heim. Bei Isa in der Münstervorstadt holst du sie wieder ab.'); }
+    if (pick2 === 'Lauft mal kurz alleine heim') { this.st().follow = 0; G.npcs = G.npcs.filter((n) => !n.follower); UI.toast('Elin und Timo gehen heim. In der Münstervorstadt 8 bei Isa holst du sie wieder ab.'); }
   },
   async cousinsTalk(k) {
     if (G.S.stage === 's_strahl' && !hasInv('strahl')) return this.schatzkiste();
@@ -756,7 +756,7 @@ Object.assign(Sur, {
       hirschenplatz: 'Der Hirschenplatz in der Unterstadt, gleich beim Diebenturm.',
       spielplatz: 'Schaukel, Rutschbahn, Sandkasten. Im Sand liegen Schaufeln – und Spuren von Kinderstiefeln.',
       beckenhof: 'Der Beckenhof mit dem Städtlipark. Von hier geht es durch das neue Quartier Münstervorstadt Richtung See.',
-      muenstervorstadt: 'Das neue Quartier Münstervorstadt zwischen Altstadt und See. Hier wohnt Isa mit den Kindern.',
+      muenstervorstadt: 'Das neue Quartier Münstervorstadt zwischen Altstadt und See: vier olivgrüne Häuser, Nummer 2, 4, 6 und 8. In der Nummer 8 wohnt Isa mit den Kindern.',
       suhre: 'Hier fliesst die Suhre aus dem Sempachersee – durch Sursee nach Norden, bis in die Aare.',
       zellmoos: 'Naturschutzgebiet Zellmoos: das grösste naturnahe Ufer am Sempachersee. Schilf, Weiden, Wasservögel. Bitte auf den Wegen bleiben.',
       mariazell: 'Die Wallfahrtskirche Mariazell über dem See. Von hier oben sieht man den ganzen Triechter.',
@@ -1165,7 +1165,7 @@ Object.assign(Sur, {
       s_strahl: [hasInv('strahl') ? `Mami ist ${this.isaWhere().t}.` : 'Thierry und Louve spielen beim Spielplatz im Ehret-Park. Durch die Pforte in der Stadtmauer.', 'Rede mit ihnen!'],
       s_probe: ['Die Guuggen proben beim Untertor, unten an der Sure. Ab 16 Uhr.', 'Der mit dem grossen, goldenen Instrument – das ist ein Sousaphon.'],
       s_boot: ['Zum See! Die Bootsvermietung am Quai hat ein Elektroboot für dich.', 'Rede mit Sepp von der Bootsvermietung.'],
-      s_gans: ['Die Gansabhauet beginnt um 10 Uhr beim Diebenturm. Der Heinivater wartet dort.', 'Wenn es Nacht ist: Schlaf bei uns im Gästebett, Münstervorstadt.'],
+      s_gans: ['Die Gansabhauet beginnt um 10 Uhr beim Diebenturm. Der Heinivater wartet dort.', 'Wenn es Nacht ist: Schlaf bei uns im Gästebett, Münstervorstadt 8.'],
     }[st];
     if (!H) return 'Sursee ist gross genug für alles: Chilbi, See, Bars. Viel Spass!';
     return H[Math.min(lvl, H.length) - 1];

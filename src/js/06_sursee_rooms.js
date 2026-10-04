@@ -1205,8 +1205,8 @@ function srBookshelf(x, y, w, col = '#5a3a24') {
   });
 }
 
-/* 16. Isas Wohnung in der Münstervorstadt: Wohnzimmer, Küche, Esstisch, Kinderecke, Gästezimmer, Bad */
-sRoom('isa_haus', { name: 'Bei Isa', sign: false, w: 22, h: 14, door: 9, back: ['sursee', 'isa_out'], style: 0, cap: '#4a4038', floor: T.WOOD, floorV: 0, lightC: '#fff0d0', light: false,
+/* 16. Isas Wohnung in der Münstervorstadt 8: Wohnzimmer, Küche, Esstisch, Kinderecke, Gästezimmer, Bad */
+sRoom('isa_haus', { name: 'Münstervorstadt 8', sign: false, w: 22, h: 14, door: 9, back: ['sursee', 'isa_out'], style: 0, cap: '#4a4038', floor: T.WOOD, floorV: 0, lightC: '#fff0d0', light: false,
   spots: { isa: [3, 10, 0], elin: [12, 5, 0], timo: [14, 5, 1], cuche: [6, 5, 2], thierry: [10, 5, 1], louve: [5, 10, 3] },
   wall: (c) => {
     /* Küche: Hängeschränke, Fliesenspiegel */
