@@ -5,6 +5,16 @@ function itemIconURL(icon) {
   const [c, x] = canvas(16, 16);
   const beerGlass = (col) => { R(x, 4, 3, 8, 11, col); R(x, 4, 3, 8, 2, '#fffaf0'); R(x, 12, 6, 2, 5, '#d9e2e6'); R(x, 5, 6, 1, 7, shade(col, 0.3)); R(x, 4, 14, 8, 1, shade(col, -0.3)); };
   switch (icon) {
+    case 'pizza': E(x, 8, 8, 7, 7, '#d8a050'); E(x, 8, 8, 6, 6, '#c8402a'); for (const [a, b] of [[5, 6], [10, 7], [7, 10], [11, 11], [4, 10]]) E(x, a, b, 1.5, 1.5, '#f4f0e0'); P(x, 9, 4, '#3f8a3a'); P(x, 6, 12, '#3f8a3a'); break;
+    case 'pasta': E(x, 8, 10, 7, 4, '#f4f0e6'); for (let k = 0; k < 7; k++) line(x, 3 + k, 8, 5 + k * 1.2, 11, '#e8c870'); E(x, 8, 8, 3, 2, '#b8401e'); break;
+    case 'fish': E(x, 7, 8, 5, 3, '#9ab0b8'); E(x, 7, 7, 4, 2, '#c8d8dc'); for (let k = 0; k < 3; k++) P(x, 13 + (k % 2), 6 + k * 2, '#7a9098'); line(x, 12, 8, 14, 5, '#7a9098'); line(x, 12, 8, 14, 11, '#7a9098'); P(x, 4, 7, '#1a1a1a'); break;
+    case 'fishplate': E(x, 8, 10, 7, 4, '#f4f0e6'); E(x, 7, 9, 4, 2, '#d8a050'); for (let k = 0; k < 4; k++) R(x, 10 + k, 7 + (k % 2), 1, 4, '#f2c84a'); P(x, 4, 9, '#e8e060'); break;
+    case 'mask': E(x, 8, 8, 4, 4, '#f2d040'); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283; line(x, 8 + Math.cos(a) * 4, 8 + Math.sin(a) * 4, 8 + Math.cos(a) * 7, 8 + Math.sin(a) * 7, '#e8b830'); } P(x, 7, 7, '#5a3a10'); P(x, 9, 7, '#5a3a10'); break;
+    case 'ray': for (let k = 0; k < 8; k++) R(x, 3 + k, 12 - k - (k % 2), 2, 2, k % 2 ? '#e8b830' : '#f2d860'); break;
+    case 'detector': line(x, 3, 3, 10, 12, '#5a5e64'); E(x, 11, 13, 3, 2, '#2a2a2e'); R(x, 2, 2, 4, 3, '#c8302a'); break;
+    case 'nuts': R(x, 4, 4, 8, 10, '#e8d8b0'); for (let k = 0; k < 5; k++) E(x, 5 + (k % 3) * 3, 3 + Math.floor(k / 3) * 2, 2, 1.5, '#8a4a2a'); break;
+    case 'cotton': E(x, 8, 6, 5, 5, '#f4b0d0'); E(x, 6, 5, 3, 3, '#ffd0e8'); R(x, 7, 10, 2, 5, '#e8dcc0'); break;
+    case 'bait': R(x, 4, 6, 8, 7, '#7a8a5a'); R(x, 4, 6, 8, 2, '#9aaa7a'); for (let k = 0; k < 3; k++) E(x, 6 + k * 2, 10, 1, 1, '#f4e8c0'); break;
     case 'beer': beerGlass('#e8b33a'); break;
     case 'weiss': R(x, 5, 2, 6, 13, '#e8a03a'); R(x, 5, 1, 6, 3, '#fffaf0'); R(x, 6, 5, 1, 8, '#f8c86a'); break;
     case 'can': R(x, 4, 2, 8, 13, '#c9ccd2'); R(x, 4, 5, 8, 7, '#2f7a3a'); R(x, 5, 6, 6, 1, '#e8c23a'); R(x, 5, 2, 6, 1, '#8a9096'); break;
@@ -328,8 +338,9 @@ const Phone = {
   tab: 'ziele',
   open(tab) {
     if (tab) this.tab = tab;
+    if (this.tab === 'fall' && !Sur.active()) this.tab = 'ziele';
     const o = UI.overlay(`<div class="panel" style="height:min(720px,100%)"><div class="panel-head"><h2>${G.S.name}s Handy</h2><span class="sub">${clockStr()} · ${dateStr()}</span><button class="x-btn" data-close aria-label="Schliessen">×</button></div>
-      <div class="tabs" role="tablist">${[['ziele', 'Ziele'], ['karte', 'Karte'], ['inv', 'Tasche'], ['fotos', 'Fotos'], ['status', 'Status'], ['opt', 'Optionen']].map(([k, n]) => `<button class="tab ${k === this.tab ? 'on' : ''}" data-tab="${k}" role="tab">${n}</button>`).join('')}</div>
+      <div class="tabs" role="tablist">${[['ziele', 'Ziele'], ...(Sur.active() ? [['fall', 'Notizbuch']] : []), ['karte', 'Karte'], ['inv', 'Tasche'], ['fotos', 'Fotos'], ['status', 'Status'], ['opt', 'Optionen']].map(([k, n]) => `<button class="tab ${k === this.tab ? 'on' : ''}" data-tab="${k}" role="tab">${n}</button>`).join('')}</div>
       <div class="panel-body" id="phoneBody"></div></div>`);
     o.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => { this.tab = b.dataset.tab; o.querySelectorAll('.tab').forEach((x) => x.classList.toggle('on', x === b)); this.render(); }));
     this.render();
@@ -340,16 +351,18 @@ const Phone = {
     b.innerHTML = '';
     this[this.tab](b);
   },
+  fall(b) { Sur.notebook(b); },
   ziele(b) {
     const steps = Story.steps();
     const achN = Object.keys(G.S.ach).length, achT = Object.keys(ACH).length;
     b.innerHTML = `<div class="row" style="border-color:var(--amber)"><div><div class="d">Jetzt</div><div class="t">${Story.objective()}</div></div></div>
-      <div class="shop-sec">Reiseplan</div><div class="list">${steps.map((s) => `<div class="row ${s.done ? 'done' : ''}"><div><div class="t">${s.t}</div>${s.d ? `<div class="d">${s.d}</div>` : ''}</div><span class="${s.done ? 'tick' : 'open'}">${s.done ? '✓' : '·'}</span></div>`).join('')}</div>
+      <div class="shop-sec">${Sur.active() ? 'Der Fall' : 'Reiseplan'}</div><div class="list">${steps.map((s) => `<div class="row ${s.done ? 'done' : ''}"><div><div class="t">${s.t}</div>${s.d ? `<div class="d">${s.d}</div>` : ''}</div><span class="${s.done ? 'tick' : 'open'}">${s.done ? '✓' : '·'}</span></div>`).join('')}</div>
       <div class="shop-sec">Erlebnisse ${achN}/${achT}</div><div class="list">${Object.entries(ACH).map(([k, [t, d]]) => `<div class="row ${G.S.ach[k] ? 'done' : ''}"><div><div class="t">${G.S.ach[k] ? t : '???'}</div><div class="d">${d}</div></div><span class="${G.S.ach[k] ? 'tick' : 'open'}">${G.S.ach[k] ? '✓' : '·'}</span></div>`).join('')}</div>`;
   },
   karte(b) {
     const showCity = G.map.indoor && BUILT.ibk && (['hotel_lobby', 'hotel_floor', 'hotel_room', 'bar', 'stueberl', 'club', 'rouge', 'casino'].includes(G.map.id) || G.map.id.startsWith('shop_'));
-    const m = showCity ? BUILT.ibk : G.map;
+    const showSursee = Sur.here() && !SU_MAPS.includes(G.map.id) && G.map.indoor;
+    const m = showSursee ? getMap('sursee') : G.map.id === 'inseli' ? getMap('sursee_see') : showCity ? BUILT.ibk : G.map;
     const sc = m.w > 60 ? 7 : 9;
     const [c, x] = canvas(m.w * sc, m.h * sc);
     const col = { [T.WATER]: '#3f86a8', [T.GRASS]: '#5c8a3e', [T.FOREST]: '#2f4a2e', [T.ASPH]: '#5a5d62', [T.TRAMR]: '#5a5d62', [T.ZEBRA]: '#8a8d92', [T.PLAZA]: '#d6cbb8', [T.COBBLE]: '#a49a8a', [T.PAVE]: '#c3bcae', [T.BRIDGE]: '#b0a690', [T.HEDGE]: '#2f5a2a', [T.GRAVEL]: '#c2b59a', [T.WALL]: '#3a3430', [T.WALLF]: '#5a5048', [T.RAIL]: '#6a5a4a', [T.PLAT]: '#b7b3aa', [T.EDGE]: '#c8b860', [T.STONE]: '#d6cfc1', [T.ROCK]: '#9a958c', [T.MEADOW]: '#86a058', [T.CLIFF]: '#6a665e', [T.DECK]: '#9a774e' };
@@ -364,17 +377,17 @@ const Phone = {
       x.lineWidth = 3; x.strokeStyle = '#0f1a2b'; x.strokeText(p.n, px - 4, ly); x.fillStyle = '#ffffff'; x.fillText(p.n, px - 4, ly);
     });
     /* Die Jungs: pro Ort ein weisser Kreis mit Anzahl */
-    if (m.id === 'ibk') {
+    if (m.id === 'ibk' || m.id === 'sursee') {
       const groups = {};
       for (const k of Object.keys(FRIENDS)) { const w = Story.whereIs(k); if (w.x == null) continue; const key = w.x + ',' + w.y; (groups[key] = groups[key] || { x: w.x, y: w.y, names: [] }).names.push(FRIENDS[k].name); }
       for (const g of Object.values(groups)) { const px = (g.x + 0.5) * sc + 9, py = (g.y + 0.5) * sc - 9; E(x, px, py, 8, 8, '#0f1a2b'); E(x, px, py, 7, 7, '#ffffff'); x.fillStyle = '#0f1a2b'; x.font = 'bold 11px Barlow Semi Condensed, sans-serif'; x.fillText(String(g.names.length), px - (g.names.length > 9 ? 6 : 3), py + 4); }
     }
     if (G.map.id === m.id) { const px = G.player.x / TS * sc, py = G.player.y / TS * sc; E(x, px, py, 6, 6, '#ffffff'); E(x, px, py, 4, 4, '#d8352d'); }
-    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof. Weisse Kreise mit Zahl: so viele der Jungs sind dort – Details unter Status.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffffff"></i>Die Jungs</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
+    b.innerHTML = `<div class="note">${m.id === 'ibk' ? 'Innsbruck: Nordkette im Norden, der Inn, darunter Altstadt, Maria-Theresien-Strasse und Hauptbahnhof. Weisse Kreise mit Zahl: so viele der Jungs sind dort – Details unter Status.' : m.id === 'sursee' ? 'Sursee: Bahnhof im Westen, die Altstadt mit Oberstadt (oben) und Unterstadt, der Märtplatz mit der Chilbi, der Ehret-Park an der Sure. Unten rechts geht es zum See.' : m.name}</div><div class="mapwrap"></div><div class="legend"><span><i style="background:#d8352d"></i>Du</span><span><i style="background:#ffffff"></i>Die Jungs</span><span><i style="background:#ffb53d"></i>Lokale</span><span><i style="background:#6cc46f"></i>Läden</span><span><i style="background:#7ab0f0"></i>Sehenswert</span><span><i style="background:#e85af0"></i>Nachtleben</span></div>`;
     c.style.width = (m.w * sc) + 'px';
     b.querySelector('.mapwrap').appendChild(c);
     const wrap = b.querySelector('.mapwrap');
-    const focus = G.map.id === m.id ? [G.player.x / TS, G.player.y / TS] : (Story.playerCityPos ? Story.playerCityPos() : [48, 45]);
+    const focus = G.map.id === m.id ? [G.player.x / TS, G.player.y / TS] : m.id === 'sursee' ? [80, 40] : (Story.playerCityPos ? Story.playerCityPos() : [48, 45]);
     setTimeout(() => { wrap.scrollLeft = focus[0] * sc - wrap.clientWidth / 2; wrap.scrollTop = focus[1] * sc - wrap.clientHeight / 2; }, 0);
     if (false) setTimeout(() => { wrap.scrollLeft = G.player.x / TS * sc - wrap.clientWidth / 2; wrap.scrollTop = G.player.y / TS * sc - wrap.clientHeight / 2; }, 0);
   },
@@ -406,9 +419,12 @@ const Phone = {
     b.appendChild(sb);
     const grid = document.createElement('div');
     grid.className = 'photos';
-    for (const [id, s] of Object.entries(SIGHTS)) {
+    const SU = Sur.active();
+    const sights = SU ? SIGHTS_SU : SIGHTS, have = SU ? Sur.st().photos : G.S.photos;
+    for (const [id0, s] of Object.entries(sights)) {
+      const id = SU ? 'su_' + id0 : id0;
       const d = document.createElement('div');
-      if (G.S.photos[id]) {
+      if (have[id0]) {
         d.className = 'photo';
         d.style.setProperty('--r', ((hash(id.length, id.charCodeAt(0)) - 0.5) * 4).toFixed(1) + 'deg');
         const src = (G.photoImg || {})[id];
@@ -418,7 +434,7 @@ const Phone = {
       } else { d.className = 'photo missing'; d.innerHTML = `<span>${s.n}<br><small>noch kein Foto</small></span>`; }
       grid.appendChild(d);
     }
-    const nt = document.createElement('div'); nt.innerHTML = `<div class="shop-sec">Sehenswürdigkeiten</div><div class="note">${Object.keys(G.S.photos).length} von ${Object.keys(SIGHTS).length} fotografiert. Stell dich davor und tippe auf „Foto“.</div>`;
+    const nt = document.createElement('div'); nt.innerHTML = `<div class="shop-sec">Sehenswürdigkeiten${SU ? ' in Sursee' : ''}</div><div class="note">${Object.keys(have).length} von ${Object.keys(sights).length} fotografiert. Stell dich davor und tippe auf „Foto“.</div>`;
     b.appendChild(nt);
     b.appendChild(grid);
   },
@@ -436,6 +452,7 @@ const Phone = {
       <div class="stat"><small>Jass gewonnen / verloren</small><b>${G.S.rec.jassW} / ${G.S.rec.jassL}</b></div><div class="stat"><small>Bestes Darts</small><b>${G.S.rec.darts}</b></div>
       <div class="stat"><small>Bestes Tanzen</small><b>${G.S.rec.dance} %</b></div><div class="stat"><small>Rekord Flitzer</small><b>${G.S.rec.stone}×</b></div><div class="stat"><small>Weitester Sprung</small><b>${G.S.rec.jump ? G.S.rec.jump.toFixed(1) + ' m' : '–'}</b></div></div>
       <p class="note">Wer viel trinkt, ohne zu essen oder zu schlafen, dem wird übel. Bei 100 % Übelkeit musst du dich übergeben. Essen, Wasser und Schlaf helfen. Ab 2,6 ‰ droht ein Filmriss.</p>
+      ${Sur.here() ? `<div class="shop-sec">Familie in Sursee</div><div class="list"><div class="row"><div><div class="t">Isa</div><div class="d">📍 ${Sur.isaWhere().t}</div></div></div><div class="row"><div><div class="t">Elin und Timo</div><div class="d">📍 ${Sur.followOk() ? 'bei dir' : hourOf(G.S.time) >= 20 || hourOf(G.S.time) < 8 ? 'zu Hause, im Bett' : 'zu Hause'}</div></div></div><div class="row"><div><div class="t">Thierry und Louve</div><div class="d">📍 ${hourOf(G.S.time) >= 9 && hourOf(G.S.time) < 17 ? 'auf dem Spielplatz im Ehret-Park' : 'zu Hause'}</div></div></div></div>` : ''}
       <div class="shop-sec">Die Jungs – wo sie sind, wie gut ihr euch versteht, ihr Pegel</div><div class="list">${Object.entries(FRIENDS).map(([k, fr]) => { const w = Story.whereIs(k); const pr = (G.S.fprom && G.S.fprom[k]) || 0; return `<div class="row"><div><div class="t">${fr.name} <small style="color:var(--ink-dim)">· ${fr.role}</small></div><div class="d">📍 ${w.t}${pr > 0.3 ? ` · 🍺 ${promStr(pr)}${pr > 2 ? ' – sturzbetrunken' : pr > 1.2 ? ' – angeheitert' : ''}` : ''}</div></div><div class="bar" style="width:120px;grid-template-columns:1fr"><i style="--v:${f(G.S.aff[k])}%;--c:var(--amber)"></i></div></div>`; }).join('')}</div>`;
   },
   opt(b) {

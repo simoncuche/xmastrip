@@ -199,6 +199,7 @@ const Story = {
   say(sp, text) { return UI.say(sp, text); },
   ask(sp, text, opts) { return UI.ask(sp, text, opts); },
   objective() {
+    if (Sur.active()) return Sur.objective();
     const s = G.S.stage, org = playerIsKassier() ? null : fname(who('kassier'));
     switch (s) {
       case 'meet': {
@@ -231,14 +232,15 @@ const Story = {
         else if (h >= 22 || h < 4) tips.push(h >= 1 && h < 3 ? 'Nachtleben: Club Lawine und Rouge in den Viaduktbögen' : 'Nachtleben: Club Lawine in den Viaduktbögen');
         else if (h < 17 && !G.S.ach.seegrube) tips.push('Nordkettenbahn zur Seegrube (bis 17:30)');
         else if (h < 16 && !G.S.ach.springer) tips.push('Tram zum Bergisel: Schanze, Turm und Gästespringen (9–16:30)');
-        else if (dayOf(G.S.time) >= 2 && Math.floor(hourOf(G.S.time)) % 3 === 0) tips.push('Genug gefeiert? Heimreise am Hauptbahnhof – das beendet das Spiel');
+        else if (dayOf(G.S.time) >= 2 && Math.floor(hourOf(G.S.time)) % 3 === 0) tips.push('Genug gefeiert? Heimreise am Hauptbahnhof – in Luzern wartet ein neues Kapitel');
         else tips.push('Die Jungs sind in der Gamsbock Bar');
         return `${tips[0]} · Fotos ${Object.keys(G.S.photos).length}/${Object.keys(SIGHTS).length}`;
       }
     }
   },
-  objectiveTag() { if (G.S.stage === 'board' && playerIsLate()) return G.S.flags.missed ? 'TAXI' : 'RAUCHEN'; return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
+  objectiveTag() { if (Sur.active()) return Sur.tag(); if (G.S.stage === 'board' && playerIsLate()) return G.S.flags.missed ? 'TAXI' : 'RAUCHEN'; return { meet: 'LUZERN', board: 'GLEIS 4', ride: 'RAILJET', arrived: 'AUSSTIEG', findHotel: 'HOTEL', checkin: 'HOTEL', room: 'ZIMMER', bar: 'BAR', free: 'FREI' }[G.S.stage]; },
   steps() {
+    if (Sur.active()) return Sur.steps();
     if (playerIsLate()) return this.lateSteps().concat(this.stepsBase().slice(3));
     return this.stepsBase();
   },
@@ -262,11 +264,12 @@ const Story = {
       { t: 'Zimmer 307 beziehen', d: '3. Stock, Rucksack auspacken', done: stageAt('bar') },
       { t: 'Die Jungs in der Gamsbock Bar treffen', d: 'Maria-Theresien-Strasse, Ostseite', done: stageAt('free') },
       { t: 'Innsbruck geniessen', d: 'Bars, Club Lawine, Casino, Shopping, Nordkette, Altstadt', done: Object.keys(G.S.ach).length >= 20 },
-      { t: 'Heimreise nach Luzern', d: 'Am Hauptbahnhof, wann ihr wollt – damit endet das Spiel', done: !!G.S.finished },
+      { t: 'Heimreise nach Luzern', d: 'Am Hauptbahnhof, wann ihr wollt – danach geht es in Luzern weiter', done: !!G.S.finished || Sur.active() },
     ];
   },
   setStage(s) { G.S.stage = s; UI.hud(); Track.event('stage', s, true); },
   mapPois(id) {
+    if (SU_MAPS.includes(id)) return Sur.pois(id);
     if (id !== 'ibk') return [];
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
     return [
@@ -288,6 +291,7 @@ const Story = {
   },
   /* Wo ist ein Kollege gerade? Text und Kartenpunkt für Handy-Status und Karte. */
   whereIs(id) {
+    if (Sur.active()) return Sur.whereIs(id);
     const s = G.S.stage;
     if (this.away(id)) return { t: G.S.flags.late ? 'im Taxi unterwegs nach Innsbruck' : 'raucht noch vor dem Bahnhof', x: null };
     if (!stageAt('bar')) {
@@ -333,6 +337,7 @@ const Story = {
     return new Actor(Object.assign({ id, friend: true, name: f.name, look: f.look, x: p.x, y: p.y, dir, pose, solid: true, talk: () => Story.talkFriend(id), keepDir: pose === 'sit', label: 'Reden: ' + f.name, sitIdle: pose === 'sit' }, extra));
   },
   populate(m) {
+    if (Sur.active()) { Sur.populate(m); return; }
     const ids = Object.keys(FRIENDS).filter((id) => !this.away(id));
     const add = (id, tx, ty, dir, pose, extra) => { if (FRIENDS[id]) G.npcs.push(this.friendActor(id, tx, ty, dir, pose, extra)); };
     const s = G.S.stage;
@@ -419,6 +424,7 @@ const Story = {
   friendsHere() { return G.npcs.filter((n) => n.friend && !n.hidden).map((n) => n.id); },
   _lastHour: -1,
   minute() {
+    if (Sur.active()) { Sur.minute(); return; }
     const h = Math.floor(hourOf(G.S.time));
     const m = G.map;
     if (!stageAt('ride') && !(playerIsLate() && G.S.flags.missed)) {
@@ -514,6 +520,7 @@ const Story = {
   /* Feste Reihenfolge für das Schüttel-Easter-Egg: jedes Ereignis genau einmal, Godzilla als Finale, dann von vorne */
   SHAKE_ORDER: ['verfolgung', 'hundkatze', 'taube', 'krampus', 'portemonnaie', 'trump', 'polizei', 'ufo', 'ueberfall', 'flitzer', 'monster', 'apokalypse'],
   shakeEvent(force) {
+    if (Sur.active()) { Sur.shakeEvent(); return; }
     if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
     const fl = G.S.flags, n = this.SHAKE_ORDER.length;
     achieve('schuettler');
@@ -541,6 +548,10 @@ const Story = {
     flitzer: ['Flitzer!', 'Didu und Römu – ohne alles durch die Gassen'],
     monster: ['Godzilla', 'Er kommt über die Nordkette'],
     apokalypse: ['Apokalypse', 'Innsbruck geht unter – der letzte Zug wartet'],
+    guuggen: ['Guuggen-Überfall', 'Pauken und Trompeten in der Oberstadt von Sursee'],
+    gans: ['Gans auf der Flucht', 'Eine Gans rennt durchs Städtli'],
+    nebel: ['Nebel über Sursee', 'Der See schickt seinen Dezembernebel'],
+    drohne: ['Absturz!', 'Römus Drohne verliert die Kontrolle'],
   },
   /* Zähler erlebter Ereignisse; ältere Spielstände übernehmen die Zähler des Tagesplans und die Apokalypse */
   evSeen() {
@@ -1145,7 +1156,9 @@ const Story = {
       await Scene.play('apocend', { ms: 12000, keep: true, friends: sheets, text: 'Last Exit Innsbruck – hinter euch versinkt die Stadt in Lava.' });
       saveGame(true);
       await UI.fadeIn();
-      await Ending.show({ apoc: true });
+      await Ending.show({ apoc: true, cont: true });
+      await UI.fadeOut('Luzern Hauptbahnhof');
+      await Sur.toLuzern({ apoc: true });
     } else {
       if (G.live === live) G.live = null;
       fl.adrenalin = 0;
@@ -2007,7 +2020,8 @@ const Story = {
       UI.toast(`${dayStr()} · ${clockStr()} – ausgeschlafen!`);
       if (st.hang > 0) await this.say('me', 'Aua. Mein Kopf. Ein Gröstl, eine Kopfwehtablette oder viel Wasser wären jetzt gut…');
       const org = playerIsKassier() ? who('party') : who('kassier');
-      UI.toast(`💬 ${fname(org)}: „Frühstück unten bis 10:30!“`);
+      if (Sur.active()) UI.toast('💬 Isa: „Zmorge steht auf dem Tisch! Kafi ist frisch.“');
+      else UI.toast(`💬 ${fname(org)}: „Frühstück unten bis 10:30!“`);
     } else UI.toast('Erholt!');
     UI.hud();
   },
@@ -2722,10 +2736,10 @@ const Story = {
     await this.say(null, '… iii … iii … (Das Echo antwortet. Irgendwo pfeift ein Murmeltier.)');
   },
   async station() {
-    const c = await this.ask(null, 'Abfahrtstafel: Railjet nach Zürich HB, nächste Abfahrt in 40 Minuten. Achtung: Die Heimreise beendet das Spiel.', ['Heimreise antreten – beendet das Spiel', 'Taxi am Taxistand nehmen', 'Nur schauen']);
+    const c = await this.ask(null, 'Abfahrtstafel: Railjet nach Zürich HB, nächste Abfahrt in 40 Minuten. Achtung: Mit der Heimreise ist Innsbruck vorbei – in Luzern kannst du weiter nach Sursee oder das Spiel beenden.', ['Heimreise nach Luzern antreten', 'Taxi am Taxistand nehmen', 'Nur schauen']);
     if (c === 0) {
       if (!stageAt('free')) { await this.say(null, 'Jetzt schon? Ihr seid doch gerade erst angekommen!'); return; }
-      const c2 = await this.ask(null, `Wirklich nach Hause fahren? Das Spiel ist danach zu Ende, der Spielstand wird abgeschlossen. Ihr wart ${dayOf(G.S.time) + 1} Tage in Innsbruck.`, ['Ja, Heimreise nach Luzern', 'Doch noch bleiben']);
+      const c2 = await this.ask(null, `Wirklich heimfahren? Zurück nach Innsbruck geht es danach nicht mehr. Ihr wart ${dayOf(G.S.time) + 1} Tage in Innsbruck.`, ['Ja, Heimreise nach Luzern', 'Doch noch bleiben']);
       if (c2 === 0) await this.goHome();
     }
     if (c === 1) await this.taxi();
@@ -2736,11 +2750,11 @@ const Story = {
     await this.say(voice('kassier'), `Alle da? Zwölf … ${G.S.flags.jail ? 'elf, einer sitzt noch' : 'zwölf'}. Billette hab ich. Luzern, wir kommen.`);
     await this.say(voice('party'), 'Letzte Runde war gestern. Oder vorgestern. Egal. Es war LEGENDÄR.');
     achieve('heimreise');
-    G.S.finished = 1;
     await Scene.play('train', { text: 'Railjet · Innsbruck → Zürich HB → Luzern', ms: 4200, label: 'RAILJET', col: '#a8282a', lake: true, keep: true });
-    saveGame(true);
     await UI.fadeIn();
-    await Ending.show();
+    await Ending.show({ cont: true });
+    await UI.fadeOut('Luzern Hauptbahnhof');
+    await Sur.toLuzern();
     G.busy--;
   },
   async atm() {
@@ -2826,6 +2840,7 @@ const Story = {
     await UI.shop(def);
   },
   onEnter(m) {
+    if (Sur.active()) { Sur.onEnter(m); return; }
     if (m.id === 'hotel_lobby' && G.S.stage === 'findHotel') this.setStage('checkin');
     if (m.id === 'bar' && G.S.stage === 'bar') setTimeout(() => this.barArrive(), 650);
     if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; this._cond = null; this._shot = null; }
@@ -2897,7 +2912,7 @@ const Story = {
     if (I.t === 'smoke') return this.smoke();
     if (I.t === 'ticket') { await this.say(null, 'Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen, 2. Klasse, gültig heute. Nicht verlieren!'); return; }
     if (I.t === 'read') { await this.say(null, pick(['Schlagzeile: „Föhnsturm am Wochenende erwartet“.', 'Sportteil: Ski-Saison startet bald am Gletscher.', 'Lokales: Neue Tram-Linie bis zum Flughafen geplant?'])); passTime(10); mood(1); return; }
-    if (I.t === 'souv') { await this.say(null, { schneekugel: 'Du schüttelst die Schneekugel. Schnee rieselt aufs Goldene Dachl.', magnet: 'Ein Magnet mit dem Goldenen Dachl. Für den Kühlschrank zu Hause.', postkarte: 'Eine Postkarte der Nordkette. Am Schreibtisch im Hotel kannst du sie schreiben.', edelweiss: 'Ein Edelweiss-Anstecker. Du steckst ihn dir an.', muenze: 'Deine Glücksmünze.' }[id] || I.n); return; }
+    if (I.t === 'souv') { await this.say(null, { schneekugel: 'Du schüttelst die Schneekugel. Schnee rieselt aufs Goldene Dachl.', magnet: 'Ein Magnet mit dem Goldenen Dachl. Für den Kühlschrank zu Hause.', postkarte: 'Eine Postkarte der Nordkette. Am Schreibtisch im Hotel kannst du sie schreiben.', edelweiss: 'Ein Edelweiss-Anstecker. Du steckst ihn dir an.', muenze: 'Deine Glücksmünze.', strahl: 'Ein goldener, gezackter Strahl aus dünnem Blech. Er gehört zur Sonnenmaske der Zunft.', sonnenmaske: 'Die goldene Sonnenmaske der Zunft Heini von Uri. Ein Strahl fehlt.', felchen: 'Ein schöner Felchen aus dem Sempachersee. Fischer Wäli wird sich freuen.', detektor: hasInv('detektor') && Sur.active() ? 'Der Metalldetektor. Im Römer-Vicus westlich der Altstadt piepst er bestimmt.' : 'Ein Metalldetektor.', konzertticket: 'Konzertticket für die Triechter-Gäng in der Stadthalle Sursee. Los geht es um 20 Uhr.' }[id] || I.n); return; }
     if (I.uses) { G.S.uses[id] = (G.S.uses[id] || I.uses) - 1; if (G.S.uses[id] <= 0) { takeInv(id); delete G.S.uses[id]; } }
     else takeInv(id);
     consume(id);
@@ -2948,8 +2963,9 @@ const Story = {
     await sleep(1500);
     const t = G.S.time, d = dayOf(t);
     const wake = (hourOf(t) < 5 ? d : d + 1) * 1440 + 10 * 60;
-    const lost = Math.min(G.S.money.eur, Math.round(rnd(15, 45)));
-    addMoney('eur', -lost);
+    const cur = Sur.active() ? 'chf' : 'eur';
+    const lost = Math.min(G.S.money[cur], Math.round(rnd(15, 45)));
+    addMoney(cur, -lost);
     G.S.time = wake; G.S.lastSleep = wake;
     Object.assign(st, { energy: 70, prom: 0, nau: 0, food: 20, mood: Math.max(15, st.mood - 25), hang: 120 });
     G.S.flags.blackoutAt = wake;
@@ -2959,13 +2975,14 @@ const Story = {
     if (r < 0.35) { G.S.unlocked.tirolerhut = 1; G.S.look.hat = 9; G.S.look.hatCol = 8; extra = 'Auf deinem Kopf sitzt ein Tirolerhut, an den du dich nicht erinnern kannst.'; }
     else if (r < 0.65) { addInv('muenze'); extra = 'In deiner Hosentasche steckt eine Münze mit einer eingeritzten Telefonnummer.'; }
     else { G.S.beers += 3; extra = 'Auf deinem Bierdeckel sind drei Striche mehr, als du dir erklären kannst.'; }
-    if (G.S.flags.checkedIn) enterMap('hotel_room', 'bed'); else enterMap('ibk', 'hbf');
+    if (Sur.here()) enterMap('isa_haus', 'entry');
+    else if (G.S.flags.checkedIn && !Sur.active()) enterMap('hotel_room', 'bed'); else if (!Sur.active()) enterMap('ibk', 'hbf'); else enterMap(G.map.id, Object.keys(G.map.spawns)[0]);
     G.npcs = G.npcs.filter((n) => !n.friend); this.populate(G.map);
     await sleep(600);
     await UI.fadeIn();
-    await this.say('me', `Wo… bin ich? ${G.S.flags.checkedIn ? 'Ah, im Hotelzimmer.' : 'Am Bahnhof?'} Wie spät ist es? ${clockStr()}?!`);
-    await this.say(null, `${extra} Dein Portemonnaie ist ${lost} € leichter.`);
-    UI.toast(`💬 ${fname(who('party'))}: „Lebst du noch? Wir haben dich gestern ins Bett getragen 😂“`);
+    await this.say('me', `Wo… bin ich? ${Sur.here() ? 'Ah, bei Isa auf dem Sofa.' : G.S.flags.checkedIn ? 'Ah, im Hotelzimmer.' : 'Am Bahnhof?'} Wie spät ist es? ${clockStr()}?!`);
+    await this.say(null, `${extra} Dein Portemonnaie ist ${lost} ${Sur.active() ? 'Franken' : '€'} leichter.`);
+    UI.toast(Sur.here() ? '💬 Isa: „Die Jungs haben dich um drei Uhr abgeliefert. Wasser steht neben dir.“' : `💬 ${fname(who('party'))}: „Lebst du noch? Wir haben dich gestern ins Bett getragen 😂“`);
     G.busy--;
   },
   /* Kurz vor dem Einschlafen: letzte Chance, etwas zu essen, zu trinken oder ins Hotel zu fahren */
@@ -2980,6 +2997,7 @@ const Story = {
     if (bag.length) opts.push({ t: `Tasche öffnen (${bag.slice(0, 3).map((id) => ITEMS[id].n).join(', ')}${bag.length > 3 ? ' …' : ''})`, k: 'bag' });
     else opts.push({ t: 'Tasche öffnen – leer, aber vielleicht hilft Wasser', k: 'bag' });
     if (G.map.id === 'hotel_room') opts.push({ t: 'Ins Bett', k: 'bed' });
+    else if (G.map.id === 'isa_haus') opts.push({ t: 'Ins Gästebett', k: 'subed' });
     else if (G.map.city === 'ibk' || ['bar', 'stueberl', 'club', 'rouge', 'casino', 'hotel_lobby', 'hotel_floor'].includes(G.map.id)) opts.push({ t: 'Taxi ins Hotel Zirbe rufen', k: 'taxi' });
     if (['bar', 'stueberl', 'casino', 'hotel_lobby'].includes(G.map.id)) opts.push({ t: 'Einen Kaffee an der Theke bestellen', k: 'coffee' });
     opts.push({ t: 'Durchhalten', k: 'hold' });
@@ -2988,6 +3006,7 @@ const Story = {
     G.busy--;
     if (k === 'bag') { Phone.open('inv'); UI.toast('Alles mit „weckt auf“ oder Essen hilft gegen die Müdigkeit.'); }
     else if (k === 'bed') await this.bed();
+    else if (k === 'subed') await Sur.sleep();
     else if (k === 'taxi') await this.taxi();
     else if (k === 'coffee') { if (pay('eur', 3.4)) { consume('kaffee'); UI.toast('Ein doppelter Espresso. Das hält dich wach.'); } else UI.toast('Kein Geld für Kaffee.', 'warn'); }
     else UI.toast('Du reisst dich zusammen. Ein paar Minuten hast du noch – dann brauchst du Schlaf.', 'warn');
@@ -3001,10 +3020,11 @@ const Story = {
     passTime(240, { sleep: true, rate: 0.25 });
     G.S.lastSleep = Math.min(G.S.time, G.S.lastSleep + 600);
     await sleep(1400);
-    if (G.S.flags.checkedIn) enterMap('hotel_room', 'bed');
+    if (Sur.here()) enterMap('isa_haus', 'entry');
+    else if (G.S.flags.checkedIn && !Sur.active()) enterMap('hotel_room', 'bed');
     else enterMap(G.map.id, G.S.map === 'ibk' ? 'hbf' : Object.keys(G.map.spawns)[0]);
     await UI.fadeIn();
-    await this.say(null, G.S.flags.checkedIn ? 'Du wachst in deinem Hotelbett auf. Die Jungs haben dich offenbar hergebracht.' : 'Du wachst auf einer Bank auf. Ein Taubenschwarm beobachtet dich.');
+    await this.say(null, Sur.here() ? 'Du wachst bei Isa auf dem Sofa auf. Elin hat dir eine Decke gebracht und ein Zettelchen: „Gute Besserung, Detektiv!“' : G.S.flags.checkedIn ? 'Du wachst in deinem Hotelbett auf. Die Jungs haben dich offenbar hergebracht.' : 'Du wachst auf einer Bank auf. Ein Taubenschwarm beobachtet dich.');
     G.busy--;
   },
 };
@@ -3013,6 +3033,7 @@ function tracht() { const L = G.S.look; return L.hat === 9 && L.top === 11 && L.
 /* ============ Ende / Heimreise ============ */
 const Ending = {
   async show(opt = {}) {
+    if (opt.sursee || opt.final) return this.showSursee(opt);
     const S2 = G.S;
     Track.event('ende', opt.apoc ? 'Apokalypse überlebt' : 'Heimreise', true);
     const html = `<div class="panel"><div class="panel-head"><h2>${opt.apoc ? 'Last Exit Innsbruck' : 'Heimreise nach Luzern'}</h2><span class="sub">Spiel beendet</span></div><div class="panel-body">
@@ -3024,10 +3045,31 @@ const Ending = {
         <div class="stat"><small>Restgeld</small><b>${fmtEur(S2.money.eur)}</b></div><div class="stat"><small>Tage</small><b>${dayOf(S2.time) + 1}</b></div>
       </div>
       <p class="note">${Object.keys(S2.ach).length > 20 ? 'Legendär. Davon werdet ihr noch in zehn Jahren erzählen.' : 'Schöner Ausflug! Aber da geht noch mehr – vielleicht beim nächsten Mal.'}</p>
-      <p class="note">Das Spiel ist damit beendet. Ein neues Spiel beginnt wieder in Luzern am Bahnhof.</p>
-      </div><div class="panel-foot"><span>Danke fürs Spielen!</span><button class="btn primary" id="endNew">Neues Spiel</button></div></div>`;
+      <p class="note">${opt.cont ? 'Innsbruck ist vorbei. In Luzern geht es weiter: Auf Gleis 2 fährt die S-Bahn nach Sursee – dort wartet ein neuer Fall. Oder du gehst heim und beendest das Spiel.' : 'Das Spiel ist damit beendet. Ein neues Spiel beginnt wieder in Luzern am Bahnhof.'}</p>
+      </div><div class="panel-foot"><span>${opt.cont ? 'Kapitel 1 geschafft!' : 'Danke fürs Spielen!'}</span>${opt.cont ? '<button class="btn primary" id="endCont">Weiter nach Luzern</button>' : '<button class="btn primary" id="endNew">Neues Spiel</button>'}</div></div>`;
+    const o = UI.overlay(html, null);
+    if (opt.cont) { await new Promise((res) => o.querySelector('#endCont').addEventListener('click', () => { UI.closeOverlay(); res(); })); return; }
+    o.querySelector('#endNew').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });
+    G.mode = 'over';
+    await new Promise(() => {});
+  },
+  /* Ende von Kapitel 2 (weiterspielen möglich) oder endgültiges Spielende in Luzern */
+  async showSursee(opt) {
+    const S2 = G.S, su = S2.su || {};
+    Track.event('ende', opt.final ? 'Spiel beendet in Luzern' : 'Sursee-Fall gelöst', true);
+    const html = `<div class="panel"><div class="panel-head"><h2>${opt.final ? 'Daheim' : 'Gans oder gar nicht'}</h2><span class="sub">${opt.final ? 'Spiel beendet' : 'Kapitel 2 gelöst'}</span></div><div class="panel-body">
+      <p class="note">${opt.final ? `Zurück aus Innsbruck, der Rucksack voller Geschichten. ${Object.keys(FRIENDS).length} Kollegen winken dir in der Bahnhofshalle nach.` : `Die goldene Sonnenmaske ist zurück, die Gans ist gefallen, und Sursee hat einen neuen Ehrenzünftler: ${S2.name}. Ruedi Pfister spielt wieder Sousaphon – ohne Larve.`}</p>
+      <div class="statgrid">
+        <div class="stat"><small>Bier</small><b>${S2.beers}</b></div><div class="stat"><small>Erlebnisse</small><b>${Object.keys(S2.ach).length}/${Object.keys(ACH).length}</b></div>
+        <div class="stat"><small>Fotos Sursee</small><b>${Object.keys(su.photos || {}).length}/${Object.keys(SIGHTS_SU).length}</b></div><div class="stat"><small>Notizen</small><b>${(su.notes || []).length}</b></div>
+        <div class="stat"><small>Römermünzen</small><b>${(su.coins || []).length}/5</b></div><div class="stat"><small>Narren-Rätsel</small><b>${su.riddles || 0}</b></div>
+        <div class="stat"><small>Restgeld</small><b>${fmtChf(S2.money.chf)}</b></div><div class="stat"><small>Tage</small><b>${dayOf(S2.time) + 1}</b></div>
+      </div>
+      <p class="note">${opt.final ? 'Das Spiel ist beendet. Ein neues Spiel beginnt wieder in Luzern am Bahnhof.' : 'Du kannst in Sursee weiterspielen: Chilbi, See, Römermünzen, Konzert, Bars – alles bleibt offen.'}</p>
+      </div><div class="panel-foot"><span>Danke fürs Spielen!</span>${opt.final ? '' : '<button class="btn primary" id="endCont">Weiterspielen in Sursee</button>'}<button class="btn ${opt.final ? 'primary' : ''}" id="endNew">Neues Spiel</button></div></div>`;
     const o = UI.overlay(html, null);
     o.querySelector('#endNew').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });
+    if (!opt.final) { await new Promise((res) => o.querySelector('#endCont').addEventListener('click', () => { UI.closeOverlay(); res(); })); return; }
     G.mode = 'over';
     await new Promise(() => {});
   },

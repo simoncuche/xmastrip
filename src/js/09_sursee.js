@@ -1,0 +1,1382 @@
+/* ============ Kapitel 2: Sursee – „Gans oder gar nicht“ ============
+   Nach der Heimreise aus Innsbruck geht das Spiel in Luzern weiter: Gleis 2, S-Bahn nach Sursee. Dort ist die goldene
+   Sonnenmaske der Zunft Heini von Uri verschwunden, die Gansabhauet vom Martinstag musste ausfallen und wird jetzt im
+   Dezember mit einer Chilbi nachgeholt – wenn die Maske rechtzeitig auftaucht. Der Spieler löst den Fall, frei in der
+   offenen Welt, aber mit einem klaren nächsten Ziel. Zustand in G.S.su, Stufen in STAGES (ab 'heim'). */
+
+const SU_STAGES = ['heim', 'sbahn', 's_ankunft', 's_tatort', 's_faehrten', 's_strahl', 's_probe', 's_boot', 's_gans', 's_frei'];
+STAGES.push(...SU_STAGES);
+const suAt = (s) => STAGES.indexOf(G.S.stage) >= STAGES.indexOf(s);
+const SU_MAPS = ['sursee', 'sursee_see', 'inseli'];
+
+/* ---- Leute in Sursee (erfunden bis auf die Familie: Isa mit Elin und Timo, Cousin Thierry und Cousine Louve) ---- */
+const SU_P = {
+  isa: { name: 'Isa', bg: '#5a2a4a', look: { skin: 1, build: 0, height: 1, head: 0, ears: 1, hair: 10, hairCol: 2, eyes: 1, eyeCol: 3, brows: 2, nose: 0, mouth: 4, beard: 0, beardCol: 0, mark: 0, glasses: 0, jewel: 4, hat: 0, hatCol: 0, top: 4, topCol: 7, print: 0, pants: 0, pantsCol: 2, shoes: 1, shoesCol: 2, acc: 2, costume: 0 } },
+  elin: { name: 'Elin', bg: '#6a3a6a', look: { skin: 1, build: 0, height: 1, head: 4, ears: 1, hair: 10, hairCol: 4, eyes: 1, eyeCol: 5, brows: 2, nose: 6, mouth: 0, beard: 0, beardCol: 0, mark: 1, glasses: 0, jewel: 1, hat: 3, hatCol: 1, top: 3, topCol: 12, print: 0, pants: 0, pantsCol: 1, shoes: 0, shoesCol: 0, acc: 1, costume: 0, kid: 1 } },
+  timo: { name: 'Timo', bg: '#2a4a6a', look: { skin: 1, build: 1, height: 1, head: 1, ears: 2, hair: 2, hairCol: 4, eyes: 6, eyeCol: 5, brows: 0, nose: 6, mouth: 2, beard: 0, beardCol: 0, mark: 1, glasses: 0, jewel: 0, hat: 0, hatCol: 0, top: 10, topCol: 9, print: 0, pants: 4, pantsCol: 3, shoes: 5, shoesCol: 9, acc: 0, costume: 0, kid: 1 } },
+  thierry: { name: 'Thierry', bg: '#3a5a2a', look: { skin: 1, build: 1, height: 1, head: 1, ears: 2, hair: 7, hairCol: 2, eyes: 1, eyeCol: 0, brows: 0, nose: 6, mouth: 6, beard: 0, beardCol: 0, mark: 5, glasses: 0, jewel: 0, hat: 1, hatCol: 2, top: 6, topCol: 0, print: 3, pants: 3, pantsCol: 0, shoes: 0, shoesCol: 4, acc: 0, costume: 0, kid: 2 } },
+  louve: { name: 'Louve', bg: '#6a5a2a', look: { skin: 1, build: 0, height: 1, head: 4, ears: 1, hair: 16, hairCol: 5, eyes: 1, eyeCol: 6, brows: 2, nose: 0, mouth: 0, beard: 0, beardCol: 0, mark: 5, glasses: 0, jewel: 0, hat: 0, hatCol: 0, top: 4, topCol: 4, print: 0, pants: 1, pantsCol: 11, shoes: 1, shoesCol: 4, acc: 1, costume: 0, kid: 2 } },
+  heinivater: { name: 'Heinivater', bg: '#7a6a1a', look: { skin: 2, build: 3, height: 1, head: 1, ears: 3, hair: 12, hairCol: 9, eyes: 4, eyeCol: 5, brows: 1, nose: 4, mouth: 0, beard: 6, beardCol: 9, mark: 5, glasses: 7, jewel: 0, hat: 8, hatCol: 1, top: 9, topCol: 0, print: 0, pants: 5, pantsCol: 2, shoes: 3, shoesCol: 1, acc: 2, costume: 0 } },
+  pfister: { name: 'Ruedi Pfister', bg: '#4a3a2a', look: { skin: 3, build: 3, height: 2, head: 2, ears: 2, hair: 12, hairCol: 3, eyes: 4, eyeCol: 7, brows: 1, nose: 4, mouth: 5, beard: 2, beardCol: 3, mark: 7, glasses: 0, jewel: 0, hat: 0, hatCol: 0, top: 7, topCol: 0, print: 0, pants: 2, pantsCol: 7, shoes: 1, shoesCol: 2, acc: 0, costume: 0 } },
+  roli: { name: 'Roli Rüttimann', bg: '#2a3a6a', look: { skin: 4, build: 2, height: 2, head: 2, ears: 0, hair: 4, hairCol: 0, eyes: 2, eyeCol: 1, brows: 3, nose: 1, mouth: 2, beard: 4, beardCol: 0, mark: 2, glasses: 4, jewel: 2, hat: 2, hatCol: 0, top: 8, topCol: 16, print: 0, pants: 0, pantsCol: 2, shoes: 1, shoesCol: 1, acc: 3, costume: 0 } },
+  narr: { name: 'Heini, der Narr', bg: '#7a5a1a', look: { skin: 2, build: 0, height: 1, head: 3, ears: 2, hair: 7, hairCol: 7, eyes: 1, eyeCol: 3, brows: 4, nose: 3, mouth: 2, beard: 0, beardCol: 0, mark: 5, glasses: 0, jewel: 3, hat: 0, hatCol: 0, top: 4, topCol: 4, print: 1, pants: 4, pantsCol: 11, shoes: 4, shoesCol: 4, acc: 0, costume: 0 } },
+  riesenrad: { name: 'Riesenrad-Frau Nelly', bg: '#5a2a5a', look: { skin: 2, build: 1, height: 1, head: 0, ears: 0, hair: 9, hairCol: 13, eyes: 1, eyeCol: 0, brows: 2, nose: 0, mouth: 4, beard: 0, beardCol: 0, mark: 0, glasses: 1, jewel: 4, hat: 0, hatCol: 0, top: 3, topCol: 11, print: 0, pants: 0, pantsCol: 2, shoes: 0, shoesCol: 0, acc: 5, costume: 0 } },
+};
+const suP = (k) => SU_P[k];
+const sayP = (k, text) => UI.say(SU_P[k], text);
+const askP = (k, text, opts) => UI.ask(SU_P[k], text, opts);
+/* Wer begleitet als „Papi“? Cuche – oder Lexx, wenn man Cuche spielt */
+const playerIsCuche = () => G.S.pid === 'cuche';
+const suPapi = () => (playerIsCuche() ? (FRIENDS.lexx ? 'lexx' : who('kassier')) : 'cuche');
+
+/* ---- Sehenswürdigkeiten in Sursee (eigene Fotoreihe, getrennt von Innsbruck) ---- */
+const SIGHTS_SU = {
+  untertor: { n: 'Untertor, Sursee', f: 'Das Untertor am unteren Ende der Altstadt. Hier enden Oberstadt und Unterstadt, gleich daneben steht das Wirtshaus Wilder Mann.' },
+  rathaus_sursee: { n: 'Rathaus Sursee', f: 'Spätgotisches Rathaus, erbaut 1539 bis 1546. Vor dem Rathaus findet jedes Jahr am Martinstag die Gansabhauet statt.' },
+  stgeorg: { n: 'Stadtkirche St. Georg', f: 'Die Stadtkirche St. Georg steht mit ihrer Treppe hinter dem Rathaus in der Mitte der Oberstadt.' },
+  diebenturm: { n: 'Diebenturm', f: 'Der Turm in der alten Stadtmauer war einst Gefängnis. Heute hat die Fasnachtszunft Heini von Uri hier ihre Zunftstube.' },
+  ehretpark: { n: 'Ehret-Park', f: 'Der Park liegt unterhalb der Unterstadt, auf der anderen Seite der Stadtmauer, an der Sure.' },
+  triechter: { n: 'Triechter', f: 'Der Triechter ist die trichterförmige Bucht am Nordende des Sempachersees mit Quai, Promenade und Strandbad.' },
+  gammainseli: { n: 'Gamma-Inseli', f: 'Eine echte kleine Insel von 184 m² mit hohen Bäumen. Sie entstand, als der See zwischen 1806 und 1814 abgesenkt wurde, und war schon in der Jungsteinzeit bewohnt.' },
+};
+
+/* ---- Erlebnisse ---- */
+Object.assign(ACH, {
+  su_sbahn: ['Seeblick', 'Mit der S-Bahn dem Sempachersee entlang nach Sursee'],
+  su_spuren: ['Spürnase', 'Alle drei Spuren in der Zunftstube gefunden'],
+  su_faehrten: ['Fährtenleser', 'Allen drei Fährten gefolgt'],
+  su_velo: ['Velo-Kurier', 'Den Flüchtigen auf dem Velo nicht verloren'],
+  su_boot: ['Kapitän', 'Die Bootsjagd zum Gamma-Inseli gewonnen'],
+  su_maske: ['Die Sonne geht auf', 'Die goldene Sonnenmaske gefunden'],
+  su_anklage: ['Plädoyer', 'Den Dieb mit drei Beweisen überführt'],
+  su_gans: ['Gansabhauer', 'An der Gansabhauet die Gans mit einem Hieb heruntergeholt'],
+  su_zunft: ['Ehrenzünftler', 'Von der Zunft Heini von Uri geehrt'],
+  su_fisch: ['Petri Heil', 'Einen Felchen aus dem Sempachersee gezogen'],
+  su_hecht: ['Hecht im See', 'Einen Hecht gefangen'],
+  su_riesenrad: ['Überblick', 'Mit dem Riesenrad über Sursee gefahren'],
+  su_achterbahn: ['Looping', 'Achterbahn an der Chilbi gefahren'],
+  su_lukas: ['Glocke!', 'Beim Hau den Lukas die Glocke getroffen'],
+  su_schiess: ['Scharfschütze', 'An der Schiessbude einen Preis gewonnen'],
+  su_konzert: ['Mitgesungen', 'Am Konzert in der Stadthalle mitgemacht'],
+  su_guugge: ['Schränzer', 'Mit der Guuggenmusig mitgespielt'],
+  su_roemer: ['Archäologe', 'Alle fünf Römermünzen gefunden'],
+  su_narr: ['Narrenfreiheit', 'Fünf Rätsel von Heini, dem Narren, gelöst'],
+  su_sprung: ['Winterschwimmer', 'Im Dezember vom Sprungturm ins Strandbad gesprungen'],
+  su_sup: ['Stehpaddler', 'Auf dem Stand-up-Paddle trocken geblieben'],
+  su_pedalo: ['Pedalo-Profi', 'Mit dem Pedalo ums Gamma-Inseli'],
+  su_kinder: ['Kinderspiele', 'Sackgumpe, Chäszänne oder Stangechlädere gewonnen'],
+  su_118: ['Kellerkonzert', 'Im Kulturwerk 118 auf der Bühne gestanden'],
+  su_kloster: ['Klostergeheimnis', 'Im Kapuzinerkloster etwas Verstecktes gefunden'],
+  su_fotos: ['Sursee im Kasten', 'Alle Sehenswürdigkeiten von Sursee fotografiert'],
+  su_velofahrer: ['Gümmeler', 'Mit dem Mietvelo durch Sursee gefahren'],
+});
+
+/* ---- Gegenstände ---- */
+Object.assign(ITEMS, {
+  strahl: { n: 'Goldener Strahl', t: 'souv', icon: 'ray', inv: true },
+  sonnenmaske: { n: 'Goldene Sonnenmaske', t: 'souv', icon: 'mask', inv: true },
+  felchen: { n: 'Felchen (frisch gefangen)', t: 'souv', icon: 'fish', inv: true },
+  detektor: { n: 'Metalldetektor', t: 'souv', icon: 'detector', inv: true },
+  konzertticket: { n: 'Konzertticket Stadthalle', t: 'souv', icon: 'ticket', inv: true },
+  pizza: { n: 'Pizza aus dem Holzofen', t: 'food', food: 65, mood: 10, nau: -16, icon: 'pizza' },
+  pasta: { n: 'Spaghetti al ragù', t: 'food', food: 60, mood: 9, nau: -14, icon: 'pasta' },
+  tiramisu: { n: 'Tiramisù della casa', t: 'food', food: 22, mood: 9, nau: -4, icon: 'cake' },
+  espresso: { n: 'Espresso', t: 'drink', en: 16, nau: -2, icon: 'coffee' },
+  cappuccino: { n: 'Cappuccino', t: 'drink', en: 12, mood: 3, icon: 'coffee' },
+  kafilutz: { n: 'Kafi Lutz', t: 'drink', alc: 0.08, en: 6, mood: 6, icon: 'tea' },
+  lager: { n: 'Lager vom Fass (5 dl)', t: 'drink', alc: 0.24, beer: 1, mood: 4, en: -2, icon: 'beer' },
+  ipa: { n: 'Craft-IPA (4 dl)', t: 'drink', alc: 0.26, beer: 1, mood: 5, en: -2, icon: 'weiss' },
+  stout: { n: 'Stout (3 dl)', t: 'drink', alc: 0.2, beer: 1, mood: 5, food: 4, icon: 'beer' },
+  sangria: { n: 'Sangria', t: 'drink', alc: 0.18, mood: 6, icon: 'wine' },
+  williams: { n: 'Williams (2 cl)', t: 'drink', alc: 0.13, mood: 5, en: -2, nau: 3, icon: 'shot' },
+  gluehwein: { n: 'Glühwein', t: 'drink', alc: 0.15, mood: 6, en: 2, icon: 'tea' },
+  punsch: { n: 'Kinderpunsch', t: 'drink', mood: 4, en: 3, icon: 'tea' },
+  rivella: { n: 'Rivella', t: 'drink', en: 5, mood: 2, icon: 'bottle', inv: true },
+  eistee: { n: 'Eistee', t: 'drink', en: 4, mood: 1, icon: 'can2', inv: true },
+  eglifilet: { n: 'Eglifilets mit Pommes', t: 'food', food: 60, mood: 9, nau: -14, icon: 'fishplate' },
+  felchenfilet: { n: 'Felchenfilet Müllerinnenart', t: 'food', food: 55, mood: 9, nau: -14, icon: 'fishplate' },
+  cordonbleu: { n: 'Cordon bleu mit Pommes', t: 'food', food: 75, mood: 10, nau: -16, en: -3, icon: 'schnitzel' },
+  roesti: { n: 'Rösti mit Spiegelei', t: 'food', food: 60, mood: 8, nau: -16, hang: 1, icon: 'pan' },
+  chaeschuechli: { n: 'Chäschüechli', t: 'food', food: 25, mood: 5, nau: -6, icon: 'cake' },
+  tapas: { n: 'Tapas-Teller', t: 'food', food: 35, mood: 7, nau: -8, icon: 'board' },
+  magenbrot: { n: 'Magenbrot (Tüte)', t: 'food', food: 18, mood: 6, icon: 'nuts', inv: true },
+  mandeln: { n: 'Gebrannte Mandeln', t: 'food', food: 15, mood: 6, icon: 'nuts', inv: true },
+  zuckerwatte: { n: 'Zuckerwatte', t: 'food', food: 8, mood: 8, nau: 3, icon: 'cotton' },
+  marroni: { n: 'Heisse Marroni', t: 'food', food: 20, mood: 6, nau: -4, icon: 'nuts', inv: true },
+  migrosmenu: { n: 'Tagesmenü Migros-Restaurant', t: 'food', food: 70, mood: 6, nau: -14, icon: 'pan' },
+  gipfeli_m: { n: 'Gipfeli', t: 'food', food: 15, mood: 3, nau: -5, icon: 'croissant', inv: true },
+  ruebli: { n: 'Rüeblitorte (Stück)', t: 'food', food: 20, mood: 7, icon: 'cake', inv: true },
+  angelkoeder: { n: 'Köder (Maden)', t: 'tool', icon: 'bait', inv: true, uses: 5 },
+});
+
+/* ---- Läden und Lokale (Franken) ---- */
+Object.assign(OPEN, { wildermann: [10, 24], muehle: [11, 23.5], stadtcafe: [8, 24], tnt: [17, 26], roessli: [21, 28], mosquito: [16, 25], lafuga: [7, 18.5], craftwerk: [16, 25], museum: [11, 17], theater: [9, 22], stadthalle: [18, 24], kulturwerk: [20, 28], chilbi: [10, 24], boote: [9, 17], buvette: [10, 18], surseepark: [8, 20] });
+Object.assign(SHOPS, {
+  wildermann: { title: 'Wirtshaus Wilder Mann', cur: 'chf', mode: 'eat', venue: 'wildermann', intro: 'Seit 1495 am Untertor. Die Wirtin wischt den Stammtisch ab: „Grüezi! Was darf\'s sein?“', sections: [
+    { t: 'Aus dem See', items: [it('eglifilet', 34.5), it('felchenfilet', 36)] },
+    { t: 'Gutbürgerlich', items: [it('cordonbleu', 32), it('roesti', 22.5), it('chaeschuechli', 9.5)] },
+    { t: 'Getränke', items: [it('lager', 6.8), it('wein', 7.5), it('williams', 6), it('kafilutz', 7.5), it('rivella', 4.8), it('wasser', 4.2)] },
+    { t: 'Für die Jungs', items: [it('runde', 54, { n: 'Runde Lager für alle', d: 'Alle Jungs hier bekommen ein Bier', icon: 'beer', special: 'round' })] },
+  ] },
+  muehle: { title: 'Pizzeria zur Mühle', cur: 'chf', mode: 'eat', venue: 'muehle', intro: 'Es duftet nach Holzofen. Pizzaiolo Gino wirbelt den Teig: „Buonasera! Una pizza, una pasta?“', sections: [
+    { t: 'Dal forno', items: [it('pizza', 21.5, { n: 'Pizza Margherita', d: 'Holzofen, Büffelmozzarella' }), it('pizza', 25.5, { n: 'Pizza Diavola', d: 'scharfe Salami · macht richtig satt' })] },
+    { t: 'Primi e dolci', items: [it('pasta', 23.5), it('tiramisu', 10.5)] },
+    { t: 'Da bere', items: [it('wein', 7.9, { n: 'Chianti (1 dl)' }), it('lager', 6.5, { n: 'Birra Moretti' }), it('espresso', 4.2), it('wasser', 4)] },
+  ] },
+  stadtcafe: { title: 'Stadtcafé', cur: 'chf', mode: 'eat', venue: 'stadtcafe', intro: 'Am Rathausplatz, im ehemaligen Modehaus Heimann. An den Wänden hängt die aktuelle Ausstellung.', sections: [
+    { t: 'Kaffee', items: [it('cappuccino', 5.2), it('espresso', 4.2), it('kafilutz', 7.8)] },
+    { t: 'Dazu', items: [it('gipfeli_m', 3.2), it('ruebli', 6.5), it('chaeschuechli', 8.5)] },
+    { t: 'Bar', items: [it('lager', 6.9), it('wein', 7.8), it('gluehwein', 7.5), it('punsch', 5)] },
+  ] },
+  tnt: { title: 'TNT Rock Bar', cur: 'chf', mode: 'eat', venue: 'tnt', intro: 'AC/DC aus den Boxen, Billardkugeln klacken. „Was trinksch?“', sections: [{ t: 'Bar', items: [it('lager', 7.5), it('flaschenbier', 6.5), it('shot', 6), it('wodkaE', 13), it('cola', 5)] }] },
+  roessli: { title: 'Rössli Nightbar', cur: 'chf', mode: 'eat', venue: 'roessli', intro: 'Rotes Licht, Discokugel, Schlager und Hits. Die Barfrau zwinkert.', sections: [{ t: 'Bar', items: [it('gintonic', 16), it('flaschenbier', 7.5), it('shot', 7), it('wodkaE', 15), it('wasser', 5)] }] },
+  mosquito: { title: 'El Mosquito Bodega & Bar', cur: 'chf', mode: 'eat', venue: 'mosquito', intro: '¡Hola! Weinfässer, Schinken an der Decke, Gitarrenmusik.', sections: [{ t: 'Tapas', items: [it('tapas', 16.5)] }, { t: 'Bebidas', items: [it('sangria', 8.5), it('wein', 7.5, { n: 'Rioja (1 dl)' }), it('flaschenbier', 6.5, { n: 'Estrella' }), it('wasser', 4)] }] },
+  lafuga: { title: 'La Fuga', cur: 'chf', mode: 'eat', venue: 'lafuga', intro: 'Die Siebträgermaschine faucht. Hier gibt es den besten Kaffee im Städtli.', sections: [{ t: 'Caffè', items: [it('espresso', 4), it('cappuccino', 5), it('kaffee', 4.5)] }, { t: 'Dolci', items: [it('gipfeli_m', 3), it('ruebli', 6)] }] },
+  craftwerk: { title: 'Craftwerk', cur: 'chf', mode: 'eat', venue: 'craftwerk', intro: 'Zwanzig Zapfhähne an der Wand. Auf der Kreidetafel stehen Namen, die du noch nie gehört hast.', sections: [{ t: 'Vom Hahn', items: [it('ipa', 9.5), it('stout', 8.5), it('lager', 7)] }, { t: 'Dazu', items: [it('nachos', 12.5), it('cola', 5)] }, { t: 'Für die Jungs', items: [it('runde', 66, { n: 'Runde Craft-Bier für alle', d: 'Für alle Jungs hier', icon: 'beer', special: 'round' })] }] },
+  migros: { title: 'Migros Surseepark', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Grosse Migros: alles für unterwegs.', sections: [{ t: 'Proviant', items: [it('sandwich', 5.2), it('gipfeli_m', 1.2), it('banane', 0.6), it('chips', 2.9), it('schoko', 2.2), it('ruebli', 3.9)] }, { t: 'Getränke', items: [it('wasser', 1.1), it('rivella', 2.1), it('eistee', 1.6), it('dosenbier', 1.9), it('energy', 2.3)] }, { t: 'Apotheke & Co.', items: [it('aspirin', 7.9), it('elektrolyt', 6.5)] }] },
+  migrosresto: { title: 'Migros-Restaurant', cur: 'chf', mode: 'eat', venue: 'surseepark', intro: 'Tablett nehmen, anstehen, essen. Schnell und günstig.', sections: [{ t: 'Menü', items: [it('migrosmenu', 14.9), it('roesti', 13.5), it('pommes', 5.5)] }, { t: 'Getränke', items: [it('kaffee', 3.6), it('rivella', 3.5), it('wasser', 2.5)] }] },
+  sportsursee: { title: 'Sport im Surseepark', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Angelruten, Neoprenanzüge, Velohelme. „Für den See im Dezember? Mutig!“', sections: [{ t: 'Fischen', items: [it('angelkoeder', 6.5, { d: '5 Würfe mit Maden – mehr Bisse' })] }, { t: 'Kleidung', items: [it('o_beanie', 24, { n: 'Beanie mit Bommel', icon: 'cap', wear: { hat: 3, hatCol: 1 }, d: 'Rot, warm' }), it('o_jacke', 79, { n: 'Trainerjacke', icon: 'shirt', wear: { top: 10, topCol: 9 }, d: 'Blau mit Streifen' })] }] },
+  elektro: { title: 'Elektronik', cur: 'chf', mode: 'take', venue: 'surseepark', intro: 'Bildschirme, Kopfhörer, Drohnen. Ein Verkäufer zeigt dir begeistert einen Metalldetektor.', sections: [{ t: 'Angebote', items: [it('detektor', 129, { d: 'Für Schatzsucher · findet Münzen im Boden' })] }] },
+  kiosk_sursee: { title: 'Kiosk', cur: 'chf', mode: 'take', venue: 'surseepark', sections: [{ t: 'Kiosk', items: [it('zigaretten', 9.8), it('feuerzeug', 2), it('zeitung', 3.5), it('schoko', 2.5), it('eistee', 2.5), it('dosenbier', 2.9)] }] },
+  stadthalle_bar: { title: 'Bar in der Stadthalle', cur: 'chf', mode: 'eat', venue: 'stadthalle', intro: 'Becherpfand zwei Franken. Die Schlange ist lang, aber schnell.', sections: [{ t: 'Bar', items: [it('lager', 7.5), it('wein', 8), it('cola', 5), it('wasser', 4)] }, { t: 'Snacks', items: [it('bratwurst', 8.5), it('pommes', 6)] }] },
+  kulturwerk: { title: 'Bar im Kulturwerk 118', cur: 'chf', mode: 'eat', venue: 'kulturwerk', sections: [{ t: 'Bar', items: [it('lager', 6), it('ipa', 8), it('shot', 5), it('cola', 4)] }] },
+  buvette: { title: 'Triechter Buvette', cur: 'chf', mode: 'eat', venue: 'buvette', intro: 'Mit Blick auf den Triechter. Im Winter gibt es Glühwein und heisse Marroni.', sections: [{ t: 'Warm', items: [it('gluehwein', 6.5), it('punsch', 4.5), it('kaffee', 4.2), it('marroni', 6)] }, { t: 'Kalt', items: [it('lager', 6.5), it('rivella', 4.5)] }, { t: 'Snacks', items: [it('bratwurst', 8), it('chaeschuechli', 7.5)] }] },
+  magenbrot: { title: 'Magenbrot-Stand', cur: 'chf', mode: 'eat', venue: 'chilbi', intro: 'Es riecht nach Zimt und Zucker.', sections: [{ t: 'Chilbi-Klassiker', items: [it('magenbrot', 6), it('mandeln', 7), it('zuckerwatte', 5)] }, { t: 'Warm', items: [it('gluehwein', 6), it('punsch', 4)] }] },
+  marroni: { title: 'Marroni-Stand', cur: 'chf', mode: 'eat', intro: 'Heisse Marroni aus der Trommel, im Papiersack.', sections: [{ t: 'Heiss', items: [it('marroni', 6, { d: '200 g' }), it('punsch', 4)] }] },
+});
+
+/* ============ Logik ============ */
+const Sur = {
+  active() { return !!(G.S && G.S.chapter); },
+  here() { return !!(G.S && G.S.chapter === 'sursee'); },
+  st() { if (!G.S.su) G.S.su = { clues: {}, f: {}, notes: [], ev: {}, hidden: {}, coins: [], photos: {}, met: {}, riddles: 0, attempts: 0 }; return G.S.su; },
+  note(k, text) { const s = this.st(); if (s.notes.some((n) => n.k === k)) return; s.notes.push({ k, t: text, at: G.S.time }); s.lastProg = G.S.time; UI.toast(`📓 Notizbuch: ${text}`); },
+  evid(k) { this.st().ev[k] = 1; },
+  prog() { this.st().lastProg = G.S.time; this.hintLvl = 0; },
+  setStage(s) { Story.setStage(s); this.prog(); },
+
+  /* ---------- Kapitelwechsel: von Innsbruck zurück nach Luzern ---------- */
+  async toLuzern(opt = {}) {
+    G.S.chapter = 'heim';
+    G.S.finished = 0;
+    this.st();
+    delete BUILT.luzern_halle;
+    Story.setStage('heim');
+    passTime(opt.apoc ? 200 : 255);
+    if (G.S.time % 1440 < 8 * 60) G.S.time = dayOf(G.S.time) * 1440 + 8 * 60;
+    G.S.st.prom = Math.min(G.S.st.prom, 0.6);
+    enterMap('luzern_halle', 'gleis');
+    G.player.dir = 0;
+    await sleep(200);
+    await UI.fadeIn();
+    const papi = suPapi(), k = voice('kassier');
+    await Story.say(k, opt.apoc ? 'Luzern. Wir leben. Innsbruck … naja. Ich sag nur: Das zahlt keine Versicherung.' : 'Luzern Hauptbahnhof. Endstation, Jungs. Danke für die legendärsten Tage seit Dublin.');
+    if (playerIsCuche()) {
+      Snd.sfx('blip');
+      await sayP('isa', '📱 Schatz! Seid ihr zurück? Komm bitte sofort nach Sursee. Die Sonnenmaske der Zunft ist weg, die Gansabhauet steht auf der Kippe. Der Heinivater sucht einen Detektiv – ich hab gesagt, ich kenn einen.');
+    } else {
+      await Story.say(papi, `${G.S.name}, komm doch mit nach Sursee! Isa hat geschrieben, im Städtli ist etwas Verrücktes passiert. Die goldene Sonnenmaske der Zunft ist verschwunden – und die Gansabhauet wird nachgeholt, sobald sie wieder da ist.`);
+      await sayP('isa', `📱 ${G.S.name}, du warst doch schon in Innsbruck der mit dem Riecher. Die Kinder wollen unbedingt Detektiv spielen. Gleis 2, die S-Bahn fährt gleich!`);
+    }
+    await Story.say(voice('party'), 'Sursee? Chilbi? Bier? Wir kommen später nach. Erst mal duschen.');
+    UI.toast('Gleis 2: S-Bahn nach Sursee. Oder durch die Halle heimgehen – das beendet das Spiel.');
+    saveGame(true);
+  },
+  async leaveLuzern() {
+    const c = await Story.ask(null, 'Durch die Halle hinaus und nach Hause? Damit endet das Spiel. Die S-Bahn nach Sursee fährt auf Gleis 2.', ['Heimgehen – Spiel beenden', 'Doch nach Sursee']);
+    if (c !== 0) return false;
+    G.S.finished = 1;
+    saveGame(true);
+    await Ending.show({ final: true });
+    return false;
+  },
+  async boardSBahn() {
+    if (G.S.stage !== 'heim') { await Story.say(null, 'Die S-Bahn nach Sursee.'); return; }
+    G.busy++;
+    Snd.sfx('ding');
+    await Story.say(null, '🔊 „S1 nach Sursee, Abfahrt auf Gleis 2. Nächster Halt: Emmenbrücke.“');
+    Story.setStage('sbahn');
+    G.S.flags.sbDep = G.S.time + 1;
+    _sbScroll = 0;
+    await Scene.play('door', { exit: false, style: { name: 'S1 SURSEE', wall: '#e8e4dc', door: 'glass', sign: ['#d8302a', '#ffffff'], inner: '#eef4fa' }, ms: 900, keep: true });
+    enterMap('sbahn', 'start');
+    await UI.fadeIn();
+    G.busy--;
+    UI.toast('Setz dich ans Fenster: Ab Sempach-Neuenkirch fährst du dem See entlang.');
+    saveGame(true);
+  },
+  _sbLast: null,
+  sbahnUpdate(dt) {
+    if (G.S.stage !== 'sbahn') return;
+    const st = sbState();
+    _sbScroll += (st.stop ? 0 : 200) * dt;
+    G.map.timeScale = G.player.seated ? 2 : 1;
+    if (st.stop && this._sbLast !== st.stop.n && st.tm > 0.5 && st.stop.n !== 'Luzern') {
+      this._sbLast = st.stop.n;
+      Snd.sfx('ding');
+      UI.toast(st.stop.n === 'Sursee' ? '🔊 „Sursee. Endstation. Bitte alle aussteigen.“' : `🔊 „${st.stop.n}.“${st.stop.n === 'Nottwil' ? ' Am Ufer das Paraplegiker-Zentrum.' : st.stop.n === 'Sempach-Neuenkirch' ? ' Draussen glitzert der Sempachersee.' : ''}`);
+      if (st.stop.n === 'Sursee') { G.player.seated = false; G.player.pose = 'stand'; }
+    }
+  },
+  async sbahnSeat() {
+    if (G.player.seated) { G.player.seated = false; G.player.pose = 'stand'; return; }
+    G.player.seated = true; G.player.pose = 'sit'; G.player.dir = 2;
+    UI.toast('Du setzt dich ans Fenster. Die Fahrt vergeht schneller.');
+  },
+  async sbahnDoor() {
+    const st = sbState();
+    if (st.tm < SB_END) { await Story.say(null, `Die Türen sind zu. Nächster Halt: ${st.next.n}.${st.next.n === 'Sursee' ? '' : ' Du fährst bis Sursee.'}`); return; }
+    G.busy++;
+    achieve('su_sbahn');
+    G.S.chapter = 'sursee';
+    Story.setStage('s_ankunft');
+    await Scene.play('trainexit', { ms: 1400, keep: true });
+    enterMap('sursee', 'bahnhof');
+    await UI.fadeIn();
+    G.busy--;
+    await this.arrive();
+  },
+
+  /* ---------- Ankunft in Sursee ---------- */
+  async arrive() {
+    G.busy++;
+    const s = this.st();
+    s.met.isa = 1;
+    const papi = suPapi();
+    await sayP('elin', 'DA IST ER! Mami, er ist da!');
+    await sayP('timo', `Hoi ${G.S.name}! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!`);
+    await sayP('isa', `${playerIsCuche() ? 'Da bist du ja endlich' : `Willkommen in Sursee, ${G.S.name}`}! Also, hör zu. Die goldene Sonnenmaske der Zunft Heini von Uri ist weg. Die Zunft feiert dieses Jahr 150 Jahre, die Maske war in der Jubiläumsausstellung im Sankturbanhof.`);
+    await sayP('isa', 'In der Nacht vor dem Martinstag haben sie die Maske in die Zunftstube im Diebenturm gebracht. Am Morgen war sie verschwunden – und die Gansabhauet fiel zum ersten Mal überhaupt aus.');
+    await sayP('isa', 'Die Stadt holt sie jetzt nach, mit Chilbi auf dem Märtplatz. Aber ohne Sonnenmaske keine Gansabhauet. Der Heinivater wartet in der Zunftstube im Diebenturm. Unterstadt, beim Hirschenplatz.');
+    if (!playerIsCuche() && FRIENDS[papi]) await Story.say(papi, 'Ich bring die Taschen heim. Elin und Timo zeigen dir den Weg. Du schaffst das, Sherlock.');
+    await sayP('elin', 'Wir kommen mit! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
+    s.follow = 1;
+    Story.dropActor(G.npcs.find((n) => n.id === 'su_isa'));
+    UI.toast('Isa geht heim in die Münstervorstadt. Elin und Timo bleiben bei dir.');
+    this.spawnFollowers(true);
+    G.busy--;
+    this.prog();
+    UI.toast('📓 Im Handy gibt es jetzt das Notizbuch mit Spuren, Fährten und Tipps.');
+    saveGame(true);
+  },
+
+  /* ---------- Ziele, Schritte, Karte ---------- */
+  faehrtenDone() { const f = this.st().f; return ['chilbi', 'see', 'alt'].filter((k) => this.faehrte(k)).length; },
+  faehrte(k) { const f = this.st().f; return k === 'chilbi' ? !!(f.roli && f.rad) : k === 'see' ? !!(f.log && f.fischer) : !!(f.buch && f.fundus); },
+  objective() {
+    const s = this.st(), st = G.S.stage;
+    switch (st) {
+      case 'heim': return 'Zurück in Luzern · Gleis 2: S-Bahn nach Sursee – oder durch die Halle heimgehen (beendet das Spiel)';
+      case 'sbahn': { const b = sbState(); return b.tm >= SB_END ? 'Sursee! Aussteigen – Tür in der Mitte des Wagens' : `S-Bahn nach Sursee · nächster Halt: ${b.next.n}`; }
+      case 's_ankunft': return 'Geh mit Elin und Timo zum Diebenturm in der Unterstadt (Zunftstube, beim Hirschenplatz)';
+      case 's_tatort': return `Zunftstube im Diebenturm: Finde drei Spuren (${Object.keys(s.clues).length}/3)`;
+      case 's_faehrten': {
+        const open = [];
+        if (!this.faehrte('chilbi')) open.push(s.f.roli ? (isNight() || hourOf(G.S.time) >= 17 ? 'Riesenrad: Ausschau halten' : 'Riesenrad ab 17 Uhr') : 'Chilbi: Jeton zum Achterbahn-Betreiber');
+        if (!this.faehrte('see')) open.push(!s.f.log ? 'See: Logbuch der Bootsvermietung' : 'See: Fischer Wäli am Quai');
+        if (!this.faehrte('alt')) open.push(!s.f.buch ? 'Altstadt: Besucherbuch im Sankturbanhof' : 'Altstadt: Fundus im Stadttheater');
+        return `Folge den Fährten (${this.faehrtenDone()}/3) · ${open.join(' · ')}`;
+      }
+      case 's_strahl': return hasInv('strahl') ? `Zeig Isa den goldenen Strahl (${this.isaWhere().t})` : 'Thierry und Louve warten beim Spielplatz im Ehret-Park';
+      case 's_probe': { const h = hourOf(G.S.time); return h >= 16 && h < 23 ? 'Guuggen-Probe der Diebetormtöibeler beim Untertor – schau dir den Bläser mit der Larve an' : 'Die Guuggen proben heute ab 16 Uhr beim Untertor. Bis dahin: Chilbi, See, Essen!'; }
+      case 's_boot': return 'Er flieht über den See! Zum Quai – Bootsjagd zum Gamma-Inseli';
+      case 's_gans': { const h = hourOf(G.S.time); return h >= 10 && h < 16 ? 'Nachhol-Gansabhauet: Hol dir beim Diebenturm deine Startnummer' : 'Die Gansabhauet beginnt um 10 Uhr beim Diebenturm. Schlaf bei Isa oder geniess die Chilbi.'; }
+      default: {
+        const tips = [];
+        if (G.S.money.chf < 15) tips.push('Kaum Franken – Bankomat am Bahnhof oder im Surseepark');
+        else if (G.S.st.energy < 25) tips.push('Müde – Gästebett bei Isa in der Münstervorstadt');
+        else if (G.S.st.food < 25) tips.push('Hunger! Pizza in der Mühle oder Egli im Wilden Mann');
+        else if (hourOf(G.S.time) >= 19 && hourOf(G.S.time) < 23 && !G.S.ach.su_konzert) tips.push('Heute Abend Konzert in der Stadthalle');
+        else if (s.coins.length < 5 && hasInv('detektor')) tips.push(`Römermünzen im Vicus (${s.coins.length}/5)`);
+        else tips.push('Chilbi, See, Bars – Sursee gehört dir');
+        return `${tips[0]} · Fotos ${Object.keys(s.photos).length}/${Object.keys(SIGHTS_SU).length}`;
+      }
+    }
+  },
+  tag() { return { heim: 'LUZERN', sbahn: 'S1', s_ankunft: 'SURSEE', s_tatort: 'TATORT', s_faehrten: 'FÄHRTEN', s_strahl: 'STRAHL', s_probe: 'GUUGGE', s_boot: 'SEE', s_gans: 'GANS', s_frei: 'FREI' }[G.S.stage] || 'SURSEE'; },
+  steps() {
+    const s = this.st();
+    return [
+      { t: 'Heimreise nach Luzern', d: 'Innsbruck ist geschafft', done: true },
+      { t: 'S-Bahn nach Sursee', d: 'Gleis 2, dem Sempachersee entlang', done: suAt('s_ankunft') },
+      { t: 'Isa und die Kinder am Bahnhof treffen', d: 'Elin und Timo helfen beim Suchen', done: suAt('s_tatort') || !!s.met.isa },
+      { t: 'Tatort Diebenturm', d: `Drei Spuren in der Zunftstube (${Object.keys(s.clues).length}/3)`, done: suAt('s_faehrten') },
+      { t: 'Fährte Chilbi', d: 'Jeton zum Achterbahn-Betreiber, vom Riesenrad aus Ausschau halten', done: this.faehrte('chilbi') },
+      { t: 'Fährte See', d: 'Logbuch der Bootsvermietung, Fischer Wäli braucht einen Felchen', done: this.faehrte('see') },
+      { t: 'Fährte Altstadt', d: 'Besucherbuch im Sankturbanhof, Fundus im Stadttheater', done: this.faehrte('alt') },
+      { t: 'Louves Schatzkiste', d: 'Spielplatz im Ehret-Park', done: suAt('s_probe') },
+      { t: 'Velo-Verfolgung', d: 'Guuggen-Probe beim Untertor', done: suAt('s_boot') },
+      { t: 'Bootsjagd und Anklage', d: 'Gamma-Inseli', done: suAt('s_gans') },
+      { t: 'Nachhol-Gansabhauet', d: 'Vor dem Rathaus', done: suAt('s_frei') },
+    ];
+  },
+  pois(id) {
+    const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
+    if (id === 'sursee') return [
+      { x: 9, y: 31, n: 'Bahnhof', c: V }, { x: 28, y: 34, n: 'Surseepark', c: S }, { x: 45, y: 46, n: 'Martigny-Platz', c: S }, { x: 54, y: 38, n: 'Untertor', c: V },
+      { x: 58, y: 36, n: 'Wilder Mann', c: A }, { x: 63, y: 36, n: 'TNT', c: N }, { x: 80, y: 36, n: 'Rathaus', c: V }, { x: 89, y: 36, n: 'Stadtcafé', c: A },
+      { x: 98, y: 36, n: 'El Mosquito', c: A }, { x: 107, y: 36, n: 'Craftwerk', c: N }, { x: 81, y: 22, n: 'St. Georg', c: V }, { x: 71, y: 33, n: 'Obertor', c: V },
+      { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 72, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
+      { x: 110, y: 16, n: 'Chilbi', c: N }, { x: 62, y: 49, n: 'Rössli', c: N }, { x: 71, y: 49, n: 'La Fuga', c: A }, { x: 81, y: 49, n: 'Diebenturm', c: V },
+      { x: 101, y: 49, n: 'Mühle', c: A }, { x: 65, y: 57, n: 'Spielplatz', c: S }, { x: 85, y: 62, n: 'Ehret-Park', c: V }, { x: 127, y: 41, n: 'Beckenhof', c: V },
+      { x: 122, y: 60, n: 'Bei Isa', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 28, y: 46, n: 'Römer-Vicus', c: V }, { x: 17, y: 31, n: 'Polizei', c: S },
+    ];
+    if (id === 'sursee_see') return [{ x: 32, y: 14, n: 'Bootsvermietung', c: A }, { x: 39, y: 18, n: 'Fischer', c: S }, { x: 47, y: 12, n: 'Buvette', c: A }, { x: 63, y: 19, n: 'Sprungturm', c: V }, { x: 79, y: 18, n: 'SUP', c: S }, { x: 7, y: 26, n: 'Zellmoos', c: V }, { x: 45, y: 48, n: 'Gamma-Inseli', c: V }, { x: 84, y: 3, n: 'Mariazell', c: V }, { x: 40, y: 1, n: 'Stadt', c: V }];
+    return [];
+  },
+
+  /* ---------- Wo sind Isa, die Kinder und die Jungs? ---------- */
+  isaWhere() {
+    const h = hourOf(G.S.time);
+    if (h >= 9 && h < 18) return { t: 'im Stadtcafé am Rathausplatz', map: 'stadtcafe', x: 89, y: 36 };
+    return { t: 'zu Hause in der Münstervorstadt', map: 'isa_haus', x: 122, y: 60 };
+  },
+  jungsDa() { return suAt('s_tatort') && (this.st().jungsAt != null && G.S.time >= this.st().jungsAt); },
+  friendLoc(id) {
+    if (!this.jungsDa() || !FRIENDS[id]) return null;
+    const h = hourOf(G.S.time), fn = FRIENDS[id].fn;
+    if (id === suPapi() && !playerIsCuche()) return h >= 9 && h < 18 ? 'stadtcafe' : 'isa_haus';
+    if (h >= 3 && h < 9) return null;
+    const night = h >= 22 || h < 3;
+    const T = {
+      saeufer: h >= 11 || night ? 'wildermann' : null, gourmet: (h >= 11 && h < 14) || (h >= 18 && h < 23) ? 'muehle' : 'lafuga',
+      party: night || h >= 18 ? 'tnt' : h >= 14 ? 'chilbi' : 'stadtcafe', frech: h >= 10 && h < 22 ? 'chilbi' : 'roessli', pilot: h >= 9 && h < 16 ? 'martigny' : 'craftwerk',
+      taenzer: night ? 'roessli' : 'stadtcafe', charmeur: night ? 'roessli' : 'stadtcafe', muskel: h >= 10 && h < 17 ? 'quai' : 'craftwerk',
+      kanadier: h >= 9 && h < 16 ? 'quai' : 'craftwerk', raucher: h >= 17 || night ? 'diebenturm' : 'lafuga', anwalt: h >= 9 && h < 18 ? 'stadtcafe' : 'wildermann', kassier: 'stadtcafe',
+    };
+    return T[fn] || 'wildermann';
+  },
+  LOC: { wildermann: ['im Wilden Mann', 58, 36], muehle: ['in der Pizzeria zur Mühle', 101, 49], stadtcafe: ['im Stadtcafé', 89, 36], tnt: ['in der TNT Rock Bar', 63, 36], roessli: ['in der Rössli Nightbar', 62, 49], craftwerk: ['im Craftwerk', 107, 36], lafuga: ['im La Fuga', 71, 49], chilbi: ['an der Chilbi', 108, 20], martigny: ['auf dem Martigny-Platz (mit Drohne)', 45, 48], quai: ['am Quai beim See', 128, 77], diebenturm: ['beim Diebenturm, eine rauchen', 81, 50], isa_haus: ['bei Isa zu Hause', 122, 60] },
+  whereIs(id) {
+    if (!this.here()) return { t: G.S.stage === 'sbahn' ? 'in Luzern geblieben' : 'auf Gleis 4 in Luzern', x: null };
+    const l = this.friendLoc(id);
+    if (!l) return { t: suAt('s_tatort') && this.jungsDa() ? 'im Hotel Rössli, schläft' : 'kommt später nach Sursee', x: null };
+    const e = this.LOC[l];
+    return { t: e[0], x: e[1], y: e[2] };
+  },
+  /* Figuren der Story auf die Karten setzen */
+  populate(m) {
+    G.npcs = G.npcs.filter((n) => !(n.friend || (n.id && String(n.id).startsWith('su_'))));
+    const s = this.st(), st = G.S.stage, h = hourOf(G.S.time);
+    const add = (o) => { const a = new Actor(Object.assign({ solid: true, keepDir: true, dir: 0 }, o)); G.npcs.push(a); return a; };
+    const person = (k, x, y, dir, extra = {}) => add(Object.assign({ id: 'su_' + k, name: SU_P[k].name, look: SU_P[k].look, x: x * 16 + 8, y: y * 16 + 12, dir, talk: () => this.talk(k), label: 'Reden: ' + SU_P[k].name, bubbleRand: ['dots'] }, extra));
+    const spot = (name) => (m.spots && m.spots[name]) || null;
+    const atSpot = (k, name, extra) => { const p = spot(name); if (p) person(k, p[0], p[1], p[2] ?? 0, extra); };
+    const friend = (id, x, y, dir, pose = 'stand', extra = {}) => { if (FRIENDS[id]) G.npcs.push(Story.friendActor(id, x, y, dir, pose, Object.assign({ talk: () => this.friendTalk(id) }, extra))); };
+    /* Followers zuerst entfernen, sie werden unten neu gesetzt */
+    if (m.id === 'sbahn') {
+      const c = spot('cuche'); if (c && !playerIsCuche() && FRIENDS.cuche) friend('cuche', c[0], c[1], c[2], 'sit', { bubbleRand: ['zzz', 'dots'] });
+      const a = spot('alter'); if (a) person('heinivater', a[0], a[1], a[2], { name: 'Älterer Herr mit Abzeichen', label: 'Reden: Älterer Herr', pose: 'sit', bubbleRand: ['!'], talk: () => this.talk('alter') });
+      return;
+    }
+    if (m.id === 'sursee') {
+      if (st === 's_ankunft' && !s.met.isa) { person('isa', 8, 34, 3); }
+      person('roli', 106, 13, 0, { bubbleRand: ['dots', '!'] });
+      person('riesenrad', 116, 14, 0, { talk: () => this.riesenrad(), label: 'Riesenrad', bubbleRand: ['note'] });
+      if ((st === 's_strahl' && h >= 8 && h < 20) || (suAt('s_ankunft') && h >= 9 && h < 17)) { const hot = st === 's_strahl' && !hasInv('strahl'); person('thierry', 66, 59, 0, { bubbleRand: hot ? ['!'] : ['note'] }); person('louve', 68, 59, 1, { bubbleRand: hot ? ['!'] : ['heart'] }); }
+      if (st === 's_probe' && h >= 16 && h < 23) this.spawnGuuggen();
+      if (st === 's_gans' && h >= 10 && h < 16) person('heinivater', 82, 51, 0, { bubbleRand: ['!'] });
+      if (suAt('s_ankunft')) this.spawnNarr(m);
+      for (const id of Object.keys(FRIENDS)) {
+        const l = this.friendLoc(id); if (!l) continue;
+        const P = { chilbi: [[104, 20], [112, 21], [100, 21]], martigny: [[44, 49]], diebenturm: [[79, 51]] }[l];
+        if (!P) continue;
+        const k = Object.keys(FRIENDS).indexOf(id) % P.length;
+        friend(id, P[k][0], P[k][1], 0, 'stand', { bubbleRand: l === 'diebenturm' ? ['dots'] : l === 'martigny' ? ['!', '?'] : ['note', '!'] });
+      }
+    } else if (m.id === 'sursee_see') {
+      for (const id of Object.keys(FRIENDS)) { if (this.friendLoc(id) !== 'quai') continue; const k = Object.keys(FRIENDS).indexOf(id) % 2; friend(id, k ? 36 : 30, 16, 0, 'stand', { bubbleRand: ['!', 'dots'] }); }
+    } else if (m.id === 'zunftstube') {
+      if (suAt('s_ankunft') && !suAt('s_gans')) atSpot('heinivater', 'heinivater');
+    } else if (m.id === 'rathaus') {
+      if (suAt('s_faehrten') && !suAt('s_gans') && h >= 9 && h < 18) atSpot('heinivater', 'heinivater');
+    } else if (m.id === 'isa_haus') {
+      if (this.isaWhere().map === 'isa_haus') atSpot('isa', 'isa');
+      if (h >= 18 || h < 8) { atSpot('elin', 'elin', { pose: h >= 21 || h < 7 ? 'sit' : 'stand', bubbleRand: h >= 21 || h < 7 ? ['zzz'] : ['note'] }); atSpot('timo', 'timo', { bubbleRand: h >= 21 || h < 7 ? ['zzz'] : ['!'] }); }
+    } else if (m.id === 'stadtcafe') {
+      if (this.isaWhere().map === 'stadtcafe') atSpot('isa', 'isa', { pose: 'sit' });
+    } else if (m.id === 'inseli') {
+      if (G.S.stage === 's_boot' && this.st().maskFound) atSpot('pfister', 'pfister');
+    }
+    /* Die Jungs in den Lokalen */
+    if (m.spots) {
+      const here = Object.keys(FRIENDS).filter((id) => this.friendLoc(id) === m.id && !(m.id === 'isa_haus' && id !== suPapi()) && !(m.id === 'stadtcafe' && id === suPapi() && this.isaWhere().map !== 'stadtcafe'));
+      const names = Object.keys(m.spots).filter((k) => /^friend|^lexx|^cuche/.test(k));
+      here.forEach((id, i) => { const nm = m.spots[id] ? id : names[i]; const p = m.spots[nm]; if (p) friend(id, p[0], p[1], p[2] ?? 0, /friend/.test(nm) ? 'sit' : 'stand', { drinkIdle: true, bubbleRand: ['beer', 'note', 'dots'] }); });
+    }
+    this.spawnFollowers(false);
+  },
+  onEnter(m) {
+    const s = this.st();
+    G.player.velo = !!s.velo && !m.indoor && ['sursee', 'sursee_see'].includes(m.id);
+    if (m.id === 'zunftstube' && G.S.stage === 's_ankunft') setTimeout(() => this.tatortStart(), 600);
+    if (m.id === 'sursee_see' && G.S.stage === 's_boot' && !s.bootReady) { s.bootReady = 1; setTimeout(() => this.bootsjagd(), 500); }
+    if (m.id === 'inseli') s.photosInseli = 1;
+  },
+  minute() {
+    const s = this.st();
+    const h = Math.floor(hourOf(G.S.time));
+    if (h !== this._h) {
+      const prev = this._h; this._h = h;
+      if (prev != null && !G.busy && (SU_MAPS.includes(G.map.id) || G.map.spots)) { G.npcs = G.npcs.filter((n) => !(n.friend || (n.id && n.id.startsWith('su_')))); this.populate(G.map); }
+      if (s.follow && (h === 20) && !G.busy) { UI.toast('💬 Isa: „Elin, Timo – ab nach Hause, es ist acht! Morgen helft ihr wieder.“'); }
+    }
+    if (this.here() && suAt('s_tatort') && s.jungsAt == null) s.jungsAt = G.S.time + 120;
+    if (s.jungsAt != null && !s.jungsMsg && G.S.time >= s.jungsAt) { s.jungsMsg = 1; Snd.sfx('blip'); UI.toast(`💬 ${fname(voice('party'))}: „Wir sind in Sursee! Hotel Rössli. Wo ist hier das Bier?“`); }
+    this.hintTick();
+    this.maybeEvent();
+  },
+
+  /* ---------- Kinder als Begleiter ---------- */
+  followOk() { const s = this.st(), h = hourOf(G.S.time); return !!s.follow && h >= 8 && h < 20 && suAt('s_ankunft') && !['inseli', 'sbahn', 'roessli', 'tnt', 'craftwerk', 'kulturwerk', 'mosquito'].includes(G.map.id); },
+  _trail: [],
+  spawnFollowers(force) {
+    G.npcs = G.npcs.filter((n) => !n.follower);
+    if (!this.followOk() && !force) return;
+    const p = G.player;
+    ['elin', 'timo'].forEach((k, i) => {
+      const a = new Actor({ id: 'su_' + k, name: SU_P[k].name, look: SU_P[k].look, x: p.x - (i + 1) * 6, y: p.y + 4 + i * 3, dir: p.dir, solid: false, follower: i + 1, talk: () => this.talk(k), label: 'Reden: ' + SU_P[k].name, speed: 60 });
+      G.npcs.push(a);
+    });
+    this._trail = [];
+  },
+  tick(dt) {
+    const p = G.player;
+    const fol = G.npcs.filter((n) => n.follower);
+    if (!fol.length) return;
+    const last = this._trail[this._trail.length - 1];
+    if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 3) { this._trail.push({ x: p.x, y: p.y }); if (this._trail.length > 60) this._trail.shift(); }
+    for (const a of fol) {
+      const idx = this._trail.length - 1 - a.follower * 7;
+      const tgt = idx >= 0 ? this._trail[idx] : null;
+      if (!tgt) { a.moving = false; continue; }
+      const dx = tgt.x - a.x, dy = tgt.y - a.y, d = Math.hypot(dx, dy);
+      if (d < 2) { a.moving = false; if (!p.moving) a.dir = dirTo(a.x, a.y, p.x, p.y); continue; }
+      const sp = Math.min(d, (d > 40 ? 140 : 70) * dt * (p.velo ? 1.8 : 1));
+      a.x += dx / d * sp; a.y += dy / d * sp; a.dir = dirTo(0, 0, dx, dy); a.moving = true; a.walkT += dt;
+      if (d > 120) { a.x = tgt.x; a.y = tgt.y; }
+    }
+  },
+  mapUpdate() {},
+};
+
+/* ============ Gespräche und Fall ============ */
+const SU_CLUES = {
+  feder: ['Gänsefeder', 'Eine weisse Gänsefeder, noch ganz flaumig. Wer trainiert hier mit einer Gans?'],
+  jeton: ['Achterbahn-Jeton', 'Ein Messing-Jeton mit dem Aufdruck „LOOPING – Freifahrt“. Von der Achterbahn an der Chilbi.'],
+  quittung: ['Nasser Quittungsfetzen', 'Ein aufgeweichter Fetzen: „Bootsvermietung Sursee … Boot 7 … Nacht…“. Der Rest ist unleserlich.'],
+};
+const SU_SUSPECTS = [
+  { k: 'roli', n: 'Roli Rüttimann', d: 'Betreibt die Achterbahn. Die Jetons sind von ihm.' },
+  { k: 'bea', n: 'Kostümbildnerin Bea', d: 'Hütet den Fundus im Stadttheater, in dem ein roter Mantel fehlt.' },
+  { k: 'pfister', n: 'Ruedi Pfister, der Pechvogel', d: 'Ist seit zwanzig Jahren Schläger an der Gansabhauet und hat noch nie getroffen.' },
+  { k: 'kari', n: 'Schatzsucher Kari', d: 'Sucht mit dem Metalldetektor im Zellmoos. Nach was eigentlich?' },
+];
+/* Beweise für die Anklage: p = zeigt auf den Täter */
+const SU_EVID = {
+  jeton: { n: 'Der Jeton gehört einem Stammgast mit Jahresabo', p: 1 },
+  rad: { n: 'Nachts Licht auf dem Gamma-Inseli', p: 1 },
+  log: { n: 'Logbuch: Boot 7, Nacht vor dem Martinstag, unterschrieben „R. P.“', p: 1 },
+  fischer: { n: 'Fischer Wäli: ein Boot mit goldenem Schimmer Richtung Inseli', p: 1 },
+  buch: { n: 'Besucherbuch: „R. Pfister“ 23-mal vor der Sonnenmaske', p: 1 },
+  fundus: { n: 'Zettel im Fundus: „Bringe den Mantel nach der Gansabhauet zurück. R.“', p: 1 },
+  strahl: { n: 'Goldener Strahl der Maske, gefunden im Ehret-Park', p: 1 },
+  plan: { n: 'Trainingsplan aus dem Klostergarten: „blind, Maske, Mantel, Inseli“', p: 1 },
+  zeuge: { n: 'Zeugin an der Stadthalle: Mann mit Sousaphon-Koffer und rotem Mantel', p: 1 },
+  bea: { n: 'Bea war in jener Nacht an der Theaterprobe', p: 0 },
+  kari: { n: 'Kari sucht Römermünzen, nicht Gold', p: 0 },
+  roli: { n: 'Roli war in jener Nacht mit der Achterbahn unterwegs', p: 0 },
+};
+Object.assign(Sur, {
+  clueOpen(id) { return suAt('s_tatort') && !this.st().clues[id] && !suAt('s_faehrten'); },
+  hiddenOpen(id) { return suAt('s_faehrten') && !this.st().hidden[id]; },
+  maskSpot(k) { const s = this.st(); if (s.maskSpot == null) s.maskSpot = rint(0, 3); return G.S.stage === 's_boot' && s.inseliSearch && !s.maskFound && s.maskSpot === k && (s.searched || []).length >= 2; },
+  hasPhoto(id) { return !!this.st().photos[id]; },
+  async photo(id) {
+    const s = this.st();
+    if (s.photos[id]) { UI.toast('Davon hast du schon ein Foto.'); return; }
+    try { const W = 120, H = 90; const [c, x] = canvas(W, H); const px = G.player.x - G.cam.x, py = G.player.y - G.cam.y - 30; x.drawImage(View.wcv, Math.round(px - W / 2), Math.round(py - H / 2), W, H, 0, 0, W, H); G.photoImg = G.photoImg || {}; G.photoImg['su_' + id] = c.toDataURL('image/png'); try { const all = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); all['su_' + id] = G.photoImg['su_' + id]; localStorage.setItem(SAVE_KEY + '-img', JSON.stringify(all)); } catch (e) {} } catch (e) {}
+    s.photos[id] = G.S.time; Snd.sfx('shutter'); G.fx.flash = 1; mood(3);
+    UI.toast(`📷 Foto: <b>${SIGHTS_SU[id].n}</b>`);
+    if (Object.keys(s.photos).length >= Object.keys(SIGHTS_SU).length) achieve('su_fotos');
+    await Story.say(null, `<em>${SIGHTS_SU[id].n}</em> – ${SIGHTS_SU[id].f}`);
+  },
+  async openGuard(k) {
+    if (isOpen(k)) return true;
+    await Story.say(null, `Geschlossen. Offen ${hoursStr(k)} Uhr.`);
+    return false;
+  },
+  async diebenturmDoor() {
+    if (!suAt('s_ankunft')) return true;
+    if (G.S.stage === 's_gans') { await Story.say(null, 'Die Zunftstube ist abgeschlossen. Alle sind draussen für die Gansabhauet.'); return false; }
+    return true;
+  },
+  async isaDoor() { if (hourOf(G.S.time) >= 23 || hourOf(G.S.time) < 7) UI.toast('Leise – die Kinder schlafen.'); return true; },
+  async stadthalleDoor() {
+    const h = hourOf(G.S.time);
+    if (h >= 18 && h < 24) return true;
+    await Story.say(null, 'Plakat an der Stadthalle: „Triechter-Gäng · Winter-Tour 2026 · Heute 20 Uhr · Türöffnung 18 Uhr · Abendkasse“. Jetzt ist noch zu.');
+    return false;
+  },
+  async kulturwerkDoor() {
+    const h = hourOf(G.S.time);
+    if (h >= 20 || h < 4) return true;
+    await Story.say(null, 'Kulturwerk 118 – Konzertkeller im Untergeschoss der Feuerwehr. Die 118 ist die Nummer der Feuerwehr. Geöffnet ab 20 Uhr.');
+    return false;
+  },
+  async rathausDoor() {
+    if (!(hourOf(G.S.time) >= 8 && hourOf(G.S.time) < 18)) { await Story.say(null, 'Das Rathaus ist zu. Öffnungszeiten 8–18 Uhr.'); return; }
+    await warpTo('rathaus', 'entry');
+  },
+
+  /* ---------- Gespräche ---------- */
+  async talk(k) {
+    const s = this.st(), st = G.S.stage;
+    switch (k) {
+      case 'isa': return this.talkIsa();
+      case 'elin': case 'timo': return this.kidTalk(k);
+      case 'thierry': case 'louve': return this.cousinsTalk(k);
+      case 'heinivater': return this.talkHeinivater();
+      case 'alter': return this.talkAlter();
+      case 'roli': return this.talkRoli();
+      case 'narr': return this.narr();
+      case 'fischer': return this.talkFischer();
+      case 'bea': return this.talkBea();
+      case 'museum': return this.talkMuseum();
+      case 'kari': return this.talkKari();
+      case 'pfister': return Story.say(SU_P.pfister, suAt('s_gans') ? 'Ich hab der Zunft alles erzählt. Und weisst du was? Der Heinivater hat gesagt, ich darf trotzdem wieder Schläger sein. Diesmal treff ich!' : 'Lass mich in Ruhe!');
+      case 'stadtschreiber': return Story.say('Stadtschreiber Huber', suAt('s_gans') ? 'Die Gansabhauet ist bewilligt! Die Stadt dankt dir. Vor dem Rathaus wird schon die Gans aufgehängt.' : 'Die Stadt hat die Gansabhauet als Nachholtermin bewilligt – sobald die Sonnenmaske wieder da ist. Ohne Maske kein Schläger, so ist die Tradition seit 1880.');
+      case 'polizei': return Story.say('Polizistin Fischer', suAt('s_gans') ? 'Die Maske ist wieder da? Ohne Anzeige? Die Zunft regelt das unter sich, sagt der Heinivater. Typisch Sursee.' : 'Die Zunft hat keine Anzeige gemacht. „Das regeln wir unter uns“, hat der Heinivater gesagt. Viel Glück, Detektiv.');
+      case 'kapuziner': return Story.say('Museumsführerin', 'Das Kloster wurde 1606 bis 1608 gebaut. Heute ist hier das Museum der Schweizer Kapuziner. Im Klostergarten ist es herrlich ruhig – manche kommen zum Nachdenken her. Oder zum Üben.');
+    }
+  },
+  async talkIsa() {
+    const st = G.S.stage;
+    if (st === 's_strahl' && hasInv('strahl')) return this.showStrahl();
+    const lines = {
+      s_ankunft: 'Der Diebenturm ist in der Unterstadt, beim Hirschenplatz. Die Kinder zeigen dir den Weg.',
+      s_tatort: 'Schau dich in der Zunftstube gut um. Drei Spuren, hat Elin gesagt. Sie hat ein Gefühl für so was.',
+      s_faehrten: `Chilbi, See und Altstadt – das sind deine drei Fährten. ${this.faehrtenDone()} von 3 hast du. Und iss zwischendurch etwas!`,
+      s_strahl: 'Thierry und Louve haben im Ehret-Park etwas gefunden, sagen sie. Beim Spielplatz.',
+      s_probe: 'Die Diebetormtöibeler proben ab 16 Uhr beim Untertor. Pass auf den mit der Larve auf.',
+      s_boot: 'Zum See! Schnell!',
+      s_gans: 'Morgen holen wir die Gansabhauet nach. Ich bin so stolz auf dich. Die Kinder auch.',
+    };
+    const opts = ['Wie geht es dir?', 'Wo finde ich was?', 'Tschüss'];
+    const c = await askP('isa', lines[st] || (playerIsCuche() ? 'Schön, dass du da bist. Gehen wir später zusammen an die Chilbi?' : 'Fühl dich wie zu Hause. Das Gästebett ist frisch bezogen.'), opts);
+    if (c === 0) await sayP('isa', pick(['Gut! Seit die Maske weg ist, ist das ganze Städtli in Aufruhr. Endlich passiert mal was.', 'Müde. Die Kinder reden von nichts anderem mehr als von Detektiven.', 'Gespannt, ob du den Fall löst. Ich wette auf dich.']));
+    if (c === 1) await sayP('isa', 'Bars sind in der Oberstadt: TNT, El Mosquito, Craftwerk. In der Unterstadt das Rössli und La Fuga. Essen: Mühle oder Wilder Mann. Einkaufen im Surseepark beim Bahnhof. Und zum See geht\'s hinten raus über den Beckenhof und die Münstervorstadt.');
+  },
+  async kidTalk(k) {
+    const st = G.S.stage;
+    const c = await askP(k, k === 'elin' ? pick(['Ich schreib alles ins Notizbuch!', 'Detektive brauchen Zvieri. Nur so als Tipp.', 'Wenn wir die Maske finden, darf ich sie dann mal anprobieren?']) : pick(['Ich glaub, der Täter ist der Achterbahn-Mann. Der hat eine Sonnenbrille. Im Dezember!', 'Darf ich nachher auf die Putschibahn?', 'Ich bin der Assistent. Assistent Timo.']), ['Hast du einen Tipp?', 'Lauft mal kurz alleine heim', 'Weiter']);
+    if (c === 0) await this.giveHint(true);
+    if (c === 1) { this.st().follow = 0; G.npcs = G.npcs.filter((n) => !n.follower); UI.toast('Elin und Timo gehen heim. Bei Isa in der Münstervorstadt holst du sie wieder ab.'); }
+  },
+  async cousinsTalk(k) {
+    if (G.S.stage === 's_strahl' && !hasInv('strahl')) return this.schatzkiste();
+    const s = this.st();
+    if (k === 'thierry' && suAt('s_gans') && !hasInv('detektor') && !s.detGiven) {
+      s.detGiven = 1; addInv('detektor');
+      await sayP('thierry', 'Schau, Kari aus dem Zellmoos hat mir seinen alten Metalldetektor geschenkt! Hier, du darfst ihn haben. Im Römer-Vicus beim Bahnhof liegen bestimmt noch Münzen!');
+      UI.toast('Metalldetektor erhalten. Römer-Vicus westlich der Altstadt: fünf Münzen sind versteckt.');
+      return;
+    }
+    await sayP(k, k === 'thierry' ? pick(['Ich bin ein Schatzsucher!', 'Ich kann schon bis hundert zählen. Fast.', 'Gänse sind lustig. Die machen so: GAAA!']) : pick(['Meine Schatzkiste ist geheim.', 'Ich hab einen Stein gefunden, der aussieht wie ein Herz.', 'Spielst du mit uns Fangis?']));
+  },
+  async friendTalk(id) {
+    const s = this.st();
+    const opts = ['Wie gefällt dir Sursee?', 'Hilfst du mir beim Fall?', 'Ein Bier zusammen?', 'Tschüss'];
+    const fn = FRIENDS[id].fn;
+    const first = {
+      saeufer: 'Der Wilde Mann ist seit 1495 offen. Das ist Vertrauen. Ich bleib hier.', gourmet: 'Diese Pizza … der Holzofen … ich glaub, ich zieh nach Sursee.', party: 'Chilbi ist wie Club, nur mit Zuckerwatte. Ich liebe es.',
+      frech: 'Ich bin dreimal Putschibahn gefahren. Der Mann an der Kasse kennt jetzt meinen Namen. Und meine Mutter.', pilot: 'Ich hab die Drohne über die Altstadt geflogen. Von oben sieht man alles. ALLES.',
+      taenzer: 'Rössli Nightbar. Ich sag nur: Schlager-Nacht. Ich war der König.', charmeur: 'Die Barfrau im Rössli hat gelacht. Zweimal. Das zählt.', muskel: 'Bin am See. Wenn du ein Boot brauchst, ich steuer.',
+      kanadier: 'This lake is nice, eh. Like Canada, but smaller. And everything is closed at 6.', raucher: 'Ich steh hier beim Diebenturm. Hab da in Innsbruck … egal. Hier ist gut rauchen.', anwalt: 'Wenn du jemanden anklagst, brauchst du drei Beweise. Nicht zwei. Drei.', kassier: 'Isa hat gesagt, ich soll den Detektiv nicht stören. Also: Ich stör nicht.',
+    }[fn] || 'Sursee ist herzig.';
+    const c = await Story.ask(id, first, opts);
+    if (c === 0) await Story.say(id, pick(['Kleiner als Innsbruck, aber das Bier ist näher.', 'Die Altstadt ist schön. Und der See! Im Sommer kommen wir wieder.', 'Hier kennt jeder jeden. Die Wirtin wusste schon meinen Namen.']));
+    if (c === 1) await Story.say(id, this.friendHint(id));
+    if (c === 2) { if (pay('chf', 6.8)) { consume('lager'); Story.friendDrink(id, 0.24); Snd.sfx('clink'); await Story.say(id, 'Prost! Auf Sursee. Und auf den Detektiv.'); G.S.aff[id] = clamp((G.S.aff[id] || 50) + 4, 0, 100); } else UI.toast('Zu wenig Franken.', 'warn'); }
+  },
+  friendHint(id) {
+    const s = this.st(), fn = FRIENDS[id].fn, st = G.S.stage;
+    if (fn === 'raucher' && suAt('s_faehrten') && !s.yaennuSaid) { s.yaennuSaid = 1; this.note('yaennu', `${fname(id)}: Nachts beim Diebenturm riecht es nach See – und nach Ventilöl wie bei Blasinstrumenten.`); return 'Ich steh oft hier zum Rauchen. Weisst du, was komisch ist? Die Zunftstube riecht nach Ventilöl. Wie bei Trompeten. Oder Sousaphonen.'; }
+    if (fn === 'pilot' && suAt('s_faehrten') && !s.droneSaid) { s.droneSaid = 1; this.note('drohne', `${fname(id)}: Die Drohne hat auf dem Gamma-Inseli eine Plane und Fussspuren gesehen.`); return 'Meine Drohne war über dem See. Auf dem Gamma-Inseli liegt eine Plane zwischen den Bäumen. Wer zeltet im Dezember auf einer Insel?'; }
+    if (fn === 'anwalt') return suAt('s_boot') ? 'Bei der Anklage: drei Beweise, die alle auf dieselbe Person zeigen. Nicht raten.' : 'Sammle Beweise, nicht Vermutungen. Im Notizbuch siehst du, was du hast.';
+    if (fn === 'muskel' && st === 's_boot') return 'Ab in ein Elektroboot! Ich steuer, du schaust.';
+    return this.hintText(1);
+  },
+  async talkAlter() {
+    const s = this.st();
+    if (s.sageHeard) { await Story.say(SU_P.heinivater.name === 'Heinivater' ? 'Älterer Herr' : 'Älterer Herr', 'Schöne Fahrt. Grüssen Sie mir Sursee.'); return; }
+    s.sageHeard = 1;
+    await UI.say({ name: 'Älterer Herr mit Abzeichen', look: SU_P.heinivater.look, bg: SU_P.heinivater.bg }, 'Sie fahren nach Sursee? Dann kennen Sie die Geschichte von Heini? Nein? Hören Sie zu.');
+    await UI.say({ name: 'Älterer Herr mit Abzeichen', look: SU_P.heinivater.look, bg: SU_P.heinivater.bg }, 'Herzog Leopold III. zog 1386 nach Sempach in die Schlacht. Mit dabei: sein Narr Heini aus Uri. Der sagte seinem Herrn immer die Wahrheit – und riet ihm vom Kampf ab.');
+    await UI.say({ name: 'Älterer Herr mit Abzeichen', look: SU_P.heinivater.look, bg: SU_P.heinivater.bg }, 'Der Herzog schickte ihn nach Sursee, dort sollte er den Ausgang abwarten. Seither heisst unsere Fasnachtszunft „Heini von Uri“. 150 Jahre dieses Jahr. Gegründet 1876.');
+    await UI.say({ name: 'Älterer Herr mit Abzeichen', look: SU_P.heinivater.look, bg: SU_P.heinivater.bg }, 'Ein Narr sagt immer die Wahrheit. Merken Sie sich das. Man sieht sich.');
+    this.note('sage', 'Sage: Der Narr Heini sagte dem Herzog immer die Wahrheit. Die Zunft heisst nach ihm.');
+  },
+
+  /* ---------- Tatort Diebenturm ---------- */
+  async tatortStart() {
+    if (G.S.stage !== 's_ankunft') return;
+    G.busy++;
+    await sayP('heinivater', `Da seid ihr! Ich bin der Heinivater der Zunft Heini von Uri. Sie müssen ${G.S.name} sein – Isa hat Sie angekündigt. Willkommen in der Zunftstube.`);
+    await sayP('heinivater', 'Hier, in dieser Vitrine, lag die Sonnenmaske. Seit 1880 tragen unsere Schläger an der Gansabhauet die Maske und den roten Mantel. Die Zunft kleidet sie ein und hängt die Gans auf. Und jetzt? Leer.');
+    await sayP('heinivater', 'Die Polizei haben wir nicht geholt. Das regeln wir unter uns – und mit Ihnen. Suchen Sie den Raum ab. Wenn etwas glitzert, schauen Sie genau hin.');
+    await sayP('elin', 'Drei Spuren! Ich spür das. Drei.');
+    this.setStage('s_tatort');
+    G.busy--;
+    saveGame(true);
+  },
+  async clue(id) {
+    const s = this.st();
+    if (s.clues[id]) return;
+    s.clues[id] = 1; Snd.sfx('ok');
+    const [n, d] = SU_CLUES[id];
+    await Story.say(null, `<em>${n}</em> – ${d}`);
+    this.note('clue_' + id, `Spur: ${n}`);
+    const k = Object.keys(s.clues).length;
+    if (k < 3) { await sayP(k === 1 ? 'timo' : 'elin', k === 1 ? 'Eine! Noch zwei!' : 'Noch eine Spur! Schau überall, wo es glitzert.'); return; }
+    achieve('su_spuren');
+    await sayP('heinivater', 'Eine Gänsefeder, ein Achterbahn-Jeton und ein Quittungsfetzen von der Bootsvermietung. Das sind drei Fährten: Chilbi, See – und die Altstadt, denn die Maske kam aus dem Sankturbanhof, und der rote Mantel …');
+    await sayP('heinivater', 'Ach ja: Auch ein roter Mantel fehlt. Nicht unserer – einer aus dem Fundus des Stadttheaters. Die Kostümbildnerin Bea hat es gemeldet.');
+    await sayP('heinivater', 'Verdächtige gibt es genug. Roli von der Achterbahn. Bea vom Theater. Kari, der Schatzsucher im Zellmoos. Und Ruedi Pfister – unser ewiger Pechvogel. Zwanzig Jahre Schläger, nie getroffen.');
+    for (const sp of SU_SUSPECTS) this.note('sus_' + sp.k, `Verdächtig: ${sp.n}`);
+    await sayP('timo', 'Ich schreib alle auf! Das Notizbuch ist im Handy.');
+    this.setStage('s_faehrten');
+    UI.toast('Drei Fährten: Chilbi auf dem Märtplatz · See (Bootsvermietung am Quai) · Altstadt (Sankturbanhof und Stadttheater). Reihenfolge egal.');
+    saveGame(true);
+  },
+  async look(key) {
+    const s = this.st();
+    const L = {
+      vitrine: suAt('s_gans') ? 'Die Sonnenmaske liegt wieder in ihrer Vitrine. Golden, mit einem frisch angelöteten Strahl.' : 'Die Vitrine ist leer. Auf dem roten Samt sieht man noch den Abdruck der Maske – und einen kleinen Kratzer, als wäre etwas abgebrochen.',
+      ratssaal: 'Der Ratssaal: Holztäfer, das Stadtwappen in Rot und Weiss, Porträts früherer Schultheissen. Hier entscheidet der Stadtrat.',
+      ausstellung: pick(['Eine Ausstellung lokaler Malerinnen: der Sempachersee in allen Jahreszeiten.', 'Fotografien vom Städtli in den Fünfzigerjahren. Erstaunlich wenig hat sich verändert.', 'Ölbilder vom Märtplatz an der Chilbi. Das Riesenrad in Rosa und Gold.']),
+      billard: 'Ein Billardtisch mit grünem Filz. Jemand hat mit Kreide „TNT RULES“ auf die Bande geschrieben.',
+      gehege: 'Ein Bauernhof am Stadtrand. Im Gehege schnattern Gänse. Eine schaut dich an, als wüsste sie, was am Martinstag passiert.',
+      gaerten: 'Familiengärten an der Sure. Im Dezember ruhen die Beete, nur der Grünkohl steht noch.',
+      vicus: 'Tafel: „Römischer Vicus Sursee. Im 1. bis 3. Jahrhundert lag hier, westlich der heutigen Altstadt, eine Siedlung mit Handwerkern und einem Markt, Holz- und Steinbauten an einer Strasse.“',
+      markt: 'Wochenmarkt auf dem Martigny-Platz: Gemüse, Käse, Brot, Blumen. Im Winter riecht es nach Marroni.',
+      pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
+      vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
+      kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
+      marienbrunnen: 'Der Marienbrunnen in der Oberstadt. Das Wasser plätschert, auch im Dezember.',
+      muehlerad: 'Ein altes Mühlerad an der Sure. Hier am Mühleplatz stand früher die Mühle, die dem Platz den Namen gab.',
+      hirschenplatz: 'Der Hirschenplatz in der Unterstadt, gleich beim Diebenturm.',
+      spielplatz: 'Schaukel, Rutschbahn, Sandkasten. Im Sand liegen Schaufeln – und Spuren von Kinderstiefeln.',
+      beckenhof: 'Der Beckenhof mit dem Städtlipark. Von hier geht es durch das neue Quartier Münstervorstadt Richtung See.',
+      muenstervorstadt: 'Das neue Quartier Münstervorstadt zwischen Altstadt und See. Hier wohnt Isa mit den Kindern.',
+      suhre: 'Hier fliesst die Suhre aus dem Sempachersee – durch Sursee nach Norden, bis in die Aare.',
+      zellmoos: 'Naturschutzgebiet Zellmoos: das grösste naturnahe Ufer am Sempachersee. Schilf, Weiden, Wasservögel. Bitte auf den Wegen bleiben.',
+      mariazell: 'Die Wallfahrtskirche Mariazell über dem See. Von hier oben sieht man den ganzen Triechter.',
+      inseli: suAt('s_boot') ? 'Das Gamma-Inseli. 184 m², hohe Bäume. Von hier aus winzig.' : 'Das Gamma-Inseli draussen vor dem Triechter. 184 Quadratmeter, hohe Bäume. Nachts sieht man manchmal ein Licht, sagen die Fischer.',
+      besucherbuch: () => this.besucherbuch(),
+      fundus: () => this.fundus(),
+      roemervitrine: `Eine Vitrine mit römischen Funden aus dem Vicus: Scherben, eine Fibel, Werkzeug. Fünf Münzplätze, ${s.coins.length} davon belegt.${s.coins.length >= 5 ? ' Daneben ein Schild: „Gefunden von ' + G.S.name + '“.' : ''}`,
+      klosterbank: () => this.klosterbank(),
+    };
+    const v = L[key];
+    if (typeof v === 'function') return v();
+    await Story.say(null, v || 'Nichts Besonderes.');
+    if (key === 'kirche') mood(2);
+  },
+
+  /* ---------- Fährte Chilbi ---------- */
+  async talkRoli() {
+    const s = this.st();
+    if (!suAt('s_faehrten') || s.f.roli) {
+      const c = await askP('roli', s.f.roli ? 'Na, Detektiv? Noch eine Runde LOOPING? Fünf Franken.' : 'LOOPING! Die schnellste Achterbahn der Innerschweiz. Na gut, eine der schnelleren. Fünf Franken!', ['Einsteigen (5 CHF)', 'Nein danke']);
+      if (c === 0) await this.achterbahn();
+      return;
+    }
+    if (!s.clues.jeton) { await sayP('roli', 'Was schaust du so? Willst du fahren oder nicht?'); return; }
+    await sayP('roli', 'Ein Jeton von mir! „LOOPING – Freifahrt“. Die gibt es nur für Jahresabos. Und ich hab genau einen Kunden mit Jahresabo.');
+    await sayP('roli', 'Aber Moment: Ich verrat doch keine Kunden. Ausser … du fährst einmal mit. Und am Ende lachst du auf dem Foto. Abgemacht?');
+    const ok = await this.achterbahn(true);
+    if (!ok) return;
+    await sayP('roli', 'Hahaha, das Foto! Also gut: Mein Jahresabo-Kunde fährt jeden Abend, immer allein, immer mit so einem langen roten Mantel. Sagt nach jeder Fahrt: „Pech gehabt.“ Den Namen kenn ich nicht. Aber er spielt Sousaphon – ich hör ihn manchmal hinter der Kirche üben.');
+    await sayP('roli', 'Und wenn du ihn suchst: Vom Riesenrad aus sieht man nachts den ganzen See. Nelly hat mir erzählt, auf dem Gamma-Inseli brennt manchmal ein Licht.');
+    s.f.roli = 1; this.evid('jeton');
+    this.note('f_roli', 'Chilbi: Der Jeton gehört einem Stammgast mit Jahresabo – roter Mantel, spielt Sousaphon, sagt „Pech gehabt“.');
+    this.checkFaehrten();
+  },
+  async achterbahn(story) {
+    if (!isOpen('chilbi')) { await Story.say(null, 'Die Chilbi ist zu. Offen 10–24 Uhr.'); return false; }
+    if (!pay('chf', 5)) { UI.toast('Fünf Franken fehlen.', 'warn'); return false; }
+    const r = await this.mini('achterbahn');
+    achieve('su_achterbahn'); mood(8); G.S.st.nau = clamp(G.S.st.nau + (G.S.st.prom > 1 ? 18 : 6), 0, 140);
+    if (r && r.score != null) UI.toast(`Fahrtfoto: ${r.score} Punkte`);
+    if (G.S.st.nau > 85) await Story.say('me', 'Uff. Ich glaub, das Zuckerwatte war keine gute Idee.');
+    return true;
+  },
+  async riesenrad() {
+    const s = this.st();
+    if (!isOpen('chilbi')) { await Story.say(null, 'Die Chilbi ist zu. Offen 10–24 Uhr.'); return; }
+    const story = G.S.stage === 's_faehrten' && s.f.roli && !s.f.rad;
+    const c = await askP('riesenrad', story ? 'Hoch hinaus? Nachts sieht man den ganzen See. Sechs Franken.' : 'Eine Runde Riesenrad? Sechs Franken. Ganz oben bleibt es kurz stehen. Extra für Verliebte und Detektive.', ['Einsteigen (6 CHF)', 'Nein danke']);
+    if (c !== 0) return;
+    if (!pay('chf', 6)) { UI.toast('Sechs Franken fehlen.', 'warn'); return; }
+    if (story && !(isNight() || hourOf(G.S.time) >= 17)) {
+      await Scene.play('lift', { text: 'Das Riesenrad dreht sich langsam über den Märtplatz …', ms: 2600 });
+      achieve('su_riesenrad'); mood(6);
+      await Story.say('me', 'Schöne Aussicht. Aber am Tag sieht man auf dem See kein Licht. Ich komm am Abend wieder, nach 17 Uhr.');
+      return;
+    }
+    const r = await this.mini('riesenrad');
+    achieve('su_riesenrad'); mood(6);
+    if (story) {
+      if (r && r.found === false) { await Story.say('me', 'Ich hab das Licht nicht gefunden. Nochmal versuchen – es blinkt irgendwo draussen auf dem See.'); return; }
+      await Story.say('me', 'Da! Draussen auf dem See, auf dem Gamma-Inseli, blinkt eine Taschenlampe. Wer ist um diese Zeit auf der Insel?');
+      s.f.rad = 1; this.evid('rad');
+      this.note('f_rad', 'Chilbi: Vom Riesenrad aus ein Licht auf dem Gamma-Inseli gesehen.');
+      this.checkFaehrten();
+    }
+  },
+  /* ---------- Fährte See ---------- */
+  async bootsverleih() {
+    const s = this.st();
+    const storyLog = G.S.stage === 's_faehrten' && !s.f.log;
+    const opts = [];
+    if (storyLog) opts.push({ t: s.clues.quittung ? 'Quittungsfetzen zeigen' : 'Nach der Nacht vor dem Martinstag fragen', k: 'log' });
+    if (G.S.stage === 's_boot') opts.push({ t: 'Elektroboot: dem Flüchtigen nach!', k: 'jagd' });
+    opts.push({ t: 'Pedalo mieten (12 CHF)', k: 'pedalo' }, { t: 'Elektroboot mieten (25 CHF)', k: 'motor' });
+    if (suAt('s_gans')) opts.push({ t: 'Elektroboot zum Gamma-Inseli (25 CHF)', k: 'inseli' });
+    opts.push({ t: 'Nichts', k: 'x' });
+    const c = await Story.ask('Bootsvermieter Sepp', isOpen('boote') ? 'Grüezi! Im Winter vermiete ich nur wegen der Chilbi. Pedalo oder Elektroboot?' : 'Jetzt ist zu. Die Boote gibt\'s von 9 bis 17 Uhr.', isOpen('boote') || storyLog ? opts.map((o) => o.t) : ['Okay']);
+    if (!isOpen('boote') && !storyLog) return;
+    const k = opts[c] && opts[c].k;
+    if (k === 'log') {
+      if (!s.clues.quittung) { await Story.say('Bootsvermieter Sepp', 'Ohne Quittung kann ich dir nicht sagen, wer wann wo war. Datenschutz, weisch.'); return; }
+      await Story.say('Bootsvermieter Sepp', 'Das ist von mir, ja. Boot 7. Moment, das Logbuch … Nacht vom 10. auf den 11. November. Rausgegangen um 23 Uhr, zurückgebracht um 4 Uhr früh. Das Boot war nass innen, und auf dem Sitz lag eine Gänsefeder.');
+      await Story.say('Bootsvermieter Sepp', 'Unterschrieben hat er mit „R. P.“. Mehr weiss ich nicht. Ich frag die Leute nicht aus, die mitten in der Nacht Boote mieten. Wer das macht, hat seine Gründe.');
+      s.f.log = 1; this.evid('log');
+      this.note('f_log', 'See: Logbuch – Boot 7 in der Nacht vor dem Martinstag, unterschrieben „R. P.“.');
+      this.checkFaehrten();
+      return;
+    }
+    if (k === 'jagd') return this.bootsjagd();
+    if (k === 'pedalo') { if (!pay('chf', 12)) { UI.toast('Zu wenig Franken.', 'warn'); return; } const r = await this.mini('pedalo'); if (r && r.ok) { achieve('su_pedalo'); UI.toast(`Einmal ums Gamma-Inseli in ${r.time.toFixed(1)} s!`); } mood(5); return; }
+    if (k === 'motor') { if (!pay('chf', 25)) { UI.toast('Zu wenig Franken.', 'warn'); return; } const r = await this.mini('motorboat'); if (r) UI.toast(`Slalom: ${r.time ? r.time.toFixed(1) + ' s' : ''}${r.hits ? `, ${r.hits} Bojen touchiert` : ', fehlerfrei!'}`); mood(6); return; }
+    if (k === 'inseli') { if (!pay('chf', 25)) { UI.toast('Zu wenig Franken.', 'warn'); return; } await Scene.play('boat', { text: 'Mit dem Elektroboot zum Gamma-Inseli …', ms: 2200, keep: true }); enterMap('inseli', 'landing'); await UI.fadeIn(); return; }
+  },
+  async talkFischer() {
+    const s = this.st();
+    const story = G.S.stage === 's_faehrten' && !s.f.fischer;
+    if (story && hasInv('felchen')) {
+      takeInv('felchen');
+      await Story.say('Fischer Wäli', 'Ein Felchen! Schön, schön. Also gut, ich erzähl dir was. In der Nacht vor dem Martinstag war ich draussen, Netze kontrollieren. Da fuhr ein Elektroboot ohne Licht Richtung Gamma-Inseli.');
+      await Story.say('Fischer Wäli', 'Und im Boot hat etwas geglänzt. Golden. Wie eine kleine Sonne. Ich dachte zuerst, ich hab zu viel Kafi Lutz gehabt.');
+      s.f.fischer = 1; this.evid('fischer');
+      this.note('f_fischer', 'See: Fischer Wäli sah nachts ein Boot ohne Licht mit goldenem Schimmer Richtung Gamma-Inseli.');
+      this.checkFaehrten();
+      return;
+    }
+    if (story) { await Story.say('Fischer Wäli', 'Reden? Ich red nicht mit Leuten, die nicht fischen. Bring mir einen Felchen, dann reden wir. Ruten und Köder gibt\'s im Surseepark, aber du kannst auch hier vom Quai aus fischen. Ich leih dir meine Rute.'); return; }
+    await Story.say('Fischer Wäli', pick(['Felchen, Egli, Hecht. Der Sempachersee ist gut zu uns.', 'Im Winter beissen sie langsam. Wie ich.', 'Siehst du die Möwen? Wo Möwen sind, ist Fisch.']));
+  },
+  async fish(spot) {
+    const st = G.S.stage;
+    const r = await this.mini('fishing', spot);
+    if (!r) return;
+    if (r.fish === 'hecht') achieve('su_hecht');
+    if (r.felchen || r.fish === 'felchen') { achieve('su_fisch'); addInv('felchen'); UI.toast('Ein Felchen! Für Fischer Wäli?'); }
+    else if (r.fish === 'egli') UI.toast(`Ein Egli, ${r.cm} cm. Schön, aber Wäli will einen Felchen.`);
+    else if (r.fish === 'schuh') UI.toast('Ein alter Schuh. Immerhin in deiner Grösse.');
+    mood(4); passTime(15);
+  },
+  /* ---------- Fährte Altstadt ---------- */
+  async talkMuseum() {
+    const s = this.st();
+    if (G.S.stage === 's_faehrten' && !s.f.buch) { await Story.say('Museumswärter Bruno', 'Die Jubiläumsausstellung „zünftig“ war ein Riesenerfolg, darum haben wir sie bis Ende November verlängert. Die Sonnenmaske lag in der Mitte. Ein Besucher kam fast jeden Tag. Steht alles im Besucherbuch.'); return; }
+    await Story.say('Museumswärter Bruno', 'Der Sankturbanhof war früher der Verwaltungshof des Klosters St. Urban. Heute zeigen wir Kunst und die Geschichte von Sursee.');
+  },
+  async besucherbuch() {
+    const s = this.st();
+    if (G.S.stage !== 's_faehrten' || s.f.buch) { await Story.say(null, 'Das Besucherbuch. Viele Einträge: „Wunderschön!“, „Zünftig!“, „Hopp Heini!“'); return; }
+    await Story.say(null, 'Das Besucherbuch der Ausstellung. Seite um Seite: „Toll!“, „Zünftig!“ … und immer wieder dieselbe Handschrift: „R. Pfister – heute wieder vor der Sonnenmaske. Einmal tragen. Nur einmal.“ Dreiundzwanzig Einträge.');
+    s.f.buch = 1; this.evid('buch');
+    this.note('f_buch', 'Altstadt: Im Besucherbuch steht 23-mal „R. Pfister – vor der Sonnenmaske. Einmal tragen.“');
+    this.checkFaehrten();
+  },
+  async talkBea() {
+    const s = this.st();
+    if (G.S.stage === 's_faehrten' && !s.f.fundus) { await Story.say('Kostümbildnerin Bea', 'Ja, ein roter Mantel fehlt im Fundus! Aus einer alten Operetten-Produktion. Ich war es nicht, falls du das denkst – in jener Nacht hatten wir Probe bis Mitternacht, frag das ganze Ensemble. Schau dir den Bügel an.'); this.evid('bea'); return; }
+    await Story.say('Kostümbildnerin Bea', pick(['Ein Theater ohne Fundus ist wie eine Fasnacht ohne Guuggen.', 'Du brauchst ein Kostüm? Für die Fasnacht gibt\'s den Kostümverleih. Hier wird nur geliehen, wenn man fragt.']));
+  },
+  async fundus() {
+    const s = this.st();
+    if (G.S.stage !== 's_faehrten' || s.f.fundus) { await Story.say(null, 'Rote Mäntel, ordentlich aufgereiht.'); return; }
+    await Story.say(null, 'An einem leeren Bügel hängt ein Zettel, mit Bleistift geschrieben: „Bringe den Mantel nach der Gansabhauet zurück. Versprochen. R.“');
+    s.f.fundus = 1; this.evid('fundus');
+    this.note('f_fundus', 'Altstadt: Zettel im Fundus – „Bringe den Mantel nach der Gansabhauet zurück. R.“');
+    this.checkFaehrten();
+  },
+  async talkKari() {
+    const s = this.st();
+    if (suAt('s_faehrten') && !s.kari) { s.kari = 1; this.evid('kari'); this.note('kari', 'Kari sucht im Zellmoos Römermünzen, kein Gold.'); }
+    await Story.say('Schatzsucher Kari', suAt('s_faehrten') ? 'Gold? Masken? Ich such Römermünzen! Westlich der Altstadt lag ein römischer Vicus. Hier im Zellmoos find ich höchstens Kronkorken. Aber mein Detektor piepst bei allem.' : 'Psst. Hier liegt etwas. Ich spür es.');
+  },
+  async checkFaehrten() {
+    const n = this.faehrtenDone();
+    this.prog();
+    if (n < 3) { UI.toast(`Fährten: ${n}/3`); saveGame(true); return; }
+    achieve('su_faehrten');
+    await sayP('elin', 'Alle drei Fährten! R. P., roter Mantel, Sousaphon, Gamma-Inseli … Mami muss das hören!');
+    Snd.sfx('blip');
+    await sayP('isa', '📱 Thierry und Louve rufen die ganze Zeit an! Sie haben im Ehret-Park etwas Goldenes gefunden. Beim Spielplatz!');
+    this.setStage('s_strahl');
+    saveGame(true);
+  },
+  /* ---------- Louves Schatzkiste ---------- */
+  async schatzkiste() {
+    await sayP('louve', 'Schau mal in meine Schatzkiste! Aber nicht anfassen. Doch, du darfst.');
+    await Story.say(null, 'In der Blechdose: drei Kastanien, ein Herzstein, ein Glasmurmel – und ein goldener, gezackter Strahl aus dünnem Blech. Wie ein Sonnenstrahl.');
+    await sayP('thierry', 'Den haben wir am Ufer gefunden, da wo die Sure vom See kommt! Unter der Brücke. Ist das ein Schatz?');
+    addInv('strahl'); this.evid('strahl');
+    this.note('strahl', 'Goldener Strahl der Sonnenmaske – gefunden von Thierry und Louve an der Sure im Ehret-Park. Der Dieb kam vom See.');
+    Snd.sfx('win');
+    await sayP('timo', 'Das ist von der Maske! Zeig es Mami!');
+    this.prog();
+    saveGame(true);
+  },
+  async showStrahl() {
+    await sayP('isa', 'Ein Strahl von der Sonnenmaske! Und alles zeigt auf „R. P.“ … Ruedi Pfister? Unser Pechvogel? Der spielt Sousaphon bei den Diebetormtöibelern!');
+    await sayP('isa', 'Die Guuggen proben heute Abend beim Untertor. Ab 16 Uhr. Wenn er da ist, nimmt er bestimmt nie die Larve ab …');
+    this.setStage('s_probe');
+    saveGame(true);
+  },
+});
+
+/* ============ Probe, Verfolgung, See, Anklage, Finale ============ */
+/* Larven (Fasnachtsmasken) und Instrumente der Guuggenmusig, über die Figur gezeichnet */
+function drawLarve(c, x, y, a) {
+  const hy = y - 25 + (a.moving ? Math.floor(G.t * 8) % 2 : 0);
+  const col = a.larve || '#e8c23a';
+  E(c, x, hy + 6, 6, 7, col); E(c, x, hy + 6, 5, 6, shade(col, 0.15));
+  R(c, x - 4, hy + 4, 3, 2, '#1a1a1a'); R(c, x + 1, hy + 4, 3, 2, '#1a1a1a'); E(c, x, hy + 10, 2, 1, '#8a1e1e');
+  for (let k = -5; k <= 5; k += 2) R(c, x + k, hy - 2 - Math.abs(k) * 0.4, 1, 3, a.larve2 || '#c8302a');
+  const ins = a.instr;
+  if (ins === 'sousa') { c.strokeStyle = '#e8c84a'; c.lineWidth = 2; c.beginPath(); c.arc(x, y - 14, 8, 0.4, 5.5); c.stroke(); E(c, x + 6, y - 27, 6, 4, '#f2d860'); E(c, x + 6, y - 27, 4, 2, '#3a3020'); }
+  else if (ins === 'pauke') { E(c, x, y - 9, 6, 4, '#c8302a'); E(c, x, y - 11, 6, 2, '#f4f0e6'); if (Math.floor(G.t * 4) % 2) line(c, x - 6, y - 16, x - 2, y - 12, '#8a6a3a'); }
+  else if (ins === 'trompete') { R(c, x + 3, y - 18, 8, 2, '#e8c84a'); E(c, x + 11, y - 17, 2, 3, '#f2d860'); }
+}
+Object.assign(Sur, {
+  spawnGuuggen() {
+    const cols = [['#e8c23a', '#c8302a', 'pauke'], ['#3f8ec8', '#f4f0e6', 'trompete'], ['#e3589c', '#ffd23d', 'trompete'], ['#3f8e4b', '#c8302a', 'pauke'], ['#f4f0e6', '#2f5fb8', 'sousa']];
+    const pos = [[53, 42], [54, 43], [55, 42], [56, 43], [55, 45]];
+    cols.forEach(([c1, c2, ins], i) => {
+      const pf = ins === 'sousa';
+      const a = new Actor({ id: pf ? 'su_sousa' : 'su_guugge' + i, name: pf ? 'Sousaphonist mit Larve' : 'Diebetormtöibeler', look: npcLook(4100 + i, { top: 4, topCol: [3, 9, 12, 6, 13][i], pants: 4, pantsCol: 2, hat: 0 }), x: pos[i][0] * 16 + 8, y: pos[i][1] * 16 + 12, dir: 0, solid: true, keepDir: true, larve: c1, larve2: c2, instr: ins, extra: drawLarve, bubbleRand: ['note'], danceIdle: !pf,
+        talk: () => (pf ? this.sousaphonist() : this.guuggenTalk()), label: pf ? 'Den Sousaphonisten ansprechen' : 'Reden: Diebetormtöibeler' });
+      G.npcs.push(a);
+    });
+  },
+  async guuggenTalk() {
+    const c = await Story.ask('Diebetormtöibeler', 'Wir sind die Diebetormtöibeler, benannt nach dem Diebenturm! Wir proben schon für die Fasnacht. Willst du mitschränzen?', ['Mitspielen', 'Lieber zuhören']);
+    if (c === 0) { const r = await this.mini('rhythm', 'guugge'); if (r && r.pct >= 50) achieve('su_guugge'); mood(8); UI.toast(r ? `Takt getroffen: ${Math.round(r.pct)} %` : 'Schräg, aber laut. Perfekt.'); }
+    else { Snd.sfx('cheer'); mood(3); }
+  },
+  async sousaphonist() {
+    if (G.S.stage !== 's_probe') { await Story.say('Sousaphonist mit Larve', 'Mmmh. (Er spielt weiter.)'); return; }
+    G.busy++;
+    await Story.say('me', 'Schönes Sousaphon. Sagen Sie … Pech gehabt in letzter Zeit? Mit einer Maske vielleicht? Einer goldenen?');
+    await Story.say('Sousaphonist mit Larve', '…');
+    await sayP('elin', 'Er hat einen roten Mantel unter der Jacke!');
+    Snd.sfx('whoosh');
+    await Story.say('Sousaphonist mit Larve', 'PECH GEHABT!');
+    await Story.say(null, 'Er lässt das Sousaphon fallen, springt auf ein Velo und rast durch das Untertor davon – Richtung Unterstadt!');
+    const papi = suPapi();
+    await Story.say(this.st().follow ? 'me' : null, this.st().follow ? 'Elin, dein Velo! Ich bring es dir zurück!' : 'Neben dem Wilden Mann steht ein Velo. Du schwingst dich drauf.');
+    G.busy--;
+    let r = await this.mini('velo', 'chase');
+    if (!(r && r.ok)) {
+      await sayP('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, du schaffst das!');
+      r = await this.mini('velo', 'chase');
+    }
+    if (r && r.ok) { achieve('su_velo'); await Story.say('me', 'Er fährt zum See! Ich bleib dran!'); }
+    else await Story.say('me', 'Weg ist er … aber die Spur führt zum See. Zum Quai!');
+    this.setStage('s_boot');
+    this.st().bootReady = 0;
+    G.npcs = G.npcs.filter((n) => !n.larve);
+    await warpTo('sursee_see', 'quai', { plain: true });
+  },
+  async bootsjagd() {
+    G.busy++;
+    const helper = FRIENDS.hoshy ? 'hoshy' : who('arm');
+    await Story.say(null, 'Am Quai springt der Mann im roten Mantel in Boot 7 und fährt los – mitten in den Triechter hinaus.');
+    if (FRIENDS[helper]) await Story.say(helper, `${G.S.name}! Ich war grad hier am Quai. Rein ins Elektroboot, ich steuer – du schaust, wohin er fährt!`);
+    await Story.say('Bootsvermieter Sepp', 'Nimm die Nummer 3, die ist geladen! Bezahlen kannst du später!');
+    G.busy--;
+    const r = await this.mini('bootsjagd');
+    if (r && r.ok) { achieve('su_boot'); await Story.say(helper, 'Er legt am Gamma-Inseli an! Wir sind direkt hinter ihm!'); }
+    else await Story.say(helper, 'Er ist schneller … aber er fährt zum Gamma-Inseli. Hinterher!');
+    this.st().inseliSearch = 1;
+    await Scene.play('boat', { text: 'Das Elektroboot surrt über den Triechter hinaus zum Gamma-Inseli …', ms: 2200, keep: true });
+    enterMap('inseli', 'landing');
+    await UI.fadeIn();
+    await Story.say('me', 'Er ist zwischen den Bäumen verschwunden. Irgendwo hier muss die Maske sein. Ich such die Insel ab.');
+    UI.toast('Such die Insel ab: unter Bäumen, im Schilf, hinter Steinen.');
+  },
+  async search(k) {
+    const s = this.st();
+    if (G.S.stage !== 's_boot' || s.maskFound) { await Story.say(null, pick(['Wurzeln, Moos, ein paar Federn von Enten.', 'Nur Laub und ein alter Ast.', 'Eine Ente schaut dich vorwurfsvoll an.'])); return; }
+    if (s.maskSpot == null) s.maskSpot = rint(0, 3);
+    s.searched = s.searched || [];
+    if (!s.searched.includes(k)) s.searched.push(k);
+    if (k !== s.maskSpot) { await Story.say(null, pick(['Nichts. Nur Wurzeln.', 'Ein Krähennest. Leer.', 'Ein Kronkorken. Kari wäre stolz.'])); if (s.searched.length >= 2) UI.toast('Dort drüben glitzert etwas!'); return; }
+    s.maskFound = 1;
+    addInv('sonnenmaske'); achieve('su_maske'); Snd.sfx('win'); G.fx.flash = 0.8;
+    await Story.say(null, 'Unter einer grünen Plane, in ein Frotteetuch gewickelt: die goldene Sonnenmaske! Es fehlt genau ein Strahl.');
+    const sp = (G.map.spots && G.map.spots.pfister) || [10, 6, 0];
+    const a = Story.tempActor({ id: 'su_pfister', name: SU_P.pfister.name, look: Object.assign({}, SU_P.pfister.look, { top: 9, topCol: 0 }), x: sp[0] * 16 + 8, y: sp[1] * 16 + 12, dir: 0, solid: true, speed: 30 });
+    a.talk = () => this.talk('pfister');
+    await Story.walk(a, G.player.x + 20, G.player.y);
+    a.dir = 1;
+    await Story.say(SU_P.pfister, 'Pech gehabt. Wieder mal. Zwanzig Jahre Pech.');
+    await this.anklage();
+  },
+  async anklage() {
+    const s = this.st();
+    const lawyer = FRIENDS.lexx ? 'lexx' : suPapi();
+    await Story.say(lawyer, `Moment. Bevor hier jemand „Pech“ sagt: ${G.S.name}, du brauchst drei Beweise, die alle auf ihn zeigen. Dann gilt es.`);
+    const used = {};
+    let n = 0, tries = 0;
+    while (n < 3 && tries < 12) {
+      tries++;
+      const keys = Object.keys(SU_EVID).filter((k) => s.ev[k] && !used[k]);
+      if (!keys.length) break;
+      const c = await Story.ask(lawyer, `Beweis ${n + 1} von 3: Was legst du vor?`, keys.map((k) => SU_EVID[k].n));
+      const k = keys[c];
+      used[k] = 1;
+      if (SU_EVID[k].p) { n++; Snd.sfx('ok'); await Story.say(SU_P.pfister, ['Das … das kann jeder gewesen sein.', 'Hm. Ja. Das war ich. Aber das beweist noch nichts!', 'Schon gut. Schon gut! Ich geb es zu.'][n - 1]); }
+      else { Snd.sfx('error'); await Story.say(lawyer, 'Das beweist nichts gegen ihn. Überleg nochmal – im Notizbuch steht alles.'); }
+    }
+    if (n < 3) { await Story.say(lawyer, 'Es reicht auch so. Er hat ja die Maske versteckt.'); }
+    else achieve('su_anklage');
+    this.note('gestaendnis', 'Ruedi Pfister hat gestanden.');
+    await Story.say(SU_P.pfister, 'Zwanzig Jahre bin ich Schläger an der Gansabhauet. Zwanzig Mal mit verbundenen Augen – und nie getroffen. Nicht einmal gestreift.');
+    await Story.say(SU_P.pfister, 'Ich wollte nur EINMAL mit der echten Maske üben. Nachts, hier auf dem Inseli, wo mich niemand sieht. Mit dem roten Mantel aus dem Theater und einer Stoffgans. Dabei bin ich an der Sure gestolpert, und ein Strahl ist abgebrochen.');
+    await Story.say(SU_P.pfister, 'Ich wollte die Maske am Martinstag zurückbringen. Aber dann fiel die Gansabhauet aus – wegen MIR. Ich hab mich so geschämt, dass ich sie hier versteckt habe. Und jede Nacht hab ich mit der Taschenlampe nachgeschaut, ob sie noch da ist.');
+    await Story.say('me', 'Gib sie der Zunft zurück. Selber. Das ist das Mindeste.');
+    await Story.say(SU_P.pfister, 'Ja. Das mach ich. Pech gehabt … nein. Diesmal nicht.');
+    Snd.sfx('blip');
+    await sayP('heinivater', '📱 Die Maske ist gefunden?! Das ganze Städtli redet schon davon. Ruedi hat mich angerufen und alles erzählt. Die Gansabhauet wird nachgeholt – um 10 Uhr geht\'s los! Kommen Sie zum Diebenturm, Sie bekommen eine Startnummer.');
+    takeInv('sonnenmaske');
+    Story.dropActor(G.npcs.find((n) => n.id === 'su_pfister'));
+    this.setStage('s_gans');
+    await Scene.play('boat', { text: 'Zurück zum Quai. Ruedi fährt im eigenen Boot hinterher, die Maske im Arm.', ms: 2200, keep: true, back: true });
+    enterMap('sursee_see', 'inseli_back');
+    await UI.fadeIn();
+    saveGame(true);
+  },
+  async inseliBoat() {
+    const c = await Story.ask(null, 'Mit dem Elektroboot zurück zum Quai?', ['Zurückfahren', 'Noch bleiben']);
+    if (c !== 0) return;
+    if (G.S.stage === 's_boot' && !this.st().maskFound) { await Story.say('me', 'Nicht ohne die Maske!'); return; }
+    await Scene.play('boat', { text: 'Zurück zum Quai …', ms: 1800, keep: true, back: true });
+    enterMap('sursee_see', 'inseli_back');
+    await UI.fadeIn();
+  },
+
+  /* ---------- Finale: Nachhol-Gansabhauet ---------- */
+  async talkHeinivater() {
+    const s = this.st(), st = G.S.stage, h = hourOf(G.S.time);
+    if (st === 's_gans') {
+      if (!(h >= 10 && h < 16)) { await sayP('heinivater', 'Die Gansabhauet beginnt um 10 Uhr. Schlafen Sie gut!'); return; }
+      return this.gansabhauet();
+    }
+    if (st === 's_ankunft') return this.tatortStart();
+    if (st === 's_tatort') { await sayP('heinivater', 'Schauen Sie überall, wo es glitzert. Drei Spuren, sagt das Mädchen. Sie hat recht, glaube ich.'); return; }
+    if (suAt('s_frei')) { await sayP('heinivater', 'Unser Ehrenzünftler! Kommen Sie an die Fasnacht. Am Güdisdienstag eröffnen drei Kanonenschüsse den Umzug.'); return; }
+    await sayP('heinivater', pick(['Die Zunft Heini von Uri wurde 1876 von über hundert Surseern gegründet. Seit 1880 organisieren wir die Gansabhauet mit.', 'Am Fasnachtssamstag spielen beim Monsterkonzert rund zwanzig Guuggen in der Altstadt. Die Guggsurruugger haben es 1987 erfunden.', 'Ohne Sonnenmaske keine Gansabhauet. So einfach ist das. Und so schlimm.']));
+  },
+  async gansabhauet() {
+    G.busy++;
+    const s = this.st();
+    await sayP('heinivater', `Startnummer 7, für ${G.S.name}! Und Startnummer 6 für Ruedi – er hat es sich nicht verdient, aber die Zunft verzeiht. Einmal im Jahr.`);
+    await Scene.play('umzug', { text: 'Umzug mit Stadtrat, Zunft und Tambouren vom Diebenturm durch die Gasse zum Rathaus …', ms: 3600, keep: true });
+    enterMap('sursee', 'rathausplatz');
+    this.gansLive();
+    await UI.fadeIn();
+    await Story.say(null, 'Vor dem Rathaus hängt an einem Draht die Gans. Hunderte Menschen stehen in der Gasse, auf den Treppen, in den Fenstern. Die Tambouren wirbeln.');
+    const kids = ['Elin', 'Timo', 'Thierry'];
+    for (;;) {
+      const c = await askP('elin', 'Zuerst die Kinderspiele! Machst du mit?', ['Sackgumpe', 'Chäszänne (Grimassen)', 'Stangechlädere', 'Weiter zur Gansabhauet']);
+      if (c === 3) break;
+      if (c === 0) { const r = await this.mini('sackgumpe', kids); if (r && r.place === 1) { achieve('su_kinder'); UI.toast('Erster im Sackgumpe!'); } }
+      if (c === 1) { const r = await this.mini('chaeszaenne'); if (r && r.win) { achieve('su_kinder'); addInv('chaeschuechli'); UI.toast('Die grässlichste Grimasse! Du gewinnst ein Stück Käse.'); } }
+      if (c === 2) { const r = await this.mini('stange'); if (r && r.top) { achieve('su_kinder'); UI.toast('Ganz oben! Der Preis am Kranz gehört dir.'); } }
+    }
+    await sayP('heinivater', 'Schläger Nummer 6: Ruedi Pfister! Maske auf, Augen verbunden, roter Mantel. Ein Hieb mit dem stumpfen Säbel!');
+    let hit = false;
+    for (let round = 1; round <= 3 && !hit; round++) {
+      Snd.sfx('hit');
+      await Story.say(null, round === 1 ? 'Ruedi holt aus … und schlägt einen halben Meter daneben. Die Menge stöhnt. „Pech gehabt!“, ruft er – und lacht dabei.' : 'Ruedi schlägt wieder ins Leere. Er zuckt mit den Schultern und grinst.');
+      await sayP('heinivater', `Schläger Nummer 7: ${G.S.name}!${round > 1 ? ` ${round}. Durchgang!` : ''}`);
+      const r = await this.mini('gansabhauet');
+      hit = !!(r && r.hit);
+      if (hit) { G.fx.flash = 1; Snd.sfx('cheer'); achieve('su_gans'); await Story.say(null, 'Ein sauberer Hieb – die Gans fällt! Die Menge tobt, Hüte fliegen, die Tambouren trommeln wie verrückt. Du nimmst die Sonnenmaske ab und blinzelst ins Licht.'); }
+      else await Story.say(null, round < 3 ? 'Knapp daneben! Die Menge raunt. Nächster Durchgang.' : 'Wieder daneben …');
+    }
+    if (!hit) {
+      Snd.sfx('cheer');
+      await Story.say(null, 'Im letzten Durchgang tritt Ruedi Pfister noch einmal an. Er holt aus – und trifft. Zum ersten Mal in zwanzig Jahren. Die Gans fällt, Ruedi fällt auf die Knie, die Menge jubelt.');
+      await Story.say(SU_P.pfister, 'Ich … ich hab GETROFFEN! Danke! Ohne dich hätte es diese Gansabhauet nie gegeben!');
+    }
+    achieve('su_zunft');
+    await sayP('heinivater', `Liebe Surseerinnen und Surseer! Ohne ${G.S.name} gäbe es heute keine Gansabhauet. Im Namen der Zunft Heini von Uri: Ehrenzünftler auf Lebenszeit!`);
+    await sayP('isa', playerIsCuche() ? 'Ich bin so stolz auf dich, Schatz.' : `${G.S.name}, du bist ab heute offiziell ein Surseer. Fast.`);
+    await sayP('timo', 'Ich war der Assistent! Assistent Timo!');
+    G.live = null;
+    const c2 = await Story.ask('Diebetormtöibeler', 'Und jetzt: Musik! Spielst du mit?', ['Mitschränzen', 'Zuhören']);
+    if (c2 === 0) { const r = await this.mini('rhythm', 'guugge'); if (r && r.pct >= 50) achieve('su_guugge'); }
+    passTime(Math.max(0, (dayOf(G.S.time) * 1440 + 18 * 60) - G.S.time));
+    await Scene.play('raebeli', { text: 'Am Abend zieht der Räbeliechtli-Umzug vom Untertor durch die dunkle Altstadt.', ms: 4200, keep: true });
+    await Scene.play('lift', { text: 'Zum Schluss: eine letzte Fahrt mit dem Riesenrad. Ganz oben bleibt es stehen. Unter dir leuchtet Sursee.', ms: 3200, keep: true });
+    this.setStage('s_frei');
+    saveGame(true);
+    G.busy--;
+    await Ending.show({ sursee: true });
+  },
+  gansLive() {
+    G.live = {
+      draw: (c, cx, cy, t) => {
+        const x = 81 * 16 - cx, y = 37 * 16 - cy;
+        line(c, x - 40, y - 34, x + 40, y - 34, '#3a3a40');
+        const sw = Math.sin(t * 1.3) * 1.5;
+        line(c, x, y - 34, x + sw, y - 20, '#3a3a40');
+        E(c, x + sw, y - 12, 4, 6, '#f4f0e6'); R(c, x + sw - 1, y - 20, 2, 6, '#f4f0e6'); E(c, x + sw, y - 21, 2, 2, '#f4f0e6'); P(c, x + sw + 2, y - 21, '#e8902a'); R(c, x + sw - 2, y - 6, 1, 3, '#e8902a'); R(c, x + sw + 1, y - 6, 1, 3, '#e8902a');
+      },
+    };
+  },
+
+  /* ---------- Notizbuch im Handy ---------- */
+  notebook(b) {
+    const s = this.st();
+    const sus = SU_SUSPECTS.map((x) => `<div class="row ${G.S.stage === 's_gans' || suAt('s_frei') ? (x.k === 'pfister' ? '' : 'done') : ''}"><div><div class="t">${x.n}</div><div class="d">${x.d}</div></div><span class="open">${(suAt('s_gans') && x.k === 'pfister') ? '!' : '?'}</span></div>`).join('');
+    const ev = Object.keys(SU_EVID).filter((k) => s.ev[k]).map((k) => `<div class="row"><div><div class="t">${SU_EVID[k].n}</div></div></div>`).join('') || '<p class="note">Noch keine Beweise.</p>';
+    const notes = s.notes.slice().reverse().map((n) => `<div class="row"><div><div class="d">${dateStr(n.at)} ${clockStr(n.at)}</div><div class="t">${n.t}</div></div></div>`).join('') || '<p class="note">Noch leer.</p>';
+    b.innerHTML = `<div class="row" style="border-color:var(--amber)"><div><div class="d">Jetzt</div><div class="t">${this.objective()}</div></div></div>
+      <button class="btn" id="suHint">💡 Tipp von Elin und Timo</button>
+      <div class="shop-sec">Spuren aus der Zunftstube</div><div class="list">${Object.entries(SU_CLUES).map(([k, [n, d]]) => `<div class="row ${s.clues[k] ? 'done' : ''}"><div><div class="t">${s.clues[k] ? n : '???'}</div><div class="d">${s.clues[k] ? d : 'noch nicht gefunden'}</div></div><span class="${s.clues[k] ? 'tick' : 'open'}">${s.clues[k] ? '✓' : '·'}</span></div>`).join('')}</div>
+      <div class="shop-sec">Verdächtige</div><div class="list">${suAt('s_faehrten') ? sus : '<p class="note">Noch keine – zuerst den Tatort untersuchen.</p>'}</div>
+      <div class="shop-sec">Beweise</div><div class="list">${ev}</div>
+      <div class="shop-sec">Notizen</div><div class="list">${notes}</div>`;
+    b.querySelector('#suHint').onclick = async () => { UI.closeOverlay(); G.busy++; await this.giveHint(true); G.busy--; };
+  },
+  hintText(lvl) {
+    const s = this.st(), st = G.S.stage;
+    const H = {
+      s_ankunft: ['Der Diebenturm ist in der Unterstadt. Durch das Untertor und dann rechts runter in die Gasse mit dem Bach.', 'Folg der Unterstadt nach Osten bis zum Turm mit der gelben Fahne. Die Tür ist unten.'],
+      s_tatort: [`Es glitzert! Unter dem Fenster, unter einer Bank, bei der Truhe. ${3 - Object.keys(s.clues).length} fehlen noch.`, 'Stell dich vor die glitzernden Stellen und drück A.'],
+      s_faehrten: [!s.f.roli ? 'Der Jeton ist von der Achterbahn. Auf dem Märtplatz rechts von der Kirche steht Roli bei der Kasse.' : !s.f.rad ? 'Roli hat vom Riesenrad gesprochen. Nach 17 Uhr ist es dunkel – dann sieht man Lichter auf dem See.' : !s.f.log ? 'Die Quittung ist von der Bootsvermietung am See. Über den Beckenhof und die Münstervorstadt zum Quai.' : !s.f.fischer ? 'Fischer Wäli will einen Felchen. Fisch vom Quai aus – vorne auf dem Steg.' : !s.f.buch ? 'Die Maske war im Museum Sankturbanhof. Neben dem Stadttheater, beim Obertor. Dort liegt ein Besucherbuch.' : 'Im Stadttheater fehlt ein roter Mantel. Schau im Fundus nach!', 'Im Notizbuch steht, was noch fehlt. Auf der Handy-Karte siehst du alle Orte.'],
+      s_strahl: [hasInv('strahl') ? `Mami ist ${this.isaWhere().t}.` : 'Thierry und Louve spielen beim Spielplatz im Ehret-Park. Durch die Pforte in der Stadtmauer.', 'Rede mit ihnen!'],
+      s_probe: ['Die Guuggen proben beim Untertor, unten an der Sure. Ab 16 Uhr.', 'Der mit dem grossen, goldenen Instrument – das ist ein Sousaphon.'],
+      s_boot: ['Zum See! Die Bootsvermietung am Quai hat ein Elektroboot für dich.', 'Rede mit Sepp von der Bootsvermietung.'],
+      s_gans: ['Die Gansabhauet beginnt um 10 Uhr beim Diebenturm. Der Heinivater wartet dort.', 'Wenn es Nacht ist: Schlaf bei uns im Gästebett, Münstervorstadt.'],
+    }[st];
+    if (!H) return 'Sursee ist gross genug für alles: Chilbi, See, Bars. Viel Spass!';
+    return H[Math.min(lvl, H.length) - 1];
+  },
+  hintLvl: 0,
+  async giveHint(asked) {
+    this.hintLvl = Math.min(2, this.hintLvl + 1);
+    const k = this.followOk() ? (this.hintLvl === 1 ? 'elin' : 'timo') : 'elin';
+    const t = this.hintText(this.hintLvl);
+    if (this.followOk()) await sayP(k, t); else await sayP(k, '📱 ' + t);
+  },
+  hintTick() {
+    const s = this.st();
+    if (!this.here() || G.busy || s.lastProg == null || ['s_frei', 's_gans'].includes(G.S.stage)) return;
+    if (G.S.time - s.lastProg > 100 && (!s.lastHint || G.S.time - s.lastHint > 100)) {
+      s.lastHint = G.S.time;
+      const k = Math.random() < 0.5 ? 'elin' : 'timo';
+      const kid = G.npcs.find((n) => n.id === 'su_' + k);
+      if (kid) { kid.bubble = '?'; kid.bubbleT = 4; }
+      UI.toast(`💬 ${SU_P[k].name}: „${this.hintText(Math.min(2, ++this.hintLvl))}“`);
+    }
+  },
+
+  /* ---------- Heini, der Narr: Rätsel mit wahren Tipps ---------- */
+  NARR_SPOTS: [[68, 41], [91, 39], [82, 27], [61, 19], [110, 22], [45, 49], [88, 52], [70, 59]],
+  RIDDLES: [
+    ['Wie viele Jahre feiert die Zunft Heini von Uri im Jahr 2026?', ['100', '150', '200'], 1],
+    ['In welcher Schlacht war der Narr Heini mit dem Herzog?', ['Morgarten', 'Sempach', 'Marignano'], 1],
+    ['Seit wann tragen die Schläger an der Gansabhauet Sonnenmaske und roten Mantel?', ['1386', '1880', '1975'], 1],
+    ['Wie gross ist das Gamma-Inseli?', ['18 m²', '184 m²', '1840 m²'], 1],
+    ['Aus welchem See fliesst die Sure?', ['Baldeggersee', 'Sempachersee', 'Vierwaldstättersee'], 1],
+    ['Wann wurde das Rathaus von Sursee gebaut?', ['1539 bis 1546', '1876', '1912'], 0],
+    ['Wofür steht die 118 beim Kulturwerk?', ['Hausnummer', 'Feuerwehr-Notruf', 'Anzahl Plätze'], 1],
+    ['Wie heisst die älteste Guuggenmusig von Sursee?', ['Guggsurruugger', 'Diebetormtöibeler', 'Alti Sieche'], 0],
+  ],
+  spawnNarr(m) {
+    const s = this.st();
+    const i = (Math.floor(G.S.time / 60) + 3) % this.NARR_SPOTS.length, p = this.NARR_SPOTS[i];
+    G.npcs.push(new Actor({ id: 'su_narr', name: SU_P.narr.name, look: SU_P.narr.look, x: p[0] * 16 + 8, y: p[1] * 16 + 12, dir: 0, solid: true, keepDir: true, talk: () => this.narr(), label: 'Reden: Heini, der Narr', bubbleRand: ['?', 'note'], extra: drawNarrenkappe, wander: { x: p[0] - 2, y: p[1] - 1, w: 5, h: 2 } }));
+  },
+  async narr() {
+    const s = this.st();
+    s.narrQ = s.narrQ || 0;
+    const R = this.RIDDLES[s.narrQ % this.RIDDLES.length];
+    await sayP('narr', pick(['Hoppla! Ein Narr sagt immer die Wahrheit – aber nur dem, der ein Rätsel löst!', 'Klingeling! Der Narr weiss, was du suchst. Doch zuerst: ein Rätsel!', 'Heini bin ich, Narr von Beruf. Wahrheit gegen Wissen!']));
+    const c = await askP('narr', R[0], R[1]);
+    if (c === R[2]) {
+      s.narrQ++; s.riddles++;
+      Snd.sfx('ok');
+      if (s.riddles >= 5) achieve('su_narr');
+      await sayP('narr', `Richtig! Und hier die Wahrheit, gereimt für dich: ${this.narrHint()}`);
+      mood(3);
+    } else { Snd.sfx('error'); await sayP('narr', 'Falsch, falsch! Der Narr lacht. Komm ein andermal wieder – er steht nie lange am selben Ort.'); s.narrQ++; }
+  },
+  narrHint() {
+    const t = this.hintText(1);
+    return `„${t}“ – Klingeling!`;
+  },
+});
+/* Narrenkappe mit Schellen */
+function drawNarrenkappe(c, x, y, a) {
+  const hy = y - 26 + (a.moving ? Math.floor(G.t * 8) % 2 : 0);
+  R(c, x - 5, hy + 2, 10, 3, '#c8302a'); R(c, x - 5, hy + 2, 5, 3, '#e8c23a');
+  line(c, x - 4, hy + 2, x - 9, hy - 4, '#c8302a'); line(c, x + 4, hy + 2, x + 9, hy - 4, '#e8c23a'); line(c, x, hy + 1, x, hy - 6, '#2f5fb8');
+  const j = Math.floor(G.t * 5) % 2;
+  E(c, x - 9, hy - 4 + j, 1.5, 1.5, '#ffd23d'); E(c, x + 9, hy - 4 - j, 1.5, 1.5, '#ffd23d'); E(c, x, hy - 7 + j, 1.5, 1.5, '#ffd23d');
+}
+
+/* ============ Freizeit in Sursee ============ */
+Object.assign(Sur, {
+  /* Minispiele aufrufen; fehlt eines (noch), läuft die Story mit einem fairen Standard-Ergebnis weiter */
+  async mini(name, ...args) {
+    if (typeof Mini !== 'undefined' && typeof Mini[name] === 'function') { try { return await Mini[name](...args); } catch (e) { console.error(e); } }
+    const D = { fishing: { fish: 'felchen', cm: 34, felchen: true }, pedalo: { time: 42, ok: true }, motorboat: { time: 38, hits: 1, ok: true }, sup: { ok: true, dist: 120 }, sprung: { score: 14, figure: 'Köpfler' }, velo: { ok: true, time: 40 }, schiessbude: { hits: 7, prize: 'Rose' }, lukas: { best: 80, bell: false }, entenfischen: { ducks: 5, points: 40 }, buechsen: { cleared: true, cans: 6 }, achterbahn: { score: 70 }, riesenrad: { found: true }, gansabhauet: { hit: Math.random() < 0.5, quality: 0.5 }, sackgumpe: { place: 2 }, chaeszaenne: { score: 60, win: false }, stange: { top: true, height: 100 }, rhythm: { pct: 70 }, bootsjagd: { ok: true }, detektor: { found: true } }[name];
+    await UI.card(`(${name})`, 600);
+    return D || null;
+  },
+  async atm() {
+    const d = dayOf(G.S.time);
+    if (G.S.cashDay !== d) { G.S.cashDay = d; G.S.cashToday = 0; }
+    const left = 1000 - G.S.cashToday, eur = G.S.money.eur;
+    const opts = ['50 CHF', '100 CHF', '200 CHF', '500 CHF'];
+    if (eur >= 5) opts.push(`Euro wechseln (${fmtEur(eur)} → ${fmtChf(Math.floor(eur * 0.93))})`);
+    opts.push('Abbrechen');
+    const c = await Story.ask(null, `Bankomat · Heute noch ${Math.max(0, left)} CHF möglich.`, opts);
+    if (opts[c] === 'Abbrechen') return;
+    if (opts[c].startsWith('Euro')) { const v = Math.floor(eur * 0.93); addMoney('eur', -eur); addMoney('chf', v); Snd.sfx('coin'); UI.toast(`${fmtEur(eur)} gewechselt: ${fmtChf(v)}.`); return; }
+    if (left <= 0) { await Story.say(null, 'Tageslimit erreicht.'); return; }
+    const v = Math.min(left, [50, 100, 200, 500][c]);
+    G.S.cashToday += v; addMoney('chf', v); Snd.sfx('coin'); UI.toast(`${v} CHF abgehoben.`);
+  },
+  async veloRent() {
+    const s = this.st();
+    if (s.velo) { const c = await Story.ask(null, 'Velo zurückgeben?', ['Zurückgeben', 'Behalten']); if (c === 0) { s.velo = 0; G.player.velo = false; UI.toast('Velo zurückgegeben.'); } return; }
+    const c = await Story.ask(null, 'Velostation: Mietvelo für den ganzen Tag, 15 CHF. Damit bist du draussen fast doppelt so schnell.', ['Mieten (15 CHF)', 'Lieber zu Fuss']);
+    if (c !== 0) return;
+    if (!pay('chf', 15)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
+    s.velo = 1; G.player.velo = true; achieve('su_velofahrer');
+    UI.toast('🚲 Velo gemietet! In Häusern stellst du es automatisch ab.');
+  },
+  async chilbi(kind) {
+    if (!isOpen('chilbi')) { await Story.say(null, 'Die Chilbi ist zu. Offen 10–24 Uhr.'); return; }
+    const price = { schiessbude: 5, lukas: 3, entenfischen: 4, buechsen: 4, los: 2, putschi: 4 }[kind];
+    const name = { schiessbude: 'Schiessbude', lukas: 'Hau den Lukas', entenfischen: 'Entenfischen', buechsen: 'Büchsenwerfen', los: 'Losbude', putschi: 'Putschibahn' }[kind];
+    const c = await Story.ask(null, `${name}: ${price} Franken.`, ['Spielen', 'Weitergehen']);
+    if (c !== 0) return;
+    if (!pay('chf', price)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
+    if (kind === 'los') { const r = Math.random(); const prize = r < 0.55 ? null : r < 0.85 ? 'magenbrot' : r < 0.97 ? 'zuckerwatte' : 'schoko'; if (prize) { addInv(prize); UI.toast(`Gewonnen: ${ITEMS[prize].n}!`); } else UI.toast('Niete. „Nächstes Mal!“'); return; }
+    if (kind === 'putschi') { const f = Object.keys(FRIENDS).find((id) => this.friendLoc(id) === 'chilbi'); await Scene.play('putschi', { text: f ? `Putschibahn mit ${fname(f)}! Rums – frontal.` : 'Putschibahn! Rums – ein Kind rammt dich frontal und lacht.', ms: 2600 }); mood(8); return; }
+    const r = await this.mini(kind === 'schiessbude' ? 'schiessbude' : kind);
+    if (!r) return;
+    if (kind === 'schiessbude' && r.prize) { achieve('su_schiess'); UI.toast(`Preis: ${r.prize}!`); }
+    if (kind === 'lukas' && r.bell) achieve('su_lukas');
+    mood(5);
+  },
+  async concertKasse() {
+    const h = hourOf(G.S.time);
+    if (hasInv('konzertticket')) { await Story.say('Abendkasse', 'Du hast schon ein Ticket. Viel Spass!'); return; }
+    const c = await Story.ask('Abendkasse', h >= 18 ? 'Triechter-Gäng, Winter-Tour 2026! Abendkasse 49 Franken. Beginn 20 Uhr.' : 'Die Kasse öffnet um 18 Uhr.', h >= 18 ? ['Ticket kaufen (49 CHF)', 'Nein danke'] : ['Okay']);
+    if (h < 18 || c !== 0) return;
+    if (!pay('chf', 49)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
+    addInv('konzertticket'); UI.toast('🎫 Konzertticket! Vor die Bühne, sobald es losgeht (ab 20 Uhr).');
+  },
+  async concert() {
+    const h = hourOf(G.S.time);
+    if (!hasInv('konzertticket')) { await Story.say('Security', 'Ohne Ticket geht\'s nicht vor die Bühne. Abendkasse beim Eingang.'); return; }
+    if (h < 20) { await Story.say(null, 'Auf der Bühne wird noch Soundcheck gemacht. „Eins, zwei, eins, zwei.“ Um 20 Uhr geht\'s los.'); return; }
+    await Story.say(null, 'Licht aus, Nebel, Jubel: Die Triechter-Gäng stürmt auf die Bühne. Mundart, Schlager, Party – die ganze Stadthalle hüpft.');
+    const r = await this.mini('rhythm', 'konzert');
+    takeInv('konzertticket');
+    achieve('su_konzert'); mood(12); energy(-6); passTime(90);
+    if (r && r.pct >= 80) await Story.say(null, 'Die Sängerin zeigt auf dich: „Dä det vorne cha’s!“ Die ganze Halle klatscht.');
+  },
+  async galerie() {
+    const s = this.st();
+    if (suAt('s_faehrten') && !suAt('s_gans') && !s.ev.zeuge) {
+      await Story.say(null, 'Von der Galerie siehst du über das ganze Publikum. Neben dir lehnt eine Frau am Geländer.');
+      await Story.say('Frau auf der Galerie', 'Detektiv? Isa hat von dir erzählt. Ich wohne am Quai. In der Nacht vor dem Martinstag hab ich einen Mann gesehen – roter Mantel, Sousaphon-Koffer, Richtung See. Um elf Uhr nachts!');
+      this.evid('zeuge'); this.note('zeuge', 'Zeugin auf der Galerie: Mann mit rotem Mantel und Sousaphon-Koffer, nachts Richtung See.');
+      return;
+    }
+    await Story.say(null, 'Von der Galerie siehst du über die Halle. Lichter, Nebel, tausend Hände.');
+  },
+  async kulturwerk() {
+    const s = this.st(), h = hourOf(G.S.time);
+    const late = h >= 23 || h < 4;
+    if (late && this.jungsDa() && !s.k118) {
+      s.k118 = 1;
+      await Story.say(null, 'Plötzlich geht das Licht aus. Spot an: Auf der kleinen Bühne stehen … die Jungs! Mit Gitarre, Kochtopf als Schlagzeug und viel zu viel Selbstvertrauen.');
+      await Story.say(voice('party'), `Sursee! Wir sind die Innsbruck-Allstars, und wir holen jetzt jemanden auf die Bühne: ${G.S.name}!`);
+      const r = await this.mini('rhythm', 'konzert');
+      achieve('su_118'); mood(15);
+      await Story.say(null, r && r.pct >= 60 ? 'Standing Ovations im Keller. Die Feuerwehr oben fragt, was los ist.' : 'Schräg. Laut. Unvergesslich.');
+      return;
+    }
+    const c = await Story.ask(null, 'Open Stage im Kulturwerk 118. Willst du auf die Bühne?', ['Auf die Bühne', 'Lieber zuschauen']);
+    if (c === 0) { const r = await this.mini('rhythm', 'konzert'); if (r && r.pct >= 60) achieve('su_118'); mood(8); }
+  },
+  canDetect() { return hasInv('detektor') && this.st().coins.length < 5; },
+  async detector() {
+    const s = this.st();
+    const r = await this.mini('detektor');
+    if (!(r && r.found)) { UI.toast('Piep … piep … nur ein Kronkorken.'); return; }
+    s.coins.push(G.S.time);
+    Snd.sfx('coin');
+    const n = s.coins.length;
+    await Story.say(null, `Eine römische Münze! Grün angelaufen, mit einem Kaiserkopf. (${n}/5)`);
+    if (n >= 5) { achieve('su_roemer'); await Story.say(null, 'Alle fünf! Bring sie dem Museum Sankturbanhof – die Vitrine mit den leeren Münzplätzen wartet. (Die Münzen liegen jetzt dort, mit deinem Namen.)'); }
+  },
+  async klosterbank() {
+    const s = this.st();
+    if (!this.hiddenOpen('trainingsplan')) { await Story.say(null, 'Eine Bank im Klostergarten. Still. Ein Rotkehlchen hüpft herum.'); return; }
+    s.hidden.trainingsplan = 1;
+    await Story.say(null, 'Unter der Bank klemmt ein zerknittertes Blatt: „TRAININGSPLAN GANSABHAUET. 1. Blind gehen. 2. Maske tragen (echte!). 3. Roter Mantel. 4. Vollmond. 5. Inseli – da sieht mich keiner.“');
+    achieve('su_kloster'); this.evid('plan');
+    this.note('plan', 'Im Klostergarten: ein Trainingsplan für die Gansabhauet – „echte Maske, roter Mantel, Inseli“.');
+  },
+  async sprung() {
+    const c = await Story.ask(null, 'Der Sprungturm im Strandbad. Wasser: 6 Grad. Es ist Dezember.', ['1 Meter', '3 Meter', '5 Meter', 'Bist du verrückt?']);
+    if (c === 3) return;
+    const r = await this.mini('sprung', [1, 3, 5][c]);
+    G.S.st.wet = 120; energy(10); mood(c === 2 ? 10 : 6);
+    achieve('su_sprung');
+    await Story.say('me', r && r.score >= 15 ? 'Kalt! KALT! Aber die Haltungsnoten waren super.' : 'Kaaaalt! Ich brauch sofort einen Glühwein.');
+  },
+  async sup() {
+    const c = await Story.ask('Seebadi Schenkon', 'Stand-up-Paddle im Dezember? Mit Neopren, ja. 20 Franken für eine halbe Stunde.', ['Mieten (20 CHF)', 'Nein danke']);
+    if (c !== 0) return;
+    if (!pay('chf', 20)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
+    const r = await this.mini('sup');
+    if (r && r.ok) { achieve('su_sup'); UI.toast('Trocken geblieben! Respekt.'); mood(8); }
+    else { G.S.st.wet = 120; mood(-2); UI.toast('Platsch! Eiskalt.'); }
+  },
+  async sleep() {
+    const c = await Story.ask(null, 'Das Gästebett bei Isa. Frisch bezogen, mit einer Wärmflasche.', [{ t: 'Kurz hinlegen', r: '1 Std.' }, { t: 'Powernap', r: '3 Std.' }, { t: 'Schlafen bis morgen früh', r: 'bis 8:00' }, { t: 'Lieber nicht' }]);
+    if (c === 3) return;
+    let mins = c === 0 ? 60 : c === 1 ? 180 : null;
+    if (mins == null) { const t = G.S.time, d = dayOf(t), h = hourOf(t); mins = (h < 4 ? d : d + 1) * 1440 + 8 * 60 - t; }
+    await Story.sleep(mins, 'isa');
+  },
+  async fridge() {
+    const c = await Story.ask(null, 'Isas Kühlschrank: Rivella, Rüeblitorte, Joghurt, ein Rest Pizza.', ['Rivella', 'Rüeblitorte', 'Rest Pizza', 'Zu']);
+    if (c === 3) return;
+    consume(['rivella', 'ruebli', 'pizza'][c]);
+    UI.toast(['Rivella! Schmeckt nach Heimat.', 'Isas Rüeblitorte. Himmlisch.', 'Kalte Pizza, das beste Frühstück.'][c]);
+  },
+  async wc() { await Story.toilet('isa'); },
+  async shower() { await Story.shower(); },
+
+  /* ---------- Zufallsereignisse in Sursee ---------- */
+  EVENTS_SU: [
+    { id: 'guuggen', cond: () => { const h = hourOf(G.S.time); return h >= 11 && h < 22; } },
+    { id: 'gans', cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 17; } },
+    { id: 'nebel', cond: () => { const h = hourOf(G.S.time); return h >= 6 && h < 11; } },
+    { id: 'drohne', cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 16 && !!FRIENDS.roemu; } },
+  ],
+  maybeEvent() {
+    const s = this.st();
+    if (G.busy || G.live || G.map.id !== 'sursee' || !suAt('s_tatort') || G.mode !== 'play') return;
+    const d = dayOf(G.S.time);
+    s.evN = s.evN || {};
+    if ((s.evN[d] || 0) >= 2) return;
+    if (s.lastEv != null && G.S.time - s.lastEv < 150) return;
+    if (Math.random() > 1 / 90) return;
+    const list = this.EVENTS_SU.filter((e) => e.cond());
+    if (!list.length) return;
+    const e = list[Math.floor(Math.random() * list.length)];
+    s.evN[d] = (s.evN[d] || 0) + 1; s.lastEv = G.S.time;
+    Story.announce(e.id).then(() => this['ev_' + e.id]());
+  },
+  shakeEvent() {
+    if (G.map.id !== 'sursee' || !suAt('s_tatort')) { UI.toast('📳 Du schüttelst das Handy … aber hier passiert nichts. Versuch\'s draussen in der Altstadt von Sursee.'); return; }
+    const s = this.st();
+    const ids = this.EVENTS_SU.map((e) => e.id);
+    const id = ids[(s.shakeIdx || 0) % ids.length]; s.shakeIdx = (s.shakeIdx || 0) + 1;
+    achieve('schuettler');
+    Story._viaShake = true;
+    UI.toast('📳 Irgendetwas in Sursee hat dein Schütteln gespürt …', 'ach');
+    Story.announce(id).then(() => this['ev_' + id]());
+  },
+  /* Eine Guugge zieht unangekündigt durch die Oberstadt */
+  async ev_guuggen() {
+    const p = G.player, y = 38 * 16 + 12;
+    const band = [];
+    for (let i = 0; i < 6; i++) band.push(Story.tempActor({ name: 'Guugger', look: npcLook(4200 + i, { top: 4, topCol: [0, 4, 9, 6, 12, 2][i], pants: 4, pantsCol: 2 }), x: (53 + i * 1.2) * 16, y: y + (i % 2) * 10, dir: 2, speed: 26, larve: ['#e8c23a', '#c8302a', '#3f8ec8', '#3f8e4b', '#e3589c', '#f4f0e6'][i], larve2: '#1a1a1a', instr: ['pauke', 'trompete', 'trompete', 'pauke', 'trompete', 'sousa'][i], extra: drawLarve, bubbleRand: ['note'] }));
+    let t = 0, beat = 0, danced = false;
+    G.live = {
+      update: (dt) => {
+        t += dt;
+        for (const a of band) { a.x += 26 * dt; a.moving = true; a.walkT += dt; a.dir = 2; }
+        if (Math.floor(t * 2.4) !== beat) { beat = Math.floor(t * 2.4); Snd.tone(beat % 4 === 0 ? 90 : 140, 0.12, 'triangle', 0.12); if (beat % 2) Snd.tone([392, 440, 523, 587][beat % 4], 0.18, 'square', 0.04); }
+        if (!danced && band.some((a) => Math.hypot(a.x - p.x, a.y - p.y) < 30)) { danced = true; mood(10); UI.toast('Du tanzt mit der Guugge durch die Gasse!'); p.pose = 'danceA'; }
+        if (band[0].x > 118 * 16 || t > 40) { for (const a of band) Story.dropActor(a); G.live = null; UI.toast('Die Guugge zieht weiter Richtung Märtplatz.'); }
+      },
+      hudText: () => 'Eine Guuggenmusig zieht durch die Oberstadt!',
+    };
+  },
+  /* Eine Gans ist ausgebüxt */
+  async ev_gans() {
+    const p = G.player;
+    const g = { x: p.x + 60, y: p.y - 10, vx: 0, vy: 0, t: 0 };
+    let t = 0;
+    UI.toast('Eine Gans rennt schnatternd durch das Städtli! Fang sie (lauf hinein)!');
+    G.live = {
+      update: (dt) => {
+        t += dt; g.t += dt;
+        const dx = g.x - p.x, dy = g.y - p.y, d = Math.hypot(dx, dy) || 1;
+        const run = d < 70 ? 52 : 18;
+        g.vx += ((dx / d) * run - g.vx) * dt * 2 + Math.sin(t * 3) * 6 * dt; g.vy += ((dy / d) * run - g.vy) * dt * 2 + Math.cos(t * 2.3) * 6 * dt;
+        const nx = g.x + g.vx * dt, ny = g.y + g.vy * dt;
+        if (!G.map.isSolid(Math.floor(nx / 16), Math.floor((ny - 2) / 16))) { g.x = nx; g.y = ny; } else { g.vx = -g.vx; g.vy = -g.vy; }
+        if (Math.floor(t * 3) !== Math.floor((t - dt) * 3) && Math.random() < 0.4) Snd.tone(520, 0.08, 'square', 0.04, 0, 200);
+        if (d < 12) { G.live = null; addMoney('chf', 20); mood(10); Snd.sfx('win'); UI.toast('Gefangen! Die Bäuerin vom Martigny-Platz gibt dir 20 Franken Finderlohn.'); }
+        else if (t > 35) { G.live = null; UI.toast('Die Gans ist entwischt – Richtung Sure. Schnatter.'); }
+      },
+      draw: (c, cx, cy) => { const x = Math.round(g.x - cx), y = Math.round(g.y - cy), f = g.vx < 0, s = f ? -1 : 1; E(c, x, y + 1, 6, 2, 'rgba(0,0,0,0.2)'); E(c, x, y - 5, 6, 4, '#f4f0e6'); R(c, x + s * 3, y - 14, 2, 8, '#f4f0e6'); E(c, x + s * 4, y - 14, 2, 2, '#f4f0e6'); P(c, x + s * 6, y - 14, '#e8902a'); P(c, x + s * 7, y - 14, '#e8902a'); P(c, x + s * 4, y - 15, '#1a1a1a'); const l = Math.floor(G.t * 10) % 2; R(c, x - 2, y - 1, 1, 2 + l, '#e8902a'); R(c, x + 1, y - 1, 1, 3 - l, '#e8902a'); },
+      hudText: () => 'Fang die Gans!',
+    };
+  },
+  /* Nebel über Sursee */
+  async ev_nebel() {
+    let t = 0;
+    UI.toast('Dichter Nebel zieht vom See herauf. Typisch Dezember.');
+    G.live = {
+      update: (dt) => { t += dt; if (t > 50) { G.live = null; UI.toast('Der Nebel lichtet sich.'); } },
+      draw: (c, cx, cy, tt) => { const a = Math.min(0.55, t * 0.08, (50 - t) * 0.08); for (let k = 0; k < 7; k++) { const x = ((k * 97 + tt * 6) % (View.w + 120)) - 60, y = (k * 53) % View.h; c.fillStyle = `rgba(220,226,232,${a * 0.6})`; c.beginPath(); c.ellipse(x, y, 90, 40, 0, 0, 6.283); c.fill(); } c.fillStyle = `rgba(210,216,222,${a * 0.5})`; c.fillRect(0, 0, View.w, View.h); },
+      hudText: () => 'Nebel über Sursee',
+    };
+  },
+  /* Römus Drohne stürzt ab */
+  async ev_drohne() {
+    const p = G.player;
+    const dr = { x: p.x - 40, y: p.y - 60, z: 40, t: 0, down: false };
+    G.live = {
+      update: (dt) => { dr.t += dt; if (!dr.down) { dr.x += Math.sin(dr.t * 2) * 30 * dt + 20 * dt; dr.y += Math.cos(dr.t * 1.5) * 20 * dt; if (dr.t > 4) dr.down = true; } else { dr.z = Math.max(0, dr.z - 40 * dt); if (dr.z === 0 && !dr.done) { dr.done = 1; Snd.sfx('hit'); } } },
+      draw: (c, cx, cy, tt) => { const x = Math.round(dr.x - cx), y = Math.round(dr.y - cy - dr.z); if (dr.z > 0) E(c, x, Math.round(dr.y - cy), 4, 1, 'rgba(0,0,0,0.25)'); R(c, x - 4, y - 2, 8, 3, '#2a2a2e'); for (const s of [-1, 1]) { R(c, x + s * 6 - 2, y - 4, 4, 1, Math.floor(tt * 20) % 2 ? '#c9ccd2' : '#5a5e64'); } if (!dr.down) P(c, x, y + 1, '#e8302a'); },
+      onAction: async () => { if (!dr.done) return; if (Math.hypot(dr.x - p.x, dr.y - p.y) > 26) { UI.toast('Geh zur Drohne und drück A.'); return; } G.live = null; await Story.say(FRIENDS.roemu ? 'roemu' : null, 'MEINE DROHNE! Danke! Die Aufnahmen sind noch drauf: die ganze Altstadt von oben. Komm, ich lad dich auf ein Bier ein!'); G.S.aff.roemu = clamp((G.S.aff.roemu || 50) + 10, 0, 100); consume('lager'); },
+      hudText: () => (dr.done ? 'Die Drohne liegt am Boden – heb sie auf (A)' : 'Da oben surrt eine Drohne …'),
+    };
+    await sleep(500);
+    UI.toast(`💬 ${fname('roemu')}: „Achtung, meine Drohne! Batterie leer!“`);
+  },
+});

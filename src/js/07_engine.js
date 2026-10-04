@@ -279,7 +279,7 @@ function updateParts(dt) {
 
 /* ============ Rendern ============ */
 function frameIndex(a) {
-  if (a.pose === 'sit') return 3;
+  if (a.pose === 'sit' || a.velo) return 3;
   if (a.pose === 'drink') return 4;
   if (a.pose === 'danceA') return 5;
   if (a.pose === 'danceB') return 6;
@@ -292,8 +292,10 @@ function drawActor(c, a, cx, cy) {
   const sheet = getSheet(a.look);
   const fi = frameIndex(a);
   const z = Math.round(a.z || 0); /* Sprunghöhe: Figur hebt ab, Schatten bleibt am Boden und wird kleiner */
-  const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1) - z;
+  const vy = a.velo ? 3 : 0;
+  const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1) - z - vy;
   if (a.pose !== 'sit') E(c, Math.round(a.x - cx), Math.round(a.y - cy) - 1, Math.max(2, 5 - z * 0.2), 2, `rgba(0,0,0,${z > 0 ? 0.18 : 0.25})`);
+  if (a.velo) drawVelo(c, Math.round(a.x - cx), Math.round(a.y - cy), a, false);
   if (a.sinkY) { c.save(); c.beginPath(); c.rect(x - 4, y - 8, SPR_W + 8, SPR_H + 8 - a.sinkY); c.clip(); c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y + a.sinkY, SPR_W, SPR_H); c.restore(); }
   else c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y, SPR_W, SPR_H);
   if (a.dog) {
@@ -303,8 +305,22 @@ function drawActor(c, a, cx, cy) {
     R(c, dx, dy - 5, 9, 3, '#7a4a24'); R(c, dx + (a.dir === 2 ? -2 : 8), dy - 7, 3, 3, '#7a4a24'); P(c, dx + (a.dir === 2 ? -2 : 10), dy - 6, '#1a1a1a');
     R(c, dx + 1, dy - 2, 1, 2 - step, '#5a3418'); R(c, dx + 7, dy - 2, 1, 1 + step, '#5a3418'); R(c, dx + (a.dir === 2 ? 9 : -1), dy - 6, 1, 2, '#5a3418');
   }
+  if (a.velo) drawVelo(c, Math.round(a.x - cx), Math.round(a.y - cy), a, true);
+  if (a.extra) a.extra(c, Math.round(a.x - cx), Math.round(a.y - cy), a);
   if (a.bubble && a.bubbleT > 0) drawBubble(c, Math.round(a.x - cx), y - 3, a.bubble);
   if (a === G.player && G.S.st.wet > 0 && Math.random() < 0.3) addPart({ x: a.x + rnd(-5, 5), y: a.y - rnd(4, 18), vy: 20, life: 0.5, kind: 'drip' });
+}
+/* Velo unter der Figur (Sursee): von der Seite Räder und Rahmen, von vorn/hinten nur Lenker und Rad */
+function drawVelo(c, x, y, a, front) {
+  const side = a.dir === 1 || a.dir === 2, s = a.dir === 1 ? -1 : 1, rot = a.moving ? Math.floor(G.t * 12) % 2 : 0;
+  if (side) {
+    if (front) { line(c, x + s * 1, y - 10, x + s * 5, y - 13, '#2a2a2e'); return; }
+    for (const wx of [-6, 6]) { c.strokeStyle = '#1e1e22'; c.lineWidth = 1; c.beginPath(); c.arc(x + wx * s + 0.5, y - 3.5, 3.5, 0, 6.283); c.stroke(); P(c, x + wx * s + (rot ? 1 : -1), y - 4, '#8a8e94'); }
+    line(c, x - 6 * s, y - 4, x, y - 9, '#c8302a'); line(c, x, y - 9, x + 6 * s, y - 4, '#c8302a'); line(c, x - 2 * s, y - 9, x + 4 * s, y - 9, '#c8302a'); line(c, x, y - 4, x - 6 * s, y - 4, '#c8302a');
+  } else {
+    if (front) { R(c, x - 5, y - 13, 10, 1, '#2a2a2e'); return; }
+    R(c, x - 1, y - 7 + rot, 2, 7, '#1e1e22'); R(c, x - 1, y - 9, 2, 3, '#c8302a');
+  }
 }
 function drawBubble(c, x, y, b) {
   R(c, x - 6, y - 10, 13, 9, '#ffffff'); R(c, x - 5, y - 11, 11, 1, '#ffffff'); R(c, x - 5, y - 1, 11, 1, '#ffffff'); P(c, x - 1, y, '#ffffff');
@@ -546,7 +562,7 @@ function updatePlayer(dt) {
   const tired = st.energy < 12 ? 0.7 : 1;
   const run = ax.run && (st.energy > 8 || G.S.flags.adrenalin);
   p.running = run && (vx || vy);
-  const sp = (run ? 82 : 50) * tired * (prom > 1.8 ? 0.85 : 1);
+  const sp = (run ? 82 : 50) * tired * (prom > 1.8 ? 0.85 : 1) * (p.velo ? 1.8 : 1);
   let dx = vx * sp * dt, dy = vy * sp * dt;
   if (p.stumble) { dx += p.stumble.x * dt; dy += p.stumble.y * dt; p.stumble.t -= dt; if (p.stumble.t <= 0) p.stumble = null; }
   if (Math.abs(ax.x) > 0.2 || Math.abs(ax.y) > 0.2) {
@@ -590,6 +606,7 @@ function updateWorld(dt) {
   updateBirds(dt);
   for (const a of G.peds) updatePed(a, dt);
   for (const a of G.npcs) updateNpc(a, dt);
+  if (typeof Sur !== 'undefined' && Sur.active()) Sur.tick(dt);
   for (const v of G.map.vehicles) if (v.update) v.update(dt);
   if (G.map.update) G.map.update(dt);
   if (!G.busy) {
