@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.23.2 – 04.10.2026
+
+- Tracker: Die Rangliste „Am weitesten“ zeigt nur noch laufende Spiele. Beendete Spiele, Game Over und ältere Spiele eines Geräts fallen weg. Bei gleichem Abschnitt entscheidet die Spielzeit.
+
 ## 2.23.1 – 04.10.2026
 
 - Tracking ist aktiv: Die Spielstände gehen an die Firebase-Datenbank der Reisegruppe und erscheinen auf der Tracker-Seite.

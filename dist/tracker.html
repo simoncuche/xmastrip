@@ -1304,13 +1304,15 @@ function portraitCanvas(L, bg) {
     </section>`;
   }
   function boards(rs) {
-    const all = rs.flatMap((r) => r.games.map((g) => ({ r, s: g.s })));
-    const top = (title, val, fmt, filter = (x) => true) => {
+    const all = rs.flatMap((r) => r.games.map((g) => ({ r, s: g.s, cur: g === r.cur })));
+    /* Laufend = aktuelles Spiel des Geräts, weder Heimreise noch Apokalypse noch Game Over */
+    const running = (x) => x.cur && !x.s.finished && !x.s.apoc && !x.s.over;
+    const top = (title, val, fmt, filter = (x) => true, empty = 'Noch niemand.') => {
       const l = all.filter((x) => filter(x) && val(x.s) > 0).sort((a, b) => val(b.s) - val(a.s)).slice(0, 5);
-      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${x.r.d.label ? ` <small style="color:var(--dim)">· ${esc(x.r.d.label)}</small>` : ''}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : '<p class="empty">Noch niemand.</p>'}</div>`;
+      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${x.r.d.label ? ` <small style="color:var(--dim)">· ${esc(x.r.d.label)}</small>` : ''}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : `<p class="empty">${empty}</p>`}</div>`;
     };
     return `<h2>Ranglisten</h2><section class="boards">
-      ${top('Am weitesten', (s) => progress(s) + 0.001, (v, s) => s.finished ? 'Heimreise' : s.apoc ? 'Apokalypse' : s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '')}
+      ${top('Am weitesten · laufende Spiele', (s) => progress(s) * 100000 + (s.time || 0) + 1, (v, s) => s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '', running, 'Gerade läuft kein Spiel.')}
       ${top('Meiste Biere', (s) => s.beers || 0, (v) => `${v} 🍺`)}
       ${top('Meiste Erlebnisse', (s) => (s.ach || []).length, (v, s) => `${v}/${s.achTotal || '?'}`)}
       ${top('Weitester Skisprung', (s) => (s.rec && s.rec.jump) || 0, (v) => `${v.toFixed(1).replace('.', ',')} m`)}
