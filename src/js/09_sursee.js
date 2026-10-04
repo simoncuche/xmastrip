@@ -713,6 +713,7 @@ Object.assign(Sur, {
       vicus: 'Tafel: „Römischer Vicus Sursee. Im 1. bis 3. Jahrhundert lag hier, westlich der heutigen Altstadt, eine Siedlung mit Handwerkern und einem Markt, Holz- und Steinbauten an einer Strasse.“',
       markt: 'Wochenmarkt auf dem Martigny-Platz: Gemüse, Käse, Brot, Blumen. Im Winter riecht es nach Marroni.',
       pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
+      stadthof: pick(['Der Stadthof am Martigny-Platz: ein heller Betonwürfel mit hohen Pfeilern, oben eine offene Pergola über der Dachterrasse. Unten Reisebüro, Coiffeur, Versicherung und Praxen.', 'Im Schaufenster vom Reisebüro hängt ein Plakat: „Innsbruck – Weihnachtsmärkte und Bergisel“. Du lachst kurz.', 'Unter den Arkaden des Stadthofs ist es windstill. Ein Velo lehnt an einem der weissen Pfeiler.']),
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
       kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
