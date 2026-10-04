@@ -713,6 +713,7 @@ Object.assign(Sur, {
       vicus: 'Tafel: „Römischer Vicus Sursee. Im 1. bis 3. Jahrhundert lag hier, westlich der heutigen Altstadt, eine Siedlung mit Handwerkern und einem Markt, Holz- und Steinbauten an einer Strasse.“',
       markt: 'Wochenmarkt auf dem Martigny-Platz: Gemüse, Käse, Brot, Blumen. Im Winter riecht es nach Marroni.',
       pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
+      sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
       kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
       marienbrunnen: 'Der Marienbrunnen: Säule und Marienfigur von Meister Hans Spichtig, 1688. Ein Brunnen an dieser Stelle ist schon 1596 erwähnt. Das Wasser plätschert, auch im Dezember.',
@@ -1302,6 +1303,18 @@ Object.assign(Sur, {
     const n = s.coins.length;
     await Story.say(null, `Eine römische Münze! Grün angelaufen, mit einem Kaiserkopf. (${n}/5)`);
     if (n >= 5) { achieve('su_roemer'); await Story.say(null, 'Alle fünf! Bring sie dem Museum Sankturbanhof – die Vitrine mit den leeren Münzplätzen wartet. (Die Münzen liegen jetzt dort, mit deinem Namen.)'); }
+  },
+  async sportplatz() {
+    const c = await Story.ask(null, 'Der rote Allwetterplatz neben der Stadthalle: Tartanbahn, Handballtore, ein paar vergessene Hütchen.', ['Sackgumpe-Rennen mit den Kindern', 'Ein paar Runden joggen', 'Weitergehen']);
+    if (c === 0) {
+      if (!this.followOk()) { await Story.say(null, 'Ohne Elin und Timo macht das keinen Spass. Die zwei sind gerade nicht dabei.'); return; }
+      const r = await this.mini('sackgumpe', ['Elin', 'Timo', 'Thierry']);
+      if (r && r.place === 1) { achieve('su_kinder'); UI.toast('Sieg auf dem Sportplatz!'); } else await kidSay('timo', 'Nomal! Nomal!');
+      energy(-8); mood(6); passTime(15);
+    } else if (c === 1) {
+      await Story.say(null, 'Vier Runden auf der Tartanbahn. Die Lunge brennt, der Kopf wird klar.');
+      energy(-12); mood(8); G.S.st.hang = Math.max(0, (G.S.st.hang || 0) - 20); passTime(25);
+    }
   },
   async klosterbank() {
     const s = this.st();

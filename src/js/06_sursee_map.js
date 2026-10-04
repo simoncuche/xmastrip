@@ -421,6 +421,19 @@ function objGarten(x, y, i) {
 }
 
 /* --- Karte --- */
+/* Wald: Nadel- und Laubbäume im versetzten 2er-Raster, nur auf Gras mit freien Nachbarn (Wege bleiben frei), Abstand zu Triggern, Spawns, NPCs und Fussgängerzonen */
+function sForest(m, x0, y0, w, h, dens = 0.6, seed = 1) {
+  const sp = Object.values(m.spawns).map((q) => [Math.floor(q.x / TS), Math.floor(q.y / TS)]).concat(m.npcDefs.map((n) => [n.x, n.y]));
+  const free = (x, y) => m.at(x, y) === T.GRASS && !m.isSolid(x, y);
+  const keep = (x, y) => m.trigs.some((t) => x >= t.x - 2 && x < t.x + t.w + 2 && y >= t.y - 2 && y < t.y + t.h + 2) || sp.some(([sx, sy]) => Math.abs(sx - x) < 3 && Math.abs(sy - y) < 3) || m.pedZones.some((z) => x >= z.x - 1 && x < z.x + z.w + 1 && y >= z.y - 1 && y < z.y + z.h + 1);
+  for (let y = y0; y < y0 + h; y += 2) for (let x = x0 + ((y >> 1) % 2); x < x0 + w; x += 2) {
+    if (hash(x, y, seed) > dens || keep(x, y)) continue;
+    let ok = true; for (let dy = -1; dy <= 1 && ok; dy++) for (let dx = -1; dx <= 1; dx++) if (!free(x + dx, y + dy)) { ok = false; break; }
+    if (!ok) continue;
+    const r = hash(y, x, seed + 7);
+    m.add(r < 0.5 ? objFir(x, y, 30 + Math.floor(hash(x, seed, y) * 16)) : objTree(x, y, r < 0.75 ? 'green' : r < 0.9 ? 'autumn' : 'yellow', r < 0.65));
+  }
+}
 MAP_BUILDERS.sursee = () => {
   const W = 132, H = 80;
   const m = new GMap('sursee', W, H, { name: 'Sursee', city: 'sursee', bg: '#2f4a2a' });
@@ -507,6 +520,23 @@ MAP_BUILDERS.sursee = () => {
   for (const [ax, aw] of [[62, 3], [81, 3]]) m.add(mkObj(ax, 5, aw, 4, 10, (c, Wd, Hd) => { R(c, 0, 0, Wd, Hd - 12, '#7a7c80'); for (let i = 0; i < Wd; i += 4) P(c, i, 3 + (i % 7), '#6a6c70'); R(c, 0, Hd - 12, Wd, 12, '#e8e8e4'); R(c, 0, Hd - 12, Wd, 2, '#c9cbcc'); R(c, 3, Hd - 9, 4, 5, '#3e4c5e'); }, { solid: true }));
   m.warp(72, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 72, 10, 0);
   for (const x of [66, 79]) m.add(objLamp(x, 10, 'new'));
+  /* roter Allwetter-Sportplatz neben der Stadthalle: Tartan, weisse Linien, Handballtore, Zaun */
+  m.fill(85, 1, 10, 8, T.PAVE, 1);
+  m.decal((c) => {
+    const X = 85 * 16, Y = 1 * 16, W = 160, H = 128;
+    c.fillStyle = '#b8473a'; c.fillRect(X, Y, W, H);
+    for (let i = 0; i < 260; i++) { c.fillStyle = hash(i, 51) > 0.5 ? '#a63e32' : '#c4554a'; c.fillRect(X + Math.floor(hash(i, 52) * W), Y + Math.floor(hash(i, 53) * H), 1, 1); }
+    c.fillStyle = '#f2ece4';
+    c.fillRect(X + 6, Y + 6, W - 12, 1); c.fillRect(X + 6, Y + H - 7, W - 12, 1); c.fillRect(X + 6, Y + 6, 1, H - 12); c.fillRect(X + W - 7, Y + 6, 1, H - 12); c.fillRect(X + W / 2, Y + 6, 1, H - 12);
+    c.strokeStyle = '#f2ece4'; c.lineWidth = 1; c.beginPath(); c.arc(X + W / 2 + 0.5, Y + H / 2, 14, 0, Math.PI * 2); c.stroke();
+    for (const [gx, d] of [[X + 6, 1], [X + W - 7, -1]]) { c.beginPath(); c.arc(gx + 0.5, Y + H / 2, 30, -Math.PI / 2, Math.PI / 2, d < 0); c.stroke(); }
+    c.fillStyle = '#e8e8e8'; for (const gx of [X + 3, X + W - 7]) { c.fillRect(gx, Y + H / 2 - 12, 4, 1); c.fillRect(gx, Y + H / 2 + 11, 4, 1); c.fillRect(gx + (gx < X + 10 ? 0 : 3), Y + H / 2 - 12, 1, 24); }
+    c.fillStyle = 'rgba(200,200,200,0.35)'; for (let k = 0; k < 24; k++) c.fillRect(gx2(k), Y + H / 2 - 11 + (k % 6) * 4, 3, 1);
+    function gx2(k) { return k < 12 ? X + 3 : X + W - 7; }
+    c.fillStyle = '#6a6e74'; for (let xx = X; xx <= X + W; xx += 16) { c.fillRect(xx, Y - 6, 1, 6); c.fillRect(xx, Y + H - 1, 1, 3); } c.fillRect(X, Y - 6, W, 1);
+    c.fillStyle = '#f2a020'; for (const [hx, hy] of [[30, 40], [44, 90], [120, 50]]) { c.fillRect(X + hx, Y + hy, 3, 3); c.fillRect(X + hx + 1, Y + hy - 1, 1, 1); }
+  });
+  m.trig(85, 1, 10, 8, { label: 'Sportplatz', act: () => Sur.sportplatz() });
   /* Theaterstrasse hinter der oberen Häuserreihe */
   m.fill(52, 27, 44, 3, T.COBBLE, 1);
   /* Sankturbanhof und Stadttheater beim Obertor */
@@ -550,9 +580,10 @@ MAP_BUILDERS.sursee = () => {
   /* Obere Häuserreihe der Oberstadt (Fassaden zur Gasse) */
   m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], drawH: 78, roofH: 34, wall: '#f6f4ee', roof: '#8a4a32', dormers: 1, untertor: true })); m.solid(53, 31, 3, 6);
   /* Schützenhaus am Untertor, nach Foto: Walmdach, Fachwerk-Obergeschoss mit rot-weiss geflammten Läden, Bogenhalle unten */
-  m.add(mkObj(53, 41, 4, 4, 26, (c, Wd, Hd) => {
-    for (let k = 0; k < 18; k++) R(c, 1 + k * 0.7, k, Wd - 2 - k * 1.4, 1, k % 3 ? '#7a4a34' : '#6a3e2a');
-    for (let k = 2; k < 18; k += 3) for (let xx = 3 + k * 0.5; xx < Wd - 3 - k * 0.5; xx += 4) P(c, xx, k, '#8a5a40');
+  m.add(mkObj(50, 41, 4, 4, 26, (c, Wd, Hd) => {
+    /* Walmdach: oben der First, nach unten breiter bis zur Traufe */
+    for (let k = 0; k < 18; k++) { const ww = Math.round(Wd - 30 + k * (28 / 17)), x0 = Math.round((Wd - ww) / 2); R(c, x0, k, ww, 1, k % 3 ? '#8a5038' : '#74422e'); P(c, x0, k, '#5a3424'); P(c, x0 + ww - 1, k, '#5a3424'); for (let xx = x0 + 3; xx < x0 + ww - 3; xx += 4) if (k % 3 === 1) P(c, xx + (k % 2), k, '#9a6048'); }
+    R(c, (Wd - 34) / 2, 0, 34, 1, '#5a3424'); line(c, 15, 0, 1, 17, '#6a3a28'); line(c, Wd - 16, 0, Wd - 2, 17, '#6a3a28');
     R(c, 0, 17, Wd, 2, '#5a3424');
     const fy = 19, fh = 26, beam = '#8a3a26';
     R(c, 2, fy, Wd - 4, fh, '#f4efe2');
@@ -565,7 +596,12 @@ MAP_BUILDERS.sursee = () => {
       for (const sx of [wx + 1, wx + 10]) for (let yy = 0; yy < 14; yy++) for (let xx = 0; xx < 4; xx++) P(c, sx + xx, fy + 5 + yy, ((xx + yy + (sx > wx + 5 ? 0 : 2)) >> 1) % 2 ? '#c8302a' : '#f6f2ea');
     }
     R(c, 2, fy + fh, Wd - 4, Hd - fy - fh, '#ece6d6'); R(c, 2, fy + fh, Wd - 4, 1, '#c8c0aa');
-    for (let k = 0; k < 3; k++) { const ax = 6 + k * 19; R(c, ax, Hd - 22, 15, 22, '#3a3430'); E(c, ax + 7.5, Hd - 22, 7.5, 5, '#3a3430'); R(c, ax + 1, Hd - 3, 13, 3, '#4a443e'); }
+    for (let k = 0; k < 3; k++) {
+      const ax = 6 + k * 19; R(c, ax, Hd - 22, 15, 22, '#3a3430'); E(c, ax + 7.5, Hd - 22, 7.5, 5, '#3a3430');
+      /* die Sure fliesst unter den beiden linken Bögen durch */
+      if (k < 2) { const ww = k === 0 ? 15 : 7; R(c, ax, Hd - 9, ww, 9, '#2c5a72'); R(c, ax, Hd - 9, ww, 1, '#1e3e50'); for (let i = 0; i < 3; i++) R(c, ax + 2 + i * 4, Hd - 6 + (i % 2) * 2, 3, 1, '#5a8aa8'); if (k === 1) R(c, ax + 7, Hd - 3, 8, 3, '#4a443e'); }
+      else R(c, ax + 1, Hd - 3, 13, 3, '#4a443e');
+    }
     R(c, 2, fy + fh + 1, 2, Hd - fy - fh - 1, '#d4ccb8');
   }, { solid: true }));
   m.trig(53, 37, 3, 4, { here: true, label: 'Foto: Untertor', act: () => Sur.photo('untertor'), cond: () => !Sur.hasPhoto('untertor') });
@@ -720,6 +756,14 @@ MAP_BUILDERS.sursee = () => {
   m.spawn('chilbi', 110, 21, 0);
   m.spawn('ehretpark', 75, 57, 0);
   m.spawn('rathausplatz', 81, 40, 3);
+  /* Wald rund um das Städtli und entlang der Sure */
+  sForest(m, 42, 0, 8, 36, 0.75, 3);
+  sForest(m, 52, 0, 10, 9, 0.8, 4);
+  sForest(m, 84, 0, 48, 9, 0.7, 5);
+  sForest(m, 124, 9, 8, 28, 0.75, 6);
+  sForest(m, 20, 0, 22, 26, 0.35, 7);
+  sForest(m, 0, 72, 51, 8, 0.7, 8);
+  sForest(m, 120, 50, 12, 30, 0.6, 9);
   m.groundAnim = waterAnim;
   m.update = (dt) => Sur.mapUpdate(dt);
   return m;
