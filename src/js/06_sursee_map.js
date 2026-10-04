@@ -172,22 +172,36 @@ function objRathaus(x, y) {
   }, { solid: true, emit: (c, W, H) => { const base = H - 112; for (const fx of [8, 30, 52, 76]) if (hash(fx, 7) > 0.3) R(c, fx, base + 16, 14, 16, '#ffd27a'); for (const fx of [10, 56, 76]) R(c, fx, base + 84, 12, 14, '#ffd27a'); } });
 }
 /* Diebenturm: wuchtiger Mauerturm mit Zeltdach, Zunftfahne und Schild der Zunft Heini von Uri */
+/* Diebenturm, nach Fotos vom Unteren Graben: quadratischer Turm, hell verputzt mit Eckquadern aus Sandstein, kleine Schlitzfenster,
+   Reihe runder Luken unter der Traufe, geschweiftes Pyramidendach aus roten Biberschwanzziegeln mit Knauf und Wetterfahne */
 function objDiebenturm(x, y) {
-  return mkObj(x, y, 4, 8, 50, (c, W, H) => {
-    c.translate(0, 10);
-    const st = '#bfae8a', sd = shade(st, -0.22), sl = shade(st, 0.1);
-    R(c, 4, 18, W - 8, H - 18, st);
-    for (let yy = 22; yy < H; yy += 6) for (let xx = 4 + ((yy / 6) % 2) * 5; xx < W - 6; xx += 10) R(c, xx, yy, 9, 5, (xx + yy) % 3 ? st : sd);
-    R(c, W - 7, 18, 3, H - 18, sd); R(c, 4, 18, 2, H - 18, sl);
-    /* steiles Ziegeldach */
-    for (let k = 0; k < 28; k++) { const ww = Math.round((W - 2) * (k / 28)); R(c, W / 2 - ww / 2, k - 10, ww, 1, k % 3 ? '#8a3b2a' : '#7a3424'); }
-    R(c, 2, 18, W - 4, 3, '#5a4a3a');
-    for (const yy of [30, 52]) { R(c, W / 2 - 2, yy, 4, 8, '#2a2a30'); }
-    R(c, W / 2 - 7, H - 22, 14, 22, '#4a3420'); E(c, W / 2, H - 22, 7, 4, '#4a3420'); R(c, W / 2 - 6, H - 21, 12, 1, '#6a4a30'); P(c, W / 2 + 4, H - 10, '#e8c84a');
-    /* Zunftfahne */
-    R(c, W - 10, 8, 1, 22, '#3a3a40'); R(c, W - 9, 8, 12, 8, '#f2d040'); R(c, W - 9, 12, 12, 1, '#c8302a'); E(c, W - 3, 11, 2, 2, '#c8302a');
-    /* Schild */
-    R(c, 8, H - 34, W - 16, 8, '#2a2a2e'); pxText(c, '1681', W / 2 - 8, H - 33, '#e8dcc0');
+  return mkObj(x, y, 4, 8, 80, (c, W, H) => {
+    const wall = '#ddd3bc', wd = '#c4b89c', wl = '#ebe4d2', q = '#b8a27c', qd = '#94805c', top = 64;
+    R(c, 6, top, W - 12, H - top, wall); R(c, W - 14, top, 8, H - top, wd); R(c, 6, top, 2, H - top, wl);
+    for (let i = 0; i < 60; i++) P(c, 8 + hash(i, 21) * (W - 16), top + 4 + hash(i, 22) * (H - top - 6), hash(i, 23) > 0.5 ? wd : wl);
+    /* Eckquader abwechselnd lang und kurz */
+    for (let yy = top + 3, k = 0; yy < H; yy += 6, k++) { const l = k % 2 ? 5 : 8; R(c, 6, yy, l, 5, q); R(c, 6, yy + 5, l, 1, qd); R(c, W - 6 - l, yy, l, 5, qd); R(c, W - 6 - l, yy, l, 1, q); }
+    /* Schlitzfenster und Luken */
+    R(c, W / 2 - 1, top + 14, 2, 6, '#3a3632'); R(c, W / 2 - 1, top + 38, 2, 7, '#3a3632'); R(c, W - 20, top + 26, 2, 5, '#4a443c');
+    for (let k = 0; k < 5; k++) R(c, 14 + k * ((W - 30) / 4), top + 4, 2, 2, '#3a3632');
+    /* Dachfuss mit Gesims */
+    R(c, 4, top - 1, W - 8, 3, '#a8987a'); R(c, 4, top + 2, W - 8, 1, '#8a7a60');
+    /* geschweiftes Pyramidendach: unten ausgestellt, oben spitz */
+    const rH = 48;
+    for (let k = 0; k <= rH; k++) {
+      const f = k / rH, half = Math.round(4 + (W / 2 + 2 - 4) * Math.pow(f, 1.35) + (f > 0.86 ? (f - 0.86) * 30 : 0));
+      const yy = top - rH + k - 1;
+      R(c, W / 2 - half, yy, half * 2, 1, (k % 4 === 0) ? '#7a3424' : '#9a4630');
+      R(c, W / 2, yy, half, 1, (k % 4 === 0) ? '#6a2c1e' : '#843a28');
+      if (k % 4 === 2) for (let xx = W / 2 - half + 2; xx < W / 2 + half - 1; xx += 3) P(c, xx, yy, '#b05a3c');
+    }
+    line(c, W / 2, top - rH - 1, W / 2, top - 2, '#6a2c1e');
+    /* Knauf und Wetterfahne */
+    R(c, W / 2, top - rH - 12, 1, 12, '#4a4a50'); E(c, W / 2 + 0.5, top - rH - 4, 2, 2, '#d8b040');
+    R(c, W / 2 + 1, top - rH - 12, 5, 3, '#4a4a50'); P(c, W / 2 + 5, top - rH - 12, '#d8b040');
+    /* niedrige Holztür auf der Gassenseite */
+    R(c, W / 2 - 5, H - 15, 10, 15, '#5a3c22'); E(c, W / 2, H - 15, 5, 3, '#5a3c22'); R(c, W / 2 - 6, H - 16, 12, 1, q);
+    for (let yy = H - 13; yy < H; yy += 4) R(c, W / 2 - 4, yy, 8, 1, '#4a301a'); P(c, W / 2 + 3, H - 7, '#c8a040');
   }, { solid: true });
 }
 /* Stadthalle (eröffnet 1988), nach Foto: flaches Satteldach voller dunkelblauer Solarpanels, Giebelschräge dunkeltürkis, hellgrüne

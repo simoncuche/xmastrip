@@ -4582,7 +4582,7 @@ function objGate(x, y, w, h, o = {}) {
 function objKirche(x, y) {
   return mkObj(x, y, 14, 5, 176, (c, W, H) => {
     c.translate(0, 56); H -= 56;
-    const wall = '#f2f0ea', wd = '#d8d6d0', grey = '#b8b8b4', roof = '#7a5a3e', red = '#b8503a';
+    const wall = '#f2f0ea', wd = '#d8d6d0', grey = '#b8b8b4', roof = '#5a4232', red = '#9a3030';
     const fy = H - 64;
     /* braunes Satteldach */
     for (let k = 0; k < 40; k++) R(c, 10 - k * 0.1, fy - 40 + k, W - 66 + k * 0.2, 1, k % 3 ? roof : shade(roof, -0.15));
@@ -4619,65 +4619,86 @@ function objKirche(x, y) {
     E(c, lx, ly - 66, 2.5, 2.5, '#e8c84a'); E(c, lx, ly - 70, 1.5, 1.5, '#e8c84a'); R(c, lx, ly - 80, 1, 10, '#e8c84a'); R(c, lx - 2, ly - 77, 5, 1, '#e8c84a');
   }, { solid: true });
 }
-/* Rathaus Sursee (spätgotisch, 1539–1546), nach Foto: Die Schauseite zur Gasse ist ein mächtiger Treppengiebel in hellem Beige,
-   mit Vordächern zwischen den Geschossen, Geranien an allen Fenstern, Sonnenuhr mit Figur in der Mitte, zwei Rundbogentüren,
-   rot-weiss geflammten Läden im Giebel. Dahinter der Turm mit roter Zwiebelhaube und Laterne. */
+/* Rathaus Sursee (spätgotisch, 1539–1546), nach Fotos: blassgelbe Fassade mit hohem Treppengiebel (acht Stufen), graue
+   Steinrahmen, Vordächer zwischen den Geschossen, rot-weiss geflammte Läden im Giebel, Sonnenuhr mit Wappen, Rundbogentür;
+   vorne rechts der helle Turm mit zwei Zifferblättern und weinroter Zwiebelhaube, Laterne und Spitze */
 function objRathaus(x, y) {
-  return mkObj(x, y, 8, 7, 92, (c, W, H) => {
-    const wall = '#ddd2b6', wd = shade(wall, -0.14), wl = shade(wall, 0.07), trim = '#b8ab8c', eave = '#6a5a4a';
-    const base = H - 112; /* Oberkante der drei Vollgeschosse */
-    /* Turm mit roter Zwiebelhaube hinten rechts */
-    const tx = W - 30;
-    R(c, tx, base - 70, 18, 70, '#ece6d8'); R(c, tx + 14, base - 70, 4, 70, '#cfc8b8');
-    R(c, tx - 2, base - 74, 22, 5, '#5a5a5e');
-    E(c, tx + 9, base - 84, 11, 10, '#b8402a'); E(c, tx + 6, base - 87, 4, 4, '#d8604a'); R(c, tx + 5, base - 98, 8, 10, '#ece6d8'); R(c, tx + 7, base - 96, 4, 6, '#3a3a40');
-    E(c, tx + 9, base - 100, 6, 4, '#b8402a'); R(c, tx + 8, base - 112, 2, 10, '#5a5a5e'); E(c, tx + 9, base - 104, 2, 2, '#e8c84a'); R(c, tx + 10, base - 112, 5, 3, '#c8302a');
-    /* Treppengiebel über die ganze Breite */
-    const steps = 7, gh = 84;
-    for (let k = 0; k < steps; k++) { const inset = Math.round((k + 1) * (W / 2 - 14) / steps); R(c, inset, base - (k + 1) * (gh / steps), W - inset * 2, gh / steps + 1, wall); R(c, inset - 2, base - (k + 1) * (gh / steps), 4, 2, wl); R(c, W - inset - 2, base - (k + 1) * (gh / steps), 4, 2, wl); }
-    R(c, W / 2 - 14, base - gh - 6, 28, 8, wall);
-    /* Fenster im Giebel mit rot-weiss geflammten Läden */
-    const flamm = (fx, fy) => { R(c, fx, fy, 6, 7, '#3e4c5e'); for (let k = 0; k < 7; k++) { P(c, fx - 3 + (k % 3), fy + k, k % 2 ? '#c8302a' : '#f4f0e6'); P(c, fx + 7 + (k % 3), fy + k, k % 2 ? '#c8302a' : '#f4f0e6'); } };
-    flamm(W / 2 - 3, base - 80); flamm(W / 2 - 22, base - 58); flamm(W / 2 + 16, base - 58);
-    /* Vordach (Klebdach) am Giebelfuss und zwischen den Geschossen */
-    for (const ey of [base - 40, base]) { R(c, 8, ey, W - 16, 3, eave); R(c, 8, ey + 3, W - 16, 1, '#3a2a1a'); for (let xx = 10; xx < W - 10; xx += 6) P(c, xx, ey + 4, '#3a2a1a'); }
-    /* Fenster des Giebelgeschosses */
-    for (const fx of [24, W / 2 - 14, W / 2 + 4, W - 32]) { R(c, fx - 1, base - 30, 12, 13, trim); R(c, fx, base - 29, 10, 11, '#3e4c5e'); R(c, fx + 5, base - 29, 1, 11, trim); }
+  return mkObj(x, y, 8, 7, 112, (c, W, H) => {
+    const wall = '#ece3b8', wd = shade(wall, -0.12), wl = shade(wall, 0.06), trim = '#a8a49a', eave = '#5a4a3a', red = '#8e2a2e';
+    const TW = 26, FW = W - TW + 2; /* Breite der Giebelfassade, Turm rechts */
+    const base = H - 112;
+    /* Treppengiebel mit acht Stufen */
+    const steps = 8, gh = 96;
+    for (let k = 0; k < steps; k++) { const inset = Math.round((k + 1) * (FW / 2 - 10) / steps); R(c, inset, base - (k + 1) * (gh / steps), FW - inset * 2, gh / steps + 1, wall); R(c, inset, base - (k + 1) * (gh / steps), 3, 2, wl); R(c, FW - inset - 3, base - (k + 1) * (gh / steps), 3, 2, wl); }
+    R(c, FW / 2 - 8, base - gh - 5, 16, 6, wall); P(c, FW / 2, base - gh - 8, '#e8c84a'); R(c, FW / 2, base - gh - 7, 1, 3, '#5a5a5e');
+    const flamm = (fx, fy) => { R(c, fx - 1, fy - 1, 8, 10, trim); R(c, fx, fy, 6, 8, '#f4f0e6'); for (let k = 0; k < 8; k += 2) { R(c, fx, fy + k, 3, 1, '#c8302a'); R(c, fx + 3, fy + k + 1, 3, 1, '#c8302a'); } };
+    flamm(FW / 2 - 3, base - 84); flamm(FW / 2 - 14, base - 62); flamm(FW / 2 + 8, base - 62);
+    /* Vordächer (Klebdächer) */
+    for (const ey of [base - 40, base + 2]) { R(c, 10, ey, FW - 20, 4, eave); R(c, 10, ey + 4, FW - 20, 1, '#2a1e14'); }
+    const win = (fx, fy, w2, h2) => { R(c, fx - 2, fy - 2, w2 + 4, h2 + 4, trim); R(c, fx, fy, w2, h2, '#3e4652'); for (let k = 3; k < w2; k += 4) R(c, fx + k, fy, 1, h2, '#7a8490'); R(c, fx, fy + Math.floor(h2 / 2), w2, 1, '#7a8490'); };
+    /* Giebelgeschoss: Fenstergruppe */
+    for (const fx of [16, 40, 66]) win(fx, base - 28, fx === 40 ? 16 : 9, 12);
     /* drei Vollgeschosse */
-    R(c, 0, base + 4, W, H - base - 4, wall); R(c, W - 2, base + 4, 2, H - base - 4, wd); R(c, 0, base + 4, 2, H - base - 4, wl);
-    R(c, 0, base + 40, W, 2, wd);
-    const win = (fx, fy, pair) => { const ww = pair ? 20 : 11; R(c, fx - 1, fy - 1, ww + 2, 15, trim); if (pair) { R(c, fx, fy, 9, 13, '#3e4c5e'); R(c, fx + 11, fy, 9, 13, '#3e4c5e'); } else R(c, fx, fy, 11, 13, '#3e4c5e'); R(c, fx - 2, fy + 13, ww + 4, 3, '#5a3a24'); for (let k = 0; k < ww + 2; k += 2) { P(c, fx - 1 + k, fy + 12, k % 4 ? '#e8302a' : '#3f8a3a'); P(c, fx + k, fy + 11, '#d8303a'); } };
-    /* 1. Obergeschoss (unter dem Vordach) */
-    for (const fx of [8, 34, 64, W - 30]) win(fx, base + 12, true);
-    /* 2. Obergeschoss mit Sonnenuhr in der Mitte */
-    for (const fx of [10, 32, W - 50, W - 26]) win(fx, base + 48, false);
-    R(c, W / 2 - 16, base + 44, 32, 26, '#f2ecd8'); R(c, W / 2 - 16, base + 44, 32, 1, trim);
-    for (let k = 0; k < 9; k++) { const a = Math.PI * (k / 8); line(c, W / 2, base + 52, W / 2 - Math.cos(a) * 13, base + 52 + Math.sin(a) * 14, '#c8a050'); }
-    line(c, W / 2, base + 52, W / 2 + 5, base + 64, '#3a2a1a'); E(c, W / 2, base + 49, 4, 4, '#e8c23a'); R(c, W / 2 - 3, base + 47, 6, 4, '#c8302a'); P(c, W / 2 - 1, base + 48, '#f4e0c0');
-    /* Erdgeschoss: zwei Rundbogentüren, Fenster, Mittelpfeiler */
-    for (const dx of [20, W - 36]) { R(c, dx - 2, H - 26, 20, 26, trim); R(c, dx, H - 24, 16, 24, '#5a2a1a'); E(c, dx + 8, H - 24, 8, 5, '#5a2a1a'); R(c, dx + 7, H - 22, 1, 22, '#3a1a10'); }
-    for (const fx of [W / 2 - 22, W / 2 + 12]) { R(c, fx - 1, H - 24, 12, 11, trim); R(c, fx, H - 23, 10, 9, '#3e4c5e'); }
-    R(c, W / 2 - 4, H - 34, 8, 34, '#cfc4a6'); R(c, W / 2 - 5, H - 34, 10, 3, trim);
-    R(c, 0, H - 3, W, 3, '#8f887c');
-  }, { solid: true, emit: (c, W, H) => { const base = H - 112; for (const fx of [8, 34, 64, W - 30]) { R(c, fx, base + 12, 9, 13, '#ffd27a'); R(c, fx + 11, base + 12, 9, 13, '#ffd27a'); } for (const fx of [10, 32, W - 50, W - 26]) if (hash(fx, 3) > 0.3) R(c, fx, base + 48, 11, 13, '#ffd27a'); } });
+    R(c, 0, base + 7, FW, H - base - 7, wall); R(c, 0, base + 7, 2, H - base - 7, wl);
+    R(c, 0, base + 42, FW, 2, wd); R(c, 0, base + 76, FW, 2, wd);
+    /* 1. OG: Reihenfenster */
+    for (const fx of [8, 30, 52, 76]) win(fx, base + 16, 14, 16);
+    /* 2. OG: Sonnenuhr mit Wappen links der Mitte, Fenster */
+    for (const fx of [8, 56, 78]) win(fx, base + 50, 12, 16);
+    const sx = 28;
+    R(c, sx, base + 46, 20, 24, '#f6f2e0'); R(c, sx, base + 46, 20, 1, trim);
+    for (let k = 0; k < 7; k++) { const a = Math.PI * (k / 6); line(c, sx + 10, base + 54, sx + 10 - Math.cos(a) * 9, base + 54 + Math.sin(a) * 12, '#3a3a40'); }
+    line(c, sx + 10, base + 54, sx + 14, base + 66, '#1a1a1a');
+    R(c, sx + 6, base + 37, 8, 9, '#e8c23a'); R(c, sx + 7, base + 38, 6, 7, '#c8302a'); R(c, sx + 9, base + 39, 2, 4, '#f4f0e6'); P(c, sx + 5, base + 38, '#e8c23a'); P(c, sx + 14, base + 38, '#e8c23a');
+    /* 3. Ebene (EG-Obergeschoss) */
+    for (const fx of [10, 32, 56, 76]) win(fx, base + 84, 12, 14);
+    /* Erdgeschoss: Rundbogentür links, Mittelpfeiler, kleine Fenster */
+    R(c, 6, H - 26, 22, 26, trim); R(c, 8, H - 24, 18, 24, '#5a3a24'); E(c, 17, H - 24, 9, 5, '#5a3a24'); R(c, 16, H - 22, 1, 22, '#3a2414');
+    R(c, FW / 2 - 3, H - 40, 6, 40, '#c8c2b0');
+    for (const fx of [36, 62]) win(fx, H - 22, 10, 9);
+    R(c, 0, H - 3, FW, 3, '#8f887c');
+    /* Turm vorne rechts: hell, zwei Zifferblätter, weinrote Zwiebelhaube, Laterne, Spitze */
+    const tx = W - TW;
+    R(c, tx, base - 70, TW, H - base + 70, '#f2eee2'); R(c, tx + TW - 4, base - 70, 4, H - base + 70, '#d8d4c8'); R(c, tx, base - 70, 2, H - base + 70, '#fffaf0');
+    for (const yy of [base - 20, base + 30, base + 80]) R(c, tx + TW / 2 - 2, yy, 4, 8, '#3e4652');
+    for (const cx2 of [tx + 7, tx + 19]) { E(c, cx2, base - 52, 5, 5, '#3a3a40'); E(c, cx2, base - 52, 4, 4, '#f4f0e0'); line(c, cx2, base - 52, cx2, base - 55, '#1a1a1a'); line(c, cx2, base - 52, cx2 + 2, base - 51, '#1a1a1a'); }
+    R(c, tx - 2, base - 72, TW + 4, 3, '#a8a49a');
+    E(c, tx + TW / 2, base - 84, 15, 13, red); E(c, tx + TW / 2 - 4, base - 88, 5, 5, shade(red, 0.25)); R(c, tx + 1, base - 74, TW - 2, 3, red);
+    R(c, tx + TW / 2 - 5, base - 106, 10, 14, '#f2eee2'); R(c, tx + TW / 2 - 3, base - 104, 6, 8, '#3a3a40');
+    E(c, tx + TW / 2, base - 108, 7, 4, red); R(c, tx + TW / 2 - 1, base - 124, 2, 14, '#5a5a5e'); E(c, tx + TW / 2, base - 116, 2, 2, '#e8c84a'); R(c, tx + TW / 2 + 1, base - 124, 4, 2, '#c8302a');
+  }, { solid: true, emit: (c, W, H) => { const base = H - 112; for (const fx of [8, 30, 52, 76]) if (hash(fx, 7) > 0.3) R(c, fx, base + 16, 14, 16, '#ffd27a'); for (const fx of [10, 56, 76]) R(c, fx, base + 84, 12, 14, '#ffd27a'); } });
 }
 /* Diebenturm: wuchtiger Mauerturm mit Zeltdach, Zunftfahne und Schild der Zunft Heini von Uri */
+/* Diebenturm, nach Fotos vom Unteren Graben: quadratischer Turm, hell verputzt mit Eckquadern aus Sandstein, kleine Schlitzfenster,
+   Reihe runder Luken unter der Traufe, geschweiftes Pyramidendach aus roten Biberschwanzziegeln mit Knauf und Wetterfahne */
 function objDiebenturm(x, y) {
-  return mkObj(x, y, 4, 8, 50, (c, W, H) => {
-    c.translate(0, 10);
-    const st = '#bfae8a', sd = shade(st, -0.22), sl = shade(st, 0.1);
-    R(c, 4, 18, W - 8, H - 18, st);
-    for (let yy = 22; yy < H; yy += 6) for (let xx = 4 + ((yy / 6) % 2) * 5; xx < W - 6; xx += 10) R(c, xx, yy, 9, 5, (xx + yy) % 3 ? st : sd);
-    R(c, W - 7, 18, 3, H - 18, sd); R(c, 4, 18, 2, H - 18, sl);
-    /* steiles Ziegeldach */
-    for (let k = 0; k < 28; k++) { const ww = Math.round((W - 2) * (k / 28)); R(c, W / 2 - ww / 2, k - 10, ww, 1, k % 3 ? '#8a3b2a' : '#7a3424'); }
-    R(c, 2, 18, W - 4, 3, '#5a4a3a');
-    for (const yy of [30, 52]) { R(c, W / 2 - 2, yy, 4, 8, '#2a2a30'); }
-    R(c, W / 2 - 7, H - 22, 14, 22, '#4a3420'); E(c, W / 2, H - 22, 7, 4, '#4a3420'); R(c, W / 2 - 6, H - 21, 12, 1, '#6a4a30'); P(c, W / 2 + 4, H - 10, '#e8c84a');
-    /* Zunftfahne */
-    R(c, W - 10, 8, 1, 22, '#3a3a40'); R(c, W - 9, 8, 12, 8, '#f2d040'); R(c, W - 9, 12, 12, 1, '#c8302a'); E(c, W - 3, 11, 2, 2, '#c8302a');
-    /* Schild */
-    R(c, 8, H - 34, W - 16, 8, '#2a2a2e'); pxText(c, '1681', W / 2 - 8, H - 33, '#e8dcc0');
+  return mkObj(x, y, 4, 8, 80, (c, W, H) => {
+    const wall = '#ddd3bc', wd = '#c4b89c', wl = '#ebe4d2', q = '#b8a27c', qd = '#94805c', top = 64;
+    R(c, 6, top, W - 12, H - top, wall); R(c, W - 14, top, 8, H - top, wd); R(c, 6, top, 2, H - top, wl);
+    for (let i = 0; i < 60; i++) P(c, 8 + hash(i, 21) * (W - 16), top + 4 + hash(i, 22) * (H - top - 6), hash(i, 23) > 0.5 ? wd : wl);
+    /* Eckquader abwechselnd lang und kurz */
+    for (let yy = top + 3, k = 0; yy < H; yy += 6, k++) { const l = k % 2 ? 5 : 8; R(c, 6, yy, l, 5, q); R(c, 6, yy + 5, l, 1, qd); R(c, W - 6 - l, yy, l, 5, qd); R(c, W - 6 - l, yy, l, 1, q); }
+    /* Schlitzfenster und Luken */
+    R(c, W / 2 - 1, top + 14, 2, 6, '#3a3632'); R(c, W / 2 - 1, top + 38, 2, 7, '#3a3632'); R(c, W - 20, top + 26, 2, 5, '#4a443c');
+    for (let k = 0; k < 5; k++) R(c, 14 + k * ((W - 30) / 4), top + 4, 2, 2, '#3a3632');
+    /* Dachfuss mit Gesims */
+    R(c, 4, top - 1, W - 8, 3, '#a8987a'); R(c, 4, top + 2, W - 8, 1, '#8a7a60');
+    /* geschweiftes Pyramidendach: unten ausgestellt, oben spitz */
+    const rH = 48;
+    for (let k = 0; k <= rH; k++) {
+      const f = k / rH, half = Math.round(4 + (W / 2 + 2 - 4) * Math.pow(f, 1.35) + (f > 0.86 ? (f - 0.86) * 30 : 0));
+      const yy = top - rH + k - 1;
+      R(c, W / 2 - half, yy, half * 2, 1, (k % 4 === 0) ? '#7a3424' : '#9a4630');
+      R(c, W / 2, yy, half, 1, (k % 4 === 0) ? '#6a2c1e' : '#843a28');
+      if (k % 4 === 2) for (let xx = W / 2 - half + 2; xx < W / 2 + half - 1; xx += 3) P(c, xx, yy, '#b05a3c');
+    }
+    line(c, W / 2, top - rH - 1, W / 2, top - 2, '#6a2c1e');
+    /* Knauf und Wetterfahne */
+    R(c, W / 2, top - rH - 12, 1, 12, '#4a4a50'); E(c, W / 2 + 0.5, top - rH - 4, 2, 2, '#d8b040');
+    R(c, W / 2 + 1, top - rH - 12, 5, 3, '#4a4a50'); P(c, W / 2 + 5, top - rH - 12, '#d8b040');
+    /* niedrige Holztür auf der Gassenseite */
+    R(c, W / 2 - 5, H - 15, 10, 15, '#5a3c22'); E(c, W / 2, H - 15, 5, 3, '#5a3c22'); R(c, W / 2 - 6, H - 16, 12, 1, q);
+    for (let yy = H - 13; yy < H; yy += 4) R(c, W / 2 - 4, yy, 8, 1, '#4a301a'); P(c, W / 2 + 3, H - 7, '#c8a040');
   }, { solid: true });
 }
 /* Stadthalle (eröffnet 1988), nach Foto: flaches Satteldach voller dunkelblauer Solarpanels, Giebelschräge dunkeltürkis, hellgrüne
@@ -5060,6 +5081,12 @@ MAP_BUILDERS.sursee = () => {
   m.fill(51, 37, 69, 4, T.COBBLE, 0); m.fill(53, 41, 66, 1, T.PAVE, 1);
   m.fill(75, 37, 20, 4, T.PLAZA, 1);
   m.add(objBrunnenSursee(67, 38)); m.trig(67, 38, 2, 2, { label: 'Marienbrunnen', act: () => Sur.look('marienbrunnen') });
+  /* Rathausplatz: Bogenpflaster und runder Steinbrunnen vorne rechts vor dem Rathaus */
+  m.fill(75, 37, 20, 4, T.COBBLE, 1);
+  m.decal((c) => { c.save(); c.beginPath(); c.rect(75 * 16, 37 * 16, 20 * 16, 4 * 16); c.clip(); for (let r = 10; r < 240; r += 9) { c.strokeStyle = r % 18 ? 'rgba(70,64,58,0.35)' : 'rgba(200,196,186,0.3)'; c.lineWidth = 1; c.beginPath(); c.arc(81 * 16, 44 * 16, r, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); } c.restore(); });
+  const rb = mkObj(86, 38, 2, 2, 6, (c, Wd, Hd) => { E(c, Wd / 2, Hd - 10, 15, 8, '#8a8a88'); E(c, Wd / 2, Hd - 11, 14, 7, '#b8b8b4'); E(c, Wd / 2, Hd - 12, 12, 5, '#9a9a96'); E(c, Wd / 2, Hd - 12, 11, 4, '#4a86a8'); E(c, Wd / 2 - 3, Hd - 13, 4, 1, '#8ac0e0'); }, { solid: true });
+  rb.anim = (c, t, px, py) => { const k = (t * 1.2) % 1; E(c, px + 16, py + 6 + 32 - 12, 3 + k * 8, 1 + k * 3, `rgba(220,240,255,${0.5 - k * 0.5})`); };
+  m.add(rb); m.trig(86, 38, 2, 2, { label: 'Brunnen am Rathausplatz', act: () => Story.drinkFountain() });
   m.trig(66, 40, 4, 1, { here: true, label: 'Foto: Marienbrunnen', act: () => Sur.photo('marienbrunnen'), cond: () => !Sur.hasPhoto('marienbrunnen') });
   for (const x of [60, 72, 95, 112]) m.add(objLamp(x, 40));
   m.birdSpots.push({ x: 76, y: 38, w: 16, h: 2, n: 8 });
