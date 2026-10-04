@@ -976,7 +976,9 @@ MAP_BUILDERS.sursee = () => {
   m.trig(127, 41, 1, 1, { label: 'Beckenhof', act: () => Sur.look('beckenhof') });
   for (const [x, y, k] of [[123, 44, 'red'], [128, 45, 'yellow'], [125, 48, 'green']]) m.add(objTree(x, y, k, true));
   m.add(objBench(126, 47, 0));
-  m.fill(118, 54, 14, 26, T.PAVE, 1);
+  /* Münstervorstadt: Rasen zwischen den Häusern, Wege zu den Türen, zum Ehret-Park, zum Beckenhof und zum See */
+  m.fill(118, 54, 14, 26, T.GRASS, 1);
+  m.fill(118, 54, 14, 1, T.PAVE, 1); m.fill(118, 54, 1, 8, T.PAVE, 1); m.fill(118, 61, 14, 1, T.PAVE, 1); m.fill(125, 54, 1, 18, T.PAVE, 1); m.fill(118, 71, 14, 1, T.PAVE, 1);
   m.add(objOase(119, 55, 6, 6, { door: 3, num: 8 }));
   m.warp(122, 60, 'isa_haus', 'entry', { label: 'Münstervorstadt 8 (Isa)', guard: () => Sur.isaDoor() }); m.spawn('isa_out', 122, 61, 0);
   m.add(objOase(126, 55, 6, 6, { door: 3, num: 6 }));
@@ -987,6 +989,12 @@ MAP_BUILDERS.sursee = () => {
   m.add(mkObj(127, 76, 3, 1, 12, (c, Wd) => { R(c, 22, 4, 2, 10, '#5a5e64'); R(c, 6, 0, 36, 7, '#2f6e8f'); pxText(c, 'ZUM SEE', 9, 1, '#ffffff'); }, { solid: false }));
   m.warp(127, 79, 'sursee_see', 'from_town', { w: 3, label: 'Zum See' });
   for (const [x, y] of [[119, 52], [130, 52], [121, 72]]) m.add(objLamp(x, y, 'new'));
+  /* Grün in der Münstervorstadt: Bäume, Hecken, Blumenbeete, Bänke */
+  for (const [x, y, k, big] of [[119, 63, 'green', false], [123, 63, 'autumn', false], [127, 63, 'green', true], [130, 63, 'yellow', false], [119, 74, 'green', true], [122, 77, 'red', true], [124, 74, 'yellow', false], [131, 73, 'green', false], [131, 77, 'autumn', true], [130, 75, 'green', false]]) m.add(objTree(x, y, k, big));
+  m.fill(120, 64, 3, 1, T.HEDGE); m.fill(128, 64, 2, 1, T.HEDGE); m.fill(131, 65, 1, 6, T.HEDGE);
+  for (const [x, y, col] of [[118, 62, '#e8402e'], [124, 62, '#f2c23a'], [126, 62, '#e87ac0'], [118, 72, '#f2c23a'], [126, 72, '#e8402e']]) m.add(objPlanter(x, y, col));
+  m.add(objBench(120, 76, 0)); m.add(objBench(128, 62, 0));
+  m.birdSpots.push({ x: 118, y: 72, w: 8, h: 6, n: 3 });
   /* Bauernhof mit Gänsen im Nordwesten (von dort kommen die Gänse für die Gansabhauet) */
   m.fill(19, 14, 2, 10, T.GRAVEL);
   m.fill(6, 4, 16, 11, T.MEADOW);
@@ -1030,7 +1038,6 @@ MAP_BUILDERS.sursee = () => {
   sForest(m, 124, 9, 8, 28, 0.75, 6);
   sForest(m, 20, 0, 22, 26, 0.35, 7);
   sForest(m, 0, 72, 51, 8, 0.7, 8);
-  sForest(m, 120, 50, 12, 30, 0.6, 9);
   m.groundAnim = waterAnim;
   m.update = (dt) => Sur.mapUpdate(dt);
   return m;
