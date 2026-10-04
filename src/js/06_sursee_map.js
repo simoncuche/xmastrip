@@ -601,6 +601,35 @@ function objBillettautomat(x, y) {
     R(c, 3, 0, 10, H - 2, '#5a5e64'); R(c, 4, 1, 8, H - 4, '#e8eaec'); R(c, 4, 1, 8, 3, '#c8302a'); R(c, 5, 6, 6, 5, '#2a3a4a'); R(c, 6, 7, 4, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#c8302a'); R(c, 6, 17, 4, 1, '#3a3a40');
   }, { solid: true, light: { dx: 8, dy: 8, r: 14, c: '#7ad0f0' } });
 }
+/* Dreiklang beim Bahnhof nach Foto: helle Betonraster-Fassaden. kind 'hoch' = Hochhaus mit Loggien an der Ecke und
+   verglasten unteren Geschossen, 'turm' = kleinerer Turm, 'riegel' = flacher Riegel mit Fensterbändern und offenem Erdgeschoss */
+function objDreiklang(x, y, w, h, drawH, kind) {
+  return mkObj(x, y, w, h, drawH, (c, W, H) => {
+    const cr = '#e6dec8', crL = '#f4eedc', crD = '#cfc6ae', gl = '#3e4e5c', glL = '#6a8296', rd = kind === 'riegel' ? 20 : 26;
+    R(c, 0, 0, W, rd, '#bdbab2'); R(c, 0, 0, W, 2, crL); R(c, 0, 0, 2, rd, crL); R(c, W - 2, 0, 2, rd, crD);
+    for (let i = 0; i < W; i++) P(c, hash(i, x, 1) * W, 2 + hash(i, x, 2) * (rd - 4), '#b0ada4');
+    R(c, W / 2 - 10, 6, 20, 10, '#d4d2cc'); R(c, W / 2 - 8, 8, 6, 6, '#9a9890'); R(c, W / 2 + 2, 8, 6, 6, '#9a9890');
+    R(c, 0, rd, W, H - rd, cr); R(c, W - 3, rd, 3, H - rd, crD);
+    if (kind === 'riegel') {
+      R(c, 0, rd, W, 6, crL);
+      for (let f = 0; f < 3; f++) { const fy = rd + 7 + f * 13; R(c, 0, fy, W, 9, gl); for (let xx = 0; xx < W; xx += 6) R(c, xx, fy, 1, 9, crL); R(c, 0, fy + 9, W, 4, crL); for (let xx = 3; xx < W; xx += 18) R(c, xx, fy + 1, 4, 2, glL); }
+      const gy = rd + 7 + 3 * 13; R(c, 0, gy, W, H - gy, '#4a4c50'); for (let xx = 4; xx < W; xx += 16) R(c, xx, gy, 3, H - gy, crL); R(c, 0, gy, W, 2, crD);
+      return;
+    }
+    const fh = kind === 'hoch' ? 10 : 12, g = kind === 'hoch' ? 26 : 16, top = rd + 3, nf = Math.floor((H - g - top) / fh);
+    for (let f = 0; f < nf; f++) {
+      const fy = top + f * fh; R(c, 0, fy - 2, W, 2, crL);
+      for (let xx = 3; xx < W - 6; xx += 8) {
+        const loggia = kind === 'hoch' && xx > W - 26;
+        if (loggia) { R(c, xx, fy, 7, fh - 2, '#6a6252'); R(c, xx, fy + fh - 5, 7, 1, '#e8e4d8'); for (let k = 0; k < 7; k += 2) R(c, xx + k, fy + fh - 5, 1, 3, '#b8b2a2'); }
+        else { R(c, xx, fy, 6, fh - 2, gl); R(c, xx + 1, fy + 1, 2, 2, glL); if (hash(xx, f, x) > 0.8) R(c, xx, fy, 6, 3, '#d8d2c0'); }
+        R(c, xx + 6, fy, 2, fh - 2, crL);
+      }
+    }
+    const gy = H - g; R(c, 0, gy - 2, W, 2, crL); R(c, 0, gy, W, g, '#486a7a'); for (let xx = 0; xx < W; xx += 10) R(c, xx, gy, 2, g, '#2e3a42'); if (kind === 'hoch') R(c, 0, gy + 12, W, 2, '#2e3a42');
+    R(c, W / 2 - 6, H - 14, 12, 14, '#1e2a32'); R(c, W / 2, H - 14, 1, 14, '#8a9aa8');
+  }, { solid: true, emit: (c, W, H) => { if (kind === 'riegel') { for (let f = 0; f < 3; f++) for (let xx = 0; xx < W; xx += 6) if (hash(xx, f, x) > 0.4) R(c, xx + 1, 27 + f * 13, 5, 9, '#fff0c8'); return; } const fh = kind === 'hoch' ? 10 : 12, g = kind === 'hoch' ? 26 : 16, nf = Math.floor((H - g - 29) / fh); for (let f = 0; f < nf; f++) for (let xx = 3; xx < W - 6; xx += 8) if (hash(xx, f, x + 3) > 0.55) R(c, xx, 29 + f * fh, 6, fh - 2, '#ffe0a0'); R(c, 0, H - g, W, g, '#fff2c8'); } });
+}
 MAP_BUILDERS.sursee = () => {
   const W = 132, H = 80;
   const m = new GMap('sursee', W, H, { name: 'Sursee', city: 'sursee', bg: '#2f4a2a' });
@@ -618,13 +647,18 @@ MAP_BUILDERS.sursee = () => {
   for (const [x, y] of [[4, 34], [18, 34]]) m.add(objLamp(x, y, 'new'));
   m.add(objBench(16, 40, 0, '#6a6e74'));
   /* Polizeiposten */
-  m.add(objBlock(15, 26, 4, 6, '#d8dce0', { door: 2, name: 'POLIZEI' }));
-  m.warp(17, 31, 'polizei', 'entry', { label: 'Polizeiposten' }); m.spawn('polizei_out', 17, 32, 0);
+  m.fill(15, 26, 4, 6, T.PLAZA, 1); m.add(objTree(16, 27, 'green', true)); m.add(objBench(15, 30, 0, '#6a6e74'));
   /* Bahnhofstrasse */
   m.fill(4, 36, 47, 1, T.PAVE); m.fill(18, 37, 33, 3, T.ASPH); m.fill(18, 38, 33, 1, T.ASPH, 1); m.fill(18, 40, 33, 1, T.PAVE);
   m.fill(4, 37, 14, 3, T.PLAZA, 1);
   for (const x of [22, 30, 38, 46]) m.add(objLamp(x, 36, 'new'));
-  for (const x of [24, 34, 44]) m.add(objTree(x, 41, 'green'));
+  m.add(objTree(44, 41, 'green'));
+  /* Dreiklang gegenüber vom Surseepark: kleinerer Turm, Riegel, Hochhaus; dahinter die Polizei */
+  m.fill(18, 41, 19, 2, T.PLAZA, 1); m.fill(18, 49, 19, 1, T.PAVE);
+  m.add(objDreiklang(18, 43, 6, 6, 52, 'turm')); m.add(objDreiklang(24, 45, 6, 4, 12, 'riegel')); m.add(objDreiklang(30, 42, 7, 7, 80, 'hoch'));
+  m.trig(18, 48, 19, 1, { label: 'Dreiklang', act: () => Sur.look('dreiklang') });
+  m.add(objBlock(20, 50, 5, 6, '#d8dce0', { door: 2, name: 'POLIZEI' }));
+  m.warp(22, 55, 'polizei', 'entry', { label: 'Polizeiposten' }); m.spawn('polizei_out', 22, 56, 0);
   /* Surseepark */
   m.fill(19, 24, 20, 12, T.PAVE, 2);
   m.add(objSurseepark(20, 27, 18, 8));
@@ -649,12 +683,12 @@ MAP_BUILDERS.sursee = () => {
   m.fill(31, 12, 3, 6, T.GRAVEL, 0);
   m.fill(31, 18, 3, 1, T.PAVE); m.fill(34, 18, 6, 1, T.PAVE);
   /* Römischer Vicus: Grabungsfeld mit Mauerresten und Tafel */
-  m.fill(20, 42, 18, 9, T.MEADOW);
-  m.fill(23, 44, 12, 5, T.GRAVEL);
-  for (const [x, y, w] of [[23, 44, 5], [30, 44, 5], [23, 48, 12]]) m.add(mkObj(x, y, w, 1, 3, (c, Wd, Hd) => { for (let xx = 0; xx < Wd; xx += 6) R(c, xx, Hd - 7, 5, 5, (xx / 6) % 2 ? '#a89878' : '#b8a888'); }, { solid: false }));
-  m.add(objTafel(21, 43, '#6a3a20', 'ROM'));
-  m.trig(21, 43, 1, 1, { label: 'Tafel: Römischer Vicus', act: () => Sur.look('vicus') });
-  m.trig(23, 45, 12, 3, { here: true, label: 'Mit dem Metalldetektor suchen', act: () => Sur.detector(), cond: () => Sur.canDetect() });
+  m.fill(6, 16, 12, 8, T.MEADOW);
+  m.fill(8, 18, 9, 4, T.GRAVEL);
+  for (const [x, y, w] of [[8, 18, 4], [13, 18, 4], [8, 21, 9]]) m.add(mkObj(x, y, w, 1, 3, (c, Wd, Hd) => { for (let xx = 0; xx < Wd; xx += 6) R(c, xx, Hd - 7, 5, 5, (xx / 6) % 2 ? '#a89878' : '#b8a888'); }, { solid: false }));
+  m.add(objTafel(7, 17, '#6a3a20', 'ROM'));
+  m.trig(7, 17, 1, 1, { label: 'Tafel: Römischer Vicus', act: () => Sur.look('vicus') });
+  m.trig(8, 19, 9, 2, { here: true, label: 'Mit dem Metalldetektor suchen', act: () => Sur.detector(), cond: () => Sur.canDetect() });
   /* Feuerwehr mit dem Kulturwerk 118 im Keller */
   m.fill(16, 42, 2, 14, T.ASPH);
   m.fill(4, 43, 12, 13, T.ASPH, 0);
@@ -910,7 +944,7 @@ MAP_BUILDERS.sursee = () => {
   m.fill(16, 56, 2, 24, T.ASPH);
   m.add(objStadthof(37, 45)); m.trig(38, 55, 9, 1, { label: 'Stadthof', act: () => Sur.look('stadthof') });
   m.light(42 * 16, 54 * 16, 60, '#bfe4ff');
-  [[21, 50, 5], [26, 50, 4], [31, 50, 5]].forEach(([x, y, w], i) => house(m, x, y, w, 6, i + 2, { floors: 3, drawH: 8, flowers: true, doors: [{ dx: 1, col: ['#5a3a24', '#2f5a3a', '#7a2a2a'][i % 3] }] }));
+  [[26, 50, 4], [31, 50, 5]].forEach(([x, y, w], i) => house(m, x, y, w, 6, i + 2, { floors: 3, drawH: 8, flowers: true, doors: [{ dx: 1, col: ['#5a3a24', '#2f5a3a', '#7a2a2a'][i % 3] }] }));
   [[4, 61, 5], [9, 61, 5], [21, 61, 6], [27, 61, 5], [33, 61, 5], [39, 61, 6], [45, 61, 4]].forEach(([x, y, w], i) => house(m, x, y, w, 6, i + 5, { floors: 3, drawH: 8, flowers: i % 2 === 0, doors: [{ dx: 2, col: ['#5a3a24', '#2f5a3a', '#7a2a2a'][i % 3] }] }));
   m.fill(4, 67, 46, 1, T.PAVE);
   for (let x = 6; x < 48; x += 5) m.add(objTree(x, 70 + (x % 3), ['green', 'autumn', 'yellow', 'red'][x % 4], x % 2 === 0));

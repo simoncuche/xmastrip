@@ -371,7 +371,7 @@ const Sur = {
       { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 72, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
       { x: 110, y: 16, n: 'Chilbi', c: N }, { x: 62, y: 49, n: 'Rössli', c: N }, { x: 71, y: 49, n: 'La Fuga', c: A }, { x: 81, y: 49, n: 'Diebenturm', c: V },
       { x: 101, y: 49, n: 'Mühle', c: A }, { x: 65, y: 57, n: 'Spielplatz', c: S }, { x: 85, y: 62, n: 'Ehret-Park', c: V }, { x: 127, y: 41, n: 'Beckenhof', c: V },
-      { x: 122, y: 60, n: 'Bei Isa', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 28, y: 46, n: 'Römer-Vicus', c: V }, { x: 17, y: 31, n: 'Polizei', c: S },
+      { x: 122, y: 60, n: 'Bei Isa', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 12, y: 20, n: 'Römer-Vicus', c: V }, { x: 22, y: 55, n: 'Polizei', c: S }, { x: 27, y: 49, n: 'Dreiklang', c: V },
     ];
     if (id === 'sursee_see') return [{ x: 32, y: 14, n: 'Bootsvermietung', c: A }, { x: 39, y: 18, n: 'Fischer', c: S }, { x: 47, y: 12, n: 'Buvette', c: A }, { x: 63, y: 19, n: 'Sprungturm', c: V }, { x: 79, y: 18, n: 'SUP', c: S }, { x: 7, y: 26, n: 'Zellmoos', c: V }, { x: 45, y: 48, n: 'Gamma-Inseli', c: V }, { x: 84, y: 3, n: 'Mariazell', c: V }, { x: 40, y: 1, n: 'Stadt', c: V }];
     return [];
@@ -715,6 +715,7 @@ Object.assign(Sur, {
       pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
       bahnhof: pick(['Bahnhof Sursee: SBB-Schalter, Wartsaal, Fahrplan an der Wand. Draussen stehen die Velos dicht an dicht.', 'Über der Tür das rote SBB-Logo und das blaue Ortsschild. Die Bahnhofsuhr springt auf die nächste Minute – pünktlich, wie immer.', 'Im Schaufenster hängt der Fahrplan der S-Bahn nach Luzern. Heim kommst du jederzeit, aber noch nicht jetzt.']),
       billettautomat: 'Ein Billettautomat der SBB. „Sursee → Luzern, 2. Klasse“ blinkt auf dem Bildschirm. Ein anderes Mal.',
+      dreiklang: pick(['Der Dreiklang gegenüber vom Surseepark: drei helle Bauten – ein Hochhaus, ein kleinerer Turm und dazwischen ein langer, flacher Riegel. Unten Läden und Büros, oben Wohnungen mit Blick über das Städtli.', 'Vom Hochhaus des Dreiklangs sieht man bestimmt bis zum Sempachersee. Der Lift ist leider nur für Bewohner.', 'Zwischen den drei Bauten zieht der Wind durch. Ein Velokurier flitzt vorbei.']),
       stadthof: pick(['Der Stadthof am Martigny-Platz: ein heller Betonwürfel mit hohen Pfeilern, oben eine offene Pergola über der Dachterrasse. Unten Reisebüro, Coiffeur, Versicherung und Praxen.', 'Im Schaufenster vom Reisebüro hängt ein Plakat: „Innsbruck – Weihnachtsmärkte und Bergisel“. Du lachst kurz.', 'Unter den Arkaden des Stadthofs ist es windstill. Ein Velo lehnt an einem der weissen Pfeiler.']),
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
