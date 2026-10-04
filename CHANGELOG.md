@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.20.0 – 04.10.2026
+
+- Jassen mit Stammtisch-Gefühl: Die Mitspieler reden in Sprechblasen – typische Jass-Sprüche („Stöck!“, „Wer nüt weist, verlürt.“, „Schiebe isch kei Schand.“), Witze mit Reaktionen und Gespräche über die Reise und die letzten Wiehnachtsreisli nach Strassburg, Turin, Dublin und Lyon, bei denen einer erzählt und ein anderer antwortet. Auf Trumpfansagen, grosse Stiche und einen Match gibt es Kommentare.
+- Bier am Jasstisch: Jeder hat ein Glas mit Füllstand. Die Kollegen trinken und prosten sich zu, die Gläser heben sich beim Anstossen, und die Serviertochter bringt Nachschub. Mit „Schluck“ trinkst du mit – ein ausgetrunkenes Glas zählt als Bier und steigt dir in den Kopf; auch die Kollegen bekommen Promille.
+
 ## 2.19.0 – 04.10.2026
 
 - Die Bahnhof-Bäckerei in Luzern ist jetzt eine richtige Bäckerei: gestreifte Markise mit „BÄCKEREI“-Schild und Brezeln, Holzregal voller Ruchbrote, Butterzöpfe, Baguettes und Weggli, Brezeln am Haken, Brotkörbe, eine Vitrine mit Gebäck, eine Brezel-Stange – und es dampft vom frischen Brot. Bäckerin Vreni steht hinter der Theke.
