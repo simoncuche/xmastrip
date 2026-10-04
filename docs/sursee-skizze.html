@@ -49,7 +49,7 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 1 zur Review</span>
+    <span class="eyebrow">Wiehnachtsreisli · Branch sursee · Skizze 2 zur Review</span>
     <h1>Sursee-Krimi</h1>
     <p class="lead">Nach der Heimreise aus Innsbruck ist das Spiel nicht mehr zu Ende. Am Bahnhof Luzern fährt auf Gleis 2 die S-Bahn nach Sursee, dem Sempachersee entlang. In Sursee beginnt der Detektiv-Krimi. Unten stehen die Karten aus der Vogelperspektive, Norden ist immer oben. Rote Nummern markieren Stellen, bei denen ich mir nicht sicher bin.</p>
   </header>
@@ -105,58 +105,61 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   <section aria-labelledby="h-sursee">
     <h2 id="h-sursee">Karte 2 · Sursee, Bahnhof bis Altstadt</h2>
     <div class="map">
-      <svg viewBox="0 0 640 470" role="img" aria-label="Skizze der Spielkarte Sursee: Bahnhof im Westen, Bahnhofstrasse mit Surseepark, Martigny-Platz, Untertor, Unterstadt, Rathaus, Oberstadt, Stadtkirche, Sure im Osten, Weg zum See im Südosten">
-        <rect width="640" height="470" fill="#1d2a22"/>
+      <svg viewBox="0 0 640 480" role="img" aria-label="Skizze der Spielkarte Sursee nach dem Kartenausschnitt: Bahnhof im Westen, Bahnhofstrasse mit Surseepark, Altstadt diagonal von Nordwest nach Südost mit Oberstadt im Nordosten und Unterstadt im Südwesten, Sure entlang der Unterstadt, Stadthalle im Norden, oberes Ende im Südosten mit Weg zum See">
+        <rect width="640" height="480" fill="#1d2a22"/>
+        <!-- Grünzug entlang der Sure nördlich der Altstadt -->
+        <path d="M232 0 C 260 60, 300 120, 336 170 L 300 200 C 262 150, 222 80, 196 0 Z" fill="var(--grass-2)" opacity="0.8"/>
         <!-- Bahnlinie und Bahnhof im Westen -->
-        <rect x="18" y="0" width="22" height="470" fill="#3a3c40"/><path d="M24 0 V470 M34 0 V470" stroke="var(--rail)" stroke-width="1.5"/>
-        <rect x="44" y="196" width="58" height="96" rx="3" fill="#cfd2d4"/><rect x="44" y="196" width="58" height="12" fill="#d8302a"/>
-        <text x="73" y="250" fill="#14181e" font-size="13" font-weight="700" text-anchor="middle" transform="rotate(-90 73 250)">BAHNHOF SURSEE</text>
-        <!-- Bahnhofstrasse nach Osten, Surseepark -->
-        <path d="M102 246 H 236" stroke="var(--street)" stroke-width="16"/>
-        <path d="M150 246 H 200" stroke="#7a8592" stroke-width="2" stroke-dasharray="2 6"/>
-        <rect x="110" y="266" width="100" height="62" rx="4" fill="#5a6676"/><text x="160" y="292" fill="var(--ink)" font-size="13" font-weight="700" text-anchor="middle">Surseepark</text><text x="160" y="309" fill="#d8dde4" font-size="11" text-anchor="middle">MMM Migros</text>
-        <text x="168" y="236" fill="var(--dim)" font-size="11.5" text-anchor="middle">Bahnhofstrasse · verkürzt</text>
-        <!-- Martigny-Platz: Markt und Parkplatz -->
-        <rect x="236" y="196" width="84" height="104" rx="4" fill="#4a4f58"/>
-        <g fill="#c8302a"><rect x="246" y="206" width="14" height="8" rx="2"/><rect x="266" y="206" width="14" height="8" rx="2" fill="#2f5fb8"/><rect x="286" y="206" width="14" height="8" rx="2" fill="#e8e4dc"/><rect x="246" y="276" width="14" height="8" rx="2" fill="#f0d040"/><rect x="266" y="276" width="14" height="8" rx="2"/><rect x="286" y="276" width="14" height="8" rx="2" fill="#3f8e4b"/></g>
-        <text x="278" y="240" fill="var(--ink)" font-size="13" font-weight="700" text-anchor="middle">Martigny-</text><text x="278" y="255" fill="var(--ink)" font-size="13" font-weight="700" text-anchor="middle">Platz</text><text x="278" y="270" fill="#d8dde4" font-size="10.5" text-anchor="middle">Markt · Parkplatz</text>
-        <!-- Altstadt: lang gezogen, Untertor im Westen, Unterstadt bis Rathaus, Oberstadt höher und breiter bis zum oberen Ende -->
-        <path d="M322 214 C 360 196, 420 186, 480 188 C 520 190, 548 204, 560 224 C 570 244, 560 270, 530 284 C 480 304, 400 300, 352 286 C 334 280, 322 268, 322 252 Z" fill="#3b2f28" stroke="#6a5444" stroke-width="2"/>
-        <path d="M330 240 C 370 236, 404 234, 432 236" stroke="#a89880" stroke-width="10" fill="none"/>
-        <path d="M432 236 C 470 238, 510 242, 548 246" stroke="#b8a888" stroke-width="18" fill="none"/>
-        <g fill="var(--roof)"><rect x="338" y="214" width="20" height="16"/><rect x="362" y="210" width="18" height="18"/><rect x="384" y="208" width="20" height="18"/><rect x="408" y="208" width="18" height="18"/><rect x="338" y="248" width="22" height="18"/><rect x="364" y="248" width="20" height="20"/><rect x="388" y="248" width="18" height="20"/><rect x="452" y="214" width="20" height="16"/><rect x="476" y="212" width="22" height="18"/><rect x="502" y="214" width="20" height="18"/><rect x="452" y="258" width="22" height="18"/><rect x="478" y="258" width="22" height="18"/><rect x="504" y="258" width="20" height="18"/></g>
-        <rect x="320" y="228" width="14" height="24" fill="#c8b89a" stroke="#f2eee4" stroke-width="1.5"/><text x="300" y="186" fill="var(--amber)" font-size="12.5" font-weight="700">Untertor</text><path d="M318 190 L326 226" stroke="var(--amber)" stroke-width="1"/>
-        <text x="380" y="244" fill="#f2eee4" font-size="11.5" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke">UNTERSTADT</text>
-        <text x="474" y="251" fill="#f2eee4" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke">OBERSTADT</text>
-        <rect x="424" y="222" width="26" height="30" fill="#e8d6a8" stroke="#8a3b2a" stroke-width="2"/><path d="M424 222 L437 210 L450 222" fill="#8a3b2a"/><text x="437" y="270" fill="var(--amber)" font-size="12.5" font-weight="700" text-anchor="middle">Rathaus</text>
-        <circle cx="404" cy="230" r="4" fill="var(--amber)"/><text x="388" y="202" fill="var(--amber)" font-size="11.5">Wilder Mann</text>
-        <!-- Stadtkirche St. Georg im Norden der Oberstadt, erhöht -->
-        <rect x="470" y="150" width="58" height="30" rx="2" fill="#e8e4dc"/><rect x="520" y="132" width="14" height="48" fill="#d8d4cc"/><path d="M520 132 L527 116 L534 132" fill="#3f6a4a"/>
-        <text x="470" y="144" fill="var(--amber)" font-size="12.5" font-weight="700">St. Georg</text>
-        <!-- Sure im Osten, fliesst von Süden (See) nach Norden; Park dahinter -->
-        <path d="M600 470 C 590 420, 584 380, 580 340 C 576 300, 586 260, 590 220 C 594 180, 590 120, 580 60 C 574 30, 576 12, 582 0" fill="none" stroke="var(--sure)" stroke-width="7"/>
-        <text x="596" y="300" fill="#9ccfe6" font-size="13" font-weight="700">Sure</text>
-        <ellipse cx="614" cy="160" rx="24" ry="60" fill="var(--grass-2)"/><text x="606" y="166" fill="#d8ead0" font-size="11" text-anchor="middle" transform="rotate(-90 606 166)">Park?</text>
-        <!-- Weitere Gebäude -->
-        <rect x="360" y="96" width="92" height="44" rx="4" fill="#6a7686"/><text x="406" y="122" fill="var(--ink)" font-size="12.5" font-weight="700" text-anchor="middle">Stadthalle</text>
-        <circle cx="540" cy="196" r="4" fill="#e8d6a8"/><text x="546" y="200" fill="#e8d6a8" font-size="10.5">Murihof</text>
-        <circle cx="560" cy="268" r="4" fill="#e8d6a8"/><text x="566" y="272" fill="#e8d6a8" font-size="10.5">Sankturbanhof</text>
-        <rect x="344" y="284" width="10" height="14" fill="#8a7a6a"/><text x="300" y="316" fill="#e8d6a8" font-size="10.5">Diebenturm</text>
-        <!-- oberes Ende: Abkürzung zum See -->
-        <path d="M548 280 C 556 330, 540 380, 520 440" stroke="var(--amber)" stroke-width="3" stroke-dasharray="8 6" fill="none"/>
-        <path d="M512 430 L520 452 L530 432" fill="var(--amber)"/>
-        <text x="420" y="420" fill="var(--amber)" font-size="13" font-weight="700">Abkürzung zum See</text>
+        <rect x="14" y="0" width="22" height="480" fill="#3a3c40"/><path d="M20 0 V480 M30 0 V480" stroke="var(--rail)" stroke-width="1.5"/>
+        <rect x="40" y="214" width="56" height="92" rx="3" fill="#cfd2d4"/><rect x="40" y="214" width="56" height="12" fill="#d8302a"/>
+        <text x="68" y="266" fill="#14181e" font-size="12.5" font-weight="700" text-anchor="middle" transform="rotate(-90 68 266)">BAHNHOF SURSEE</text>
+        <!-- Bahnhofstrasse nach Osten bis zum Nordwest-Ende der Altstadt -->
+        <path d="M96 262 C 170 258, 250 252, 330 244" stroke="var(--street)" stroke-width="15" fill="none"/>
+        <path d="M150 260 H 206" stroke="#7a8592" stroke-width="2" stroke-dasharray="2 6"/>
+        <text x="200" y="285" fill="var(--dim)" font-size="11.5" text-anchor="middle">Bahnhofstrasse · verkürzt</text>
+        <rect x="112" y="176" width="104" height="58" rx="4" fill="#5a6676"/><text x="164" y="201" fill="var(--ink)" font-size="13" font-weight="700" text-anchor="middle">Surseepark</text><text x="164" y="218" fill="#d8dde4" font-size="11" text-anchor="middle">MMM Migros</text>
+        <!-- Stadthalle im Norden, über die St. Urban-Strasse erreichbar -->
+        <path d="M372 218 C 392 170, 420 130, 452 104" stroke="var(--street)" stroke-width="9" fill="none"/>
+        <text x="404" y="168" fill="var(--dim)" font-size="11" transform="rotate(-50 404 168)">St. Urban-Str.</text>
+        <rect x="430" y="40" width="96" height="58" rx="4" fill="#c8b040" opacity="0.9"/><text x="478" y="66" fill="#14181e" font-size="13" font-weight="700" text-anchor="middle">Stadthalle</text><text x="478" y="82" fill="#2a2a18" font-size="10.5" text-anchor="middle">St. Urbanstrasse 5</text>
+        <!-- Sure: kommt aus Südosten (vom See her), fliesst offen der Unterstadt entlang nach Nordwesten und weiter nach Norden -->
+        <path d="M640 452 C 610 432, 580 412, 556 396 C 500 360, 440 318, 380 268 C 350 244, 330 214, 314 186 C 290 140, 250 70, 214 0" fill="none" stroke="var(--sure)" stroke-width="7"/>
+        <text x="236" y="54" fill="#9ccfe6" font-size="13" font-weight="700" transform="rotate(58 236 54)">Sure</text>
+        <!-- Altstadt: diagonal NW–SO, Oberstadt (nordöstlich) und Unterstadt (südwestlich) -->
+        <path d="M334 236 C 360 200, 430 196, 486 214 C 540 234, 590 288, 596 340 C 600 380, 580 404, 548 404 C 500 400, 440 360, 392 312 C 356 280, 330 262, 334 236 Z" fill="#3b2f28" stroke="#6a5444" stroke-width="2"/>
+        <path d="M342 236 C 380 222, 430 220, 478 230 C 520 244, 548 290, 562 350" stroke="#c84a3a" stroke-width="15" fill="none" opacity="0.9"/>
+        <path d="M368 262 C 420 300, 480 344, 546 384" stroke="#3a6ad0" stroke-width="11" fill="none" opacity="0.9"/>
+        <path d="M552 400 C 490 362, 428 318, 366 276" stroke="var(--sure)" stroke-width="5" fill="none"/>
+        <g fill="var(--roof)"><rect x="384" y="236" width="18" height="16" transform="rotate(30 393 244)"/><rect x="408" y="246" width="18" height="18" transform="rotate(32 417 255)"/><rect x="434" y="262" width="18" height="18" transform="rotate(34 443 271)"/><rect x="462" y="282" width="18" height="18" transform="rotate(36 471 291)"/><rect x="490" y="302" width="18" height="18" transform="rotate(38 499 311)"/><rect x="516" y="276" width="18" height="16" transform="rotate(50 525 284)"/><rect x="494" y="254" width="18" height="16" transform="rotate(42 503 262)"/><rect x="398" y="196" width="18" height="16"/><rect x="424" y="196" width="18" height="16"/><rect x="452" y="200" width="18" height="16"/></g>
+        <text x="410" y="226" fill="#ffd8d0" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke">OBERSTADT</text>
+        <text x="436" y="322" fill="#d8e4ff" font-size="12" font-weight="700" stroke="#3b2f28" stroke-width="3" paint-order="stroke" transform="rotate(34 436 322)">UNTERSTADT</text>
+        <!-- Untertor am unteren (nordwestlichen) Ende, Martigny-Platz davor -->
+        <rect x="354" y="250" width="14" height="22" fill="#c8b89a" stroke="#f2eee4" stroke-width="1.5" transform="rotate(30 361 261)"/>
+        <text x="302" y="314" fill="var(--amber)" font-size="12.5" font-weight="700">Untertor</text><path d="M330 304 L356 270" stroke="var(--amber)" stroke-width="1"/>
+        <rect x="244" y="300" width="70" height="56" rx="4" fill="#4a4f58"/>
+        <g><rect x="252" y="306" width="12" height="7" rx="2" fill="#c8302a"/><rect x="268" y="306" width="12" height="7" rx="2" fill="#2f5fb8"/><rect x="284" y="306" width="12" height="7" rx="2" fill="#e8e4dc"/><rect x="252" y="342" width="12" height="7" rx="2" fill="#f0d040"/><rect x="268" y="342" width="12" height="7" rx="2" fill="#3f8e4b"/></g>
+        <text x="279" y="332" fill="var(--ink)" font-size="11.5" font-weight="700" text-anchor="middle">Martigny-Platz</text>
+        <!-- Wilder Mann in der Unterstadt -->
+        <circle cx="478" cy="336" r="4.5" fill="var(--amber)"/><text x="416" y="372" fill="var(--amber)" font-size="11.5">Wilder Mann</text><path d="M452 362 L476 340" stroke="var(--amber)" stroke-width="1"/>
+        <!-- Rathaus und Kirche am oberen (südöstlichen) Ende -->
+        <rect x="536" y="356" width="24" height="28" fill="#e8d6a8" stroke="#8a3b2a" stroke-width="2"/><path d="M536 356 L548 344 L560 356" fill="#8a3b2a"/>
+        <text x="520" y="424" fill="var(--amber)" font-size="12.5" font-weight="700">Rathaus</text>
+        <rect x="570" y="300" width="44" height="26" rx="2" fill="#e8e4dc"/><rect x="606" y="284" width="12" height="42" fill="#d8d4cc"/><path d="M606 284 L612 270 L618 284" fill="#3f6a4a"/>
+        <text x="560" y="262" fill="var(--amber)" font-size="12.5" font-weight="700">St. Georg</text>
+        <!-- Weg zum See ab dem oberen Ende -->
+        <path d="M570 400 C 590 430, 606 452, 620 476" stroke="var(--amber)" stroke-width="3" stroke-dasharray="8 6" fill="none"/>
+        <text x="450" y="460" fill="var(--amber)" font-size="13" font-weight="700">zum See (Luzernstrasse)</text>
         <!-- Fragezeichen-Pins -->
         <g font-family="Pixelify Sans, monospace" font-weight="700" font-size="12" text-anchor="middle">
-          <circle cx="458" cy="96" r="10" fill="var(--q)"/><text x="458" y="100" fill="#0f1a2b">1</text>
-          <circle cx="630" cy="104" r="10" fill="var(--q)"/><text x="630" y="108" fill="#0f1a2b">2</text>
-          <circle cx="306" cy="300" r="10" fill="var(--q)"/><text x="306" y="304" fill="#0f1a2b">3</text>
-          <circle cx="552" cy="226" r="10" fill="var(--q)"/><text x="552" y="230" fill="#0f1a2b">4</text>
+          <circle cx="548" cy="394" r="10" fill="var(--q)"/><text x="548" y="398" fill="#0f1a2b">1</text>
+          <circle cx="230" cy="328" r="10" fill="var(--q)"/><text x="230" y="332" fill="#0f1a2b">2</text>
+          <circle cx="262" cy="110" r="10" fill="var(--q)"/><text x="262" y="114" fill="#0f1a2b">3</text>
         </g>
-        <g transform="translate(18 18)"><rect width="64" height="34" rx="5" fill="#0f1a2bcc"/><path d="M14 26 L22 6 L30 26 L22 21 Z" fill="var(--dim)"/><text x="38" y="23" fill="var(--dim)" font-size="13">N</text></g>
+        <g transform="translate(560 120)"><rect width="64" height="34" rx="5" fill="#0f1a2bcc"/><path d="M14 26 L22 6 L30 26 L22 21 Z" fill="var(--dim)"/><text x="38" y="23" fill="var(--dim)" font-size="13">N</text></g>
       </svg>
     </div>
-    <div class="legend"><span><b>Westen:</b> Bahnhof, Bahnhofstrasse mit Surseepark (Weg verkürzt)</span><span><b>Mitte:</b> Martigny-Platz, Untertor, Unterstadt mit Wilder Mann, Rathaus, Oberstadt</span><span><b>Osten:</b> Stadtkirche, Sure, Park, oberes Ende mit Weg zum See</span></div>
+    <div class="legend"><span><b style="color:#ff8a78">Rot:</b> Oberstadt</span><span><b style="color:#8ab0ff">Blau:</b> Unterstadt</span><span><b style="color:#9ccfe6">Sure:</b> fliesst offen der Unterstadt entlang nach Nordwesten</span><span><b style="color:#e8d070">Stadthalle:</b> nördlich, über die St. Urban-Strasse</span></div>
+    <p class="cap">Korrigiert nach deinem Kartenausschnitt. Die Altstadt liegt diagonal von Nordwest nach Südost. Weil die Sure nach Nordwesten fliesst, ist dort das untere Ende mit dem Untertor und das obere Ende im Südosten. Von dort geht der Weg zum See.</p>
   </section>
 
   <section aria-labelledby="h-see">
@@ -219,13 +222,13 @@ a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   <section aria-labelledby="h-fragen">
     <h2 id="h-fragen">Fragen für die Review</h2>
     <ol class="qs">
-      <li><span><b>Stadthalle (1):</b> Sie liegt an der St. Urbanstrasse 5. Ich habe sie nördlich der Altstadt eingezeichnet. Stimmt die Lage, oder liegt sie eher Richtung Bahnhof?</span></li>
-      <li><span><b>„Erdpark“ hinter der Sure (2):</b> Welchen Park meinst du genau? Ich habe vorerst einen Park östlich der Sure gezeichnet.</span></li>
-      <li><span><b>„Nutzgebäude“ (3):</b> Welches Gebäude ist gemeint? Zum Beispiel ein Zeughaus, ein Kornhaus oder etwas anderes? Ich habe den Platz vorerst beim Diebenturm offen gelassen.</span></li>
-      <li><span><b>Unterstadt und Oberstadt (4):</b> Ich habe die Altstadt als lange Achse gezeichnet: Untertor im Westen, Unterstadt bis zum Rathaus, dann die breitere Oberstadt bis zum oberen Ende im Osten, die Kirche nördlich davon. Stimmt diese Anordnung, oder laufen die beiden Gassen nebeneinander?</span></li>
-      <li><span><b>Weg zum See (5):</b> Wo genau beginnt der Weg vom oberen Ende der Altstadt zum See, und sollen Mariazell und der Strandbad-Eingang am Weg liegen?</span></li>
-      <li><span><b>Inseli (6):</b> Meinst du die Halbinsel der Seebadi Schenkon oder eine andere kleine Insel?</span></li>
-      <li><span><b>Krimi:</b> Wer spielt mit? Nur du als Detektiv, oder ist die Gruppe mit dabei? Und hast du schon eine Idee für den Fall? Sonst schlage ich in der nächsten Runde zwei, drei Fälle vor.</span></li>
+      <li><span><b>Rathaus und Kirche (1):</b> Ich habe beide ans obere Ende im Südosten gesetzt, wo Oberstadt und Unterstadt zusammenlaufen. Stimmt das, oder steht das Rathaus eher in der Mitte?</span></li>
+      <li><span><b>Martigny-Platz (2):</b> Er liegt laut Quellen westlich vor dem Untertor. Ist das der Platz mit den Autos, den du meinst?</span></li>
+      <li><span><b>„Erdpark“ (3):</b> Ist das der Grünzug entlang der Sure nördlich der Altstadt, Richtung Stadthalle? Oder ein anderer Park?</span></li>
+      <li><span><b>„Nutzgebäude“:</b> Welches Gebäude meinst du? Den Namen oder die Adresse reicht mir.</span></li>
+      <li><span><b>Weg zum See:</b> Vom oberen Ende über die Luzernstrasse Richtung See, stark verkürzt. Passt das?</span></li>
+      <li><span><b>Inseli:</b> Die Halbinsel der Seebadi Schenkon, oder eine andere kleine Insel?</span></li>
+      <li><span><b>Krimi:</b> Spielst du allein als Detektiv, oder ist die Gruppe dabei? Hast du schon eine Idee für den Fall?</span></li>
     </ol>
   </section>
 
