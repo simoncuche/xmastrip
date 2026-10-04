@@ -572,6 +572,100 @@ const SCENES = {
     if (Math.floor(t * 4) % 4 === 0) R(c, cx + 2, cy + 2, 4, 2, '#ffb53d');
   },
   /* Zugfahrt (st.col = Zugfarbe, st.label = Aufschrift) */
+  /* Schöttli-Rundi im Railjet: Kusi verteilt Mini-Fläschli, alle klopfen, Zum Wohl, ex, Schütteln */
+  schoettli(c, t, p, st) {
+    const W = SCENE_W, H = SCENE_H, r2 = st.round > 1;
+    const q = r2 ? 0.25 + p * 0.75 : p;
+    /* Abteil und Fenster mit vorbeiziehender Landschaft */
+    R(c, 0, 0, W, H, '#c9c4b8'); R(c, 0, 0, W, 4, '#b0aa9c');
+    const wx = 8, wy = 6, ww = 144, wh = 38;
+    c.save(); c.beginPath(); c.rect(wx, wy, ww, wh); c.clip();
+    sceneSky(c, false);
+    sceneMountains(c, wy + 30, '#8a9ab0', true, t * 4);
+    sceneMountains(c, wy + 36, '#4f8040', false, t * 16);
+    R(c, wx, wy + 32, ww, wh - 32, '#6a9a4a');
+    for (let k = 0; k < 8; k++) { const x = wx + ww - ((t * 90 + k * 23) % (ww + 10)); R(c, x, wy + 24, 1, 12, '#3a2a1a'); E(c, x, wy + 22, 3, 4, '#2e6b32'); }
+    for (let k = 0; k < 3; k++) { const x = wx + ww - ((t * 140 + k * 61) % (ww + 30)); R(c, x, wy + 18, 1, 20, '#5a5e64'); }
+    c.restore();
+    R(c, wx - 2, wy - 2, ww + 4, 2, '#8a8e94'); R(c, wx - 2, wy + wh, ww + 4, 3, '#8a8e94'); R(c, 79, wy, 2, wh, '#8a8e94');
+    R(c, 0, 86, W, 10, '#4a4c54'); for (let x = 0; x < W; x += 8) R(c, x, 88, 4, 1, '#5a5c64');
+    /* Sitze (Railjet rot) */
+    for (const sx of [6, 122]) { R(c, sx, 48, 32, 38, '#7a2f3a'); R(c, sx, 48, 32, 4, '#9a3f4a'); R(c, sx + 2, 52, 28, 1, '#6a2530'); }
+    const fr = st.friends || [];
+    const front = st.meK ? fr[3] : st.sheet;
+    /* Personen: [sheet, x, y, dir, scale, Platz auf dem Tisch] */
+    const P5 = [
+      { sh: front, x: 22, y: 44, dir: 2, s: 1.6, spot: 57, me: !st.meK },
+      { sh: fr[0], x: 12, y: 41, dir: 2, s: 1.45, spot: 66, back: true },
+      { sh: st.meK ? st.sheet : st.kusi, x: 66, y: 32, dir: 0, s: 1.5, spot: 78, kusi: true },
+      { sh: fr[1], x: 120, y: 41, dir: 1, s: 1.45, spot: 90, back: true },
+      { sh: fr[2], x: 110, y: 44, dir: 1, s: 1.6, spot: 99 },
+    ].filter((o) => o.sh);
+    const shake = q > 0.8 ? Math.sin(t * 50) * (1 - (q - 0.8) / 0.2) * 1.5 : 0;
+    const mouth = (o) => o.dir === 0 ? [o.x + 9 * o.s, o.y + 10 * o.s] : [o.x + (o.dir === 2 ? 13 : 5) * o.s, o.y + 9 * o.s];
+    const bottle = (x, y, ang, kind, empty) => {
+      const col = [['#3a2a1a', '#f2e6c8', '#c8302a', '#2a1a10'], ['#d6e8ee', '#6a3a8a', '#f4f4f0', '#e8eef2'], ['#d8eadc', '#3f8e4b', '#f2c23a', '#eef6ee'], ['#c8302a', '#f4f4f0', '#c9a227', '#e05040']][kind];
+      c.save(); c.translate(Math.round(x), Math.round(y)); c.rotate(ang);
+      R(c, -2, -7, 4, 6, col[0]); if (!empty && kind > 0 && kind < 3) R(c, -1, -5, 2, 4, col[3]);
+      R(c, -2, -5, 4, 2, col[1]); P(c, 0, -5, col[2]);
+      R(c, -1, -9, 2, 2, col[0]); R(c, -1, -10, 2, 1, kind === 2 ? '#c9a227' : '#1a1a1e');
+      R(c, -2, -1, 4, 1, shade(col[0], -0.25));
+      c.restore();
+    };
+    const kindOf = (o) => (o.me && st.declined ? 3 : st.kind || 0);
+    /* Hinterreihe, Kusi, Tisch, Vorderreihe */
+    const drinking = q > 0.58 && q < 0.8;
+    const poseOf = (o) => (o.kusi ? (q < 0.22 && !r2 ? (Math.floor(t * 4) % 2 ? 'bend' : 'stand') : 'stand') : 'sit');
+    for (const o of P5) if (o.back) sceneSprite(c, { sheet: o.sh }, poseOf(o), o.dir, o.x + shake, o.y, o.s, 0.88);
+    const ko = P5.find((o) => o.kusi);
+    if (ko) {
+      sceneSprite(c, { sheet: ko.sh }, poseOf(ko), ko.dir, ko.x + shake, ko.y, ko.s);
+      if (q < 0.25 && !r2) { R(c, 72, 54, 16, 12, '#3f6a3a'); R(c, 72, 54, 16, 2, '#5a8a52'); R(c, 78, 52, 4, 3, '#2a4a28'); for (let k = 0; k < 3; k++) P(c, 74 + k * 5, 56 + (Math.floor(t * 6 + k) % 2), '#d8eadc'); }
+    }
+    R(c, 52, 66, 56, 5, '#9aa0a8'); R(c, 52, 66, 56, 1, '#c9ccd2'); R(c, 78, 71, 4, 15, '#5a5e64');
+    for (const o of P5) if (!o.back && !o.kusi) sceneSprite(c, { sheet: o.sh }, 'sit', o.dir, o.x + shake, o.y, o.s);
+    /* Fläschli je nach Phase */
+    P5.forEach((o, i) => {
+      const kd = kindOf(o), base = [o.spot, 66];
+      if (q < 0.25) {
+        const t0 = i * 0.045, f = clamp((q - t0) / 0.07, 0, 1);
+        if (f <= 0) return;
+        const sx = 80, sy = 56, x = sx + (base[0] - sx) * f, y = sy + (base[1] - sy) * f - Math.sin(f * Math.PI) * 10;
+        bottle(x, y, (1 - f) * 3, kd);
+        if (f >= 1 && !(st._land || {})[i]) { st._land = st._land || {}; st._land[i] = 1; Snd.sfx('clink'); }
+      } else if (q < 0.45) {
+        const k = (q - 0.25) / 0.2 * 3, hop = Math.abs(Math.sin(k * Math.PI)) * 4;
+        bottle(base[0], base[1] - hop, 0, kd);
+      } else if (q < 0.58) {
+        const f = clamp((q - 0.45) / 0.06, 0, 1), m = mouth(o);
+        bottle(base[0] + (80 + (o.spot - 78) * 0.5 - base[0]) * f, base[1] - f * (base[1] - 50), 0, kd);
+      } else if (q < 0.8) {
+        const f = clamp((q - 0.58) / 0.06, 0, 1), m = mouth(o), ex = 80 + (o.spot - 78) * 0.5;
+        const ang = f * (o.dir === 1 ? -2.2 : o.dir === 2 ? 2.2 : (i % 2 ? 2.6 : -2.6));
+        bottle(ex + (m[0] - ex) * f, 50 + (m[1] - 50) * f, ang, kd, f >= 1 && q > 0.7);
+      } else {
+        const f = clamp((q - 0.8) / 0.05, 0, 1);
+        bottle(base[0], base[1] - (1 - f) * 8 + (f >= 1 ? 9 : 0), f * Math.PI, kd, true);
+      }
+    });
+    /* Text und Sounds */
+    const banner = (txt, _y, col = '#ffd23d') => { const y = 88; const w = pxTextW(txt); R(c, 80 - w / 2 - 3, y - 2, w + 6, 9, 'rgba(0,0,0,0.6)'); pxText(c, txt, 80 - w / 2, y, col); };
+    if (q < 0.25 && !r2) banner(q < 0.12 ? 'SCHÖTTLI-RUNDI!' : st.declined ? 'RIVELLA?! NA GUET …' : 'EIS FÜR JEDE!', 47);
+    else if (q < 0.45) {
+      const n = Math.min(3, Math.floor((q - 0.25) / 0.2 * 3) + 1);
+      banner(['KLOPF!', 'KLOPF! KLOPF!', 'KLOPF! KLOPF! KLOPF!'][n - 1], 47);
+      if (n !== st._kn) { st._kn = n; Snd.tone(110, 0.06, 'square', 0.07); Snd.noise(0.05, 0.08, 300); }
+    } else if (q < 0.58) { banner('ZUM WOHL!', 38); if (!st._cl) { st._cl = 1; Snd.sfx('clink'); } for (let k = 0; k < 5; k++) P(c, 74 + ((k * 7 + Math.floor(t * 20)) % 12), 40 + (k % 3), '#ffffff'); }
+    else if (q < 0.8) { banner(st.round > 1 ? 'NO EIS – EX!' : 'EX!', 38); if (!st._gl) { st._gl = 1; Snd.sfx('gulp'); setTimeout(() => Snd.sfx('gulp'), 260); } }
+    else {
+      const word = st.declined ? 'KUSI TRINKT ZWEI!' : ['BRRRR!', 'AHHH – PFLÜMLI!', 'FEIGLING? NIE!'][st.kind || 0];
+      banner(word, 38, '#ffffff');
+      if (!st._ch) { st._ch = 1; Snd.sfx('cheer'); Snd.sfx('hicks'); }
+      for (let k = 0; k < 8; k++) { const a = t * 3 + k * 0.8; P(c, 80 + Math.cos(a) * (18 + k), 30 + Math.sin(a) * 6, k % 2 ? '#ffd23d' : '#ffffff'); }
+      if (P5[0].me && st.declined) { R(c, 30, 30, 14, 9, '#ffffff'); R(c, 34, 39, 2, 2, '#ffffff'); pxText(c, '...', 32, 32, '#1a1a1e'); }
+    }
+    const stp = Math.floor(t * 7); if (stp !== st._ck) { st._ck = stp; if (stp % 2) Snd.tone(75, 0.04, 'square', 0.02); }
+  },
   train(c, t, p, st) {
     sceneSky(c, st.night);
     sceneMountains(c, 44, '#7a8aa0', true, t * 3);

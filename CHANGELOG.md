@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.22.0 – 04.10.2026
+
+- Schöttli-Rundi im Zug: Kurz nach der Grenze bei Buchs SG holt Kusi Mini-Fläschli aus dem Rucksack und kommt zu dir an den Platz.
+- Wahl zwischen Appenzeller, Pflümli und Kleinem Feigling. Wer ein Rivella will, wird vom ganzen Vierertisch ausgebuht.
+- Animierte Szene am Vierertisch: Fläschli verteilen, dreimal klopfen, Zum Wohl, ex, schütteln. Auf Wunsch eine zweite Runde.
+- Kusi steckt dir danach ein Notfall-Fläschli zu. Neues Erlebnis „Schöttli-Rundi“.
+
 ## 2.21.0 – 04.10.2026
 
 - Schnappschüsse gehören jetzt zum jeweiligen Spiel: Ein neues Spiel startet mit leerer Galerie, alte Schnappschüsse und Fotos der Sehenswürdigkeiten aus dem vorherigen Spiel werden entfernt.

@@ -1539,6 +1539,8 @@ const Story = {
     if (ts.scene === 'tunnel' && !this._announced.tunnel) { this._announced.tunnel = 1; UI.toast('Arlbergtunnel – über zehn Kilometer durch den Berg.'); }
     if (ts.tm > 25 && !G.S.flags.ticketCheck && !G.busy && !this._cond) this.conductorStart();
     if (this._cond && !G.S.flags.ticketCheck) this.conductorFollow();
+    if (ts.tm >= 80 && ts.tm < 200 && G.S.flags.ticketCheck && !G.S.flags.schoettli && !this._cond && !G.busy) this.schoettliStart();
+    if (this._shot) this.schoettliFollow();
     if (ts.tm >= 216 && G.S.stage === 'ride' && !G.busy) this.arrive();
   },
   /* Die Zugbegleiterin betritt den Wagen am anderen Ende und läuft durch den Gang (Reihe 4) zum Spieler. */
@@ -1580,6 +1582,99 @@ const Story = {
     if (actor) { /* weiter durch den Zug und am Ende des Wagens verschwinden */
       const end = T2P(actor.x < G.player.x ? 62 : 1, 4);
       actor.path = [end]; actor.onArrive = () => { G.npcs = G.npcs.filter((n) => n !== actor); };
+    }
+  },
+  /* Schöttli-Rundi: Nach der Grenze bei Buchs SG holt Kusi Mini-Fläschli aus dem Rucksack und kommt zum Spieler */
+  _shot: null,
+  schoettliStart() {
+    G.S.flags.schoettli = 1;
+    const k = G.npcs.find((n) => n.friend && n.id === 'kusi');
+    if (G.S.pid === 'kusi' || !k) { this.schoettli(null); return; }
+    k.home = { x: k.x, y: k.y, dir: k.dir, rand: k.bubbleRand };
+    k.pose = 'stand'; k.solid = false; k.keepDir = false; k.speed = 64; k.bubbleRand = null; k.bubble = '!'; k.bubbleT = 3;
+    k._aisle = 0; k.path = [T2P(Math.floor(k.x / TS), 4)]; k.onArrive = () => { k._aisle = 1; };
+    this._shot = k;
+    UI.toast(`${fname('kusi')} steht auf und kramt klimpernd in seinem Rucksack …`);
+    Snd.sfx('clink');
+  },
+  schoettliFollow() {
+    const a = this._shot, p = G.player;
+    if (!G.npcs.includes(a)) { this._shot = null; return; }
+    if (!a._aisle) return;
+    const px = Math.floor(p.x / TS), py = Math.floor((p.y - 3) / TS);
+    const side = a.x < p.x ? -1 : 1;
+    const tgt = T2P(clamp(py === 4 ? px + side : px, 1, 62), 4);
+    if (Math.hypot(tgt.x - a.x, tgt.y - a.y) > 2) { if (!a.path || !a.path.length || a.path[0].x !== tgt.x) a.path = [tgt]; return; }
+    a.path = null; a.moving = false; a.dir = dirTo(a.x, a.y, p.x, p.y);
+    if (!G.busy) { this._shot = null; this.schoettli(a); }
+  },
+  async schoettli(k) {
+    G.busy++;
+    const meK = !k && G.S.pid === 'kusi';
+    const K = meK ? 'me' : 'kusi';
+    const late = latecomer();
+    const crew = G.npcs.filter((n) => n.friend && n.id !== 'kusi').map((n) => n.id);
+    const sch = voice('schnaps'), party = voice('party');
+    const KINDS = [
+      { n: 'Appenzeller', t: 'Appenzeller Alpenbitter – 42 Kräuter, und keiner weiss, welche.' },
+      { n: 'Pflümli', t: 'Pflümli – wie bei Grosi nach dem Sonntagsbraten.' },
+      { n: 'Kleiner Feigling', t: 'Kleiner Feigling – mit Ritual: klopfen, aufschrauben, ex!' },
+    ];
+    if (k) { k.bubble = '!'; k.bubbleT = 1.5; await sleep(350); }
+    if (meK) {
+      UI.toast('Dein Rucksack klimpert verdächtig …');
+      await this.say(null, 'Im Rucksack, sauber in Socken eingewickelt: zwölf Mini-Fläschli. Du hast sie extra für die Grenze eingepackt.');
+      await this.say('me', 'Jungs! Mir sind grad über d\'Grenze – Österreich! Das schreit nach ere Schöttli-Rundi!');
+    } else {
+      await this.say(K, `${G.S.name}! Mir sind grad über d'Grenze – Österreich! Das schreit nach ere Schöttli-Rundi!`);
+      await this.say(null, `${fname('kusi')} öffnet seinen Rucksack: Zwischen Socken und Ladekabel klimpern zwölf Mini-Fläschli.`);
+      await this.say(K, `Eis für jede – und eis für de ${fname(late)} im Taxi. Das trink ich stellvertretend. Isch Ehresach.`);
+    }
+    if (crew.length) await this.say(pick(crew), pick(['SCHÖTT-LI! SCHÖTT-LI! SCHÖTT-LI!', 'Kusi, du bisch en Held!', 'Ich han gwüsst, dass de Rucksack z\'schwer isch für nur e Zahbürschte.']));
+    const opts = KINDS.map((x) => ({ t: x.t }));
+    if (!meK) opts.push({ t: 'Für mich lieber ein Rivella' });
+    let c = await this.ask(meK ? null : K, meK ? 'Was schenkst du aus?' : 'Was nimmsch?', opts);
+    let declined = c === 3;
+    if (declined) {
+      await this.say(K, pick(['E RIVELLA?! Mir sind doch nöd uf de Schuelreis!', 'Rivella? Bisch du de Chauffeur oder was? De Zug fahrt sälber!']));
+      await this.say(party, 'Fei-gling! Fei-gling! Fei-gling!');
+      const c2 = await this.ask(null, 'Der ganze Vierertisch klopft auf den Tisch.', [{ t: 'Okay, okay – gib her!' }, { t: 'Nein, ich bleib hart' }]);
+      if (c2 === 0) { c = 2; declined = false; await this.say(K, 'Gaht doch! Für dich: en Kleine Feigling. Passt irgendwie.'); }
+      else { mood(-3); await this.say(K, 'Guet. Dänn trink ich dis au no. Opfer muess mer bringe.'); }
+    }
+    const kind = declined ? 0 : c;
+    const pickFriends = crew.filter((x) => x !== late).slice(0, meK ? 4 : 3);
+    const sheets = pickFriends.map((id) => getSheet(FRIENDS[id].look));
+    const kSheet = FRIENDS.kusi ? getSheet(FRIENDS.kusi.look) : null;
+    const sceneOpts = (round) => ({ ms: round === 1 ? 6200 : 4200, friends: sheets, kusi: meK ? null : kSheet, meK, kind, declined, round,
+      text: round === 1 ? (kind === 2 ? 'Klopfen, aufschrauben, ex – Schöttli-Rundi im Railjet!' : `${KINDS[kind].n} für alle – Schöttli-Rundi im Railjet!`) : 'Zweite Runde. Kusi zahlt. Glaubt er.' });
+    await Scene.play('schoettli', sceneOpts(1));
+    if (!declined) { consume('schoettli', { silent: true }); achieve('schoettli'); mood(6); }
+    for (const id of crew) await this.friendDrink(id, 0.11);
+    if (!meK) G.S.fprom.kusi = Math.min(4, fprom('kusi') + (declined ? 0.22 : 0.11));
+    passTime(4);
+    if (kind === 1 && sch && sch !== 'kusi') await this.say(sch, 'Pflümli … das isch mis Revier. Aber okay, de Kusi het Gschmack.');
+    else if (kind === 0 && crew.length) await this.say(pick(crew), 'Brrr! Das butzt d\'Nase bis zum Arlberg.');
+    else if (crew.length) await this.say(pick(crew), 'Wieso heisst das eigentlich Feigling? Ich fühl mich grad mega mutig.');
+    const c3 = await this.ask(meK ? null : K, meK ? 'Es hat noch Fläschli im Rucksack. Noch eine Runde?' : 'No eis? Die zweiti isch für d\'Rückfahrt – die zahl ich jetzt scho!', [{ t: 'Klar, no eis!' }, { t: 'Nei merci, ich bin guet' }]);
+    if (c3 === 0) {
+      await Scene.play('schoettli', sceneOpts(2));
+      if (!declined) consume('schoettli', { silent: true }); mood(4);
+      for (const id of crew) await this.friendDrink(id, 0.11);
+      if (!meK) G.S.fprom.kusi = Math.min(4, fprom('kusi') + 0.11);
+      passTime(3);
+      await this.say(pick(crew.length ? crew : [K]), pick(['Zwei Schöttli und mir sind no nid emal in Innsbruck. Das wird en Tag.', 'Ich gspür mini Zähn nümme. Super.', 'Wer zellt eigentlich mit? … Niemer? Guet.']));
+    } else await this.say(meK ? null : K, meK ? 'Du packst die restlichen Fläschli wieder ein. Disziplin!' : 'Vernünftig. Langwiilig, aber vernünftig.');
+    if (!meK) {
+      addInv('schoettli');
+      await this.say(K, 'Do, eis für Notfäll. Nöd säge, dass ich nöd für dich luege.');
+      UI.toast('🎒 Schöttli (Mini-Fläschli) erhalten');
+    }
+    G.busy--;
+    if (k && G.npcs.includes(k) && k.home) {
+      const h = k.home;
+      k.path = [T2P(Math.floor(k.x / TS), 4), T2P(Math.floor(h.x / TS), 4), { x: h.x, y: h.y }];
+      k.onArrive = () => { k.pose = 'sit'; k.dir = h.dir; k.keepDir = true; k.solid = true; k.bubbleRand = h.rand; k.home = null; };
     }
   },
   async arrive() {
@@ -2469,7 +2564,7 @@ const Story = {
   onEnter(m) {
     if (m.id === 'hotel_lobby' && G.S.stage === 'findHotel') this.setStage('checkin');
     if (m.id === 'bar' && G.S.stage === 'bar') setTimeout(() => this.barArrive(), 650);
-    if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; this._cond = null; }
+    if (m.id === 'zug' && G.S.stage === 'ride') { this._announced = {}; this._cond = null; this._shot = null; }
   },
   async buy(def, item, cur, opts = {}) {
     if (item.special === 'hair' || item.special === 'beard') {
