@@ -922,7 +922,7 @@ function drawLarve(c, x, y, a) {
 Object.assign(Sur, {
   spawnGuuggen() {
     const cols = [['#e8c23a', '#c8302a', 'pauke'], ['#3f8ec8', '#f4f0e6', 'trompete'], ['#e3589c', '#ffd23d', 'trompete'], ['#3f8e4b', '#c8302a', 'pauke'], ['#f4f0e6', '#2f5fb8', 'sousa']];
-    const pos = [[53, 42], [54, 43], [55, 42], [56, 43], [55, 45]];
+    const pos = [[53, 46], [54, 47], [55, 46], [56, 47], [55, 48]];
     cols.forEach(([c1, c2, ins], i) => {
       const pf = ins === 'sousa';
       const a = new Actor({ id: pf ? 'su_sousa' : 'su_guugge' + i, name: pf ? 'Sousaphonist mit Larve' : 'Diebetormtöibeler', look: npcLook(4100 + i, { top: 4, topCol: [3, 9, 12, 6, 13][i], pants: 4, pantsCol: 2, hat: 0 }), x: pos[i][0] * 16 + 8, y: pos[i][1] * 16 + 12, dir: 0, solid: true, keepDir: true, larve: c1, larve2: c2, instr: ins, extra: drawLarve, bubbleRand: ['note'], danceIdle: !pf,
