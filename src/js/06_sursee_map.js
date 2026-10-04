@@ -242,17 +242,56 @@ function objStadthalle(x, y) {
     R(c, W - 10, H - 30, 4, 20, '#1a1a2a'); R(c, 12, H - 32, 14, 16, '#1a1a2a'); R(c, 13, H - 31, 12, 7, '#e85a3a'); pxText(c, 'SG', 14, H - 22, '#ffd23d');
   }, { solid: true, emit: (c, W, H) => { const eave = 64; R(c, 18, eave + 1, W - 80, 8, '#ffe8b0'); R(c, W - 42, H - 30, 30, 30, '#ffe2a0'); for (let xx = 12; xx < W - 56; xx += 14) R(c, xx, H - 20, 4, 5, '#ffd27a'); } });
 }
-/* Surseepark: Einkaufszentrum mit Glasfront und grossem Migros-M */
+/* Surseepark nach Foto: links ein hoher Glaswürfel mit grauen Geschossbändern, rechts ein grauer Rippenblech-Bau mit Glasband
+   oben und grün-gelb verglastem Erdgeschoss, dazwischen der Eingang. Stele und Passerelle sind eigene Objekte. */
 function objSurseepark(x, y, w, h) {
-  return mkObj(x, y, w, h, 10, (c, W, H) => {
-    paintRoof(c, W, H - 52, { roofType: 'flat', roof: '#6a6e74' }, rng(5));
-    R(c, 0, H - 52, W, 52, '#c9ccd2'); R(c, 0, H - 52, W, 3, '#e8eaec');
-    R(c, 6, H - 34, W - 12, 31, '#5a7086'); for (let xx = 6; xx < W - 6; xx += 14) R(c, xx, H - 34, 1, 31, '#3a4a5a'); R(c, 6, H - 22, W - 12, 1, '#3a4a5a');
-    for (let i = 0; i < 30; i++) R(c, 8 + hash(i, 2) * (W - 20), H - 18 + hash(i, 3) * 10, 3, 4, ['#ff7a1a', '#e8c23a', '#3f8e4b', '#c8352d', '#2f5fb8'][i % 5]);
-    R(c, 10, H - 49, 70, 11, '#2a2e34'); pxText(c, 'SURSEEPARK', 14, H - 46, '#ffffff');
-    R(c, W - 30, H - 50, 18, 14, '#ff6a00'); pxText(c, 'M', W - 24, H - 46, '#ffffff');
-    R(c, W / 2 - 16, H - 34, 32, 31, '#2a3440'); R(c, W / 2 - 1, H - 34, 2, 31, '#8a9aa8');
-  }, { solid: true, emit: (c, W, H) => { R(c, 6, H - 34, W - 12, 31, '#ffe8b8'); R(c, W - 30, H - 50, 18, 14, '#ff8a20'); pxText(c, 'M', W - 24, H - 46, '#ffffff'); pxText(c, 'SURSEEPARK', 14, H - 46, '#ffffff'); } });
+  return mkObj(x, y, w, h, 40, (c, W, H) => {
+    const LW = 150, rd = 34, lTop = 0, rTop = 28, gH = 22;
+    /* Dächer von oben */
+    R(c, 0, lTop, LW, rd, '#8a8e94'); R(c, 2, lTop + 2, LW - 4, rd - 4, '#9a9ea4'); for (let i = 0; i < 40; i++) P(c, 4 + hash(i, 71) * (LW - 8), lTop + 4 + hash(i, 72) * (rd - 8), '#878b91');
+    R(c, 20, lTop + 10, 16, 8, '#c4c8cc'); R(c, 100, lTop + 14, 22, 10, '#b8bcc0'); for (let k = 0; k < 4; k++) R(c, 102 + k * 5, lTop + 16, 3, 6, '#8a8e94');
+    R(c, LW, rTop, W - LW, rd, '#7a7e84'); R(c, LW + 2, rTop + 2, W - LW - 4, rd - 4, '#8a8e94'); R(c, LW + 30, rTop + 8, 40, 14, '#3a6a78'); for (let xx = LW + 32; xx < LW + 70; xx += 6) R(c, xx, rTop + 8, 1, 14, '#8ab8c8');
+    /* linker Glaswürfel: Glasreihen mit grauen Bändern */
+    const lf = lTop + rd;
+    for (let yy = lf, k = 0; yy < H - gH; yy += 15, k++) {
+      R(c, 0, yy, LW, 3, '#a4a8ae'); R(c, 0, yy + 2, LW, 1, '#7a7e84');
+      R(c, 0, yy + 3, LW, 12, k < 3 ? '#7ab0c0' : '#4f8a98');
+      for (let xx = 0; xx < LW; xx += 12) R(c, xx, yy + 3, 1, 12, '#3e5a66');
+      for (let i = 0; i < 4; i++) { const sx = (k * 37 + i * 41) % (LW - 20); R(c, sx, yy + 4, 8, 1, 'rgba(230,245,250,0.6)'); }
+    }
+    R(c, LW - 3, lf, 3, H - lf, '#5a6a74');
+    /* rechter Bau: Glasband oben, Rippenblech, grün-gelbes Erdgeschoss */
+    const rf = rTop + rd;
+    R(c, LW, rf, W - LW, 22, '#6aa8b8'); for (let xx = LW; xx < W; xx += 10) R(c, xx, rf, 1, 22, '#3e5a66'); R(c, LW, rf + 21, W - LW, 2, '#8a8e94');
+    R(c, LW, rf + 23, W - LW, H - gH - rf - 23, '#7c8088'); for (let xx = LW; xx < W; xx += 3) R(c, xx, rf + 23, 1, H - gH - rf - 23, '#6a6e76');
+    R(c, LW, H - gH, W - LW, gH, '#b8d040'); for (let xx = LW; xx < W; xx += 12) R(c, xx, H - gH, 1, gH, '#6a8a2a'); R(c, LW, H - gH, W - LW, 2, '#5a6a74');
+    for (let i = 0; i < 14; i++) R(c, LW + 6 + hash(i, 73) * (W - LW - 16), H - 14 + hash(i, 74) * 8, 3, 4, ['#ff7a1a', '#e8c23a', '#3f8e4b', '#c8352d', '#2f5fb8'][i % 5]);
+    R(c, W - 26, H - gH - 14, 16, 12, '#ff6a00'); pxText(c, 'M', W - 21, H - gH - 11, '#ffffff');
+    /* Erdgeschoss links: dunkleres Glas mit Läden */
+    R(c, 0, H - gH, LW, gH, '#2e4a56'); for (let xx = 0; xx < LW; xx += 12) R(c, xx, H - gH, 1, gH, '#5a7a86');
+    for (let i = 0; i < 16; i++) R(c, 4 + hash(i, 75) * (LW - 40), H - 14 + hash(i, 76) * 8, 3, 4, ['#ff7a1a', '#e8c23a', '#3f8e4b', '#c8352d', '#2f5fb8'][i % 5]);
+    /* Eingang zwischen den Bauten */
+    R(c, 126, H - gH - 6, 36, gH + 6, '#5a6a74'); R(c, 128, H - gH, 32, gH, '#1e2a32'); R(c, 143, H - gH, 2, gH, '#8a9aa8');
+    R(c, 124, H - gH - 14, 40, 9, '#ffffff'); pxText(c, 'SURSEEPARK', 125, H - gH - 13, '#1f6ab8');
+  }, { solid: true, emit: (c, W, H) => { const gH = 22; R(c, 0, H - gH, 150, gH, '#ffe8b8'); R(c, 150, H - gH, W - 150, gH, '#f4ff9a'); R(c, 124, H - gH - 14, 40, 9, '#ffffff'); pxText(c, 'SURSEEPARK', 125, H - gH - 13, '#1f6ab8'); R(c, W - 26, H - 36, 16, 12, '#ff8a20'); for (let k = 0; k < 5; k++) for (let xx = 0; xx < 150; xx += 12) if (hash(xx, k, 77) > 0.6) R(c, xx + 1, 37 + k * 15, 11, 12, '#fff2c8'); } });
+}
+/* Stele vor dem Surseepark: hoch, weiss, blauer Schriftzug senkrecht, Ladenlogos darunter */
+function objParkStele(x, y) {
+  return mkObj(x, y, 1, 1, 72, (c, W, H) => {
+    E(c, 8, H - 2, 6, 2, 'rgba(0,0,0,0.2)');
+    R(c, 3, 2, 10, H - 4, '#f2f4f6'); R(c, 11, 2, 2, H - 4, '#c8ccd2'); R(c, 3, 2, 10, 4, '#3a3e44');
+    const t = 'SURSEEPARK'; for (let i = 0; i < t.length; i++) pxText(c, t[i], 5, 8 + i * 7, '#1f6ab8');
+    for (let i = 0; i < 4; i++) R(c, 4, 76 + i * 3, 7, 2, ['#c8302a', '#2f5fb8', '#3f8e4b', '#ff6a00'][i]);
+  }, { solid: true, emit: (c, W, H) => { R(c, 3, 6, 10, 70, 'rgba(255,255,255,0.9)'); const t = 'SURSEEPARK'; for (let i = 0; i < t.length; i++) pxText(c, t[i], 5, 8 + i * 7, '#1f6ab8'); } });
+}
+/* Glas-Passerelle mit Diagonalstreben vom Surseepark über die Strasse zum Parkhaus */
+function objPasserelle(x, y, w) {
+  return mkObj(x, y, w, 1, 70, (c, W, H) => {
+    const ty = 0, th = 26;
+    R(c, 0, ty, W, th, '#8ad0d8'); R(c, 0, ty, W, 3, '#5a6a74'); R(c, 0, ty + th - 4, W, 4, '#6a7a84'); R(c, 0, ty + th, W, 2, '#4a545c');
+    for (let xx = 0; xx < W; xx += 20) { line(c, xx, ty + th - 4, xx + 10, ty + 3, '#3e5a66'); line(c, xx + 10, ty + 3, xx + 20, ty + th - 4, '#3e5a66'); }
+    for (let xx = 4; xx < W; xx += 28) R(c, xx, ty + 6, 10, 1, 'rgba(240,250,255,0.7)');
+  }, { solid: false, sortOff: 0, emit: (c, W) => { R(c, 0, 3, W, 19, 'rgba(255,240,200,0.55)'); } });
 }
 /* Moderner Wohnblock (Münstervorstadt) */
 function objBlock(x, y, w, h, col = '#e4e0d8', o = {}) {
@@ -508,7 +547,15 @@ MAP_BUILDERS.sursee = () => {
   m.fill(19, 24, 20, 12, T.PAVE, 2);
   m.add(objSurseepark(20, 27, 18, 8));
   m.warp(28, 34, 'surseepark', 'entry', { w: 2, label: 'Surseepark' }); m.spawn('surseepark_out', 28, 36, 0);
-  m.add(objPlanter(20, 35)); m.add(objPlanter(37, 35, '#f2c23a'));
+  m.add(objPlanter(20, 35)); m.add(objPlanter(23, 35, '#c8302a')); m.add(objParkStele(26, 35));
+  m.add(objVelos(31, 35, 3)); m.add(objPlanter(37, 35, '#f2c23a'));
+  /* Passerelle über die Strasse zum Parkhaus */
+  m.add(mkObj(42, 26, 5, 8, 30, (c, Wd, Hd) => {
+    R(c, 0, 0, Wd, 36, '#8a8e94'); R(c, 2, 2, Wd - 4, 32, '#9a9ea4'); for (let k = 0; k < 4; k++) R(c, 6 + k * 18, 10, 12, 6, ['#c8302a', '#e8e4dc', '#2f5fb8', '#3a3c40'][k]);
+    for (let f = 0; f < 5; f++) { const fy = 36 + f * 22; R(c, 0, fy, Wd, 4, '#c4c6c8'); R(c, 0, fy + 4, Wd, 18, '#4a4e54'); for (let xx = 4; xx < Wd; xx += 10) R(c, xx, fy + 4, 2, 18, '#9a9ea4'); }
+    R(c, Wd - 22, 40, 16, 16, '#1f5fb8'); pxText(c, 'P', Wd - 16, 44, '#ffffff');
+  }, { solid: true }));
+  m.add(objPasserelle(38, 33, 4));
   /* Kapuzinerkloster an der Geuenseestrasse */
   m.fill(40, 4, 2, 32, T.ASPH); m.fill(40, 4, 2, 32, T.ASPH, 0);
   m.fill(26, 6, 13, 12, T.GRAVEL);
@@ -544,7 +591,7 @@ MAP_BUILDERS.sursee = () => {
   m.fill(43, 0, 13, 24, T.GRASS, 2);
   m.fill(50, 0, 2, 64, T.WATER);
   m.fill(50, 37, 2, 4, T.BRIDGE);
-  for (const [x, y, k] of [[45, 4, 'green'], [47, 12, 'yellow'], [44, 19, 'green'], [48, 27, 'autumn'], [46, 32, 'green'], [54, 6, 'green']]) m.add(objTree(x, y, k, k === 'green'));
+  for (const [x, y, k] of [[45, 4, 'green'], [47, 12, 'yellow'], [44, 19, 'green'], [48, 27, 'autumn'], [48, 34, 'green'], [54, 6, 'green']]) m.add(objTree(x, y, k, k === 'green'));
   m.birdSpots.push({ x: 50, y: 10, w: 2, h: 18, n: 4, kind: 'duck' });
   /* St. Urban-Strasse am Ostufer bis zur Stadthalle */
   m.fill(52, 9, 2, 28, T.ASPH); m.fill(52, 9, 20, 2, T.ASPH);
