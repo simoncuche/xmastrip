@@ -158,19 +158,28 @@ function objDiebenturm(x, y) {
     R(c, 8, H - 34, W - 16, 8, '#2a2a2e'); pxText(c, '1681', W / 2 - 8, H - 33, '#e8dcc0');
   }, { solid: true });
 }
-/* Stadthalle: moderne Halle mit Glasfront, Vordach und Leuchtschrift */
+/* Stadthalle (eröffnet 1988): ein Kind der Achtzigerjahre – knallgrüne Verkleidung, gelbe Rohre als Tragwerk und Geländer, blaue Akzente */
 function objStadthalle(x, y) {
-  return mkObj(x, y, 16, 8, 16, (c, W, H) => {
-    R(c, 0, 4, W, 12, '#5a5e64'); R(c, 0, 4, W, 2, '#8a8e94');
-    R(c, 0, 16, W, H - 16, '#d8d0b8'); for (let xx = 0; xx < W; xx += 8) R(c, xx, 16, 1, H - 40, '#c8bea4');
-    R(c, 0, H - 40, W, 4, '#3a3c40');
-    R(c, 20, H - 36, W - 40, 36, '#2a3440'); for (let xx = 20; xx < W - 20; xx += 12) R(c, xx, H - 36, 1, 36, '#6a7a88'); R(c, 20, H - 20, W - 40, 1, '#6a7a88');
-    R(c, 10, H - 44, W - 20, 6, '#c8b040'); R(c, 10, H - 38, W - 20, 2, '#8a7a2a');
-    pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 22, '#2a2a18');
-    /* Konzertplakat */
-    R(c, 6, H - 34, 12, 18, '#1a1a2a'); R(c, 7, H - 33, 10, 7, '#e85a3a'); pxText(c, 'SG', 8, H - 24, '#ffd23d');
-    R(c, W - 18, H - 34, 12, 18, '#1a1a2a'); R(c, W - 17, H - 33, 10, 7, '#3a8ae8'); R(c, W - 16, H - 24, 8, 2, '#ffffff');
-  }, { solid: true, emit: (c, W, H) => { R(c, 20, H - 36, W - 40, 36, '#ffe2a0'); for (let xx = 20; xx < W - 20; xx += 12) R(c, xx, H - 36, 1, 36, '#c8a060'); pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 22, '#ffd23d'); } });
+  return mkObj(x, y, 16, 8, 22, (c, W, H) => {
+    const G1 = '#3fb04a', G2 = '#2f8f3a', G3 = '#5fc864', Y = '#f2d020', YD = '#c8a818', B = '#2f6ec8';
+    /* flaches, leicht gewölbtes Dach mit Wellblech */
+    R(c, 0, 6, W, 22, '#c9ccd2'); for (let xx = 0; xx < W; xx += 3) R(c, xx, 6, 1, 22, '#aeb2b8'); R(c, 0, 26, W, 3, '#8a8e94');
+    /* grüne Fassade mit Profilblech */
+    R(c, 0, 29, W, H - 29, G1); for (let xx = 0; xx < W; xx += 4) R(c, xx, 29, 1, H - 29, G2); R(c, 0, 29, W, 2, G3);
+    /* gelbes Rohrtragwerk: Stützen, Diagonalen und ein durchlaufendes Rohr über dem Dach */
+    for (let xx = 6; xx < W; xx += 32) { R(c, xx, 10, 4, H - 10, Y); R(c, xx + 3, 10, 1, H - 10, YD); E(c, xx + 2, 10, 3, 3, Y); }
+    R(c, 0, 12, W, 3, Y); R(c, 0, 14, W, 1, YD);
+    for (let xx = 6; xx < W - 32; xx += 32) { line(c, xx + 4, 16, xx + 32, 34, Y); line(c, xx + 4, 34, xx + 32, 16, Y); }
+    /* blaue Fensterbänder und Eingang mit Glasfront */
+    R(c, 12, 40, W - 24, 10, B); for (let xx = 14; xx < W - 14; xx += 10) R(c, xx, 42, 7, 6, '#9ac8f0');
+    R(c, W / 2 - 40, H - 38, 80, 38, '#24303c'); for (let xx = W / 2 - 40; xx < W / 2 + 40; xx += 10) R(c, xx, H - 38, 2, 38, B); R(c, W / 2 - 40, H - 22, 80, 2, B);
+    /* gelbes Vordach auf Rohrstützen */
+    R(c, W / 2 - 48, H - 44, 96, 5, Y); R(c, W / 2 - 48, H - 40, 96, 1, YD); for (const px of [W / 2 - 46, W / 2 + 42]) R(c, px, H - 40, 3, 40, Y);
+    pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 32, '#ffffff');
+    /* Konzertplakate */
+    R(c, 8, H - 34, 14, 20, '#1a1a2a'); R(c, 9, H - 33, 12, 8, '#e85a3a'); pxText(c, 'SG', 11, H - 23, '#ffd23d');
+    R(c, W - 22, H - 34, 14, 20, '#1a1a2a'); R(c, W - 21, H - 33, 12, 8, '#3a8ae8'); R(c, W - 20, H - 23, 10, 2, '#ffffff');
+  }, { solid: true, emit: (c, W, H) => { R(c, W / 2 - 40, H - 38, 80, 38, '#ffe2a0'); for (let xx = 14; xx < W - 14; xx += 10) R(c, xx, 42, 7, 6, '#ffe8b0'); pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 32, '#ffd23d'); } });
 }
 /* Surseepark: Einkaufszentrum mit Glasfront und grossem Migros-M */
 function objSurseepark(x, y, w, h) {
@@ -439,10 +448,14 @@ MAP_BUILDERS.sursee = () => {
   /* Theaterstrasse hinter der oberen Häuserreihe */
   m.fill(52, 27, 44, 3, T.COBBLE, 1);
   /* Sankturbanhof und Stadttheater beim Obertor */
-  m.add(objBuilding(55, 21, 7, 6, { floors: 3, wall: '#efe0c0', roof: '#7a4a3a', trim: '#fbf4dc', seed: 91, wins: 'tall', lintel: true, flowers: false, drawH: 12, doors: [{ dx: 3, col: '#5a3a24' }], sign: { text: 'SANKTURBANHOF', bg: '#5a4a38', fg: '#f4e8c0' } }));
+  /* Sankturbanhof (1596–1598): Amtshaus des Klosters St. Urban mit Treppengiebeln und Erker */
+  m.add(objBuilding(55, 21, 7, 6, { floors: 3, wall: '#efe0c0', roof: '#7a4a3a', trim: '#fbf4dc', seed: 91, wins: 'tall', lintel: true, flowers: false, drawH: 22, doors: [{ dx: 3, col: '#5a3a24' }], sign: { text: 'SANKTURBANHOF', bg: '#5a4a38', fg: '#f4e8c0' }, erker: [5, 1], erkerCol: '#f4e8cc',
+    special: (c, Wd, Hd, fy0) => { for (const [gx, d] of [[0, 1], [Wd - 22, -1]]) for (let st = 0; st < 5; st++) { const ww = 22 - st * 4, xx = d > 0 ? gx : gx + st * 4; R(c, xx, fy0 - 26 + st * 5, ww, 6, st % 2 ? '#efe0c0' : '#f6ead0'); R(c, xx, fy0 - 26 + st * 5, ww, 1, '#fffaf0'); } } }));
   m.warp(58, 26, 'sankturbanhof', 'entry', { label: 'Museum Sankturbanhof', guard: () => Sur.openGuard('museum') }); m.spawn('sankturbanhof_out', 58, 27, 0);
   m.trig(55, 28, 6, 1, { here: true, label: 'Foto: Sankturbanhof', act: () => Sur.photo('sankturbanhof'), cond: () => !Sur.hasPhoto('sankturbanhof') });
-  m.add(objBuilding(62, 20, 8, 7, { floors: 3, wall: '#e8d8e0', roof: '#5a4a6a', trim: '#ffffff', seed: 93, wins: 'tall', flowers: false, drawH: 10, doors: [{ dx: 4, col: '#5a2a4a', lit: true }], sign: { text: 'STADTTHEATER', bg: '#5a3a6a', fg: '#ffffff', lit: true } }));
+  /* Stadttheater (1925/26, historisierend; 1998–2000 mit neuem Foyer und Bühnenhaus erweitert) */
+  m.add(objBuilding(62, 20, 8, 7, { floors: 3, wall: '#ece4d4', roof: '#6a5a52', trim: '#ffffff', seed: 93, wins: 'arch', lintel: true, corner: true, flowers: false, drawH: 14, doors: [{ dx: 4, type: 'glass', lit: true }], shopWins: [5, 6, 7], goods: ['#e8c890', '#c8352d'], sign: { text: 'STADTTHEATER', bg: '#2a2a2e', fg: '#f4e8c0', lit: true },
+    special: (c, Wd, Hd, fy0) => { R(c, Wd - 48, Hd - 20, 48, 20, '#5a6a78'); R(c, Wd - 46, Hd - 18, 44, 14, '#9ac0d8'); for (let xx = Wd - 46; xx < Wd - 2; xx += 8) R(c, xx, Hd - 18, 1, 14, '#5a6a78'); R(c, 6, fy0 - 14, Wd - 60, 14, '#ece4d4'); for (let k = 0; k < 7; k++) R(c, 6 + (Wd - 60) / 2 - k * 4, fy0 - 21 + k, k * 8, 1, '#ece4d4'); } }));
   m.warp(66, 26, 'theater', 'entry', { label: 'Stadttheater', guard: () => Sur.openGuard('theater') }); m.spawn('theater_out', 66, 27, 0);
   /* Murihof (Theaterstrasse 2): ehemalige Stadtburg der Kyburger und Habsburger, ältestes Steingebäude der Altstadt, seit Ende 14. Jh. Hof des Klosters Muri */
   m.fill(64, 19, 7, 1, T.COBBLE, 1);

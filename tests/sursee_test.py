@@ -30,6 +30,8 @@ with sync_playwright() as p:
     }, 30); setInterval(() => { const x = document.querySelector('#miniX'); if (x) x.click(); }, 1500); }""")
 
     def run(js, wait=0.4, q=None):
+        if os.environ.get("VERBOSE"):
+            print("·", js[:70], flush=True)
         if q is not None:
             pg.evaluate(f"window.__q = {json.dumps(q)}")
         pg.evaluate(f"async () => {{ G.busy++; try {{ {js} }} finally {{ G.busy--; }} }}")
@@ -127,10 +129,17 @@ with sync_playwright() as p:
         time.sleep(0.2)
         pg.evaluate("() => UI.closeOverlay()")
     # Spielende in Luzern: neues Spiel, Heimreise, durch die Halle heimgehen
-    pg.evaluate("async () => { clearSave(); const S3 = newState(randomLook(rng(4), {}), 'Cuche'); S3.pid = 'cuche'; await startGame(S3, true); G.S.stage = 'free'; G.S.time = 1440 + 15 * 60; enterMap('ibk', 'hbf'); }")
+    pg.evaluate("() => { clearSave(); }")
+    pg.goto(URL)
+    time.sleep(0.8)
+    pg.evaluate("""() => { window.__q = []; setInterval(() => {
+      const c = document.querySelector('#endCont'); if (c) c.click();
+      if (UI.dlgOpen) { if (UI._choices && UI._pick) { const q = window.__q.length ? window.__q.shift() : 0; UI._pick(Math.min(q, UI._choices.length - 1)); } else UI.dlgAdvance(); }
+    }, 30); }""")
+    pg.evaluate("async () => { const S3 = newState(randomLook(rng(4), {}), 'Cuche'); S3.pid = 'cuche'; await startGame(S3, true); G.S.stage = 'free'; G.S.time = 1440 + 15 * 60; enterMap('ibk', 'hbf'); }")
     time.sleep(0.6)
     run("await Story.goHome();", 1.0)
-    pg.evaluate("window.__q = [0]; Sur.leaveLuzern();")
+    pg.evaluate("() => { window.__q = [0]; Sur.leaveLuzern(); }")
     time.sleep(1.0)
     expect("G.S.finished === 1 && G.mode === 'over'", "Spielende in Luzern fehlgeschlagen")
     pg.evaluate("() => { clearSave(); }")
