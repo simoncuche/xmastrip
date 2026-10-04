@@ -294,8 +294,8 @@ const Sur = {
       G.npcs = G.npcs.filter((n) => !n.follower);
       await sayP('isa', `${playerIsCuche() ? 'Da bist du ja, Schatz' : `Willkommen in Sursee, ${G.S.name}`}! Elin und Timo schlafen schon – sie wollten unbedingt wach bleiben, für den Detektiv. Morgen ab acht sind sie dabei.`);
     } else {
-      await sayP('elin', 'DA IST ER! Mami, er ist da!');
-      await sayP('timo', `Hoi ${G.S.name}! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!`);
+      await sayP('elin', 'PAPI! Mami, Papi ist da!');
+      await sayP('timo', 'Hoi Papi! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!');
     }
     await sayP('isa', `${playerIsCuche() ? 'Da bist du ja endlich' : `Willkommen in Sursee, ${G.S.name}`}! Also, hör zu. Die goldene Sonnenmaske der Zunft Heini von Uri ist weg. Die Zunft feiert dieses Jahr 150 Jahre, die Maske war in der Jubiläumsausstellung im Sankturbanhof.`);
     await sayP('isa', 'In der Nacht vor dem Martinstag haben sie die Maske in die Zunftstube beim Diebenturm gebracht – sie ist im ersten Stock des alten Waschhauses. Am Morgen war sie verschwunden – und die Gansabhauet fiel zum ersten Mal überhaupt aus.');
@@ -308,7 +308,7 @@ const Sur = {
       await sayP('isa', 'Der Diebenturm ist in der Unterstadt, beim Hirschenplatz – der Heinivater wartet dort, auch spät noch. Und das Gästebett bei uns in der Münstervorstadt 8 ist frisch bezogen.');
       UI.toast('Isa geht heim in die Münstervorstadt 8. Morgen früh begleiten dich Elin und Timo.');
     } else {
-      await sayP('elin', 'Wir kommen mit! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
+      await sayP('elin', 'Wir kommen mit, Papi! Wir kennen alle Schleichwege. Und wenn du nicht weiterweisst, sagen wir dir einen Tipp.');
       UI.toast('Isa geht heim in die Münstervorstadt 8. Elin und Timo bleiben bei dir.');
       this.spawnFollowers(true);
     }
@@ -468,11 +468,11 @@ const Sur = {
   },
   onEnter(m) {
     const s = this.st();
-    G.player.velo = !!s.velo && !m.indoor && ['sursee', 'sursee_see'].includes(m.id);
+    G.player.velo = !!s.velo && !s.veloOff && !m.indoor && ['sursee', 'sursee_see'].includes(m.id);
     if (m.id === 'zunftstube' && G.S.stage === 's_ankunft') setTimeout(() => this.tatortStart(), 600);
     if (m.id === 'sursee_see' && G.S.stage === 's_boot' && !s.bootReady) { s.bootReady = 1; setTimeout(() => this.bootsjagd(), 500); }
     if (m.id === 'inseli') s.photosInseli = 1;
-    if (m.id === 'muehle' && this.followOk()) setTimeout(() => { UI.toast(`💬 Timo: „Teigwaren mit Käse! Ohne Sauce! Nur Käse! Und noch mehr Käse!“`); setTimeout(() => UI.toast(`💬 Elin: „Pizza Margherita. Aber ${playerIsCuche() ? 'deine' : 'Papis'} Pizza ist besser. Psst, nicht dem Gino sagen.“`), 2600); }, 900);
+    if (m.id === 'muehle' && this.followOk()) setTimeout(() => { UI.toast(`💬 Timo: „Teigwaren mit Käse! Ohne Sauce! Nur Käse! Und noch mehr Käse!“`); setTimeout(() => UI.toast(`💬 Elin: „Pizza Margherita. Aber deine Pizza ist besser, Papi. Psst, nicht dem Gino sagen.“`), 2600); }, 900);
   },
   minute() {
     const s = this.st();
@@ -506,9 +506,9 @@ const Sur = {
     const fol = G.npcs.filter((n) => n.follower);
     if (!fol.length) return;
     const last = this._trail[this._trail.length - 1];
-    if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 3) { this._trail.push({ x: p.x, y: p.y }); if (this._trail.length > 60) this._trail.shift(); }
+    if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 3) { this._trail.push({ x: p.x, y: p.y }); if (this._trail.length > 80) this._trail.shift(); }
     for (const a of fol) {
-      const idx = this._trail.length - 1 - a.follower * 7;
+      const idx = this._trail.length - 1 - a.follower * 13;
       const tgt = idx >= 0 ? this._trail[idx] : null;
       if (!tgt) { a.moving = false; continue; }
       const dx = tgt.x - a.x, dy = tgt.y - a.y, d = Math.hypot(dx, dy);
@@ -635,7 +635,7 @@ Object.assign(Sur, {
   async kidTalk(k) {
     const st = G.S.stage;
     const opts = k === 'elin' ? ['Hast du einen Tipp?', 'Erzähl mal was!', 'Rechnen üben', 'Lauft mal kurz alleine heim', 'Weiter'] : ['Hast du einen Tipp?', 'Erzähl mal was!', 'Lauft mal kurz alleine heim', 'Weiter'];
-    const c = await askP(k, k === 'elin' ? pick(['Ich schreib alles ins Notizbuch!', 'Detektive brauchen Zvieri. Nur so als Tipp.', 'Wenn wir die Maske finden, darf ich sie dann mal anprobieren?']) : pick(['Ich glaub, der Täter ist der Achterbahn-Mann. Der hat eine Sonnenbrille. Im Dezember!', 'Darf ich nachher auf die Putschibahn?', 'Ich bin der Assistent. Assistent Timo.']), opts);
+    const c = await askP(k, k === 'elin' ? pick(['Papi, ich schreib alles ins Notizbuch!', 'Detektive brauchen Zvieri, Papi. Nur so als Tipp.', 'Papi, wenn wir die Maske finden, darf ich sie dann mal anprobieren?']) : pick(['Papi, ich glaub, der Täter ist der Achterbahn-Mann. Der hat eine Sonnenbrille. Im Dezember!', 'Papi, darf ich nachher auf die Putschibahn?', 'Ich bin dein Assistent, Papi. Assistent Timo.']), opts);
     const pick2 = opts[c];
     if (pick2 === 'Hast du einen Tipp?') await this.giveHint(true);
     if (pick2 === 'Erzähl mal was!') await sayP(k, this.kidFact(k));
@@ -700,7 +700,7 @@ Object.assign(Sur, {
     await sayP('heinivater', `Da seid ihr! Ich bin der Heinivater der Zunft Heini von Uri. Sie müssen ${G.S.name} sein – Isa hat Sie angekündigt. Willkommen in der Zunftstube.`);
     await sayP('heinivater', 'Hier, in dieser Vitrine, lag die Sonnenmaske. Seit 1880 tragen unsere Schläger an der Gansabhauet die Maske und den roten Mantel. Die Zunft kleidet sie ein und hängt die Gans auf. Und jetzt? Leer.');
     await sayP('heinivater', 'Die Polizei haben wir nicht geholt. Das regeln wir unter uns – und mit Ihnen. Suchen Sie den Raum ab. Wenn etwas glitzert, schauen Sie genau hin.');
-    await kidSay('elin', 'Drei Spuren! Ich spür das. Drei.');
+    await kidSay('elin', 'Papi, drei Spuren! Ich spür das. Drei.');
     this.setStage('s_tatort');
     G.busy--;
     saveGame(true);
@@ -719,7 +719,7 @@ Object.assign(Sur, {
     await sayP('heinivater', 'Ach ja: Auch ein roter Mantel fehlt. Nicht unserer – einer aus dem Fundus des Stadttheaters. Die Kostümbildnerin Bea hat es gemeldet.');
     await sayP('heinivater', 'Verdächtige gibt es genug. Roli von der Achterbahn. Bea vom Theater. Kari, der Schatzsucher im Zellmoos. Und Ruedi Pfister – unser ewiger Pechvogel. Zwanzig Jahre Schläger, nie getroffen.');
     for (const sp of SU_SUSPECTS) this.note('sus_' + sp.k, `Verdächtig: ${sp.n}`);
-    await kidSay('timo', 'Ich schreib alle auf! Das Notizbuch ist im Handy.');
+    await kidSay('timo', 'Ich schreib alle auf, Papi! Das Notizbuch ist in deinem Handy.');
     this.setStage('s_faehrten');
     UI.toast('Drei Fährten: Chilbi auf dem Märtplatz · See (Bootsvermietung am Quai) · Altstadt (Sankturbanhof und Stadttheater). Reihenfolge egal.');
     saveGame(true);
@@ -912,7 +912,7 @@ Object.assign(Sur, {
     this.prog();
     if (n < 3) { UI.toast(`Fährten: ${n}/3`); saveGame(true); return; }
     achieve('su_faehrten');
-    await kidSay('elin', 'Alle drei Fährten! R. P., roter Mantel, Sousaphon, Gamma-Inseli … Mami muss das hören!');
+    await kidSay('elin', 'Papi, alle drei Fährten! R. P., roter Mantel, Sousaphon, Gamma-Inseli … Mami muss das hören!');
     Snd.sfx('blip');
     await sayP('isa', '📱 Thierry und Louve rufen die ganze Zeit an! Sie haben im Ehret-Park etwas Goldenes gefunden. Beim Spielplatz!');
     this.setStage('s_strahl');
@@ -926,7 +926,7 @@ Object.assign(Sur, {
     addInv('strahl'); this.evid('strahl');
     this.note('strahl', 'Goldener Strahl der Sonnenmaske – gefunden von Thierry und Louve an der Sure im Ehret-Park. Der Dieb kam vom See.');
     Snd.sfx('win');
-    await sayP('timo', 'Das ist von der Maske! Zeig es Mami!');
+    await sayP('timo', 'Papi, das ist von der Maske! Zeig es Mami!');
     this.prog();
     saveGame(true);
   },
@@ -972,7 +972,7 @@ Object.assign(Sur, {
     G.busy++;
     await Story.say('me', 'Schönes Sousaphon. Sagen Sie … Pech gehabt in letzter Zeit? Mit einer Maske vielleicht? Einer goldenen?');
     await Story.say('Sousaphonist mit Larve', '…');
-    if (this.followOk()) await sayP('elin', 'Er hat einen roten Mantel unter der Jacke!');
+    if (this.followOk()) await sayP('elin', 'Papi, er hat einen roten Mantel unter der Jacke!');
     Snd.sfx('whoosh');
     await Story.say('Sousaphonist mit Larve', 'PECH GEHABT!');
     await Story.say(null, 'Er lässt das Sousaphon fallen, springt auf ein Velo und rast durch das Untertor davon – Richtung Unterstadt!');
@@ -980,7 +980,7 @@ Object.assign(Sur, {
     await Story.say(this.followOk() ? 'me' : null, this.followOk() ? 'Elin, dein Velo! Ich bring es dir zurück!' : 'Neben dem Wilden Mann steht ein Velo. Du schwingst dich drauf.');
     let r = await this.mini('velo', 'chase');
     if (!(r && r.ok)) {
-      await kidSay('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, du schaffst das!');
+      await kidSay('timo', 'Er biegt beim Hirschenplatz ab! Hinterher, Papi, du schaffst das!');
       r = await this.mini('velo', 'chase');
     }
     if (r && r.ok) { achieve('su_velo'); await Story.say('me', 'Er fährt zum See! Ich bleib dran!'); }
@@ -1092,7 +1092,7 @@ Object.assign(Sur, {
     await Story.say(null, 'Vor dem Rathaus hängt an einem Draht die Gans. Hunderte Menschen stehen in der Gasse, auf den Treppen, in den Fenstern. Die Tambouren wirbeln.');
     const kids = ['Elin', 'Timo', 'Thierry'];
     for (;;) {
-      const c = await askP('elin', 'Zuerst die Kinderspiele! Machst du mit?', ['Sackgumpe', 'Chäszänne (Grimassen)', 'Stangechlädere', 'Weiter zur Gansabhauet']);
+      const c = await askP('elin', 'Zuerst die Kinderspiele, Papi! Machst du mit?', ['Sackgumpe', 'Chäszänne (Grimassen)', 'Stangechlädere', 'Weiter zur Gansabhauet']);
       if (c === 3) break;
       if (c === 0) { const r = await this.mini('sackgumpe', kids); if (r && r.place === 1) { achieve('su_kinder'); UI.toast('Erster im Sackgumpe!'); } }
       if (c === 1) { const r = await this.mini('chaeszaenne'); if (r && r.win) { achieve('su_kinder'); addInv('chaeschuechli'); UI.toast('Die grässlichste Grimasse! Du gewinnst ein Stück Käse.'); } }
@@ -1117,7 +1117,7 @@ Object.assign(Sur, {
     achieve('su_zunft');
     await sayP('heinivater', `Liebe Surseerinnen und Surseer! Ohne ${G.S.name} gäbe es heute keine Gansabhauet. Im Namen der Zunft Heini von Uri: Ehrenzünftler auf Lebenszeit!`);
     await sayP('isa', playerIsCuche() ? 'Ich bin so stolz auf dich, Schatz.' : `${G.S.name}, du bist ab heute offiziell ein Surseer. Fast.`);
-    await sayP('timo', 'Ich war der Assistent! Assistent Timo!');
+    await sayP('timo', 'Papi, ich war der Assistent! Assistent Timo!');
     G.live = null;
     const c2 = await Story.ask('Diebetormtöibeler', 'Und jetzt: Musik! Spielst du mit?', ['Mitschränzen', 'Zuhören']);
     if (c2 === 0) { const r = await this.mini('rhythm', 'guugge'); if (r && r.pct >= 50) achieve('su_guugge'); }
@@ -1175,7 +1175,8 @@ Object.assign(Sur, {
     this.hintLvl = Math.min(2, this.hintLvl + 1);
     const k = this.followOk() ? (this.hintLvl === 1 ? 'elin' : 'timo') : 'elin';
     const t = this.hintText(this.hintLvl);
-    if (this.followOk()) await sayP(k, t); else await sayP(k, '📱 ' + t);
+    const tp = 'Papi, ' + t.charAt(0).toLowerCase() + t.slice(1);
+    if (this.followOk()) await sayP(k, tp); else await sayP(k, '📱 ' + tp);
   },
   hintTick() {
     const s = this.st();
@@ -1263,9 +1264,9 @@ Object.assign(Sur, {
     const c = await Story.ask(null, 'Velostation: Mietvelo für den ganzen Tag, 15 CHF. Damit bist du draussen fast doppelt so schnell.', ['Mieten (15 CHF)', 'Lieber zu Fuss']);
     if (c !== 0) return;
     if (!pay('chf', 15)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
-    s.velo = 1; G.player.velo = true; achieve('su_velofahrer');
-    UI.toast('🚲 Velo gemietet! In Häusern stellst du es automatisch ab.');
-    if (this.followOk()) await kidSay('timo', 'VELO! Ich fahr mit meinem eigenen! Ohne Stützräder! Schau, Elin, ohne Hände! … Fast.');
+    s.velo = 1; s.veloOff = 0; G.player.velo = true; achieve('su_velofahrer');
+    UI.toast('🚲 Velo gemietet! Mit A steigst du ab und wieder auf, wenn gerade nichts anderes vor dir ist.');
+    if (this.followOk()) await kidSay('timo', 'Papi, VELO! Ich fahr mit meinem eigenen! Ohne Stützräder! Schau, Elin, ohne Hände! … Fast.');
   },
   async chilbi(kind) {
     if (!isOpen('chilbi')) { await Story.say(null, 'Die Chilbi ist zu. Offen 10–24 Uhr.'); return; }
@@ -1338,12 +1339,12 @@ Object.assign(Sur, {
   },
   /* ---------- Familie: Sprüche, Rechnen, Kita, Gitarre, Kaffee, Bauernhof-Quiz ---------- */
   kidFact(k) {
-    const papa = playerIsCuche() ? 'deine' : 'Papis', wk = dayOf(G.S.time) % 7 > 2 && hourOf(G.S.time) < 12;
+    const papa = 'deine', wk = dayOf(G.S.time) % 7 > 2 && hourOf(G.S.time) < 12;
     const F = {
-      elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', `Die besten Pizzas der Welt sind ${papa}. Besser als in der Mühle. Aber sag das nicht dem Gino.`,
+      elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', `Die besten Pizzas der Welt sind ${papa}, Papi. Besser als in der Mühle. Aber sag das nicht dem Gino.`,
         'Wenn ich gross bin, werd ich Detektivin. Oder Gitarristin. Oder Detektivin mit Gitarre.', 'Timo hat heute wieder nur Teigwaren mit Käse gegessen. Zum Zmorge!', 'Mami trinkt so viel Kaffee, dass die Kaffeemaschine einen Namen hat. Sie heisst Bruno.',
         wk ? 'Eigentlich hätte ich jetzt Schule im St. Martin. Aber Mami sagt, Detektivarbeit ist auch Bildung.' : 'In der Pause im St. Martin spielen wir immer Detektiv. Jetzt bin ich eine echte!'],
-      timo: ['Ich geh in die Kita Villa Luna beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
+      timo: ['Papi, weisst du noch? Ich geh in die Kita Villa Luna beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Papi, ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
         'Wenn ich gross bin, fahr ich Postauto. Und dann fahr ich auch in den Poller. KLONK!', 'Mami hat heute schon fünf Kaffee getrunken. Ich hab gezählt. Bis fünf kann ich.', 'Elin spielt Gitarre. Immer das gleiche Lied. Ich tanz trotzdem.'],
       thierry: ['Wir wohnen in Schenkon, gleich neben Sursee. Ich und Louve. Von uns aus sieht man den See!', 'Ein Kreiselheuer wirbelt das Gras durch die Luft, damit es schneller trocknet. Dann wird es Heu.', 'Ein Mähdrescher mäht das Korn und drischt es gleich. Zwei Maschinen in einer!',
         'Mit dem Schwader macht man aus dem Heu lange Reihen. Dann kommt die Ballenpresse und macht Ballen. Rund oder eckig!', 'Der Traktor vom Gänsehof hat einen Frontlader. Damit hebt er Siloballen wie nichts.', 'Mit dem Ladewagen holt man das Gras vom Feld. Mit dem Güllenfass bringt man … das riecht man dann.',
@@ -1360,15 +1361,15 @@ Object.assign(Sur, {
       const opts = new Set([r]); for (const d of [1, -1, 2, -2, 3, 10, -10]) { if (opts.size >= 4) break; const v = r + d; if (v >= 0 && v <= 20) opts.add(v); }
       return { q: `${a} ${plus ? '+' : '−'} ${b}`, r, opts: shuffle([...opts]) };
     };
-    await sayP('elin', 'Okay! Ich bin die Lehrerin. Drei Rechnungen. Plus und Minus bis 20. Ohne Finger!');
+    await sayP('elin', 'Okay, Papi! Ich bin die Lehrerin. Drei Rechnungen. Plus und Minus bis 20. Ohne Finger!');
     let ok = 0;
     for (let i = 0; i < 3; i++) {
       const t = task();
       const c = await askP('elin', `Rechnung ${i + 1}: Wie viel ist ${t.q}?`, t.opts.map(String));
-      if (t.opts[c] === t.r) { ok++; await sayP('elin', pick(['Richtig! Goldsternli!', 'Stimmt! Du bist fast so schnell wie ich.', 'Bravo! Die Lehrerin vom St. Martin wär stolz.'])); }
-      else await sayP('elin', `Nöö. ${t.q} gibt ${t.r}. Zähl nochmal mit den Fingern. Aber heimlich.`);
+      if (t.opts[c] === t.r) { ok++; await sayP('elin', pick(['Richtig, Papi! Goldsternli!', 'Stimmt! Du bist fast so schnell wie ich, Papi.', 'Bravo! Die Lehrerin vom St. Martin wär stolz.'])); }
+      else await sayP('elin', `Nöö, Papi. ${t.q} gibt ${t.r}. Zähl nochmal mit den Fingern. Aber heimlich.`);
     }
-    if (ok === 3) { achieve('su_rechnen'); mood(6); await sayP('elin', 'Drei von drei! Du darfst in die zweite Klasse. Ich mal dir ein Goldsternli auf die Hand.'); }
+    if (ok === 3) { achieve('su_rechnen'); mood(6); await sayP('elin', 'Drei von drei, Papi! Du darfst in die zweite Klasse. Ich mal dir ein Goldsternli auf die Hand.'); }
     else await sayP('elin', `${ok} von 3. Morgen üben wir nochmal. Timo, du bist der Nächste!`);
     if (this.followOk() && ok < 3) await kidSay('timo', 'Ich weiss eins: Eins plus eins gibt … KÄSE!');
   },
@@ -1387,11 +1388,11 @@ Object.assign(Sur, {
   async gitarre() {
     const h = hourOf(G.S.time), home = h >= 18 || h < 8 || this.followOk();
     if (!home) { await Story.say(null, 'Elins Gitarre lehnt am Regal. Kleine Gitarre, grosse Pläne. Auf dem Hals kleben Sternli-Kleber.'); return; }
-    await sayP('elin', 'Hörst du mir zu? Ich spiel dir mein Lied vor. Es hat drei Akkorde!');
+    await sayP('elin', 'Papi, hörst du mir zu? Ich spiel dir mein Lied vor. Es hat drei Akkorde!');
     for (const [k, f] of [[0, 196], [1, 262], [2, 294], [3, 196]]) { Snd.tone(f, 0.5, 'triangle', 0.08, k * 0.55); Snd.tone(f * 1.25, 0.5, 'triangle', 0.05, k * 0.55 + 0.02); Snd.tone(f * 1.5, 0.5, 'triangle', 0.05, k * 0.55 + 0.04); }
     await sleep(2400);
     await sayP('elin', 'G, C, D und nochmal G! Im St. Martin spiel ich das am Weihnachtssingen.');
-    if (h < 20 || this.followOk()) await kidSay('timo', 'Ich tanz dazu! Wie ein Traktor!');
+    if (h < 20 || this.followOk()) await kidSay('timo', 'Papi, ich tanz dazu! Wie ein Traktor!');
     mood(6);
   },
   async kaffee(withIsa) {
@@ -1429,12 +1430,24 @@ Object.assign(Sur, {
   /* ---------- Der Poller beim Untertor ---------- */
   pollerBroken() { return this.st().pollerDay === dayOf(G.S.time); },
   _poller: { up: 0 },
+  /* Velo: Absteigen und Aufsteigen mit A, wenn nichts anderes vor dir ist */
+  veloAction() {
+    const s = this.active() ? this.st() : null;
+    if (!s || !s.velo || G.map.indoor || !['sursee', 'sursee_see'].includes(G.map.id) || G.live) return null;
+    return { trig: { act: () => this.veloToggle() }, label: G.player.velo ? 'Vom Velo absteigen' : 'Aufs Velo steigen' };
+  },
+  async veloToggle() {
+    const s = this.st();
+    G.player.velo = !G.player.velo; s.veloOff = G.player.velo ? 0 : 1;
+    Snd.sfx('blip');
+    UI.toast(G.player.velo ? '🚲 Aufgestiegen.' : '🚶 Abgestiegen – du schiebst das Velo neben dir her. Mit A steigst du wieder auf.');
+  },
   async sportplatz() {
     const c = await Story.ask(null, 'Der rote Allwetterplatz neben der Stadthalle: Tartanbahn, Handballtore, ein paar vergessene Hütchen.', ['Sackgumpe-Rennen mit den Kindern', 'Ein paar Runden joggen', 'Weitergehen']);
     if (c === 0) {
       if (!this.followOk()) { await Story.say(null, 'Ohne Elin und Timo macht das keinen Spass. Die zwei sind gerade nicht dabei.'); return; }
       const r = await this.mini('sackgumpe', ['Elin', 'Timo', 'Thierry']);
-      if (r && r.place === 1) { achieve('su_kinder'); UI.toast('Sieg auf dem Sportplatz!'); } else await kidSay('timo', 'Nomal! Nomal!');
+      if (r && r.place === 1) { achieve('su_kinder'); UI.toast('Sieg auf dem Sportplatz!'); } else await kidSay('timo', 'Nomal, Papi! Nomal!');
       energy(-8); mood(6); passTime(15);
     } else if (c === 1) {
       await Story.say(null, 'Vier Runden auf der Tartanbahn. Die Lunge brennt, der Kopf wird klar.');
@@ -1700,7 +1713,7 @@ Object.assign(Sur, {
                 if (near()) {
                   achieve('su_poller');
                   await Story.say(bus ? 'Postauto-Chauffeur' : 'Fahrer mit Zürcher Nummer', bus ? pick(['Jetzt chunnt dä Poller scho wieder ufe! Ich bi doch s Postauto!', 'Das isch dä dritt Poller die Wuche. Ich glaub, dä mag mi nöd.', 'Dä Poller isch neu? Dä Poller isch IMMER neu!']) : pick(['Das Navi hat gesagt: geradeaus!', 'Wieso steht da plötzlich ein Pfosten? Der war doch eben noch im Boden!', 'Ich wollte nur kurz in die Altstadt parkieren …']));
-                  if (this.followOk()) { await kidSay('timo', 'KLONK! Nochmal! Nochmal!'); await kidSay('elin', 'Mami sagt, dieser Poller hat mehr Unfälle als die Achterbahn.'); }
+                  if (this.followOk()) { await kidSay('timo', 'KLONK! Papi, nochmal! Nochmal!'); await kidSay('elin', 'Mami sagt, dieser Poller hat mehr Unfälle als die Achterbahn.'); }
                   await Story.say('Mann vom Werkhof', pick(['(stellt ein Hütchen hin) Ich hab mir schon einen Stempel machen lassen: „Poller defekt“.', '(seufzt) Wir bestellen die Poller inzwischen im Zehnerpack.', '(notiert) Poller beim Untertor. Wieder. Ich nehm gleich zwei mit.']));
                 } else UI.toast(bus ? '💥 KLONK! Beim Untertor ist das Postauto in den Poller gefahren. Schon wieder.' : '💥 KLONK! Beim Untertor ist ein Auto in den Poller gefahren. Schon wieder.');
               } finally { G.busy--; }

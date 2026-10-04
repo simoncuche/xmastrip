@@ -485,10 +485,12 @@ function facingPoint(dist = 12) { const p = G.player, d = DIRV[p.dir]; return { 
 function findInteraction() {
   const p = G.player, m = G.map;
   const fp = facingPoint(12);
-  let best = null, bd = 18;
+  let best = null, bd = 18, fol = null, fd = 12;
   for (const n of G.npcs) {
     if (n.hidden || !n.talk) continue;
     const d = Math.hypot(n.x - fp.x, n.y - 4 - fp.y);
+    /* Begleiter (Elin und Timo) haben die tiefste Priorität, sonst verdecken sie Türen und Theken */
+    if (n.follower) { if (d < fd) { fd = d; fol = { npc: n, label: n.label || 'Reden: ' + n.name }; } continue; }
     if (d < bd) { bd = d; best = { npc: n, label: n.label || 'Reden: ' + n.name }; }
   }
   if (best) return best;
@@ -500,6 +502,8 @@ function findInteraction() {
     const inP = t.here && ptx >= t.x && ptx < t.x + t.w && pty >= t.y && pty < t.y + t.h;
     if (inF || inP) return { trig: t, label: typeof t.label === 'function' ? t.label() : t.label };
   }
+  if (fol) return fol;
+  if (typeof Sur !== 'undefined' && Sur.veloAction) return Sur.veloAction();
   return null;
 }
 async function doInteract() {
