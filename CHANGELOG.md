@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.19.0 – 04.10.2026
+
+- Die Bahnhof-Bäckerei in Luzern ist jetzt eine richtige Bäckerei: gestreifte Markise mit „BÄCKEREI“-Schild und Brezeln, Holzregal voller Ruchbrote, Butterzöpfe, Baguettes und Weggli, Brezeln am Haken, Brotkörbe, eine Vitrine mit Gebäck, eine Brezel-Stange – und es dampft vom frischen Brot. Bäckerin Vreni steht hinter der Theke.
+- Neues Sortiment: Butterbrezel, Nussgipfel, Berliner, Weggli, Butterzopf und ganzer Laib Ruchbrot – alles auch für die Tasche. Die Brezel hat ein neues Symbol.
+- Die Abfahrtstafel und die Bahnhofsuhr hängen dafür ein Stück weiter rechts.
+
 ## 2.18.1 – 04.10.2026
 
 - Versionshistorie aufgeräumt.

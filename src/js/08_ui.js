@@ -28,7 +28,12 @@ function itemIconURL(icon) {
     case 'schmarrn': E(x, 8, 9, 7, 4, '#f4f0e6'); for (let k = 0; k < 6; k++) R(x, 4 + (k * 3) % 8, 6 + (k % 3), 3, 2, '#d8a050'); for (let k = 0; k < 6; k++) P(x, 4 + k * 2, 6 + (k % 2), '#ffffff'); break;
     case 'strudel': R(x, 2, 7, 12, 5, '#e0b060'); for (let k = 3; k < 13; k += 3) R(x, k, 7, 1, 5, '#b88038'); R(x, 2, 6, 12, 1, '#ffffff'); break;
     case 'cake': R(x, 3, 6, 10, 7, '#4a2a1a'); R(x, 3, 6, 10, 2, '#3a1a10'); R(x, 3, 9, 10, 1, '#c8502a'); P(x, 8, 5, '#f4f0e6'); break;
-    case 'brezel': E(x, 8, 8, 6, 5, '#a8602a'); E(x, 6, 8, 2, 2, 'rgba(0,0,0,0)'); P(x, 5, 6, '#fff'); P(x, 10, 7, '#fff'); R(x, 6, 8, 1, 1, '#f4e8d0'); R(x, 9, 8, 1, 1, '#f4e8d0'); break;
+    case 'brezel': { x.strokeStyle = '#8a4a1a'; x.lineWidth = 2; x.beginPath(); x.arc(5.5, 8, 3.6, 0.3, Math.PI * 2 - 0.3); x.stroke(); x.beginPath(); x.arc(10.5, 8, 3.6, Math.PI + 0.3, Math.PI * 3 - 0.3); x.stroke(); x.beginPath(); x.moveTo(4, 12); x.lineTo(12, 4); x.stroke(); for (const [a, b] of [[4, 5], [11, 6], [7, 10], [9, 12]]) P(x, a, b, '#ffffff'); break; }
+    case 'bread': E(x, 8, 9, 7, 5, '#6a3a1c'); E(x, 8, 8, 6, 4, '#8a5028'); for (const k of [4, 7, 10]) line(x, k, 6, k + 2, 11, '#c89058'); break;
+    case 'zopf': for (let k = 0; k < 5; k++) { E(x, 3 + k * 2.6, 8 - (k % 2), 2, 2, '#d88a2c'); P(x, 2 + k * 2.6, 7 - (k % 2), '#f8c868'); } break;
+    case 'weggli': E(x, 8, 9, 5, 4, '#d8a050'); line(x, 8, 5, 8, 12, '#b88038'); P(x, 6, 7, '#f0d090'); break;
+    case 'nussgipfel': for (let k = 0; k < 5; k++) E(x, 4 + k * 2, 9 - Math.abs(k - 2), 2, 2, '#c8843a'); for (let k = 0; k < 4; k++) P(x, 5 + k * 2, 8 - Math.abs(k - 1.5), '#f4f0e6'); break;
+    case 'berliner': E(x, 8, 9, 6, 5, '#d8a050'); E(x, 8, 8, 5, 3, '#e8b868'); for (let k = 0; k < 6; k++) P(x, 4 + k * 2, 6 + (k % 2), '#ffffff'); R(x, 12, 9, 2, 2, '#c8302a'); break;
     case 'wurst': R(x, 2, 7, 12, 4, '#b8582a'); R(x, 2, 7, 12, 1, '#d87a4a'); R(x, 4, 10, 8, 1, '#e8c23a'); break;
     case 'croissant': for (let k = 0; k < 5; k++) E(x, 4 + k * 2, 9 - Math.abs(k - 2), 2, 2, '#d8a050'); break;
     case 'sandwich': R(x, 2, 6, 12, 2, '#e8c890'); R(x, 2, 8, 12, 1, '#3f8a3a'); R(x, 2, 9, 12, 1, '#e86a7a'); R(x, 2, 10, 12, 2, '#e8c890'); break;

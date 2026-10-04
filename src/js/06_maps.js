@@ -105,6 +105,53 @@ function waterAnim(c, cx, cy, t) {
 }
 
 /* ----------- Luzern: Bahnhofshalle & Gleis 4 ----------- */
+/* ---- Bäckerei-Objekte ---- */
+function drawLoaf(c, x, y, kind) {
+  if (kind === 'ruch') { E(c, x + 5, y + 3, 5, 3.5, '#6a3a1c'); E(c, x + 5, y + 2, 4, 2.5, '#8a5028'); line(c, x + 2, y + 1, x + 4, y + 4, '#c89058'); line(c, x + 5, y + 1, x + 7, y + 4, '#c89058'); P(c, x + 3, y + 1, '#e8d8c0'); }
+  else if (kind === 'zopf') { for (let k = 0; k < 4; k++) { E(c, x + 1.5 + k * 2.4, y + 3 - (k % 2), 1.8, 1.6, '#d88a2c'); P(c, x + 1 + k * 2.4, y + 2 - (k % 2), '#f8c868'); } }
+  else if (kind === 'baguette') { line(c, x, y + 4, x + 10, y, '#c8843a'); line(c, x + 1, y + 4, x + 10, y + 1, '#d8a050'); for (let k = 2; k < 9; k += 3) P(c, x + k, y + 3 - k * 0.35, '#f0d090'); }
+  else if (kind === 'weggli') { E(c, x + 2, y + 3, 2.2, 1.8, '#d8a050'); P(c, x + 2, y + 2, '#f0d090'); }
+  else if (kind === 'brezel') { c.strokeStyle = '#8a4a1a'; c.lineWidth = 1.4; c.beginPath(); c.arc(x + 3, y + 3, 2.4, 0.2, Math.PI * 2 - 0.2); c.stroke(); c.beginPath(); c.arc(x + 6, y + 3, 2.4, Math.PI + 0.2, Math.PI * 3 - 0.2); c.stroke(); line(c, x + 2, y + 5, x + 7, y + 1, '#8a4a1a'); P(c, x + 3, y + 1, '#ffffff'); P(c, x + 6, y + 2, '#ffffff'); }
+}
+function objBakeryShelf(x, y, w) {
+  return mkObj(x, y, w, 1, 34, (c, W, H) => {
+    /* Markise und Schild */
+    for (let k = 0; k < W; k += 8) { R(c, k, 0, 8, 7, (k / 8) % 2 ? '#f4ead8' : '#8a5028'); R(c, k, 7, 8, 2, (k / 8) % 2 ? '#e0d4bc' : '#6a3a1c'); }
+    for (let k = 0; k < W; k += 8) { c.fillStyle = (k / 8) % 2 ? '#e0d4bc' : '#6a3a1c'; c.beginPath(); c.moveTo(k, 9); c.lineTo(k + 8, 9); c.lineTo(k + 4, 12); c.closePath(); c.fill(); }
+    const sw = 50; R(c, W / 2 - sw / 2, 1, sw, 8, '#3a2210'); R(c, W / 2 - sw / 2, 1, sw, 1, '#c8843a'); pxText(c, 'BÄCKEREI', W / 2 - pxTextW('BÄCKEREI') / 2, 2, '#f8e8c8');
+    drawLoaf(c, W / 2 - sw / 2 - 11, 1, 'brezel'); drawLoaf(c, W / 2 + sw / 2 + 2, 1, 'brezel');
+    /* Rückwand mit Holzregal */
+    R(c, 0, 13, W, H - 13, '#7a4a28'); R(c, 0, 13, W, 2, '#5a3418');
+    for (let k = 0; k < W; k += 12) R(c, k, 15, 1, H - 16, '#5a3418');
+    const rows = [17, 26, 35];
+    for (const ry of rows) { R(c, 1, ry + 6, W - 2, 2, '#a8784a'); R(c, 1, ry + 8, W - 2, 1, '#4a2a14'); }
+    /* Brote: Ruchbrot, Zopf, Baguettes, Weggli – und Brezeln an Haken */
+    for (let k = 0; k < W - 10; k += 11) drawLoaf(c, k + 2, rows[0], ['ruch', 'zopf', 'ruch', 'zopf', 'ruch', 'zopf', 'ruch', 'zopf', 'ruch'][(k / 11) | 0]);
+    for (let k = 0; k < W - 12; k += 12) drawLoaf(c, k + 1, rows[1], k % 24 ? 'baguette' : 'baguette');
+    for (let k = 0; k < W - 6; k += 6) drawLoaf(c, k + 1, rows[2], (k / 6) % 3 === 2 ? 'brezel' : 'weggli');
+    /* Brotkörbe auf dem Boden */
+    for (const bx of [4, W - 18]) { R(c, bx, H - 9, 14, 8, '#a87a4a'); for (let k = 0; k < 14; k += 3) R(c, bx + k, H - 9, 1, 8, '#7a5232'); for (let k = 0; k < 3; k++) line(c, bx + 2 + k * 4, H - 9, bx + 4 + k * 4, H - 16, '#c8843a'); }
+  }, { solid: true, anim: (c, t, px, py) => { for (let k = 0; k < 3; k++) { const ph = (t * 0.6 + k * 0.33) % 1, x = px + 14 + k * 32 + Math.sin(t * 2 + k) * 2, y = py + 16 - ph * 12; c.fillStyle = `rgba(255,255,255,${0.35 * (1 - ph)})`; c.fillRect(x, y, 2, 2); c.fillRect(x + 1, y - 2, 1, 2); } } });
+}
+function objBakeryCounter(x, y, w) {
+  return mkObj(x, y, w, 1, 12, (c, W, H) => {
+    R(c, 0, 4, W, H - 4, '#8a5028'); R(c, 0, 4, W, 2, '#c8843a'); for (let k = 4; k < W; k += 8) R(c, k, 8, 1, H - 10, '#6a3a1c');
+    /* gläserne Vitrine mit Gebäck */
+    R(c, 2, 0, W - 18, 9, '#d8e8f0'); R(c, 2, 0, W - 18, 1, '#ffffff'); R(c, 3, 6, W - 20, 2, '#f4ead8');
+    const goods = ['brezel', 'weggli', 'brezel', 'weggli', 'brezel', 'weggli', 'brezel'];
+    for (let k = 0; k < (W - 24) / 7; k++) drawLoaf(c, 4 + k * 7, 1, goods[k % goods.length]);
+    for (let k = 0; k < 3; k++) { E(c, 8 + k * 14, 8, 2.5, 1.3, '#e0a050'); P(c, 8 + k * 14, 7, '#f8f0e0'); }
+    /* Kasse und Kaffeemaschine */
+    R(c, W - 14, 0, 12, 7, '#2a2a2e'); R(c, W - 12, 2, 6, 3, '#7ad0f0'); R(c, W - 5, 4, 2, 2, '#c8302a');
+  }, { solid: true });
+}
+function objBrezelStand(x, y) {
+  return mkObj(x, y, 1, 1, 26, (c, W, H) => {
+    R(c, 7, 4, 2, H - 5, '#6a3a1c'); R(c, 3, H - 3, 10, 2, '#4a2a14');
+    for (let k = 0; k < 4; k++) { const yy = 4 + k * 6, xx = k % 2 ? 0 : 7; drawLoaf(c, xx, yy, 'brezel'); }
+    R(c, 6, 1, 4, 3, '#c8843a');
+  }, { solid: true });
+}
 MAP_BUILDERS.luzern_halle = () => {
   const m = new GMap('luzern_halle', 34, 22, { name: 'Bahnhof Luzern', indoor: true, bg: '#0e1116', wallStyle: { cap: '#4a443c' } });
   m.fill(0, 0, 34, 2, T.RAIL);
@@ -127,17 +174,22 @@ MAP_BUILDERS.luzern_halle = () => {
   for (const x of TRAIN_DOORS) m.trig(x, 7, 1, 1, { label: 'Zugtür: Einsteigen', act: () => Story.boardTrain() });
   /* Abfahrtstafel, Uhr, Schilder */
   m.decal((c) => {
-    const px = 8 * 16, py = 12 * 16 + 1;
+    const px = 20 * 16 + 2, py = 12 * 16 + 1;
     R(c, px, py, 84, 14, '#0f1a2c'); R(c, px, py, 84, 1, '#2a3d5a');
     pxText(c, '0910 IR70 ZÜRICH HB 4', px + 3, py + 2, '#ffb53d'); pxText(c, '0914 S1 SURSEE     1', px + 3, py + 8, '#f2eee4');
-    const qx = 22 * 16, qy = 12 * 16 + 2;
+    const qx = 31 * 16, qy = 12 * 16 + 2;
     E(c, qx + 6, qy + 6, 6, 6, '#20232a'); E(c, qx + 6, qy + 6, 5, 5, '#f4f2ea'); line(c, qx + 6, qy + 6, qx + 6, qy + 2, '#1a1a1a'); line(c, qx + 6, qy + 6, qx + 9, qy + 7, '#1a1a1a');
   });
   for (const x of [5, 16, 27]) m.add(mkObj(x, 9, 1, 1, 20, (c, Wd, Hd) => { R(c, 7, 8, 2, Hd - 9, '#4a4e54'); R(c, 1, 0, 14, 10, '#1a3a7a'); R(c, 1, 0, 14, 1, '#ffffff'); pxText(c, '4', 6, 3, '#ffffff'); }));
   m.add(objCounter(2, 14, 4, 1, { top: '#d8302a', front: '#a8221e', reg: true }));
   m.trig(2, 14, 4, 1, { label: 'Bahnhofkiosk', act: () => Story.shop('kiosk_lu') });
-  m.add(objCounter(9, 14, 4, 1, { top: '#c8a070', front: '#8a6a44', coffee: true }));
+  /* Bäckerei-Stand: Brotregal an der Wand, Markise mit Schild und Riesenbrezel, Vitrine, Brezel-Stange, Bäckerin */
+  m.add(objBakeryShelf(8, 13, 6));
+  m.add(objBakeryCounter(9, 14, 4));
+  m.add(objBrezelStand(13, 14));
   m.trig(9, 14, 4, 1, { label: 'Bäckerei', act: () => Story.shop('baeckerei_lu') });
+  m.trig(13, 14, 1, 1, { label: 'Bäckerei', act: () => Story.shop('baeckerei_lu') });
+  m.npcDefs.push({ id: 'baeckerin', name: 'Bäckerin Vreni', x: 11 * 16, y: 13 * 16 + 13, dir: 0, look: npcLook(1104, { hair: 9, hairCol: 5, beard: 0, top: 4, topCol: 13, hat: 0, glasses: 0, mouth: 0, build: 2 }), talk: () => Story.shop('baeckerei_lu'), keepDir: true, bubbleRand: ['dots', 'heart'] });
   for (const x of [22, 24]) m.add(mkObj(x, 14, 1, 1, 12, (c, W, H) => { R(c, 2, 0, 12, H - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }));
   m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.ticketMachine() });
   for (const [x, y] of [[8, 17], [20, 17], [27, 17]]) m.add(objBench(x, y, 0, '#6a6e74'));

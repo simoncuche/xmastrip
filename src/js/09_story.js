@@ -110,7 +110,7 @@ const hoursStr = (k) => { const o = OPEN[k]; const f = (v) => pad2(Math.floor(v 
 const it = (id, price, o = {}) => Object.assign({ id, price }, o);
 const SHOPS = {
   kiosk_lu: { title: 'Bahnhofkiosk', cur: 'chf', mode: 'take', sections: [{ t: 'Für die Reise', items: [it('dosenbier', 3.2), it('sixpack', 13.9), it('gipfeli', 2.5), it('sandwich', 6.9), it('wasser', 2.8), it('energy', 3.5), it('chips', 3.9), it('schoko', 2.9)] }] },
-  baeckerei_lu: { title: 'Bahnhof-Bäckerei', cur: 'chf', mode: 'eat', sections: [{ t: 'Frisch', items: [it('kaffee', 4.6), it('gipfeli', 2.2), it('brezel', 3.2), it('sandwich', 7.5)] }] },
+  baeckerei_lu: { title: 'Bahnhof-Bäckerei', cur: 'chf', mode: 'eat', intro: 'Es duftet nach frischem Brot. Bäckerin Vreni hat gerade die Brezeln aus dem Ofen geholt – „Für die Reise? Nehmt e paar mit!“', sections: [{ t: 'Brezeln & Gebäck', items: [it('brezel', 3.2), it('butterbrezel', 4.2), it('gipfeli', 2.2), it('nussgipfel', 3.4), it('berliner', 2.9), it('weggli', 1.3)] }, { t: 'Brot', items: [it('zopf', 3.8), it('ruchbrot', 5.9)] }, { t: 'Für unterwegs', items: [it('sandwich', 7.5), it('kaffee', 4.6)] }] },
   speisewagen: { title: 'Speisewagen', mode: 'eat', intro: 'Der Kellner balanciert drei Tassen gleichzeitig, während der Zug durch eine Kurve fährt.', sections: [{ t: 'Getränke', items: [it('bier', 4.9), it('radler', 4.5), it('wein', 5.2), it('kaffee', 3.4), it('wasser', 2.9)] }, { t: 'Speisen', items: [it('gulasch', 6.9), it('wuerstel', 5.9), it('toast', 5.5), it('schoko', 2.5)] }] },
   bar: { title: 'Gamsbock Bar', mode: 'eat', venue: 'bar', intro: 'Sepp poliert ein Glas. „Was darf\'s sein?“', sections: [
     { t: 'Bier', items: [it('bier', 4.8), it('weissbier', 5.2), it('pils', 3.8), it('radler', 4.5)] },

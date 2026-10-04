@@ -66,6 +66,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 - Stüberl: `Story.ferdl` → `Story.brawl` (Minispiel, danach Hausverbot `flags.stueberlBan`, geprüft in `openGuard`).
 - Ereignisse starten über `Story.announce(id)` (Sequenz mit `#cine`, Titel in `Story.EV_TITLES`), danach `Story.ev_<id>`.
 - Kleider: `SHOPS.mode/boutique` (Sets via `wear`), `SHOPS.kostuem` (`wear: { costume: n }`, Freischaltung `unlock`, `LOCKED.costume`); Querformat-Layout per `@media (orientation: landscape) and (max-height: 600px)`.
+- Luzern: Bäckerei-Stand in `luzern_halle` aus `objBakeryShelf`/`objBakeryCounter`/`objBrezelStand` (Hilfe `drawLoaf`), Bäckerin `baeckerin`, Laden `SHOPS.baeckerei_lu`; Abfahrtstafel und Uhr hängen über den Billettautomaten.
 - Barbier: `SHOPS.barbier` hat `special: 'hair' | 'beard'` (Editor) und `'glatze' | 'rasur'` (setzt `look.hair`/`look.beard` auf 0); Animation `Story.barberAnim(kind, shave)` auf dem nächsten der drei Sessel.
 - Läden: `mode: 'take'` legt alles ins Inventar, `mode: 'eat'` konsumiert sofort oder legt per 🎒-Knopf ins Inventar (`Story.buy(def, item, cur, { take })`).
   Alles in der Tasche (Inventar) mit Typ `drink`/`food`/`med` ist jederzeit im Handy konsumierbar.
