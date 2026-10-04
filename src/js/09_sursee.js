@@ -713,6 +713,8 @@ Object.assign(Sur, {
       vicus: 'Tafel: „Römischer Vicus Sursee. Im 1. bis 3. Jahrhundert lag hier, westlich der heutigen Altstadt, eine Siedlung mit Handwerkern und einem Markt, Holz- und Steinbauten an einer Strasse.“',
       markt: 'Wochenmarkt auf dem Martigny-Platz: Gemüse, Käse, Brot, Blumen. Im Winter riecht es nach Marroni.',
       pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
+      bahnhof: pick(['Bahnhof Sursee: SBB-Schalter, Wartsaal, Fahrplan an der Wand. Draussen stehen die Velos dicht an dicht.', 'Über der Tür das rote SBB-Logo und das blaue Ortsschild. Die Bahnhofsuhr springt auf die nächste Minute – pünktlich, wie immer.', 'Im Schaufenster hängt der Fahrplan der S-Bahn nach Luzern. Heim kommst du jederzeit, aber noch nicht jetzt.']),
+      billettautomat: 'Ein Billettautomat der SBB. „Sursee → Luzern, 2. Klasse“ blinkt auf dem Bildschirm. Ein anderes Mal.',
       stadthof: pick(['Der Stadthof am Martigny-Platz: ein heller Betonwürfel mit hohen Pfeilern, oben eine offene Pergola über der Dachterrasse. Unten Reisebüro, Coiffeur, Versicherung und Praxen.', 'Im Schaufenster vom Reisebüro hängt ein Plakat: „Innsbruck – Weihnachtsmärkte und Bergisel“. Du lachst kurz.', 'Unter den Arkaden des Stadthofs ist es windstill. Ein Velo lehnt an einem der weissen Pfeiler.']),
       sportplatz: 'Der rote Sportplatz bei der Stadthalle. Im Sommer Leichtathletik, im Winter nur Krähen.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',

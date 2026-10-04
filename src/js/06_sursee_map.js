@@ -519,6 +519,57 @@ function objStadthof(x, y) {
     for (let b = 0; b < 7; b++) { const bx = 6 + b * bw; R(c, bx + 2, gY + 9, bw - 4, stY - gY - 9, '#ffe4a8'); for (let f = 0; f < 4; f++) if (hash(b, f, 9) > 0.55) R(c, bx + 4, 86 + 6 + f * 15 + 1, 6, 9, '#ffd27a'); }
   } });
 }
+/* Bahnhof Sursee nach Foto: heller Mittelbau mit Quergiebel und lila-grauen Läden, links und rechts eingeschossige Flügel mit
+   braunem Walmdach, SBB-Logo und blaues Ortsschild über der Glastür, Bahnhofsuhr, Geländer an der Rampe, grauer Sockel */
+function objBahnhofSursee(x, y) {
+  return mkObj(x, y, 9, 6, 30, (c, W, H) => {
+    const wall = '#eceae6', wd = '#d6d4cf', sh = '#8c88a2', shD = '#6e6a84', fr = '#9a9aa0', roof = '#7a5c4a', roofL = '#8e6c58', roofD = '#5e4638', cx = W / 2, cw = 70;
+    const win = (wx, wy, ww, wh, shut) => { if (shut) { R(c, wx - 6, wy, 5, wh, sh); R(c, wx + ww + 1, wy, 5, wh, sh); R(c, wx - 6, wy, 1, wh, shD); R(c, wx + ww + 5, wy, 1, wh, shD); } R(c, wx - 1, wy - 1, ww + 2, wh + 2, fr); R(c, wx, wy, ww, wh, '#3e4a56'); R(c, wx + ww / 2, wy, 1, wh, '#e8e8ea'); R(c, wx, wy + Math.floor(wh / 3), ww, 1, '#e8e8ea'); R(c, wx + 1, wy + 1, 2, 3, '#6a7a8a'); };
+    /* Flügel mit Walmdach */
+    for (const [wx, ww] of [[0, cx - cw / 2 + 2], [cx + cw / 2 - 2, W - (cx + cw / 2 - 2)]]) {
+      const rt = 56, rb = 82;
+      for (let k = 0; k < rb - rt; k++) { const ins = Math.max(0, Math.round((rb - rt - k) * 0.45)); R(c, wx + ins, rt + k, ww - ins * 2, 1, k % 3 ? roof : roofD); }
+      for (let k = 0; k < rb - rt; k += 3) for (let xx = wx + 2 + (k % 2) * 2; xx < wx + ww - 2; xx += 4) P(c, xx, rt + k + 1, roofL);
+      R(c, wx, rb, ww, 2, roofD); R(c, wx + 2, rb + 2, ww - 4, 1, '#c8c4bc');
+      R(c, wx, rb + 3, ww, H - rb - 3, wall); R(c, wx + ww / 2 - 4, rb + 7, 8, 4, fr); R(c, wx + ww / 2 - 3, rb + 8, 6, 2, '#5a5e64');
+      win(wx + ww / 2 - 7, H - 30, 14, 20, false);
+    }
+    R(c, 10, 54, 7, 12, '#b8b4ac'); R(c, 9, 52, 9, 3, '#8a8680');
+    /* Mittelbau: Dach von oben (First in die Tiefe), Giebeldreieck vorne */
+    R(c, cx - cw / 2 - 4, 0, cw / 2 + 4, 40, '#6a5048'); R(c, cx, 0, cw / 2 + 4, 40, '#7e6256'); R(c, cx - 1, 0, 2, 40, '#4a3830');
+    for (let yy = 3; yy < 40; yy += 4) { R(c, cx - cw / 2 - 2, yy, cw / 2, 1, '#5e463e'); R(c, cx + 2, yy, cw / 2, 1, '#8a6c60'); }
+    R(c, cx - cw / 2, 40, cw, H - 40, wall);
+    c.fillStyle = wall; c.beginPath(); c.moveTo(cx, 24); c.lineTo(cx - cw / 2, 50); c.lineTo(cx + cw / 2, 50); c.closePath(); c.fill();
+    R(c, cx - cw / 2, 40, cw, 10, wall);
+    for (let k = 0; k < 30; k++) { const t = k / 30; R(c, Math.round(cx - t * (cw / 2 + 5)) - 2, Math.round(22 + t * 30), 4, 2, roofD); R(c, Math.round(cx + t * (cw / 2 + 5)) - 2, Math.round(22 + t * 30), 4, 2, roofD); }
+    for (const bx of [cx - 26, cx - 12, cx + 12, cx + 26]) R(c, bx, 46 - Math.abs(bx - cx) * 0.55, 2, 4, '#9a9690');
+    win(cx - 6, 34, 12, 12, true);
+    R(c, cx + cw / 2 - 4, 40, 4, H - 40, wd);
+    /* Obergeschoss: drei Fenster mit Läden */
+    for (const fx of [cx - 27, cx - 6, cx + 15]) win(fx, 58, 12, 16, true);
+    R(c, cx - cw / 2, 78, cw, 2, wd);
+    /* Schilder: SBB-Logo rot, Ortsschild blau */
+    R(c, cx - 22, 84, 12, 8, '#d8232a'); R(c, cx - 19, 87, 6, 2, '#ffffff'); P(c, cx - 20, 87, '#ffffff'); P(c, cx - 13, 88, '#ffffff');
+    R(c, cx - 9, 84, 30, 8, '#1f4fa0'); pxText(c, 'Sursee', cx - 7, 85, '#ffffff');
+    /* Erdgeschoss: Glastür mit Vordach, Fenster, Uhr, Fahrplantafel */
+    R(c, cx - 12, 94, 24, 2, '#6a6e74');
+    R(c, cx - 10, 96, 20, H - 100, '#2a4a40'); R(c, cx - 8, 98, 16, H - 102, '#3e5a56'); R(c, cx, 98, 1, H - 102, '#2a4a40'); R(c, cx - 8, 99, 16, 2, '#c8302a');
+    win(cx - 30, 98, 11, 18, false); win(cx + 19, 98, 11, 18, false);
+    R(c, cx - 18, 98, 6, 14, '#e8e4dc'); for (let k = 0; k < 4; k++) R(c, cx - 17, 100 + k * 3, 4, 1, ['#c8302a', '#2f5fb8', '#3a3a3e', '#2f5fb8'][k]);
+    E(c, cx + 27, 89, 4, 4, '#3a3a40'); E(c, cx + 27, 89, 3, 3, '#ffffff'); line(c, cx + 27, 89, cx + 27, 87, '#1a1a1a'); line(c, cx + 27, 89, cx + 29, 89, '#c8302a');
+    /* Sockel, Rampe mit Geländer, Poller */
+    R(c, 0, H - 5, W, 5, '#9a9ca0'); R(c, 0, H - 5, W, 1, '#b8bac0');
+    R(c, cx - 26, H - 12, 52, 1, '#3a3a40'); for (let xx = cx - 26; xx <= cx + 26; xx += 4) R(c, xx, H - 12, 1, 8, '#3a3a40');
+    for (const bx of [cx - 40, cx - 32, cx + 32, cx + 40, 12, W - 14]) { R(c, bx, H - 9, 3, 9, '#3a3a40'); R(c, bx, H - 7, 3, 1, '#e8e8ea'); }
+  }, { solid: true, emit: (c, W, H) => { const cx = W / 2; R(c, cx - 8, 98, 16, H - 102, '#ffe8a8'); R(c, cx - 9, 84, 30, 8, '#1f4fa0'); pxText(c, 'Sursee', cx - 7, 85, '#ffffff'); R(c, cx - 22, 84, 12, 8, '#d8232a'); for (const fx of [cx - 30, cx + 19]) R(c, fx, 98, 11, 18, '#ffd890'); E(c, cx + 27, 89, 3, 3, '#ffffff'); } });
+}
+/* Billettautomat der SBB: rot-weiss mit Bildschirm */
+function objBillettautomat(x, y) {
+  return mkObj(x, y, 1, 1, 14, (c, W, H) => {
+    E(c, 8, H - 2, 6, 2, 'rgba(0,0,0,0.2)');
+    R(c, 3, 0, 10, H - 2, '#5a5e64'); R(c, 4, 1, 8, H - 4, '#e8eaec'); R(c, 4, 1, 8, 3, '#c8302a'); R(c, 5, 6, 6, 5, '#2a3a4a'); R(c, 6, 7, 4, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#c8302a'); R(c, 6, 17, 4, 1, '#3a3a40');
+  }, { solid: true, light: { dx: 8, dy: 8, r: 14, c: '#7ad0f0' } });
+}
 MAP_BUILDERS.sursee = () => {
   const W = 132, H = 80;
   const m = new GMap('sursee', W, H, { name: 'Sursee', city: 'sursee', bg: '#2f4a2a' });
@@ -526,8 +577,8 @@ MAP_BUILDERS.sursee = () => {
   /* Bahnlinie und Perron im Westen */
   m.fill(0, 0, 3, H, T.RAIL); m.fill(3, 0, 1, H, T.EDGE, 1); m.fill(4, 18, 2, 32, T.PLAT);
   /* Bahnhof Sursee */
-  m.add(objBuilding(6, 26, 9, 6, { floors: 3, wall: '#d8d4cc', roof: '#8a9096', roofType: 'flat', trim: '#e8eaec', flowers: false, allShop: true, goods: ['#e8eaec', '#7ad0f0'], seed: 61, drawH: 8,
-    doors: [{ dx: 4, type: 'glass' }], sign: { text: 'SURSEE', bg: '#d8302a', fg: '#ffffff', y: 6 } }));
+  m.add(objBahnhofSursee(6, 26)); m.trig(10, 31, 1, 1, { label: 'Bahnhof Sursee', act: () => Sur.look('bahnhof') });
+  for (const x of [12, 13]) { m.add(objBillettautomat(x, 32)); m.trig(x, 32, 1, 1, { label: 'Billettautomat', act: () => Sur.look('billettautomat') }); }
   m.fill(4, 32, 16, 10, T.PLAZA, 1);
   m.add(objVelos(6, 38, 4)); m.trig(6, 38, 4, 1, { label: 'Velostation: Velo mieten', act: () => Sur.veloRent() });
   m.add(mkObj(14, 33, 1, 1, 12, (c, Wd, Hd) => { R(c, 2, 0, 12, Hd - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); pxText(c, 'CHF', 4, 5, '#ffffff'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }, { solid: true, light: { dx: 8, dy: 4, r: 18, c: '#7ad0f0' } }));
