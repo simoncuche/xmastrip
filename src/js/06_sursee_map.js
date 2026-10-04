@@ -34,7 +34,7 @@ function altHouse(m, x, y, w, h, i, o = {}) {
 function objGate(x, y, w, h, o = {}) {
   const st = o.wall || '#d8c8a4', sd = shade(st, -0.2), sl = shade(st, 0.12), roof = o.roof || '#8a3b2a';
   const ob = mkObj(x, y, w, h, o.drawH || 34, (c, W, H) => {
-    const top = 6;
+    const top = Math.max(6, (o.roofH || 14) - 2);
     /* Turmkörper */
     R(c, 2, top + 10, W - 4, H - top - 10, st);
     for (let i = 0; i < W * H / 30; i++) P(c, 2 + hash(i, 3, x) * (W - 4), top + 10 + hash(i, 5, y) * (H - top - 12), hash(i, 7) > 0.5 ? sd : sl);
@@ -43,12 +43,19 @@ function objGate(x, y, w, h, o = {}) {
     /* hohes, steiles Zeltdach mit Spitze und Kugel, beim Untertor mit kleinen Giebelgauben */
     const rh = o.roofH || 14;
     for (let k = 0; k < rh; k++) { const ww = Math.round((W + 4) * (0.06 + 0.94 * k / rh)); R(c, W / 2 - ww / 2, top + 10 - rh + k, ww, 1, k % 3 ? roof : shade(roof, -0.2)); }
-    if (o.dormers) for (const gx of [W / 2 - 13, W / 2 + 5]) { R(c, gx, top - 4, 8, 9, '#f4f1e8'); for (let k = 0; k < 4; k++) R(c, gx - 1 + k, top - 8 + k, 10 - k * 2, 1, roof); R(c, gx + 3, top - 1, 2, 3, '#3a3a40'); }
+    if (o.dormers) for (const gx of o.dormers === 1 ? [W / 2 - 4] : [W / 2 - 13, W / 2 + 5]) { R(c, gx, top - 4, 8, 9, '#f4f1e8'); for (let k = 0; k < 4; k++) R(c, gx - 1 + k, top - 8 + k, 10 - k * 2, 1, roof); R(c, gx + 3, top - 1, 2, 3, '#3a3a40'); }
     R(c, W / 2 - 1, top + 2 - rh, 2, 10, '#5a3a2a'); E(c, W / 2, top + 1 - rh, 2, 2, '#e8c84a'); R(c, W / 2, top - 6 - rh, 1, 7, '#3a3a40'); R(c, W / 2 + 1, top - 5 - rh, 3, 2, '#c8302a');
-    /* Uhr und Wappen */
-    E(c, W / 2, top + 22, 6, 6, '#2a2a2e'); E(c, W / 2, top + 22, 5, 5, '#f4f0e0'); line(c, W / 2, top + 22, W / 2, top + 18, '#1a1a1a'); line(c, W / 2, top + 22, W / 2 + 3, top + 23, '#1a1a1a');
-    R(c, W / 2 - 4, top + 31, 8, 9, '#f4f0e6'); R(c, W / 2 - 4, top + 31, 8, 4, '#c8302a'); R(c, W / 2 - 1, top + 33, 2, 6, '#c8302a');
-    for (const wx of [8, W - 12]) { R(c, wx, top + 34, 4, 6, '#3a3a40'); R(c, wx - 1, top + 33, 6, 1, sl); }
+    if (o.untertor) {
+      /* Untertor nach Foto: graues Rahmenfeld, schwarze Schiessscharten, bemaltes Wappen über dem Torbogen */
+      R(c, W / 2 - 7, top + 14, 14, 12, '#c8c6c0'); R(c, W / 2 - 5, top + 16, 10, 8, '#f4f1e8');
+      for (const [sx, sy] of [[W / 2 - 9, top + 34], [W / 2 + 6, top + 34], [W / 2 - 9, top + 54], [W / 2 + 6, top + 54], [W / 2 - 9, top + 74], [W / 2 + 6, top + 74]]) { R(c, sx, sy, 3, 3, '#1e1e22'); P(c, sx + 1, sy - 1, '#1e1e22'); P(c, sx + 1, sy + 3, '#1e1e22'); }
+      const wy = top + 84; R(c, W / 2 - 5, wy, 10, 12, '#8a6a2a'); R(c, W / 2 - 4, wy + 1, 8, 10, '#2f5aa8'); R(c, W / 2 - 3, wy + 3, 2, 6, '#e8c23a'); R(c, W / 2 + 1, wy + 3, 2, 6, '#e8c23a'); E(c, W / 2, wy, 5, 2, '#c8a030');
+    } else {
+      /* Uhr und Wappen */
+      E(c, W / 2, top + 22, 6, 6, '#2a2a2e'); E(c, W / 2, top + 22, 5, 5, '#f4f0e0'); line(c, W / 2, top + 22, W / 2, top + 18, '#1a1a1a'); line(c, W / 2, top + 22, W / 2 + 3, top + 23, '#1a1a1a');
+      R(c, W / 2 - 4, top + 31, 8, 9, '#f4f0e6'); R(c, W / 2 - 4, top + 31, 8, 4, '#c8302a'); R(c, W / 2 - 1, top + 33, 2, 6, '#c8302a');
+      for (const wx of [8, W - 12]) { R(c, wx, top + 34, 4, 6, '#3a3a40'); R(c, wx - 1, top + 33, 6, 1, sl); }
+    }
     /* Durchgang */
     const pass = o.pass;
     if (o.dir === 'v') {
@@ -60,7 +67,8 @@ function objGate(x, y, w, h, o = {}) {
     } else {
       /* Gasse West–Ost: Wer durch das Tor geht, verschwindet kurz hinter der Südwand; ein dunkler Torbogen zeigt den Durchgang */
       const py0 = (pass[0] - y) * 16 + (o.drawH || 34), ph = pass[1] * 16;
-      const ax = 5, aw = W - 10, top2 = py0 + 4;
+      const ax = 7, aw = W - 14, top2 = py0 + 4;
+      if (o.untertor) { R(c, ax - 3, top2 - 12, aw + 6, ph + 8, '#d8d6d0'); }
       R(c, ax, top2, aw, ph - 4, 'rgba(34,28,24,0.62)');
       for (let k = 0; k < 10; k++) { const ww = Math.round(Math.sqrt(1 - (k / 10) ** 2) * (aw / 2)); R(c, W / 2 - ww, top2 - 10 + k, ww * 2, 1, 'rgba(34,28,24,0.62)'); P(c, W / 2 - ww - 1, top2 - 10 + k, sl); P(c, W / 2 + ww, top2 - 10 + k, sl); }
       for (let yy = top2 + 2; yy < top2 + ph - 4; yy += 5) R(c, ax + 2, yy, aw - 4, 1, '#3a3430');
@@ -519,7 +527,7 @@ MAP_BUILDERS.sursee = () => {
   for (const [x, y] of [[96, 20], [108, 21], [116, 21], [124, 13]]) m.add(objLamp(x, y, 'new'));
   for (let x = 96; x < 125; x += 4) m.light(x * 16, 16 * 16, 34, ['#ff8ad0', '#ffd27a', '#80e0ff'][x % 3]);
   /* Obere Häuserreihe der Oberstadt (Fassaden zur Gasse) */
-  m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], label: 'UNTERTOR', drawH: 50, roofH: 34, wall: '#f4f1e8', roof: '#5a3a2e', dormers: true })); m.solid(53, 31, 3, 6);
+  m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], drawH: 78, roofH: 34, wall: '#f6f4ee', roof: '#8a4a32', dormers: 1, untertor: true })); m.solid(53, 31, 3, 6);
   m.add(mkObj(53, 41, 4, 4, 26, (c, Wd, Hd) => {
     for (let k = 0; k < 22; k++) R(c, 2 + k * 0.6, k, Wd - 4 - k * 1.2, 1, k % 3 ? '#6a3a2a' : '#5a3424');
     R(c, 2, 22, Wd - 4, Hd - 22, '#f4efe2');
@@ -529,7 +537,8 @@ MAP_BUILDERS.sursee = () => {
     pxText(c, 'SCHÜTZENHAUS', 3, 41, '#7a3a2a');
   }, { solid: true }));
   m.trig(53, 37, 3, 4, { here: true, label: 'Foto: Untertor', act: () => Sur.photo('untertor'), cond: () => !Sur.hasPhoto('untertor') });
-  altHouse(m, 56, 30, 6, 7, 4, { wall: '#e8d4b0', roof: '#7a3a2a', doors: [{ dx: 2, col: '#4a2e1a', lit: true }], sign: { text: 'WILDER MANN', bg: '#3a2418', fg: '#f4d890', lit: true }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4, shutter: '#3f6b45' });
+  altHouse(m, 56, 30, 6, 7, 4, { wall: '#f6f4ee', roof: '#7a3a2a', trim: '#c8402a', shutter: '#b8302a', flowers: false, doors: [{ dx: 2, type: 'arch' }], sign: { text: 'WILDER MANN', bg: '#f6f4ee', fg: '#3a2a1a', lit: true, y: 63 }, awning: { cols: [0, 1, 3, 4, 5], col: '#b8302a' }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4,
+    extra: (c, W, H, fy0) => { /* Quergiebel mit Fenster unter dem Dach */ for (let k = 0; k < 20; k++) { const ww = 6 + k * 2.2; R(c, W / 2 - ww / 2, fy0 - 20 + k, ww, 1, '#f6f4ee'); P(c, W / 2 - ww / 2 - 1, fy0 - 20 + k, '#7a3a2a'); P(c, W / 2 + ww / 2, fy0 - 20 + k, '#7a3a2a'); } R(c, W / 2 - 4, fy0 - 10, 8, 8, '#3e4c5e'); R(c, W / 2 - 6, fy0 - 10, 2, 8, '#b8302a'); R(c, W / 2 + 4, fy0 - 10, 2, 8, '#b8302a'); } });
   m.warp(58, 36, 'wildermann', 'entry', { label: 'Wirtshaus Wilder Mann', guard: () => Sur.openGuard('wildermann') }); m.spawn('wildermann_out', 58, 37, 0);
   altHouse(m, 62, 30, 4, 7, 7, { wall: '#2a2a2e', roof: '#3a3a3e', trim: '#c8302a', doors: [{ dx: 1, col: '#1a1a1a', lit: true }], sign: { text: 'TNT', bg: '#c8302a', fg: '#1a1a1a', lit: true }, shutter: null, flowers: false });
   m.warp(63, 36, 'tnt', 'entry', { label: 'TNT Rock Bar', guard: () => Sur.openGuard('tnt') }); m.spawn('tnt_out', 63, 37, 0);
