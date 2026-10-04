@@ -84,7 +84,7 @@ with sync_playwright() as p:
     # Fährte See
     run("await warpTo('sursee_see', 'quai'); G.S.time = dayOf(G.S.time + 1440) * 1440 + 10 * 60; await Sur.bootsverleih();", 1.2, q=[0])
     expect("G.S.su.f.log === 1", "Logbuch nicht gelesen")
-    run("await Sur.talkFischer(); await Sur.fish('quai'); await Sur.talkFischer();", 1.0)
+    run("await Sur.talkFischer(); await Sur.fish('quai'); if (!hasInv('felchen')) addInv('felchen'); await Sur.talkFischer();", 1.0)
     expect("G.S.su.f.fischer === 1", "Fischer hat nichts erzählt")
     # Fährte Altstadt
     run("G.S.time = dayOf(G.S.time) * 1440 + 13 * 60; await warpTo('sursee', 'untertor'); await warpTo('sankturbanhof', 'entry'); await Sur.talkMuseum(); await Sur.look('besucherbuch');", 1.5)
