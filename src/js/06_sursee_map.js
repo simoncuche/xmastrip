@@ -293,6 +293,37 @@ function objPasserelle(x, y, w) {
     for (let xx = 4; xx < W; xx += 28) R(c, xx, ty + 6, 10, 1, 'rgba(240,250,255,0.7)');
   }, { solid: false, sortOff: 0, emit: (c, W) => { R(c, 0, 3, W, 19, 'rgba(255,240,200,0.55)'); } });
 }
+/* Oase Beckenhof (Münstervorstadt) nach Fotos: kubische Wohnblöcke mit senkrecht geripptem, olivgrünem Fassadenkleid, hellen
+   Geschossbändern, eingezogenen Loggien mit Geländern, zurückversetzter Attika und begrüntem Flachdach mit Solarpanels */
+function objOase(x, y, w, h, o = {}) {
+  return mkObj(x, y, w, h, 30, (c, W, H) => {
+    const rd = 34, ol = '#6c785c', olD = '#5a6650', olL = '#7c886c', band = '#d4d8cc', seed = x * 7 + y;
+    /* Dach von oben: Kies und Sedum, Solarpanels, Attika in der Mitte */
+    R(c, 0, 0, W, rd, '#a27a4c'); for (let i = 0; i < W * 2; i++) P(c, hash(i, seed, 1) * W, hash(i, seed, 2) * rd, hash(i, seed, 3) > 0.5 ? '#8a8a4a' : '#b48a58');
+    R(c, 0, 0, W, 2, band); R(c, 0, 0, 2, rd, band); R(c, W - 2, 0, 2, rd, band);
+    const ax = 10 + Math.floor(hash(seed, 4) * 10), aw = W - ax - 12;
+    R(c, ax, 6, aw, rd - 14, '#a88452'); R(c, ax, 6, aw, 1, band); R(c, ax, rd - 9, aw, 4, ol); for (let xx = ax; xx < ax + aw; xx += 2) R(c, xx, rd - 9, 1, 4, olD); R(c, ax, rd - 9, aw, 1, band);
+    for (let k = 0; k < 3; k++) { const px = ax + 4 + k * 14; if (px + 10 < ax + aw) { R(c, px, 9, 10, 6, '#34405a'); R(c, px + 5, 9, 1, 6, '#5a6a8a'); R(c, px, 12, 10, 1, '#5a6a8a'); } }
+    R(c, ax + aw - 8, 10, 4, 4, '#c8cccc'); R(c, 6, rd - 6, 3, 3, '#c8cccc');
+    /* Fassade mit Rippen und Geschossbändern */
+    R(c, 0, rd, W, H - rd, ol); for (let xx = 0; xx < W; xx += 2) R(c, xx, rd, 1, H - rd, (xx / 2) % 3 ? olD : olL);
+    R(c, W - 3, rd, 3, H - rd, olD);
+    const fl = Math.floor((H - rd - 4) / 17);
+    for (let f = 0; f < fl; f++) {
+      const fy = rd + 2 + f * 17;
+      R(c, 0, fy - 2, W, 2, band);
+      for (let b = 0, xx = 4; xx < W - 10; xx += 14, b++) {
+        const kind = hash(b, f, seed);
+        if (o.door != null && f >= fl - 2 && Math.abs(xx - o.door * 16) < 16) continue;
+        if (kind < 0.28 && f < fl - 1) { R(c, xx - 1, fy + 1, 13, 14, '#2a2e2a'); R(c, xx - 1, fy + 9, 13, 1, '#c8ccc4'); for (let k = 0; k < 13; k += 2) R(c, xx - 1 + k, fy + 9, 1, 6, '#9a9e96'); if (kind < 0.1) { R(c, xx - 2, fy + 1, 15, 3, '#e8e2cc'); } }
+        else { R(c, xx + 2, fy + 1, 6, 13, '#d8dcd4'); R(c, xx + 3, fy + 2, 4, 11, '#2c3236'); if (kind > 0.8) R(c, xx + 3, fy + 2, 4, 6, '#c8c4b4'); }
+      }
+    }
+    R(c, 0, H - 3, W, 3, '#7a7e78');
+    if (o.door != null) { const dx = o.door * 16; R(c, dx, H - 17, 16, 17, band); R(c, dx + 2, H - 15, 12, 15, '#3a4a46'); R(c, dx + 3, H - 14, 10, 14, '#7a96ac'); R(c, dx + 8, H - 14, 1, 14, '#3a4a46'); }
+    if (o.name) { const tw = pxTextW(o.name) + 6, nx = Math.max(2, Math.round((o.door ?? 0) * 16 + 8 - tw / 2)); R(c, nx - 1, H - 28, tw + 2, 9, '#2a2e2a'); R(c, nx, H - 27, tw, 7, '#f4f2ea'); pxText(c, o.name, nx + 3, H - 26, '#2a3a2a'); }
+  }, { solid: true, emit: (c, W, H) => { const fl = Math.floor((H - 38) / 17); for (let f = 0; f < fl; f++) for (let xx = 4; xx < W - 10; xx += 14) if (hash(xx, f, x + y) > 0.5) R(c, xx + 3, 34 + 2 + f * 17 + 2, 4, 11, '#ffd890'); } });
+}
 /* Moderner Wohnblock (Münstervorstadt) */
 function objBlock(x, y, w, h, col = '#e4e0d8', o = {}) {
   return mkObj(x, y, w, h, 18, (c, W, H) => {
@@ -856,10 +887,10 @@ MAP_BUILDERS.sursee = () => {
   m.add(objBench(126, 47, 0));
   m.fill(118, 54, 14, 26, T.PAVE, 1);
   m.fill(118, 62, 14, 2, T.WATER); m.fill(122, 62, 3, 2, T.BRIDGE);
-  m.add(objBlock(119, 55, 6, 6, '#e4e0d8', { door: 3, name: 'BEI ISA', balcony: '#7a8a6a' }));
+  m.add(objOase(119, 55, 6, 6, { door: 3, name: 'BEI ISA' }));
   m.warp(122, 60, 'isa_haus', 'entry', { label: 'Bei Isa', guard: () => Sur.isaDoor() }); m.spawn('isa_out', 122, 61, 0);
-  m.add(objBlock(126, 55, 6, 6, '#d8d4cc', { balcony: '#8a6a5a' }));
-  m.add(objBlock(118, 65, 7, 6, '#ece8e0', { balcony: '#6a7a8a' })); m.add(objBlock(126, 65, 5, 6, '#e0dcd4', { balcony: '#8a8e94' }));
+  m.add(objOase(126, 55, 6, 6));
+  m.add(objOase(118, 65, 7, 6)); m.add(objOase(126, 65, 5, 6));
   m.add(mkObj(125, 71, 1, 1, 12, (c) => { R(c, 7, 4, 2, 10, '#5a5e64'); R(c, 0, 0, 16, 6, '#1a3a7a'); pxText(c, 'MÜV', 1, 1, '#ffffff'); }, { solid: false }));
   m.trig(125, 72, 1, 1, { label: 'Quartier Münstervorstadt', act: () => Sur.look('muenstervorstadt') });
   m.fill(127, 71, 3, 9, T.GRAVEL);
