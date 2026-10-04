@@ -365,7 +365,7 @@ const Sur = {
   pois(id) {
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
     if (id === 'sursee') return [
-      { x: 9, y: 31, n: 'Bahnhof', c: V }, { x: 28, y: 34, n: 'Surseepark', c: S }, { x: 45, y: 46, n: 'Martigny-Platz', c: S }, { x: 54, y: 38, n: 'Untertor', c: V },
+      { x: 9, y: 31, n: 'Bahnhof', c: V }, { x: 28, y: 34, n: 'Surseepark', c: S }, { x: 45, y: 43, n: 'Martigny-Platz', c: S }, { x: 54, y: 38, n: 'Untertor', c: V },
       { x: 58, y: 36, n: 'Wilder Mann', c: A }, { x: 63, y: 36, n: 'TNT', c: N }, { x: 80, y: 36, n: 'Rathaus', c: V }, { x: 89, y: 36, n: 'Stadtcafé', c: A },
       { x: 98, y: 36, n: 'El Mosquito', c: A }, { x: 107, y: 36, n: 'Craftwerk', c: N }, { x: 81, y: 22, n: 'St. Georg', c: V }, { x: 71, y: 33, n: 'Obertor', c: V },
       { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 72, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
@@ -398,7 +398,7 @@ const Sur = {
     };
     return T[fn] || 'wildermann';
   },
-  LOC: { wildermann: ['im Wilden Mann', 58, 36], muehle: ['in der Pizzeria zur Mühle', 101, 49], stadtcafe: ['im Stadtcafé', 89, 36], tnt: ['in der TNT Rock Bar', 63, 36], roessli: ['in der Rössli Nightbar', 62, 49], craftwerk: ['im Craftwerk', 107, 36], lafuga: ['im La Fuga', 71, 49], chilbi: ['an der Chilbi', 108, 20], martigny: ['auf dem Martigny-Platz (mit Drohne)', 45, 48], quai: ['am Quai beim See', 128, 77], diebenturm: ['beim Diebenturm, eine rauchen', 81, 50], isa_haus: ['bei Isa zu Hause', 122, 60] },
+  LOC: { wildermann: ['im Wilden Mann', 58, 36], muehle: ['in der Pizzeria zur Mühle', 101, 49], stadtcafe: ['im Stadtcafé', 89, 36], tnt: ['in der TNT Rock Bar', 63, 36], roessli: ['in der Rössli Nightbar', 62, 49], craftwerk: ['im Craftwerk', 107, 36], lafuga: ['im La Fuga', 71, 49], chilbi: ['an der Chilbi', 108, 20], martigny: ['auf dem Martigny-Platz (mit Drohne)', 46, 43], quai: ['am Quai beim See', 128, 77], diebenturm: ['beim Diebenturm, eine rauchen', 81, 50], isa_haus: ['bei Isa zu Hause', 122, 60] },
   whereIs(id) {
     if (!this.here()) return { t: G.S.stage === 'sbahn' ? 'in Luzern geblieben' : 'auf Gleis 4 in Luzern', x: null };
     const l = this.friendLoc(id);
@@ -431,7 +431,7 @@ const Sur = {
       if (suAt('s_ankunft')) this.spawnNarr(m);
       for (const id of Object.keys(FRIENDS)) {
         const l = this.friendLoc(id); if (!l) continue;
-        const P = { chilbi: [[104, 20], [112, 21], [100, 21]], martigny: [[44, 49]], diebenturm: [[79, 51]] }[l];
+        const P = { chilbi: [[104, 20], [112, 21], [100, 21]], martigny: [[46, 43]], diebenturm: [[79, 51]] }[l];
         if (!P) continue;
         const k = Object.keys(FRIENDS).indexOf(id) % P.length;
         friend(id, P[k][0], P[k][1], 0, 'stand', { bubbleRand: l === 'diebenturm' ? ['dots'] : l === 'martigny' ? ['!', '?'] : ['note', '!'] });

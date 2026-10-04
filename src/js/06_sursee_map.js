@@ -434,45 +434,50 @@ function sForest(m, x0, y0, w, h, dens = 0.6, seed = 1) {
     m.add(r < 0.5 ? objFir(x, y, 30 + Math.floor(hash(x, seed, y) * 16)) : objTree(x, y, r < 0.75 ? 'green' : r < 0.9 ? 'autumn' : 'yellow', r < 0.65));
   }
 }
-/* Stadthof am Martigny-Platz, nach Foto: hellgrauer Betonwürfel, durchgehende weisse Pfeiler, die oben als offene Pergola
-   über die Dachterrasse hinausragen, dunkle Fensterraster, Läden mit Schildern im Erdgeschoss, breite Treppe zur Strasse */
+/* Stadthof am Martigny-Platz, nach Foto: quadratischer hellgrauer Betonblock, durchgehende weisse Pfeiler, die oben als offene
+   Pergola rund um die Dachterrasse laufen, dunkle Fensterraster, Läden mit Schildern im Erdgeschoss, breite Treppe zur Strasse */
 function objStadthof(x, y) {
-  return mkObj(x, y, 13, 5, 44, (c, W, H) => {
-    const pil = '#ecebe6', pilD = '#cfcdc6', fac = '#c2c1bb', win = '#2c343e', roofY = 20, gY = H - 30, stY = H - 7;
-    /* Dachterrasse mit Pergola */
-    R(c, 2, 4, W - 4, roofY - 2, '#a9a8a2'); for (let i = 0; i < 60; i++) P(c, 3 + hash(i, 61) * (W - 6), 5 + hash(i, 62) * (roofY - 4), '#9a9993');
-    for (const [px, py] of [[20, 9], [70, 12], [150, 8], [186, 13]]) { E(c, px, py, 4, 3, '#4f8040'); P(c, px - 1, py - 1, '#6a9e4c'); }
-    R(c, 2, 2, W - 4, 3, pil); R(c, 2, roofY - 2, W - 4, 3, pil); R(c, 2, 2, 3, roofY, pil); R(c, W - 5, 2, 3, roofY, pil);
-    for (let xx = 4; xx < W - 4; xx += 12) R(c, xx, 5, 2, roofY - 7, 'rgba(236,235,230,0.9)');
-    for (let xx = 8; xx < W - 8; xx += 6) R(c, xx, roofY - 6, 1, 4, '#2a2a2e'); R(c, 6, roofY - 6, W - 12, 1, '#2a2a2e');
-    /* Fassade hinter den Pfeilern */
-    R(c, 2, roofY + 1, W - 4, gY - roofY - 1, fac);
-    const bays = 8, bw = (W - 8) / bays;
+  return mkObj(x, y, 11, 11, 0, (c, W, H) => {
+    const pil = '#ecebe6', pilD = '#cfcdc6', fac = '#c2c1bb', win = '#2c343e', roofY = 86, gY = H - 28, stY = H - 7, bays = 7, bw = (W - 8) / bays;
+    /* Dachterrasse von oben: Terrassenboden, Pflanztröge, Oberlicht in der Mitte */
+    R(c, 2, 2, W - 4, roofY, '#a9a8a2'); for (let i = 0; i < 160; i++) P(c, 4 + hash(i, 61) * (W - 8), 4 + hash(i, 62) * (roofY - 6), '#9a9993');
+    R(c, W / 2 - 26, roofY / 2 - 14, 52, 28, '#8e9ca6'); for (let xx = W / 2 - 24; xx < W / 2 + 26; xx += 8) R(c, xx, roofY / 2 - 14, 1, 28, '#c8d4dc'); R(c, W / 2 - 26, roofY / 2 - 14, 52, 2, pilD);
+    for (const [px, py] of [[34, 30], [140, 28], [36, 62], [138, 60], [88, 18], [88, 70]]) { R(c, px - 6, py - 2, 12, 5, '#7a7872'); E(c, px - 3, py - 3, 3, 3, '#4f8040'); E(c, px + 2, py - 4, 3, 3, '#6a9e4c'); }
+    /* Pergola-Ring: Pfeiler und Balken rund um die Terrasse */
+    const ring = 18;
+    R(c, 2, 2, W - 4, 4, pil); R(c, 2, 2, 4, roofY, pil); R(c, W - 6, 2, 4, roofY, pil);
+    R(c, 2 + ring, 2 + ring, W - 4 - ring * 2, 2, pil); R(c, 2 + ring, 2 + ring, 2, roofY - ring - 2, pil); R(c, W - 4 - ring, 2 + ring, 2, roofY - ring - 2, pil);
+    for (let xx = 6; xx < W - 6; xx += bw) { R(c, xx, 2, 2, ring + 2, pil); R(c, xx, 2, 4, 4, pilD); }
+    for (let yy = 6; yy < roofY; yy += 14) { R(c, 2, yy, ring + 2, 2, pil); R(c, W - 4 - ring, yy, ring + 2, 2, pil); }
+    R(c, 2 + ring + 3, 2 + ring + 3, W - 10 - ring * 2, 1, '#2a2a2e'); R(c, 2 + ring + 3, 2 + ring + 3, 1, roofY - ring - 6, '#2a2a2e'); R(c, W - 7 - ring, 2 + ring + 3, 1, roofY - ring - 6, '#2a2a2e');
+    for (let yy = 2 + ring + 3; yy < roofY; yy += 4) { P(c, 2 + ring + 3, yy, '#2a2a2e'); P(c, W - 7 - ring, yy, '#2a2a2e'); }
+    /* Fassade zur Strasse */
+    R(c, 2, roofY, W - 4, gY - roofY, fac);
     for (let f = 0; f < 4; f++) {
-      const fy = roofY + 5 + f * 17;
+      const fy = roofY + 6 + f * 15;
       for (let b = 0; b < bays; b++) {
         const bx = 6 + b * bw;
-        for (const wx of [bx + 3, bx + bw / 2 + 1]) { R(c, wx, fy, 8, 12, '#a8a7a1'); R(c, wx + 1, fy + 1, 6, 10, win); R(c, wx + 4, fy + 1, 1, 10, '#5a626c'); R(c, wx + 1, fy + 1, 2, 3, '#4a5868'); if (hash(b, f, 3) > 0.6) R(c, wx + 1, fy + 1, 6, 4, '#d8d4c8'); }
+        for (const wx of [bx + 3, bx + bw / 2 + 1]) { R(c, wx, fy, 8, 11, '#a8a7a1'); R(c, wx + 1, fy + 1, 6, 9, win); R(c, wx + 4, fy + 1, 1, 9, '#5a626c'); R(c, wx + 1, fy + 1, 2, 3, '#4a5868'); if (hash(b, f, 3) > 0.6) R(c, wx + 1, fy + 1, 6, 4, '#d8d4c8'); }
       }
     }
     /* Erdgeschoss: Läden mit Schildern */
     R(c, 2, gY, W - 4, stY - gY, '#b4b3ad');
-    const signs = [['#ffffff', '#1a1a1a'], ['#ffffff', '#2a6ab0'], ['#ffffff', '#c8302a'], ['#3a3a3e', '#ffffff'], ['#ffffff', '#3a8a4a'], ['#1a3a7a', '#ffffff'], ['#ffffff', '#e08a20'], ['#ffffff', '#5a5a9a']];
+    const signs = [['#ffffff', '#1a1a1a'], ['#ffffff', '#2a6ab0'], ['#ffffff', '#c8302a'], ['#3a3a3e', '#ffffff'], ['#ffffff', '#3a8a4a'], ['#1a3a7a', '#ffffff'], ['#ffffff', '#e08a20']];
     for (let b = 0; b < bays; b++) {
       const bx = 6 + b * bw;
       R(c, bx + 2, gY + 2, bw - 4, 5, signs[b][0]); R(c, bx + 5, gY + 4, bw - 10, 1, signs[b][1]);
       R(c, bx + 2, gY + 9, bw - 4, stY - gY - 9, '#3a5866'); R(c, bx + 3, gY + 10, 3, stY - gY - 11, '#5a7a8a'); R(c, bx + bw / 2, gY + 9, 1, stY - gY - 9, '#8a9094');
-      if (b === 3) { R(c, bx + bw / 2 - 3, gY + 12, 6, stY - gY - 12, '#1e2a30'); }
+      if (b === 3) R(c, bx + bw / 2 - 3, gY + 12, 6, stY - gY - 12, '#1e2a30');
     }
-    /* Pfeiler über die ganze Höhe, oben über das Dach hinaus */
-    for (let k = 0; k <= bays; k++) { const px = 3 + k * bw; R(c, px, 0, 4, stY, pil); R(c, px + 3, roofY, 1, stY - roofY, pilD); }
-    R(c, 2, roofY, W - 4, 2, pil); R(c, 2, roofY + 2, W - 4, 1, pilD);
+    /* Pfeiler über die ganze Höhe, oben in den Pergola-Ring übergehend */
+    for (let k = 0; k <= bays; k++) { const px = 3 + k * bw; R(c, px, roofY - 4, 4, stY - roofY + 4, pil); R(c, px + 3, roofY, 1, stY - roofY, pilD); }
+    R(c, 2, roofY - 2, W - 4, 3, pil); R(c, 2, roofY + 1, W - 4, 1, pilD);
     /* breite Treppe zur Strasse */
     for (let k = 0; k < 3; k++) { R(c, 0, stY + k * 2, W, 2, k % 2 ? '#a8a7a2' : '#bdbcb7'); R(c, 0, stY + k * 2, W, 1, '#d4d3ce'); }
-    R(c, 62, stY - 2, 1, 8, '#6a6e74'); R(c, 134, stY - 2, 1, 8, '#6a6e74');
+    R(c, 52, stY - 2, 1, 8, '#6a6e74'); R(c, 124, stY - 2, 1, 8, '#6a6e74');
   }, { solid: true, emit: (c, W, H) => {
-    const gY = H - 30, stY = H - 7, bw = (W - 8) / 8;
-    for (let b = 0; b < 8; b++) { const bx = 6 + b * bw; R(c, bx + 2, gY + 9, bw - 4, stY - gY - 9, '#ffe4a8'); for (let f = 0; f < 4; f++) if (hash(b, f, 9) > 0.55) R(c, bx + 4, 25 + f * 17 + 1, 6, 10, '#ffd27a'); }
+    const gY = H - 28, stY = H - 7, bw = (W - 8) / 7;
+    for (let b = 0; b < 7; b++) { const bx = 6 + b * bw; R(c, bx + 2, gY + 9, bw - 4, stY - gY - 9, '#ffe4a8'); for (let f = 0; f < 4; f++) if (hash(b, f, 9) > 0.55) R(c, bx + 4, 86 + 6 + f * 15 + 1, 6, 9, '#ffd27a'); }
   } });
 }
 MAP_BUILDERS.sursee = () => {
@@ -531,10 +536,10 @@ MAP_BUILDERS.sursee = () => {
   m.light(13 * 16 + 8, 47 * 16, 26, '#ff4a4a');
   /* Martigny-Platz mit Wochenmarkt */
   m.fill(41, 41, 9, 10, T.PLAZA, 2);
-  for (const [x, y, col] of [[42, 43, '#3f8e4b'], [45, 43, '#c8302a'], [42, 47, '#e8a020'], [45, 47, '#2f5fb8']]) m.add(objMarktstand(x, y, col));
-  m.add(objBude(47, 45, 2, 'marroni', 'MARRONI')); m.trig(47, 46, 2, 1, { label: 'Marroni-Stand', act: () => Story.shop('marroni') });
-  m.trig(42, 44, 5, 1, { label: 'Wochenmarkt', act: () => Sur.look('markt') });
-  m.add(objTafel(48, 42, '#3a5a3a', 'MRT'));
+  for (const [x, y, col] of [[41, 42, '#3f8e4b'], [44, 42, '#c8302a'], [41, 44, '#e8a020'], [44, 44, '#2f5fb8']]) m.add(objMarktstand(x, y, col));
+  m.add(objBude(47, 41, 2, 'marroni', 'MARRONI')); m.trig(47, 43, 2, 1, { label: 'Marroni-Stand', act: () => Story.shop('marroni') });
+  m.trig(41, 42, 5, 1, { label: 'Wochenmarkt', act: () => Sur.look('markt') });
+  m.add(objTafel(49, 44, '#3a5a3a', 'MRT'));
   /* Sure: Hauptlauf nach Norden, beide Arme treffen sich unterhalb des Untertors */
   m.fill(43, 0, 13, 24, T.GRASS, 2);
   m.fill(50, 0, 2, 64, T.WATER);
@@ -774,7 +779,7 @@ MAP_BUILDERS.sursee = () => {
   /* Wohnquartier im Südwesten */
   m.fill(4, 56, 46, 1, T.PAVE); m.fill(4, 57, 46, 2, T.ASPH); m.fill(4, 58, 46, 1, T.ASPH, 1); m.fill(4, 59, 46, 1, T.PAVE);
   m.fill(16, 56, 2, 24, T.ASPH);
-  m.add(objStadthof(36, 51)); m.trig(37, 55, 11, 1, { label: 'Stadthof', act: () => Sur.look('stadthof') });
+  m.add(objStadthof(37, 45)); m.trig(38, 55, 9, 1, { label: 'Stadthof', act: () => Sur.look('stadthof') });
   m.light(42 * 16, 54 * 16, 60, '#bfe4ff');
   [[21, 50, 5], [26, 50, 4], [31, 50, 5]].forEach(([x, y, w], i) => house(m, x, y, w, 6, i + 2, { floors: 3, drawH: 8, flowers: true, doors: [{ dx: 1, col: ['#5a3a24', '#2f5a3a', '#7a2a2a'][i % 3] }] }));
   [[4, 61, 5], [9, 61, 5], [21, 61, 6], [27, 61, 5], [33, 61, 5], [39, 61, 6], [45, 61, 4]].forEach(([x, y, w], i) => house(m, x, y, w, 6, i + 5, { floors: 3, drawH: 8, flowers: i % 2 === 0, doors: [{ dx: 2, col: ['#5a3a24', '#2f5a3a', '#7a2a2a'][i % 3] }] }));
@@ -791,7 +796,7 @@ MAP_BUILDERS.sursee = () => {
   m.add(mkObj(124, 20, 1, 1, 12, (c) => { R(c, 7, 4, 2, 10, '#5a5e64'); R(c, 1, 0, 14, 8, '#2f5fb8'); pxText(c, 'P', 6, 2, '#ffffff'); }, { solid: true }));
   /* Fussgänger und Spawns */
   m.pedZones.push({ x: 4, y: 56, w: 44, h: 4, n: 4 }, { x: 52, y: 64, w: 60, h: 1, n: 2 });
-  m.pedZones.push({ x: 4, y: 33, w: 14, h: 8, n: 5 }, { x: 18, y: 36, w: 32, h: 1, n: 3 }, { x: 54, y: 37, w: 64, h: 4, n: 10 }, { x: 57, y: 50, w: 60, h: 3, n: 6 }, { x: 96, y: 12, w: 28, h: 4, n: 7 }, { x: 96, y: 19, w: 28, h: 2, n: 6 }, { x: 53, y: 56, w: 60, h: 5, n: 5 }, { x: 41, y: 41, w: 8, h: 9, n: 4 }, { x: 74, y: 26, w: 20, h: 3, n: 3 });
+  m.pedZones.push({ x: 4, y: 33, w: 14, h: 8, n: 5 }, { x: 18, y: 36, w: 32, h: 1, n: 3 }, { x: 54, y: 37, w: 64, h: 4, n: 10 }, { x: 57, y: 50, w: 60, h: 3, n: 6 }, { x: 96, y: 12, w: 28, h: 4, n: 7 }, { x: 96, y: 19, w: 28, h: 2, n: 6 }, { x: 53, y: 56, w: 60, h: 5, n: 5 }, { x: 41, y: 41, w: 9, h: 3, n: 3 }, { x: 74, y: 26, w: 20, h: 3, n: 3 });
   m.spawn('bahnhof', 5, 30, 2);
   m.spawn('kirche_out', 82, 26, 0);
   m.spawn('untertor', 56, 38, 2);
