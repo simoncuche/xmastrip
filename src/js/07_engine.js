@@ -503,7 +503,7 @@ function findInteraction() {
   return null;
 }
 async function doInteract() {
-  if (G.live && G.live.onAction && !G.busy) { G.live.onAction(); return; }
+  if (G.live && G.live.onAction && !G.busy && G.live.onAction() !== false) return;
   if (G.busy) return;
   const it = findInteraction();
   if (!it) return;

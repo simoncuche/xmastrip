@@ -150,7 +150,7 @@ summary:hover { color: var(--ink); }
 </div>
 <script>
 const TRACK_DB = "https://innsbruck-xmas-trip-default-rtdb.europe-west1.firebasedatabase.app";
-const EV_TITLES = {"ueberfall": "Nachtschatten", "polizei": "Blaulicht", "hundkatze": "Hund gegen Katze", "taube": "Die Taube", "krampus": "Krampuslauf", "portemonnaie": "Fundsache", "ufo": "Unbekanntes Flugobjekt", "trump": "Hoher Besuch", "verfolgung": "Taschendieb", "flitzer": "Flitzer!", "monster": "Godzilla", "apokalypse": "Apokalypse", "guuggen": "Guuggen-Überfall", "gans": "Gans auf der Flucht", "nebel": "Nebel über Sursee", "drohne": "Absturz!"};
+const EV_TITLES = {"ueberfall": "Nachtschatten", "polizei": "Blaulicht", "hundkatze": "Hund gegen Katze", "taube": "Die Taube", "krampus": "Krampuslauf", "portemonnaie": "Fundsache", "ufo": "Unbekanntes Flugobjekt", "trump": "Hoher Besuch", "verfolgung": "Taschendieb", "flitzer": "Flitzer!", "monster": "Godzilla", "apokalypse": "Apokalypse", "guuggen": "Guuggen-Überfall", "gans": "Gans auf der Flucht", "nebel": "Nebel über Sursee", "drohne": "Absturz!", "brand": "Feuer!"};
 'use strict';
 /* ============ Grundwerkzeuge ============ */
 const TS = 16;
@@ -1277,7 +1277,7 @@ function portraitCanvas(L, bg) {
   const SU_ST = ['heim', 'sbahn', 's_ankunft', 's_tatort', 's_faehrten', 's_strahl', 's_probe', 's_boot', 's_gans', 's_frei'];
   const STAGE_N = Object.fromEntries(STAGES);
   /* Ereignisse: Titel aus dem Spielcode (EV_TITLES, von build.py eingesetzt), Symbole nur für die Anzeige */
-  const EV_ICON = { ueberfall: '🌒', polizei: '🚨', hundkatze: '🐕', taube: '🕊️', krampus: '👹', portemonnaie: '👛', ufo: '🛸', trump: '🏍️', verfolgung: '🏃', flitzer: '🙈', monster: '🦖', apokalypse: '🌋', guuggen: '🥁', gans: '🦢', nebel: '🌫️', drohne: '🚁' };
+  const EV_ICON = { ueberfall: '🌒', polizei: '🚨', hundkatze: '🐕', taube: '🕊️', krampus: '👹', portemonnaie: '👛', ufo: '🛸', trump: '🏍️', verfolgung: '🏃', flitzer: '🙈', monster: '🦖', apokalypse: '🌋', guuggen: '🥁', gans: '🦢', nebel: '🌫️', drohne: '🚁' , brand: '🚒'};
   const EV_SHORT = { ufo: 'UFO' };
   const EV_IDS = Object.keys(EV_TITLES);
   const evDone = (s) => EV_IDS.filter((id) => s.ev && s.ev[id] > 0).length;

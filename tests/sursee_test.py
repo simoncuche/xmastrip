@@ -123,6 +123,24 @@ with sync_playwright() as p:
     for ev in ["guuggen", "gans", "nebel", "drohne"]:
         run(f"await Story.announce('{ev}'); await Sur.ev_{ev}();", 1.5)
         pg.evaluate("() => { G.live = null; }")
+    # Feuerwehreinsatz: Notruf, Löschfahrzeug, Strahlrohr, Drehleiter, Rettung
+    run("G.S.time = dayOf(G.S.time) * 1440 + 15 * 60; enterMap('sursee', 'rathausplatz'); await Story.announce('brand'); await Sur.ev_brand();", 0.5, q=[0, 0])
+    expect("G.live && Sur._brand && Sur._brand.truck.go === 3", "Feuerwehreinsatz nicht gestartet")
+    pg.evaluate("() => { const B = Sur._brand; B.t = 4; B.truck.i = 4; B.truck.x = 58.5 * 16; B.truck.y = 51.3 * 16; G.player.x = 1088; G.player.y = 820; }")
+    for _ in range(20):
+        if pg.evaluate("() => Sur._brand.phase === 'loeschen' && G.busy === 0"):
+            break
+        time.sleep(0.3)
+    expect("Sur._brand.phase === 'loeschen'", "Löschfahrzeug nicht angekommen")
+    for _ in range(14):
+        pg.evaluate("() => { if (G.live && G.live.onAction) { const B = Sur._brand; G.player.x = 1064 + (B.helped % 4) * 16; G.live.onAction(); } }")
+        time.sleep(0.15)
+    for _ in range(40):
+        if pg.evaluate("() => Sur._brand.phase === 'done' && G.busy === 0"):
+            break
+        time.sleep(0.3)
+    expect("Sur._brand.phase === 'done' && G.S.ach.su_feuer && G.S.su.brandDone", "Rettung nicht abgeschlossen")
+    shot("brand")
     # Handy mit Notizbuch, Karte und Status
     for tab in ["fall", "karte", "status", "fotos", "ziele"]:
         pg.evaluate(f"() => {{ Phone.open('{tab}'); }}")

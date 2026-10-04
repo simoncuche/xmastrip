@@ -552,6 +552,7 @@ const Story = {
     gans: ['Gans auf der Flucht', 'Eine Gans rennt durchs Städtli'],
     nebel: ['Nebel über Sursee', 'Der See schickt seinen Dezembernebel'],
     drohne: ['Absturz!', 'Römus Drohne verliert die Kontrolle'],
+    brand: ['Feuer!', 'In der Unterstadt von Sursee brennt ein Haus'],
   },
   /* Zähler erlebter Ereignisse; ältere Spielstände übernehmen die Zähler des Tagesplans und die Apokalypse */
   evSeen() {

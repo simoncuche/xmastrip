@@ -74,6 +74,7 @@ Object.assign(ACH, {
   su_kinder: ['Kinderspiele', 'Sackgumpe, Chäszänne oder Stangechlädere gewonnen'],
   su_118: ['Kellerkonzert', 'Im Kulturwerk 118 auf der Bühne gestanden'],
   su_kloster: ['Klostergeheimnis', 'Im Kapuzinerkloster etwas Verstecktes gefunden'],
+  su_feuer: ['Held von der Unterstadt', 'Mit der Feuerwehr Sursee einen Brand gelöscht und Frau Wüest gerettet'],
   su_fotos: ['Sursee im Kasten', 'Alle Sehenswürdigkeiten von Sursee fotografiert'],
   su_velofahrer: ['Gümmeler', 'Mit dem Mietvelo durch Sursee gefahren'],
   su_egg: ['Abkürzung', 'Innsbruck ausgelassen und direkt nach Sursee gefahren'],
@@ -1366,12 +1367,18 @@ Object.assign(Sur, {
     { id: 'gans', cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 17; } },
     { id: 'nebel', cond: () => { const h = hourOf(G.S.time); return h >= 6 && h < 11; } },
     { id: 'drohne', cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 16 && !!FRIENDS.roemu && !Sur.st().direct; } },
+    { id: 'brand', cond: () => { const h = hourOf(G.S.time); return h >= 8 && h < 23 && !!Sur.st().brandDone; } },
   ],
   maybeEvent() {
     const s = this.st();
     if (G.busy || G.live || G.map.id !== 'sursee' || !suAt('s_tatort') || G.mode !== 'play') return;
     const d = dayOf(G.S.time);
     s.evN = s.evN || {};
+    if (!s.brandDone && suAt('s_strahl') && hourOf(G.S.time) >= 14 && hourOf(G.S.time) < 21 && (s.lastEv == null || G.S.time - s.lastEv >= 60) && Math.random() < 1 / 25) {
+      s.evN[d] = (s.evN[d] || 0) + 1; s.lastEv = G.S.time;
+      Story.announce('brand').then(() => this.ev_brand());
+      return;
+    }
     if ((s.evN[d] || 0) >= 2) return;
     if (s.lastEv != null && G.S.time - s.lastEv < 150) return;
     if (Math.random() > 1 / 90) return;
@@ -1438,6 +1445,117 @@ Object.assign(Sur, {
       update: (dt) => { t += dt; if (t > 50) { G.live = null; UI.toast('Der Nebel lichtet sich.'); } },
       draw: (c, cx, cy, tt) => { const a = Math.min(0.55, t * 0.08, (50 - t) * 0.08); for (let k = 0; k < 7; k++) { const x = ((k * 97 + tt * 6) % (View.w + 120)) - 60, y = (k * 53) % View.h; c.fillStyle = `rgba(220,226,232,${a * 0.6})`; c.beginPath(); c.ellipse(x, y, 90, 40, 0, 0, 6.283); c.fill(); } c.fillStyle = `rgba(210,216,222,${a * 0.5})`; c.fillRect(0, 0, View.w, View.h); },
       hudText: () => 'Nebel über Sursee',
+    };
+  },
+  /* Feuerwehreinsatz: Ein Haus in der Unterstadt (neben dem La Fuga) brennt. Notruf 118, Löschfahrzeug vom Depot durchs Untertor,
+     Strahlrohr (A drücken, vor dem Haus stehen), Drehleiter, Rettung von Frau Wüest. Beim ersten Mal ein Hinweis zum Fall. */
+  async ev_brand() {
+    const s = this.st(), p = G.player, first = !s.brandDone;
+    const HX = 66 * 16, HB = 50 * 16, HW = 64;
+    const win = (k, f) => [HX + k * 16 + 8, HB - (f + 1) * 16 + 9];
+    const B = this._brand = { phase: 'alarm', t: 0, fl: [1, 1, 0.8, 1, 0.9, 1, 1, 0.7], truck: { x: 12 * 16, y: 51 * 16, i: 0, go: 15 }, spray: 0, sprayK: 0, helped: 0, ladder: 0, person: 0, crew: [], said: false };
+    const path = [[12, 51], [16.5, 51], [16.5, 38.5], [58.5, 38.5], [58.5, 51.3], [63, 51.3]].map(([x, y]) => [x * 16, y * 16]);
+    const c0 = await Story.ask(null, 'Rauch über der Unterstadt! Aus einem Fenster neben dem La Fuga schlagen Flammen. Oben am Fenster winkt jemand.', ['📞 118 anrufen', 'Hinrennen und schauen']);
+    if (c0 === 0) {
+      Snd.sfx('ding');
+      const c1 = await Story.ask('Feuerwehr-Notruf 118', 'Feuerwehr, Notruf 118. Wo brennt es genau?', ['Unterstadt, neben dem La Fuga', 'Am Märtplatz bei der Chilbi', 'Beim Bahnhof']);
+      if (c1 === 0) { B.truck.go = 3; await Story.say('Feuerwehr-Notruf 118', 'Verstanden, Unterstadt. Wir rücken aus. Bringen Sie sich in Sicherheit und halten Sie die Gasse frei!'); }
+      else { B.truck.go = 12; await Story.say('Feuerwehr-Notruf 118', 'Dort sehen wir nichts … Moment, ein Nachbar meldet Rauch in der Unterstadt. Wir fahren!'); }
+    } else UI.toast('Irgendwer hat schon 118 gewählt – vom Feuerwehrdepot heult die Sirene.');
+    const crewLook = (i) => npcLook(5300 + i, { top: 4, topCol: 2, pants: 4, pantsCol: 2, hat: 0 });
+    const zone = () => Math.abs(p.x - (HX + HW / 2)) < 56 && p.y > HB - 4 && p.y < HB + 52;
+    const finish = async (byPlayer) => {
+      B.phase = 'done'; G.live = null;
+      for (const a of B.crew) Story.dropActor(a);
+      s.brandDone = 1; s.brandN = (s.brandN || 0) + 1;
+      if (!byPlayer) { UI.toast('Die Feuerwehr Sursee hat den Brand gelöscht. Frau Wüest ist gerettet – ohne dich.'); return; }
+      G.busy++;
+      try {
+        await Story.say('Feuerwehrkommandant', 'Feuer aus! Gute Arbeit mit dem Strahlrohr. Wenn Sie wollen: Die Feuerwehr Sursee sucht immer Leute.');
+        await Story.say('Frau Wüest', first ? 'Merci vielmal! Ich hab nur Guetzli backen wollen … und dann der Ofen! Mimi, meine Katze, ist auch gerettet.' : 'Schon wieder ich! Jetzt kauf ich mir einen Feuerlöscher. Und keine Guetzli mehr.');
+        if (first && !suAt('s_gans')) {
+          await Story.say('Frau Wüest', 'Sagen Sie … Sie suchen doch die goldene Maske? In der Nacht vor der Gansabhauet hab ich vom Fenster aus einen Mann im roten Mantel gesehen. Er kam aus dem Waschhaus beim Diebenturm, mit einem Ruder unter dem Arm.');
+          this.note('wueest', 'Frau Wüest (Unterstadt): Nachts ein Mann im roten Mantel mit einem Ruder, aus dem Waschhaus beim Diebenturm.');
+        }
+        achieve('su_feuer'); mood(15); energy(-10); G.S.st.smell = Math.min(100, (G.S.st.smell || 0) + 25);
+        if (first) { addMoney('chf', 50); UI.toast('Frau Wüest drückt dir 50 Franken in die Hand. Du riechst nach Rauch.'); }
+        passTime(20);
+      } finally { G.busy--; }
+    };
+    G.live = {
+      onLeave: () => { if (B.phase !== 'done') { s.brandDone = 1; s.brandN = (s.brandN || 0) + 1; } },
+      update: (dt) => {
+        B.t += dt; B.spray = Math.max(0, B.spray - dt);
+        if (Math.floor(B.t * 2) !== Math.floor((B.t - dt) * 2) && B.phase !== 'rettung') Snd.tone(Math.floor(B.t * 2) % 2 ? 660 : 880, 0.4, 'sine', 0.035);
+        const burning = B.fl.filter((v) => v > 0).length;
+        for (let i = 0; i < 8; i++) if (B.fl[i] > 0 && B.phase !== 'rettung') B.fl[i] = Math.min(1, B.fl[i] + 0.015 * dt);
+        /* Löschfahrzeug */
+        const tr = B.truck;
+        if (B.t > tr.go && tr.i < path.length - 1) {
+          const [tx, ty] = path[tr.i + 1], dx = tx - tr.x, dy = ty - tr.y, d = Math.hypot(dx, dy), v = 95 * dt;
+          if (d <= v) { tr.x = tx; tr.y = ty; tr.i++; } else { tr.x += dx / d * v; tr.y += dy / d * v; }
+          tr.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 1) : (dy > 0 ? 0 : 3);
+          if (tr.i === path.length - 1) {
+            B.phase = 'loeschen'; B.tl = 0;
+            for (let i = 0; i < 3; i++) B.crew.push(Story.tempActor({ name: 'Feuerwehrmann', look: crewLook(i), x: (60 + i * 1.5) * 16, y: 51.6 * 16, dir: 3, speed: 0, bubbleRand: ['!'] }));
+            UI.toast('Die Feuerwehr ist da! Stell dich vor das Haus und drück A, um mit dem Strahlrohr zu löschen.');
+          }
+        }
+        if (B.phase === 'loeschen') {
+          B.tl += dt;
+          /* die Feuerwehrleute löschen mit, langsamer als mit Hilfe */
+          const mi = B.fl.indexOf(Math.max(...B.fl)); B.fl[mi] = Math.max(0, B.fl[mi] - 0.22 * dt);
+          if (zone() && !B.said) {
+            B.said = true;
+            (async () => { G.busy++; try { await Story.say('Feuerwehrkommandant', 'Sie da! Nehmen Sie das zweite Strahlrohr – Wasser auf die Fenster, ich schick die Leiter hoch, sobald es geht!'); } finally { G.busy--; } })();
+          }
+          if (B.fl.every((v) => v <= 0)) { B.phase = 'rettung'; B.tr = 0; UI.toast('Feuer unter Kontrolle! Die Drehleiter fährt aus …'); }
+          else if (B.tl > 120) { B.fl.fill(0); B.phase = 'rettung'; B.tr = 0; }
+        } else if (B.phase === 'rettung') {
+          B.tr += dt; B.ladder = Math.min(1, B.tr / 3); if (B.tr > 3) B.person = Math.min(1, (B.tr - 3) / 4);
+          if (B.tr > 7.5) finish(B.helped >= 3 && Math.hypot(p.x - (HX + 32), p.y - HB) < 200);
+        }
+      },
+      onAction: () => {
+        if (B.phase !== 'loeschen' || !zone()) return false;
+        const k = clamp(Math.round((p.x - HX - 8) / 16), 0, 3);
+        B.sprayK = k; B.spray = 0.45; B.helped++;
+        for (const i of [k, k + 4]) B.fl[i] = Math.max(0, B.fl[i] - 0.34);
+        Snd.tone(220, 0.25, 'sawtooth', 0.03, 0, -120);
+        return true;
+      },
+      draw: (c, cx, cy, tt) => {
+        /* Rauch */
+        for (let k = 0; k < 9; k++) { const a = ((tt * 0.25 + k / 9) % 1), sx = HX + 20 + k * 3 + Math.sin(tt + k) * 10 - cx, sy = HB - 150 - a * 90 - cy; const burning = B.fl.reduce((u, v) => u + v, 0) / 8; if (burning <= 0 && B.phase === 'rettung') continue; c.fillStyle = `rgba(70,70,74,${(0.45 - a * 0.4) * Math.max(0.25, burning)})`; c.beginPath(); c.ellipse(sx, sy, 10 + a * 18, 7 + a * 12, 0, 0, 6.283); c.fill(); }
+        /* Flammen in den Fenstern */
+        for (let i = 0; i < 8; i++) {
+          const v = B.fl[i]; const [wx, wy] = win(i % 4, i < 4 ? 1 : 2); const x = Math.round(wx - cx), y = Math.round(wy - cy);
+          if (v <= 0) { R(c, x - 4, y - 5, 8, 9, 'rgba(30,26,24,0.75)'); continue; }
+          const fl = 0.7 + Math.sin(tt * 14 + i * 2) * 0.3, hgt = Math.round((8 + 10 * v) * fl);
+          c.fillStyle = '#e8401a'; c.beginPath(); c.moveTo(x - 5, y + 4); c.lineTo(x, y + 4 - hgt); c.lineTo(x + 5, y + 4); c.closePath(); c.fill();
+          c.fillStyle = '#ffb02a'; c.beginPath(); c.moveTo(x - 3, y + 4); c.lineTo(x + Math.sin(tt * 9 + i), y + 4 - hgt * 0.65); c.lineTo(x + 3, y + 4); c.closePath(); c.fill();
+          R(c, x - 1, y, 2, 3, '#fff2a0');
+        }
+        /* Frau Wüest am Fenster bzw. auf der Leiter */
+        const [px0, py0] = win(2, 3), [lx, ly] = [B.truck.x + 6, B.truck.y - 10];
+        if (B.ladder > 0) { const ex = lx + (px0 - lx) * B.ladder, ey = ly + (py0 + 6 - ly) * B.ladder; for (let k = 0; k <= 10; k++) { const q = k / 10; R(c, Math.round(lx + (ex - lx) * q - cx) - 2, Math.round(ly + (ey - ly) * q - cy), 5, 1, '#c8c8cc'); } line(c, Math.round(lx - cx), Math.round(ly - cy), Math.round(ex - cx), Math.round(ey - cy), '#8a8e94'); }
+        if (B.person < 1) {
+          const q = B.person, x = Math.round(px0 + (lx - px0) * q - cx), y = Math.round(py0 + (ly - py0) * q - cy) - 2;
+          E(c, x, y - 3, 3, 3, '#f0c8a0'); R(c, x - 2, y - 7, 5, 3, '#d8d8dc'); R(c, x - 3, y, 6, 6, '#7a3a5a');
+          const w = Math.floor(tt * 6) % 2; line(c, x - 3, y + 1, x - 6, y - 3 - w * 2, '#f0c8a0'); line(c, x + 3, y + 1, x + 6, y - 3 - (1 - w) * 2, '#f0c8a0');
+          if (B.phase !== 'rettung' && Math.floor(tt * 1.5) % 3 === 0) { R(c, x - 14, y - 20, 29, 9, '#ffffff'); pxText(c, 'HILFE!', x - 12, y - 18, '#c8302a'); }
+        }
+        /* Strahl */
+        if (B.spray > 0) { const [wx, wy] = win(B.sprayK, 2), x0 = Math.round(p.x - cx), y0 = Math.round(p.y - cy) - 14, x1 = Math.round(wx - cx), y1 = Math.round(wy - cy); for (let k = 0; k < 12; k++) { const q = k / 12, j = Math.sin(tt * 40 + k) * 1.5; R(c, Math.round(x0 + (x1 - x0) * q + j), Math.round(y0 + (y1 - y0) * q - Math.sin(q * Math.PI) * 10), 2, 2, k % 2 ? '#bfe6ff' : '#7ac0f0'); } }
+        /* Löschfahrzeug */
+        const tr = B.truck, tx = Math.round(tr.x - cx), ty = Math.round(tr.y - cy), side = tr.dir === 1 || tr.dir === 2, fx = tr.dir === 1 ? -1 : 1;
+        E(c, tx, ty + 2, side ? 20 : 10, 3, 'rgba(0,0,0,0.25)');
+        if (side) { R(c, tx - 20, ty - 16, 40, 14, '#c8302a'); R(c, tx - 20, ty - 9, 40, 2, '#f4f0e6'); R(c, tx - 18, ty - 20, 30, 3, '#b8bcc2'); for (let k = 0; k < 6; k++) R(c, tx - 17 + k * 5, ty - 21, 1, 5, '#8a8e94'); const cxx = tx + fx * 14; R(c, cxx - 5, ty - 15, 10, 6, '#7ac0e0'); for (const wx of [-13, 10]) { E(c, tx + wx, ty - 1, 4, 4, '#1a1a1e'); E(c, tx + wx, ty - 1, 2, 2, '#8a8e94'); } }
+        else { R(c, tx - 9, ty - 24, 18, 24, '#c8302a'); R(c, tx - 7, ty - 22, 14, 6, tr.dir === 0 ? '#7ac0e0' : '#a8282a'); R(c, tx - 9, ty - 12, 18, 2, '#f4f0e6'); R(c, tx - 4, ty - 20, 8, 16, '#b8bcc2'); }
+        const bl = Math.floor(tt * 6) % 2; R(c, tx - 4, ty - (side ? 19 : 26), 3, 2, bl ? '#3a8aff' : '#1a2a6a'); R(c, tx + 1, ty - (side ? 19 : 26), 3, 2, bl ? '#1a2a6a' : '#3a8aff');
+      },
+      lights: () => { const L = []; const burn = B.fl.reduce((u, v) => u + v, 0); if (burn > 0) L.push({ x: HX + 32, y: HB - 26, r: 40 + burn * 8, c: '#ff8a3a' }); L.push({ x: B.truck.x, y: B.truck.y - 20, r: 26, c: Math.floor(G.t * 6) % 2 ? '#3a8aff' : '#ff5a5a' }); return L; },
+      hudText: () => B.phase === 'alarm' ? (B.t < B.truck.go ? 'Feuer in der Unterstadt! Die Feuerwehr wird alarmiert …' : 'Das Löschfahrzeug ist unterwegs – lauf in die Unterstadt!') : B.phase === 'loeschen' ? `Löschen! Vor dem Haus A drücken · Flammen: ${B.fl.filter((v) => v > 0).length}/8` : 'Die Drehleiter fährt aus …',
     };
   },
   /* Römus Drohne stürzt ab */
