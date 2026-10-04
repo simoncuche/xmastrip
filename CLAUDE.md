@@ -25,6 +25,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `01_audio.js` | `Snd`: synthetische Soundeffekte und Musik-Loops (WebAudio) |
 | `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (28 Merkmale inkl. `costume`), Kostüme `COSTUMES` + `effLook` (ersetzen Kleidung, Extras via `drawCostumeSprite`/`drawCostumeP`), Porträt 64×64, Sprite-Sheets 18×26 |
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
+| `04_track.js` | `Track`: Fortschritt pro Gerät an Firebase Realtime Database per REST (`PATCH devices/<Gerät>.json`, Mehrpfad mit `games/<gameId>/s` und `games/<gameId>/log/<id>`), Drosselung 45 s, Pause nach Fehlern, Opt-out `gleis4-track-off`; Hooks in `saveGame`, `achieve`, `Story.setStage`, `Ending.show`, `UI.gameOver`, `startGame` |
 | `04_state.js` | Spielzustand `G`, `newState`, Gegenstände `ITEMS`, Sehenswürdigkeiten `SIGHTS`, Erlebnisse `ACH`, Werte-Logik, Speichern |
 | `05_tiles.js` | Bodenkacheln `T`/`TILE_PAINT`, alle Objekte (Gebäude, Bäume, Möbel, Wahrzeichen) als vorgerenderte Sprites |
 | `06_maps.js` | Alle Karten als Builder-Funktionen: `luzern`, `luzern_halle`, `zug`, `ibk`, `hotel_lobby`, `hotel_floor`, `hotel_room`, `bar`, `stueberl`, `club`, `rouge` (Tabledance in den Bögen), `casino` (Roulette, Blackjack), `bergisel` (Schanze `objSchanze`, Tribünen, Kassa, Turm, Hofer-Denkmal, Tirol Panorama; Tram ab `ibk`-Spawn `bergisel_stop`), `shop_<id>` (individuelle Laden-Innenräume via `shopInterior(id, { build(m, h) })` mit Helfern `h.counter/keeper/shelf/door`, Rückweg über `flags.shopBack`), `seegrube`. Zug-Fahrplan, Tram, Autos |
@@ -35,6 +36,12 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `11_minigames.js` | Wirtshausrauferei (`brawl`, Testhilfe `Mini._brawl`), Darts, Armdrücken, Tanzen, Nageln, Steine flitschen, Kicker, Panorama (`turm`, `seegrube`, `bergisel`), Bierpong (`beerpong`), Roulette (`rouletteSpin`), Blackjack, Skispringen (`skijump`: Anlauf, Absprung-Timing, Haltung, Telemark; Hilfsobjekt `Mini._sj` für Tests) |
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug, Tram, Panoramalift, Übergänge bei jedem `warpTo` über `transitionFor(from, to, spawn, opts)`: `door` mit Fassade aus `FACADES`/`facadeFor` (Läden über `SHOP_SIGNS`), `stairs`, `hotellift`, `roomdoor`, `trainexit`, `thrown` (`opts.kind`), Sperrstunde (`kind: 'closing'`); `plain: true` = nur Abblenden, Jessy `jessy` mit `kind` 0–2) |
 | `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
+
+## Tracking und Tracker-Seite
+
+- Datenbank-URL in `tracking.json` (`databaseURL`) oder Umgebungsvariable `TRACK_DB` (im Workflow aus der Repo-Variable `vars.TRACK_DB`). Leer = kein Tracking. `build.py` bettet sie als `TRACK_DB` ein.
+- `src/tracker.html` wird zu `dist/tracker.html` (mit `00_util.js` und `02_look.js` für die Porträts). URL-Parameter `?db=` überschreibt die Datenbank zum Testen.
+- Firebase-Regeln: `devices` lesbar, `devices/$device` beschreibbar. Fehler beim Senden dürfen das Spiel nie stören.
 
 ## Wichtige Konventionen
 

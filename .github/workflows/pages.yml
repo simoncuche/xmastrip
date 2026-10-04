@@ -27,6 +27,9 @@ jobs:
           python-version: "3.x"
       - name: Spiel bauen
         run: python3 build.py
+        env:
+          # Optional: Firebase-URL als Repo-Variable (Settings → Secrets and variables → Actions → Variables), sonst tracking.json
+          TRACK_DB: ${{ vars.TRACK_DB }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

@@ -214,6 +214,7 @@ function takeInv(id, n = 1) { if (!hasInv(id)) return false; G.S.inv[id] -= n; i
 function achieve(id) {
   if (!ACH[id] || G.S.ach[id]) return;
   G.S.ach[id] = G.S.time;
+  Track.event('ach', ACH[id][0]);
   Snd.sfx('win');
   UI.toast(`<b>Erlebnis:</b> ${ACH[id][0]}`, 'ach');
 }
@@ -314,6 +315,7 @@ const SAVE_KEY = 'gleis4-innsbruck-v4';
 function saveGame(silent) {
   if (!G.S || !G.player) return;
   G.S.map = G.map.id; G.S.x = Math.round(G.player.x); G.S.y = Math.round(G.player.y); G.S.dir = G.player.dir;
+  Track.send('save');
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(G.S)); if (!silent) UI.toast('Spielstand gespeichert.'); return true; }
   catch (e) { if (!silent) UI.toast('Speichern ist in diesem Browser nicht möglich.', 'warn'); return false; }
 }

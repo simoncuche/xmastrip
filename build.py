@@ -26,7 +26,22 @@ def read_changelog():
     return log
 
 changelog = read_changelog()
+
+def read_tracking():
+    """tracking.json → Firebase-Datenbank-URL (leer = kein Tracking). Die Umgebungsvariable TRACK_DB hat Vorrang."""
+    import os
+    url = os.environ.get("TRACK_DB", "")
+    f = ROOT / "tracking.json"
+    if not url and f.exists():
+        url = json.loads(f.read_text(encoding="utf-8")).get("databaseURL", "")
+    url = url.strip().rstrip("/")
+    if url and not re.match(r"^https://[a-z0-9.-]+\.(firebaseio\.com|firebasedatabase\.app)$", url):
+        raise SystemExit(f"tracking.json: databaseURL sieht nicht nach einer Firebase-Realtime-Database aus: {url}")
+    return url
+
+track_db = read_tracking()
 version_js = (f"const APP_VERSION = {json.dumps(changelog[0]['v'])};\n"
+              f"const TRACK_DB = {json.dumps(track_db)};\n"
               f"const APP_VERSION_DATE = {json.dumps(changelog[0]['date'])};\n"
               f"const CHANGELOG = {json.dumps(changelog, ensure_ascii=False)};\n")
 css = (SRC / "style.css").read_text(encoding="utf-8")
@@ -116,5 +131,10 @@ for name, size in (("icon-192.png", 192), ("icon-512.png", 512), ("apple-touch-i
     "orientation": "any", "background_color": "#0f1a2b", "theme_color": "#0f1a2b",
     "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}],
 }, ensure_ascii=False), encoding="utf-8")
+# ---- Tracker-Seite: Spielstände aller Geräte aus Firebase; Porträts mit dem Zeichencode des Spiels ----
+look_js = "\n".join((SRC / "js" / n).read_text(encoding="utf-8") for n in ("00_util.js", "02_look.js"))
+tracker = (SRC / "tracker.html").read_text(encoding="utf-8")
+tracker = tracker.replace("/*CONFIG*/", f"const TRACK_DB = {json.dumps(track_db)};").replace("/*LOOK*/", look_js)
+(DIST / "tracker.html").write_text(tracker, encoding="utf-8")
 (DIST / "version.json").write_text(json.dumps({"v": changelog[0]["v"], "date": changelog[0]["date"]}), encoding="utf-8")
-print(f"OK: Version {changelog[0]['v']}, {len(js_files)} JS-Module, {len(full) // 1024} KB")
+print(f"OK: Version {changelog[0]['v']}, {len(js_files)} JS-Module, {len(full) // 1024} KB, Tracking: {track_db or 'aus (tracking.json leer)'}")

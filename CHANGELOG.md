@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.23.0 – 04.10.2026
+
+- Neue Tracker-Seite (tracker.html): zeigt für jedes Gerät Spieler, Avatar, Fortschritt, Tag, Werte, Biere, Erlebnisse, Rekorde und den Verlauf, dazu Ranglisten. Aktualisiert sich alle 20 Sekunden.
+- Das Spiel meldet seinen Stand an eine Firebase-Datenbank: beim Start, bei jedem Abschnitt, bei Erlebnissen, beim Speichern, beim Spielende und regelmässig während des Spiels.
+- Ist die Datenbank nicht erreichbar, läuft das Spiel normal weiter und versucht es später erneut.
+- Handy → Optionen: „Fortschritt teilen“ lässt sich ausschalten.
+
 ## 2.22.0 – 04.10.2026
 
 - Schöttli-Rundi im Zug: Kurz nach der Grenze bei Buchs SG holt Kusi Mini-Fläschli aus dem Rucksack und kommt zu dir an den Platz.

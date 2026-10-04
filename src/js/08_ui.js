@@ -231,6 +231,7 @@ const UI = {
     const o = this.overlay(html, null);
     o.querySelector('#goRestart').addEventListener('click', () => { clearSave(); try { localStorage.removeItem(SAVE_KEY + '-img'); } catch (e) {} location.reload(); });
     G.mode = 'over';
+    Track.event('gameover', title, true);
   },
   /* ---- Overlay ---- */
   overlay(html, onClose) {
@@ -444,6 +445,8 @@ const Phone = {
       <div class="opt-row"><span>Bewegungssensoren</span><button class="btn" id="oSens">${Shake.on ? 'An' : Shake.needsPermission() ? 'Erlauben' : typeof DeviceMotionEvent === 'undefined' ? 'Nicht verfügbar' : 'An'}</button></div>
       <p class="note">Für das Zielen per Neigung beim Darts – und wer weiss, wofür sonst noch.</p>
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
+      ${TRACK_DB ? `<div class="opt-row"><span>Fortschritt teilen</span><button class="btn" id="oTrack">${Track.optOut() ? 'Aus' : 'An'}</button></div>
+      <p class="note">Schickt Name, Spielfortschritt und Werte an die Tracker-Seite der Reisegruppe. Ohne Verbindung spielst du einfach normal weiter.</p>` : ''}
       <div class="opt-row"><span>Spielstand</span><button class="btn primary" id="oSave">Speichern</button></div>
       <div class="opt-row"><span>Neues Spiel beginnen</span><button class="btn red" id="oNew">Neu starten</button></div>
       <p class="note">Steuerung: Pfeiltasten oder WASD gehen, Shift rennen, E oder Leertaste für Aktionen, M öffnet das Handy. Auf dem Handy: links ziehen zum Gehen (weit ziehen = rennen), A-Knopf für Aktionen.</p>
@@ -454,6 +457,8 @@ const Phone = {
     b.querySelector('#oDeck').onclick = (e) => { G.S.flags.deck = G.S.flags.deck === 'fr' ? 'de' : 'fr'; e.target.textContent = G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'; };
     b.querySelector('#oSens').onclick = async (e) => { const ok = await Shake.ask(); e.target.textContent = ok ? 'An' : 'Nicht erlaubt'; };
     b.querySelector('#oSave').onclick = () => saveGame();
+    const tb = b.querySelector('#oTrack');
+    if (tb) tb.onclick = () => { const off = !Track.optOut(); Track.setOptOut(off); tb.textContent = off ? 'Aus' : 'An'; };
     const nb = b.querySelector('#oNew');
     nb.onclick = () => { if (nb.dataset.sure) { clearSave(); location.reload(); } else { nb.dataset.sure = 1; nb.textContent = 'Wirklich? Nochmal tippen'; } };
   },

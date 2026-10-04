@@ -240,7 +240,7 @@ const Story = {
       { t: 'Heimreise nach Luzern', d: 'Am Hauptbahnhof, wann ihr wollt – damit endet das Spiel', done: !!G.S.finished },
     ];
   },
-  setStage(s) { G.S.stage = s; UI.hud(); },
+  setStage(s) { G.S.stage = s; UI.hud(); Track.event('stage', s, true); },
   mapPois(id) {
     if (id !== 'ibk') return [];
     const A = '#ffb53d', S = '#6cc46f', V = '#7ab0f0', N = '#e85af0';
@@ -2750,6 +2750,7 @@ function tracht() { const L = G.S.look; return L.hat === 9 && L.top === 11 && L.
 const Ending = {
   async show(opt = {}) {
     const S2 = G.S;
+    Track.event('ende', opt.apoc ? 'Apokalypse überlebt' : 'Heimreise', true);
     const html = `<div class="panel"><div class="panel-head"><h2>${opt.apoc ? 'Last Exit Innsbruck' : 'Heimreise nach Luzern'}</h2><span class="sub">Spiel beendet</span></div><div class="panel-body">
       <p class="note">${opt.apoc ? 'Hinter euch versinkt Innsbruck in Lava, Blitz und Donner. Die Nordkette spuckt Feuer, das Goldene Dachl schmilzt. Im letzten Railjet stossen zwölf Schweizer an – auf die Stadt, die es nicht mehr gibt. Prost, Innsbruck.' : `Der Railjet rollt aus dem Inntal. ${Object.keys(FRIENDS).length} müde Kollegen, ein voller Bierdeckel und viele Geschichten.`}</p>
       <div class="statgrid">

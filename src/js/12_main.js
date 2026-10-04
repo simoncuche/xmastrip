@@ -96,6 +96,8 @@ async function startGame(state, fresh) {
   Story._lastHour = Math.floor(hourOf(G.S.time));
   G.mode = 'play';
   Story.ready = true;
+  Track.init();
+  if (fresh) Track.event('start', G.S.name, true); else Track.send('resume', true);
   UI.hud();
   if (fresh) {
     G.busy++;
