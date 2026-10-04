@@ -210,6 +210,7 @@ MAP_BUILDERS.luzern_halle = () => {
   m.npcDefs.push({ id: 'baeckerin', name: 'Bäckerin Vreni', x: 11 * 16, y: 13 * 16 + 13, dir: 0, look: npcLook(1104, { hair: 9, hairCol: 5, beard: 0, top: 4, topCol: 13, hat: 0, glasses: 0, mouth: 0, build: 2 }), talk: () => Story.shop('baeckerei_lu'), keepDir: true, bubbleRand: ['dots', 'heart'] });
   for (const x of [22, 24]) m.add(mkObj(x, 14, 1, 1, 12, (c, W, H) => { R(c, 2, 0, 12, H - 1, '#c8302a'); R(c, 4, 3, 8, 7, '#1a2a3a'); R(c, 5, 4, 6, 1, '#7ad0f0'); R(c, 5, 13, 6, 2, '#2a2a2e'); R(c, 4, 18, 8, 3, '#e8e4dc'); }));
   m.trig(22, 14, 3, 1, { label: 'Billettautomat', act: () => Story.ticketMachine() });
+  m.trig(20, 12, 6, 1, { label: 'Abfahrtstafel', act: () => Sur.tafel() });
   /* Taxizentrale: Taxi-Tickets zum Fixpreis (für Yännu, wenn der Zug weg ist) */
   m.add(objCounter(28, 14, 3, 1, { top: '#f0d040', front: '#b89418', reg: true }));
   m.trig(28, 14, 3, 1, { label: 'Taxizentrale', act: () => Story.taxiTicketLU() });

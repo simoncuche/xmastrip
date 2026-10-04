@@ -33,10 +33,15 @@ const suPapi = () => (playerIsCuche() ? (FRIENDS.lexx ? 'lexx' : who('kassier'))
 
 /* ---- Sehenswürdigkeiten in Sursee (eigene Fotoreihe, getrennt von Innsbruck) ---- */
 const SIGHTS_SU = {
-  untertor: { n: 'Untertor, Sursee', f: 'Das Untertor am unteren Ende der Altstadt. Hier enden Oberstadt und Unterstadt, gleich daneben steht das Wirtshaus Wilder Mann.' },
-  rathaus_sursee: { n: 'Rathaus Sursee', f: 'Spätgotisches Rathaus, erbaut 1539 bis 1546. Vor dem Rathaus findet jedes Jahr am Martinstag die Gansabhauet statt.' },
-  stgeorg: { n: 'Stadtkirche St. Georg', f: 'Die Stadtkirche St. Georg steht mit ihrer Treppe hinter dem Rathaus in der Mitte der Oberstadt.' },
-  diebenturm: { n: 'Diebenturm', f: 'Der Turm in der alten Stadtmauer war einst Gefängnis. Heute hat die Fasnachtszunft Heini von Uri hier ihre Zunftstube.' },
+  untertor: { n: 'Untertor, Sursee', f: 'Das einzige erhaltene Stadttor von Sursee, auch Baslertor genannt: ein weisser Turm mit hohem Dach, 1674 von Meister Thomas Martin aus Beromünster anstelle eines mittelalterlichen Vorgängers gebaut.' },
+  rathaus_sursee: { n: 'Rathaus Sursee', f: 'Erbaut 1539 bis 1546, einer der bedeutendsten spätgotischen Profanbauten der Schweiz: Treppengiebel, eine Sonnenuhr am Giebel und zwei in den Bau integrierte Türme. Vor dem Rathaus findet am Martinstag die Gansabhauet statt.' },
+  stgeorg: { n: 'Stadtkirche St. Georg', f: '1638 bis 1641 nach Plänen von Jakob Berger gebaut, der zuvor an der Hofkirche Luzern mitgearbeitet hatte. Seit 1726 trägt der Turm eine welsche Haube.' },
+  diebenturm: { n: 'Diebenturm', f: '1681 als Gefängnis- und Pulverturm gebaut, mit steilem Ziegeldach. Im angebauten oberen Waschhaus hat die Zunft Heini von Uri im ersten Stock ihre Zunftstube.' },
+  marienbrunnen: { n: 'Marienbrunnen', f: 'Ein Brunnen an dieser Stelle ist 1596 erstmals erwähnt. Säule und Marienfigur schuf Meister Hans Spichtig 1688 im Auftrag des Surseer Rats.' },
+  heinibrunnen: { n: 'Heinibrunnen', f: '1975 wurde vor dem Rathaus wieder ein Brunnen gebaut und 1979 mit einer Figur des Heini von Uri von Bildhauer August Bläsi versehen. Seit 2001 steht er am Vierherrenplatz.' },
+  murihof: { n: 'Murihof', f: 'Einst Stadtburg der Kyburger und Habsburger, seit Ende des 14. Jahrhunderts Hof des Klosters Muri und das älteste Steingebäude der Altstadt. 1785 bis 1787 spätbarock umgebaut.' },
+  sankturbanhof: { n: 'Sankturbanhof', f: 'Der ehemalige Hof des Klosters St. Urban an der Theaterstrasse, gebaut 1596 bis 1598. Heute Museum mit Kunst und Stadtgeschichte.' },
+  unterstadt: { n: 'Sure in der Unterstadt', f: 'Durch die Unterstadt fliesst die Sure offen zwischen den Häusern. Nach dem letzten grossen Stadtbrand von 1734 wurde die Altstadt barock wieder aufgebaut.' },
   ehretpark: { n: 'Ehret-Park', f: 'Der Park liegt unterhalb der Unterstadt, auf der anderen Seite der Stadtmauer, an der Sure.' },
   triechter: { n: 'Triechter', f: 'Der Triechter ist die trichterförmige Bucht am Nordende des Sempachersees mit Quai, Promenade und Strandbad.' },
   gammainseli: { n: 'Gamma-Inseli', f: 'Eine echte kleine Insel von 184 m² mit hohen Bäumen. Sie entstand, als der See zwischen 1806 und 1814 abgesenkt wurde, und war schon in der Jungsteinzeit bewohnt.' },
@@ -71,6 +76,7 @@ Object.assign(ACH, {
   su_kloster: ['Klostergeheimnis', 'Im Kapuzinerkloster etwas Verstecktes gefunden'],
   su_fotos: ['Sursee im Kasten', 'Alle Sehenswürdigkeiten von Sursee fotografiert'],
   su_velofahrer: ['Gümmeler', 'Mit dem Mietvelo durch Sursee gefahren'],
+  su_egg: ['Abkürzung', 'Innsbruck ausgelassen und direkt nach Sursee gefahren'],
 });
 
 /* ---- Gegenstände ---- */
@@ -184,6 +190,38 @@ const Sur = {
     UI.toast('Gleis 2: S-Bahn nach Sursee. Oder durch die Halle heimgehen – das beendet das Spiel.');
     saveGame(true);
   },
+  /* Easter Egg: Dreimal auf die Abfahrtstafel in der Luzerner Bahnhofshalle tippen – heimlich die S1 nach Sursee nehmen */
+  _tafel: 0,
+  async tafel() {
+    if (this.active()) { await Story.say(null, 'Abfahrtstafel: S1 nach Sursee, Gleis 2. IR 70 nach Zürich HB, Gleis 4.'); return; }
+    this._tafel++;
+    if (this._tafel < 3 || stageAt('ride')) { await Story.say(null, `Abfahrtstafel: ${clockStr(DEP_TIME)} IR 70 nach Zürich HB, Gleis 4. ${clockStr(DEP_TIME + 4)} S1 nach Sursee, Gleis 1.${this._tafel === 2 ? ' Die Anzeige für Sursee flackert seltsam …' : ''}`); return; }
+    this._tafel = 0;
+    Snd.sfx('ding');
+    const c = await Story.ask(null, 'Psst … Die Anzeige „S1 SURSEE“ blinkt nur für dich. Innsbruck auslassen und heimlich direkt nach Sursee fahren? Dort wartet ein Fall auf dich. (Easter Egg – nach Innsbruck geht es danach nicht mehr.)', ['Ab nach Sursee!', 'Nein, Innsbruck ruft']);
+    if (c !== 0) return;
+    await this.directSursee();
+  },
+  async directSursee() {
+    G.busy++;
+    const s = this.st();
+    s.direct = 1;
+    G.S.chapter = 'heim';
+    achieve('su_egg');
+    delete BUILT.luzern_halle;
+    Story.setStage('sbahn');
+    G.S.flags.sbDep = G.S.time + 1;
+    _sbScroll = 0;
+    await Scene.play('door', { exit: false, style: { name: 'S1 SURSEE', wall: '#e8e4dc', door: 'glass', sign: ['#d8302a', '#ffffff'], inner: '#eef4fa' }, ms: 900, keep: true });
+    enterMap('sbahn', 'start');
+    await UI.fadeIn();
+    Snd.sfx('blip');
+    await Story.say(voice('kassier'), `📱 ${G.S.name}?! Wo bist du? Der IR 70 fährt gleich!`);
+    await Story.say('me', '📱 Sorry, Jungs. Ich sitz in der S-Bahn nach Sursee. In Sursee ist die goldene Sonnenmaske verschwunden – Isa braucht einen Detektiv.');
+    await Story.say(voice('party'), '📱 VERRÄTER! … Wir trinken eins für dich. Oder zwölf.');
+    G.busy--;
+    saveGame(true);
+  },
   async leaveLuzern() {
     const c = await Story.ask(null, 'Durch die Halle hinaus und nach Hause? Damit endet das Spiel. Die S-Bahn nach Sursee fährt auf Gleis 2.', ['Heimgehen – Spiel beenden', 'Doch nach Sursee']);
     if (c !== 0) return false;
@@ -254,9 +292,10 @@ const Sur = {
       await sayP('timo', `Hoi ${G.S.name}! Hast du eine Lupe dabei? Wir haben schon ein Notizbuch!`);
     }
     await sayP('isa', `${playerIsCuche() ? 'Da bist du ja endlich' : `Willkommen in Sursee, ${G.S.name}`}! Also, hör zu. Die goldene Sonnenmaske der Zunft Heini von Uri ist weg. Die Zunft feiert dieses Jahr 150 Jahre, die Maske war in der Jubiläumsausstellung im Sankturbanhof.`);
-    await sayP('isa', 'In der Nacht vor dem Martinstag haben sie die Maske in die Zunftstube im Diebenturm gebracht. Am Morgen war sie verschwunden – und die Gansabhauet fiel zum ersten Mal überhaupt aus.');
-    await sayP('isa', 'Die Stadt holt sie jetzt nach, mit Chilbi auf dem Märtplatz. Aber ohne Sonnenmaske keine Gansabhauet. Der Heinivater wartet in der Zunftstube im Diebenturm. Unterstadt, beim Hirschenplatz.');
-    if (!playerIsCuche() && FRIENDS[papi]) await Story.say(papi, 'Ich bring die Taschen heim. Elin und Timo zeigen dir den Weg. Du schaffst das, Sherlock.');
+    await sayP('isa', 'In der Nacht vor dem Martinstag haben sie die Maske in die Zunftstube beim Diebenturm gebracht – sie ist im ersten Stock des alten Waschhauses. Am Morgen war sie verschwunden – und die Gansabhauet fiel zum ersten Mal überhaupt aus.');
+    await sayP('isa', 'Die Stadt holt sie jetzt nach, mit Chilbi auf dem Märtplatz. Aber ohne Sonnenmaske keine Gansabhauet. Der Heinivater wartet in der Zunftstube – im alten Waschhaus beim Diebenturm. Unterstadt, beim Hirschenplatz.');
+    if (!playerIsCuche() && FRIENDS[papi] && !s.direct) await Story.say(papi, 'Ich bring die Taschen heim. Elin und Timo zeigen dir den Weg. Du schaffst das, Sherlock.');
+    if (s.direct) await sayP('isa', `Und die Jungs sind ohne dich nach Innsbruck? ${playerIsCuche() ? 'Und du bist trotzdem hier. Ich bin gerührt.' : 'Cuche auch. Na dann: Willkommen im Team Sursee.'}`);
     s.follow = 1;
     Story.dropActor(G.npcs.find((n) => n.id === 'su_isa'));
     if (night) {
@@ -282,7 +321,7 @@ const Sur = {
       case 'heim': return 'Zurück in Luzern · Gleis 2: S-Bahn nach Sursee – oder durch die Halle heimgehen (beendet das Spiel)';
       case 'sbahn': { const b = sbState(); return b.tm >= SB_END ? 'Sursee! Aussteigen – Tür in der Mitte des Wagens' : `S-Bahn nach Sursee · nächster Halt: ${b.next.n}`; }
       case 's_ankunft': return `Geh${this.followOk() ? ' mit Elin und Timo' : ''} zum Diebenturm in der Unterstadt (Zunftstube, beim Hirschenplatz)`;
-      case 's_tatort': return `Zunftstube im Diebenturm: Finde drei Spuren (${Object.keys(s.clues).length}/3)`;
+      case 's_tatort': return `Zunftstube beim Diebenturm: Finde drei Spuren (${Object.keys(s.clues).length}/3)`;
       case 's_faehrten': {
         const open = [];
         if (!this.faehrte('chilbi')) open.push(s.f.roli ? (isNight() || hourOf(G.S.time) >= 17 ? 'Riesenrad: Ausschau halten' : 'Riesenrad ab 17 Uhr') : 'Chilbi: Jeton zum Achterbahn-Betreiber');
@@ -310,7 +349,7 @@ const Sur = {
   steps() {
     const s = this.st();
     return [
-      { t: 'Heimreise nach Luzern', d: 'Innsbruck ist geschafft', done: true },
+      s.direct ? { t: 'Abkürzung genommen', d: 'Innsbruck ausgelassen – die Jungs feiern ohne dich', done: true } : { t: 'Heimreise nach Luzern', d: 'Innsbruck ist geschafft', done: true },
       { t: 'S-Bahn nach Sursee', d: 'Gleis 2, dem Sempachersee entlang', done: suAt('s_ankunft') },
       { t: 'Isa und die Kinder am Bahnhof treffen', d: 'Elin und Timo helfen beim Suchen', done: suAt('s_tatort') || !!s.met.isa },
       { t: 'Tatort Diebenturm', d: `Drei Spuren in der Zunftstube (${Object.keys(s.clues).length}/3)`, done: suAt('s_faehrten') },
@@ -344,7 +383,7 @@ const Sur = {
     if (h >= 9 && h < 18) return { t: 'im Stadtcafé am Rathausplatz', map: 'stadtcafe', x: 89, y: 36 };
     return { t: 'zu Hause in der Münstervorstadt', map: 'isa_haus', x: 122, y: 60 };
   },
-  jungsDa() { return suAt('s_tatort') && (this.st().jungsAt != null && G.S.time >= this.st().jungsAt); },
+  jungsDa() { const s = this.st(); return !s.direct && suAt('s_tatort') && (s.jungsAt != null && G.S.time >= s.jungsAt); },
   friendLoc(id) {
     if (!this.jungsDa() || !FRIENDS[id]) return null;
     const h = hourOf(G.S.time), fn = FRIENDS[id].fn;
@@ -378,7 +417,7 @@ const Sur = {
     const friend = (id, x, y, dir, pose = 'stand', extra = {}) => { if (FRIENDS[id]) G.npcs.push(Story.friendActor(id, x, y, dir, pose, Object.assign({ talk: () => this.friendTalk(id) }, extra))); };
     /* Followers zuerst entfernen, sie werden unten neu gesetzt */
     if (m.id === 'sbahn') {
-      const c = spot('cuche'); if (c && !playerIsCuche() && FRIENDS.cuche) friend('cuche', c[0], c[1], c[2], 'sit', { bubbleRand: ['zzz', 'dots'] });
+      const c = spot('cuche'); if (c && !playerIsCuche() && FRIENDS.cuche && !s.direct) friend('cuche', c[0], c[1], c[2], 'sit', { bubbleRand: ['zzz', 'dots'] });
       const a = spot('alter'); if (a) person('heinivater', a[0], a[1], a[2], { name: 'Älterer Herr mit Abzeichen', label: 'Reden: Älterer Herr', pose: 'sit', bubbleRand: ['!'], talk: () => this.talk('alter') });
       return;
     }
@@ -434,7 +473,7 @@ const Sur = {
       if (prev != null && !G.busy && (SU_MAPS.includes(G.map.id) || G.map.spots)) { G.npcs = G.npcs.filter((n) => !(n.friend || (n.id && n.id.startsWith('su_')))); this.populate(G.map); }
       if (s.follow && (h === 20) && !G.busy) { UI.toast('💬 Isa: „Elin, Timo – ab nach Hause, es ist acht! Morgen helft ihr wieder.“'); }
     }
-    if (this.here() && suAt('s_tatort') && s.jungsAt == null) s.jungsAt = G.S.time + 120;
+    if (this.here() && suAt('s_tatort') && s.jungsAt == null && !s.direct) s.jungsAt = G.S.time + 120;
     if (s.jungsAt != null && !s.jungsMsg && G.S.time >= s.jungsAt) { s.jungsMsg = 1; Snd.sfx('blip'); UI.toast(`💬 ${fname(voice('party'))}: „Wir sind in Sursee! Hotel Rössli. Wo ist hier das Bier?“`); }
     this.hintTick();
     this.maybeEvent();
@@ -528,7 +567,7 @@ Object.assign(Sur, {
   async stadthalleDoor() {
     const h = hourOf(G.S.time);
     if (h >= 18 && h < 24) return true;
-    await Story.say(null, 'Plakat an der Stadthalle: „Triechter-Gäng · Winter-Tour 2026 · Heute 20 Uhr · Türöffnung 18 Uhr · Abendkasse“. Jetzt ist noch zu.');
+    await Story.say(null, 'Plakat an der Stadthalle: „Stubete Gäng · Samichlaus Tour · Heute 20 Uhr · Türöffnung 18 Uhr · Abendkasse“. Jetzt ist noch zu.');
     return false;
   },
   async kulturwerkDoor() {
@@ -676,7 +715,11 @@ Object.assign(Sur, {
       pfarreizentrum: 'Das neue Pfarreizentrum am Vierherrenplatz. Im Saal proben manchmal auch die Guuggen – heute nicht.',
       vierherrenplatz: 'Der Vierherrenplatz hinter dem Wilden Mann: neu gestaltet, mit Pfarreizentrum, Wohn- und Geschäftshaus und einer Tiefgarage darunter.',
       kirche: 'Die Stadtkirche St. Georg. Drinnen ist es still, Kerzen flackern. Du zündest eine an – für die Gans. Oder gegen sie?',
-      marienbrunnen: 'Der Marienbrunnen in der Oberstadt. Das Wasser plätschert, auch im Dezember.',
+      marienbrunnen: 'Der Marienbrunnen: Säule und Marienfigur von Meister Hans Spichtig, 1688. Ein Brunnen an dieser Stelle ist schon 1596 erwähnt. Das Wasser plätschert, auch im Dezember.',
+      heinibrunnen: 'Der Heinibrunnen: Heini von Uri, der Narr mit der Schellenkappe, vom Bildhauer August Bläsi (1979). Früher stand der Brunnen vor dem Rathaus, seit 2001 hier am Vierherrenplatz.',
+      murihof: 'Der Murihof an der Theaterstrasse 2: früher Stadtburg der Kyburger und Habsburger, dann Hof des Klosters Muri. Das älteste Steingebäude der Altstadt. Drinnen ein festlicher Barocksaal mit Deckengemälde.',
+      hirschen: 'Hotel Hirschen, Oberstadt 10. Unten eine Wein- und Cocktailbar. Über der Tür ein geschmiedetes Wirtshausschild, wie überall in der Oberstadt.',
+      diebenturm: 'Der Diebenturm von 1681, einst Gefängnis- und Pulverturm. Im Turm liegen heute Archiv und Sitzungszimmer der Turner. Die Zunftstube ist nebenan im ersten Stock des alten Waschhauses.',
       muehlerad: 'Ein altes Mühlerad an der Sure. Hier am Mühleplatz stand früher die Mühle, die dem Platz den Namen gab.',
       hirschenplatz: 'Der Hirschenplatz in der Unterstadt, gleich beim Diebenturm.',
       spielplatz: 'Schaukel, Rutschbahn, Sandkasten. Im Sand liegen Schaufeln – und Spuren von Kinderstiefeln.',
@@ -918,10 +961,10 @@ Object.assign(Sur, {
   },
   async bootsjagd() {
     G.busy++;
-    const helper = FRIENDS.hoshy ? 'hoshy' : who('arm');
+    const helper = this.st().direct ? 'Bootsvermieter Sepp' : FRIENDS.hoshy ? 'hoshy' : who('arm');
     await Story.say(null, 'Am Quai springt der Mann im roten Mantel in Boot 7 und fährt los – mitten in den Triechter hinaus.');
-    if (FRIENDS[helper]) await Story.say(helper, `${G.S.name}! Ich war grad hier am Quai. Rein ins Elektroboot, ich steuer – du schaust, wohin er fährt!`);
-    await Story.say('Bootsvermieter Sepp', 'Nimm die Nummer 3, die ist geladen! Bezahlen kannst du später!');
+    if (FRIENDS[helper]) { await Story.say(helper, `${G.S.name}! Ich war grad hier am Quai. Rein ins Elektroboot, ich steuer – du schaust, wohin er fährt!`); await Story.say('Bootsvermieter Sepp', 'Nimm die Nummer 3, die ist geladen! Bezahlen kannst du später!'); }
+    else await Story.say('Bootsvermieter Sepp', 'Rein in die Nummer 3, ich steuer! Halt dich fest!');
     const r = await this.mini('bootsjagd');
     if (r && r.ok) { achieve('su_boot'); await Story.say(helper, 'Er legt am Gamma-Inseli an! Wir sind direkt hinter ihm!'); }
     else await Story.say(helper, 'Er ist schneller … aber er fährt zum Gamma-Inseli. Hinterher!');
@@ -953,7 +996,7 @@ Object.assign(Sur, {
   },
   async anklage() {
     const s = this.st();
-    const lawyer = FRIENDS.lexx ? 'lexx' : suPapi();
+    const lawyer = this.st().direct ? { name: 'Isa (am Telefon)', look: SU_P.isa.look, bg: SU_P.isa.bg } : FRIENDS.lexx ? 'lexx' : suPapi();
     await Story.say(lawyer, `Moment. Bevor hier jemand „Pech“ sagt: ${G.S.name}, du brauchst drei Beweise, die alle auf ihn zeigen. Dann gilt es.`);
     const used = {};
     let n = 0, tries = 0;
@@ -1209,7 +1252,7 @@ Object.assign(Sur, {
   async concertKasse() {
     const h = hourOf(G.S.time);
     if (hasInv('konzertticket')) { await Story.say('Abendkasse', 'Du hast schon ein Ticket. Viel Spass!'); return; }
-    const c = await Story.ask('Abendkasse', h >= 18 ? 'Triechter-Gäng, Winter-Tour 2026! Abendkasse 49 Franken. Beginn 20 Uhr.' : 'Die Kasse öffnet um 18 Uhr.', h >= 18 ? ['Ticket kaufen (49 CHF)', 'Nein danke'] : ['Okay']);
+    const c = await Story.ask('Abendkasse', h >= 18 ? 'Stubete Gäng, Samichlaus Tour! Abendkasse 49 Franken. Beginn 20 Uhr.' : 'Die Kasse öffnet um 18 Uhr.', h >= 18 ? ['Ticket kaufen (49 CHF)', 'Nein danke'] : ['Okay']);
     if (h < 18 || c !== 0) return;
     if (!pay('chf', 49)) { UI.toast('Zu wenig Franken.', 'warn'); return; }
     addInv('konzertticket'); UI.toast('🎫 Konzertticket! Vor die Bühne, sobald es losgeht (ab 20 Uhr).');
@@ -1218,7 +1261,7 @@ Object.assign(Sur, {
     const h = hourOf(G.S.time);
     if (!hasInv('konzertticket')) { await Story.say('Security', 'Ohne Ticket geht\'s nicht vor die Bühne. Abendkasse beim Eingang.'); return; }
     if (h < 20) { await Story.say(null, 'Auf der Bühne wird noch Soundcheck gemacht. „Eins, zwei, eins, zwei.“ Um 20 Uhr geht\'s los.'); return; }
-    await Story.say(null, 'Licht aus, Nebel, Jubel: Die Triechter-Gäng stürmt auf die Bühne. Mundart, Schlager, Party – die ganze Stadthalle hüpft.');
+    await Story.say(null, 'Licht aus, Nebel, Jubel: Die Stubete Gäng stürmt auf die Bühne. Mundart, Schlager, Party – die ganze Stadthalle hüpft.');
     const r = await this.mini('rhythm', 'konzert');
     takeInv('konzertticket');
     achieve('su_konzert'); mood(12); energy(-6); passTime(90);
@@ -1305,7 +1348,7 @@ Object.assign(Sur, {
     { id: 'guuggen', cond: () => { const h = hourOf(G.S.time); return h >= 11 && h < 22; } },
     { id: 'gans', cond: () => { const h = hourOf(G.S.time); return h >= 9 && h < 17; } },
     { id: 'nebel', cond: () => { const h = hourOf(G.S.time); return h >= 6 && h < 11; } },
-    { id: 'drohne', cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 16 && !!FRIENDS.roemu; } },
+    { id: 'drohne', cond: () => { const h = hourOf(G.S.time); return h >= 10 && h < 16 && !!FRIENDS.roemu && !Sur.st().direct; } },
   ],
   maybeEvent() {
     const s = this.st();

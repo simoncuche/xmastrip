@@ -6,6 +6,30 @@
    Am oberen Ende führt der Weg über den Beckenhof und die Münstervorstadt zum See. */
 
 /* --- Objekte --- */
+/* Altstadthaus: Nach dem letzten grossen Stadtbrand von 1734 wurde die Oberstadt barock und einheitlich wieder aufgebaut –
+   traufständige Häuser mit bemalten Fassaden, gemalten Fensterumrahmungen, Eckquadern und geschmiedeten Wirtshausschildern */
+const ALT_WALLS = ['#ecd7ae', '#e9c9b7', '#d9e0c2', '#cbd6de', '#f1e7cf', '#e6bf98', '#e2d2e0', '#d8c8a0'];
+function altHouse(m, x, y, w, h, i, o = {}) {
+  const wall = o.wall || ALT_WALLS[i % ALT_WALLS.length], frame = shade(wall, -0.22);
+  const b = objBuilding(x, y, w, h, Object.assign({ floors: 4, wall, roof: ['#8a3b2a', '#7a3424', '#9a4a30', '#83402c'][i % 4], trim: '#f6efe0', shutter: ['#3f6b45', '#7a3a2a', null, '#2f4a6a'][i % 4], seed: x * 31 + y * 7 + i, dormers: true, corner: true, lintel: true, wins: 'tall', flowers: i % 3 !== 1, drawH: 12,
+    special: (c, W, H, fy0) => {
+      /* Dachgesims und gemalter Fries */
+      R(c, 0, fy0, W, 3, shade(wall, 0.12)); R(c, 0, fy0 + 3, W, 1, frame);
+      for (let k = 2; k < W - 2; k += 6) P(c, k, fy0 + 5, frame);
+      /* gemalte Fensterumrahmungen in den Obergeschossen */
+      const fl = Math.min(o.floors || 4, 4);
+      for (let f = 1; f < fl; f++) for (let k = 0; k < W / 16; k++) {
+        if (o.erker && k >= o.erker[0] && k < o.erker[0] + o.erker[1]) continue;
+        const cx = k * 16 + 8, yy = H - (f + 1) * 16 + 3;
+        R(c, cx - 5, yy - 3, 10, 1, frame); P(c, cx - 5, yy - 2, frame); P(c, cx + 4, yy - 2, frame); R(c, cx - 1, yy - 4, 2, 1, frame);
+        R(c, cx - 4, yy + 11, 8, 1, frame);
+      }
+      if (o.extra) o.extra(c, W, H, fy0);
+    } }, o.bo || {}, o));
+  m.add(b);
+  return b;
+}
+
 /* Stadttor mit Durchgang. dir 'h': Gasse läuft West–Ost durch das Tor (Untertor); 'v': Gasse läuft Nord–Süd (Obertor) */
 function objGate(x, y, w, h, o = {}) {
   const st = o.wall || '#d8c8a4', sd = shade(st, -0.2), sl = shade(st, 0.12), roof = o.roof || '#8a3b2a';
@@ -16,9 +40,10 @@ function objGate(x, y, w, h, o = {}) {
     for (let i = 0; i < W * H / 30; i++) P(c, 2 + hash(i, 3, x) * (W - 4), top + 10 + hash(i, 5, y) * (H - top - 12), hash(i, 7) > 0.5 ? sd : sl);
     for (let yy = top + 16; yy < H; yy += 10) R(c, 2, yy, W - 4, 1, sd);
     R(c, W - 4, top + 10, 2, H - top - 10, sd); R(c, 2, top + 10, 2, H - top - 10, sl);
-    /* Walmdach mit Spitze */
-    for (let k = 0; k < 14; k++) { const ww = Math.round((W - 2) * (0.25 + k / 18)); R(c, W / 2 - ww / 2, top - 4 + k, ww, 1, k % 3 ? roof : shade(roof, -0.2)); }
-    R(c, W / 2 - 1, top - 8, 2, 5, '#3a3a40'); P(c, W / 2, top - 9, '#e8c84a');
+    /* hohes Walmdach mit Spitze */
+    const rh = o.roofH || 14;
+    for (let k = 0; k < rh; k++) { const ww = Math.round((W - 2) * (0.12 + 0.88 * k / rh)); R(c, W / 2 - ww / 2, top + 10 - rh + k, ww, 1, k % 3 ? roof : shade(roof, -0.2)); }
+    R(c, W / 2 - 1, top + 6 - rh, 2, 5, '#3a3a40'); P(c, W / 2, top + 5 - rh, '#e8c84a');
     /* Uhr und Wappen */
     E(c, W / 2, top + 22, 6, 6, '#2a2a2e'); E(c, W / 2, top + 22, 5, 5, '#f4f0e0'); line(c, W / 2, top + 22, W / 2, top + 18, '#1a1a1a'); line(c, W / 2, top + 22, W / 2 + 3, top + 23, '#1a1a1a');
     R(c, W / 2 - 4, top + 31, 8, 9, '#f4f0e6'); R(c, W / 2 - 4, top + 31, 8, 4, '#c8302a'); R(c, W / 2 - 1, top + 33, 2, 6, '#c8302a');
@@ -47,7 +72,8 @@ function objGate(x, y, w, h, o = {}) {
 }
 /* Stadtkirche St. Georg: Langhaus mit Satteldach, hoher Turm mit Spitzhelm und Uhr, Portal mit Treppe */
 function objKirche(x, y) {
-  return mkObj(x, y, 14, 5, 84, (c, W, H) => {
+  return mkObj(x, y, 14, 5, 92, (c, W, H) => {
+    c.translate(0, 8);
     const wall = '#ece4d2', wd = shade(wall, -0.16), wl = shade(wall, 0.08), roof = '#7a3a2c';
     const fy = H - 62;
     /* Langhaus mit hohem Satteldach */
@@ -65,50 +91,71 @@ function objKirche(x, y) {
     for (let yy = 40; yy < H - 4; yy += 14) R(c, tx, yy, tw, 1, wd);
     E(c, tx + tw / 2, 44, 8, 8, '#2a2a2e'); E(c, tx + tw / 2, 44, 7, 7, '#e8c84a'); E(c, tx + tw / 2, 44, 5, 5, '#2a2a2e'); line(c, tx + tw / 2, 44, tx + tw / 2, 40, '#e8c84a'); line(c, tx + tw / 2, 44, tx + tw / 2 + 4, 45, '#e8c84a');
     for (const yy of [60, 80]) { R(c, tx + tw / 2 - 3, yy, 6, 10, '#2a2a30'); E(c, tx + tw / 2, yy, 3, 2, '#2a2a30'); }
-    /* Spitzhelm mit Kugel und Kreuz */
-    for (let k = 0; k < 24; k++) { const ww = Math.round(tw * (k / 24)); R(c, tx + tw / 2 - ww / 2, 2 + k, ww, 1, k % 4 ? '#3f6a4a' : '#4f7a58'); }
+    /* welsche Haube (seit 1726): Glockenform mit Laterne, Kugel und Kreuz */
     R(c, tx - 2, 24, tw + 4, 3, '#5a5a5e');
-    R(c, tx + tw / 2, -1, 1, 4, '#e8c84a'); R(c, tx + tw / 2 - 1, 0, 3, 1, '#e8c84a');
+    for (let k = 0; k < 14; k++) { const ww = Math.round(tw * (k < 6 ? 0.55 + k * 0.08 : 1 - (k - 6) * 0.01)); R(c, tx + tw / 2 - ww / 2, 10 + k, ww, 1, k % 3 ? '#4f7a58' : '#5f8a68'); }
+    for (let k = 0; k < 5; k++) { const ww = Math.round(tw * (0.55 - k * 0.09)); R(c, tx + tw / 2 - ww / 2, 5 + k, ww, 1, '#4f7a58'); }
+    R(c, tx + tw / 2 - 3, 0, 6, 6, '#4f7a58'); R(c, tx + tw / 2 - 2, 1, 1, 3, '#e8e4dc'); R(c, tx + tw / 2 + 1, 1, 1, 3, '#e8e4dc');
+    E(c, tx + tw / 2, -2, 2, 2, '#e8c84a'); R(c, tx + tw / 2, -8, 1, 6, '#e8c84a'); R(c, tx + tw / 2 - 2, -6, 5, 1, '#e8c84a');
   }, { solid: true });
 }
-/* Rathaus Sursee (spätgotisch, 1539–1546): breiter Bau mit Treppengiebeln, Treppenturm, Arkaden, Fahnen */
+/* Rathaus Sursee (spätgotisch, 1539–1546): einer der bedeutendsten spätgotischen Profanbauten der Schweiz. Treppengiebel,
+   zwei in den Bau integrierte Türme, der achteckige Treppenturm („Schneggen“) mit barockem Helm, Sonnenuhr am Giebel */
 function objRathaus(x, y) {
-  return mkObj(x, y, 8, 7, 34, (c, W, H) => {
-    const wall = '#e8dcc4', wd = shade(wall, -0.18), wl = shade(wall, 0.1), roof = '#8a3b2a';
-    const fy = H - 64;
-    for (let k = 0; k < 20; k++) R(c, 8, fy - 20 + k, W - 16, 1, k % 3 ? roof : shade(roof, -0.2));
-    /* Treppengiebel links und rechts */
-    for (const gx of [0, W - 22]) for (let s = 0; s < 5; s++) R(c, gx + s * 2, fy - 22 + s * 5, 22 - s * 4, 6, s % 2 ? wall : wl);
-    R(c, 0, fy, W, 64, wall); R(c, W - 2, fy, 2, 64, wd); R(c, 0, fy, 2, 64, wl);
-    for (let f = 0; f < 2; f++) for (let k = 0; k < 6; k++) { const wx = 10 + k * 19, wy = fy + 8 + f * 20; R(c, wx - 1, wy - 1, 12, 13, '#cbb894'); R(c, wx, wy, 10, 11, '#3e4c5e'); R(c, wx + 4, wy, 1, 11, '#cbb894'); R(c, wx, wy + 5, 10, 1, '#cbb894'); }
-    /* Treppenturm mit Spitzdach in der Mitte */
-    const tx = W / 2 - 9;
-    R(c, tx, fy - 26, 18, 44, wl); R(c, tx + 15, fy - 26, 3, 44, wd);
-    for (let k = 0; k < 16; k++) { const ww = Math.round(20 * k / 16); R(c, tx + 9 - ww / 2, fy - 42 + k, ww, 1, k % 3 ? '#6a3a2a' : '#7a4a34'); }
-    R(c, tx + 7, fy - 16, 4, 6, '#3e4c5e'); R(c, tx + 7, fy - 4, 4, 6, '#3e4c5e');
-    /* Arkaden im Erdgeschoss */
-    for (let k = 0; k < 6; k++) { const ax = 6 + k * 20; R(c, ax, H - 18, 14, 18, '#3a3430'); E(c, ax + 7, H - 18, 7, 4, '#3a3430'); R(c, ax - 2, H - 22, 2, 22, wd); }
-    /* Wappen Sursee (rot-weiss) und Fahnen */
-    R(c, W / 2 - 5, fy + 46, 10, 11, '#f4f0e6'); R(c, W / 2 - 5, fy + 46, 10, 5, '#c8302a');
-    for (const fx of [16, W - 18]) { R(c, fx, fy - 30, 1, 20, '#4a4a50'); R(c, fx + 1, fy - 30, 10, 3, '#c8302a'); R(c, fx + 1, fy - 27, 10, 3, '#f4f0e6'); }
-    pxText(c, 'RATHAUS', W / 2 - 13, fy + 39, '#7a5a3a');
-  }, { solid: true, emit: (c, W, H) => { const fy = H - 64; for (let f = 0; f < 2; f++) for (let k = 0; k < 6; k++) if (hash(k, f, 7) > 0.4) R(c, 10 + k * 19, fy + 8 + f * 20, 10, 11, '#ffd27a'); } });
+  return mkObj(x, y, 8, 7, 52, (c, W, H) => {
+    const wall = '#ece2cc', wd = shade(wall, -0.18), wl = shade(wall, 0.08), roof = '#8a3b2a';
+    const fy = H - 66;
+    /* Satteldach zwischen den Treppengiebeln */
+    for (let k = 0; k < 26; k++) R(c, 10, fy - 26 + k, W - 20, 1, k % 3 ? roof : shade(roof, -0.2));
+    for (let k = 0; k < 26; k += 3) for (let xx = 12; xx < W - 12; xx += 5) P(c, xx + (k % 2) * 2, fy - 25 + k, shade(roof, 0.15));
+    /* Treppengiebel an beiden Enden (Stufen) */
+    for (const [gx, dir] of [[0, 1], [W - 26, -1]]) for (let st = 0; st < 6; st++) { const ww = 26 - st * 4, xx = dir > 0 ? gx : gx + st * 4; R(c, xx, fy - 34 + st * 6, ww, 7, st % 2 ? wall : wl); R(c, xx, fy - 34 + st * 6, ww, 1, '#fffaf0'); }
+    /* Mittelgiebel zur Gasse mit Sonnenuhr */
+    const mx = W / 2 - 22;
+    for (let st = 0; st < 5; st++) R(c, mx + st * 4, fy - 30 + st * 6, 44 - st * 8, 7, st % 2 ? wl : wall);
+    R(c, mx + 6, fy - 6, 32, 6, wall);
+    E(c, W / 2, fy - 8, 9, 7, '#f8f0dc'); E(c, W / 2, fy - 8, 9, 7, 'rgba(0,0,0,0)'); for (let k = 0; k < 7; k++) { const a = Math.PI * (k / 6); line(c, W / 2, fy - 12, W / 2 - Math.cos(a) * 9, fy - 12 + Math.sin(a) * 7, '#9a7a4a'); } line(c, W / 2, fy - 12, W / 2 + 3, fy - 5, '#3a2a1a'); pxText(c, 'XII', W / 2 - 5, fy - 4, '#7a5a3a');
+    /* Hauptbau */
+    R(c, 0, fy, W, 66, wall); R(c, W - 2, fy, 2, 66, wd); R(c, 0, fy, 2, 66, wl);
+    for (let yy = fy + 3; yy < H - 4; yy += 4) { R(c, 0, yy, 3, 3, wl); R(c, W - 3, yy, 3, 3, wd); }
+    /* spätgotische Reihenfenster mit Steinrahmen */
+    for (let f = 0; f < 2; f++) for (let k = 0; k < 5; k++) { const wx = 8 + k * 23 + (k > 1 ? 10 : 0), wy = fy + 10 + f * 20; if (k === 2) continue; R(c, wx - 1, wy - 1, 16, 12, '#c8b48c'); for (let j = 0; j < 3; j++) R(c, wx + j * 5, wy, 4, 10, '#3e4c5e'); R(c, wx - 2, wy + 11, 18, 2, '#b8a47c'); }
+    /* achteckiger Treppenturm („Schneggen“) mit barockem Helm, Wappenrelief über dem Eingang */
+    const tx = W / 2 - 10;
+    R(c, tx, fy - 18, 20, 66 + 18, wl); R(c, tx + 15, fy - 18, 5, 66 + 18, wd); R(c, tx, fy - 18, 3, 84, shade(wall, 0.14));
+    for (let k = 0; k < 4; k++) R(c, tx + 8, fy - 10 + k * 16, 4, 7, '#3e4c5e');
+    for (let k = 0; k < 8; k++) { const ww = Math.round(22 * (1 - k / 10)); R(c, tx + 10 - ww / 2, fy - 26 + k, ww, 1, '#4f6a58'); }
+    E(c, tx + 10, fy - 30, 5, 5, '#4f6a58'); E(c, tx + 9, fy - 31, 2, 2, '#6f8a78'); R(c, tx + 9, fy - 42, 2, 9, '#4f6a58'); E(c, tx + 10, fy - 43, 2, 2, '#e8c84a');
+    R(c, tx + 3, H - 30, 14, 9, '#d8c8a0'); R(c, tx + 5, H - 29, 4, 7, '#c8302a'); R(c, tx + 11, H - 29, 4, 7, '#f4f0e6');
+    R(c, tx + 4, H - 20, 12, 20, '#5a3a24'); E(c, tx + 10, H - 20, 6, 3, '#5a3a24'); R(c, tx + 9, H - 20, 1, 20, '#3a2414');
+    /* zweiter Turm am Ostende mit Spitzhelm */
+    const ux = W - 22;
+    R(c, ux, fy - 40, 16, 40, wall); R(c, ux + 13, fy - 40, 3, 40, wd);
+    for (let k = 0; k < 18; k++) { const ww = Math.round(18 * (k / 18)); R(c, ux + 8 - ww / 2, fy - 58 + k, ww, 1, k % 3 ? '#7a3424' : '#8a3b2a'); }
+    R(c, ux + 6, fy - 32, 4, 6, '#3e4c5e'); E(c, ux + 8, fy - 18, 4, 4, '#2a2a2e'); E(c, ux + 8, fy - 18, 3, 3, '#f4f0e0');
+    /* Arkaden der Markthalle im Erdgeschoss */
+    for (let k = 0; k < 6; k++) { if (k === 2 || k === 3) continue; const ax = 4 + k * 20; R(c, ax, H - 18, 14, 18, '#3a3430'); E(c, ax + 7, H - 18, 7, 4, '#3a3430'); }
+    /* Fahnen: Sursee rot-weiss, Luzern blau-weiss */
+    for (const [fx, a, b2] of [[14, '#c8302a', '#f4f0e6'], [W - 30, '#2f6eb8', '#f4f0e6']]) { R(c, fx, fy - 54, 1, 22, '#4a4a50'); R(c, fx + 1, fy - 54, 10, 4, a); R(c, fx + 1, fy - 50, 10, 4, b2); }
+  }, { solid: true, emit: (c, W, H) => { const fy = H - 66; for (let f = 0; f < 2; f++) for (let k = 0; k < 5; k++) { if (k === 2) continue; if (hash(k, f, 7) > 0.35) { const wx = 8 + k * 23 + (k > 1 ? 10 : 0), wy = fy + 10 + f * 20; for (let j = 0; j < 3; j++) R(c, wx + j * 5, wy, 4, 10, '#ffd27a'); } } } });
 }
 /* Diebenturm: wuchtiger Mauerturm mit Zeltdach, Zunftfahne und Schild der Zunft Heini von Uri */
 function objDiebenturm(x, y) {
-  return mkObj(x, y, 4, 8, 40, (c, W, H) => {
+  return mkObj(x, y, 4, 8, 50, (c, W, H) => {
+    c.translate(0, 10);
     const st = '#bfae8a', sd = shade(st, -0.22), sl = shade(st, 0.1);
     R(c, 4, 18, W - 8, H - 18, st);
     for (let yy = 22; yy < H; yy += 6) for (let xx = 4 + ((yy / 6) % 2) * 5; xx < W - 6; xx += 10) R(c, xx, yy, 9, 5, (xx + yy) % 3 ? st : sd);
     R(c, W - 7, 18, 3, H - 18, sd); R(c, 4, 18, 2, H - 18, sl);
-    for (let k = 0; k < 20; k++) { const ww = Math.round((W - 4) * (k / 20)); R(c, W / 2 - ww / 2, k, ww, 1, k % 3 ? '#6a3a2c' : '#7a4a34'); }
+    /* steiles Ziegeldach */
+    for (let k = 0; k < 28; k++) { const ww = Math.round((W - 2) * (k / 28)); R(c, W / 2 - ww / 2, k - 10, ww, 1, k % 3 ? '#8a3b2a' : '#7a3424'); }
     R(c, 2, 18, W - 4, 3, '#5a4a3a');
     for (const yy of [30, 52]) { R(c, W / 2 - 2, yy, 4, 8, '#2a2a30'); }
     R(c, W / 2 - 7, H - 22, 14, 22, '#4a3420'); E(c, W / 2, H - 22, 7, 4, '#4a3420'); R(c, W / 2 - 6, H - 21, 12, 1, '#6a4a30'); P(c, W / 2 + 4, H - 10, '#e8c84a');
     /* Zunftfahne */
     R(c, W - 10, 8, 1, 22, '#3a3a40'); R(c, W - 9, 8, 12, 8, '#f2d040'); R(c, W - 9, 12, 12, 1, '#c8302a'); E(c, W - 3, 11, 2, 2, '#c8302a');
     /* Schild */
-    R(c, 6, H - 34, W - 12, 8, '#2a2a2e'); pxText(c, 'ZUNFT HEINI', 8, H - 33, '#f2d040');
+    R(c, 8, H - 34, W - 16, 8, '#2a2a2e'); pxText(c, '1681', W / 2 - 8, H - 33, '#e8dcc0');
   }, { solid: true });
 }
 /* Stadthalle: moderne Halle mit Glasfront, Vordach und Leuchtschrift */
@@ -121,7 +168,7 @@ function objStadthalle(x, y) {
     R(c, 10, H - 44, W - 20, 6, '#c8b040'); R(c, 10, H - 38, W - 20, 2, '#8a7a2a');
     pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 22, '#2a2a18');
     /* Konzertplakat */
-    R(c, 6, H - 34, 12, 18, '#1a1a2a'); R(c, 7, H - 33, 10, 7, '#e85a3a'); pxText(c, 'TG', 8, H - 24, '#ffd23d');
+    R(c, 6, H - 34, 12, 18, '#1a1a2a'); R(c, 7, H - 33, 10, 7, '#e85a3a'); pxText(c, 'SG', 8, H - 24, '#ffd23d');
     R(c, W - 18, H - 34, 12, 18, '#1a1a2a'); R(c, W - 17, H - 33, 10, 7, '#3a8ae8'); R(c, W - 16, H - 24, 8, 2, '#ffffff');
   }, { solid: true, emit: (c, W, H) => { R(c, 20, H - 36, W - 40, 36, '#ffe2a0'); for (let xx = 20; xx < W - 20; xx += 12) R(c, xx, H - 36, 1, 36, '#c8a060'); pxText(c, 'STADTHALLE SURSEE', W / 2 - 32, 22, '#ffd23d'); } });
 }
@@ -378,6 +425,11 @@ MAP_BUILDERS.sursee = () => {
   m.add(objBlock(55, 12, 7, 4, '#d8d0c0', { door: 3, name: 'PFARREIZENTRUM', balcony: '#8a8e94' }));
   m.trig(57, 15, 3, 1, { label: 'Pfarreizentrum', act: () => Sur.look('pfarreizentrum') });
   m.add(objTree(62, 18, 'green')); m.add(objBench(56, 18, 0)); m.add(objTafel(54, 19, '#3a3a5a', 'VHP'));
+  /* Heinibrunnen: 1975 vor dem Rathaus gebaut, 1979 mit der Figur des Heini von Uri von August Bläsi, seit 2001 am Vierherrenplatz */
+  const heini = objBrunnenSursee(59, 17, false); m.add(heini);
+  const heiniFig = heini.anim; heini.anim = (c, t, px, py) => { heiniFig(c, t, px, py); const x = px + 16, y = py + 22 + 2; R(c, x - 3, y - 18, 6, 10, '#e8c23a'); R(c, x - 3, y - 18, 3, 10, '#c8302a'); E(c, x, y - 21, 2, 2, '#e8d8c0'); line(c, x - 2, y - 23, x - 5, y - 27, '#c8302a'); line(c, x + 2, y - 23, x + 5, y - 27, '#e8c23a'); P(c, x - 5, y - 28, '#ffd23d'); P(c, x + 5, y - 28, '#ffd23d'); line(c, x + 3, y - 15, x + 7, y - 19, '#8a6a3a'); };
+  m.trig(59, 17, 2, 2, { label: 'Heinibrunnen', act: () => Sur.look('heinibrunnen') });
+  m.trig(58, 19, 4, 1, { here: true, label: 'Foto: Heinibrunnen', act: () => Sur.photo('heinibrunnen'), cond: () => !Sur.hasPhoto('heinibrunnen') });
   m.trig(54, 19, 1, 1, { label: 'Vierherrenplatz', act: () => Sur.look('vierherrenplatz') });
   /* Stadthalle */
   m.fill(64, 0, 20, 11, T.PAVE, 2);
@@ -389,8 +441,14 @@ MAP_BUILDERS.sursee = () => {
   /* Sankturbanhof und Stadttheater beim Obertor */
   m.add(objBuilding(55, 21, 7, 6, { floors: 3, wall: '#efe0c0', roof: '#7a4a3a', trim: '#fbf4dc', seed: 91, wins: 'tall', lintel: true, flowers: false, drawH: 12, doors: [{ dx: 3, col: '#5a3a24' }], sign: { text: 'SANKTURBANHOF', bg: '#5a4a38', fg: '#f4e8c0' } }));
   m.warp(58, 26, 'sankturbanhof', 'entry', { label: 'Museum Sankturbanhof', guard: () => Sur.openGuard('museum') }); m.spawn('sankturbanhof_out', 58, 27, 0);
+  m.trig(55, 28, 6, 1, { here: true, label: 'Foto: Sankturbanhof', act: () => Sur.photo('sankturbanhof'), cond: () => !Sur.hasPhoto('sankturbanhof') });
   m.add(objBuilding(62, 20, 8, 7, { floors: 3, wall: '#e8d8e0', roof: '#5a4a6a', trim: '#ffffff', seed: 93, wins: 'tall', flowers: false, drawH: 10, doors: [{ dx: 4, col: '#5a2a4a', lit: true }], sign: { text: 'STADTTHEATER', bg: '#5a3a6a', fg: '#ffffff', lit: true } }));
   m.warp(66, 26, 'theater', 'entry', { label: 'Stadttheater', guard: () => Sur.openGuard('theater') }); m.spawn('theater_out', 66, 27, 0);
+  /* Murihof (Theaterstrasse 2): ehemalige Stadtburg der Kyburger und Habsburger, ältestes Steingebäude der Altstadt, seit Ende 14. Jh. Hof des Klosters Muri */
+  m.fill(64, 19, 7, 1, T.COBBLE, 1);
+  m.add(objBuilding(64, 13, 7, 6, { floors: 3, wall: '#e6dcc4', roof: '#6a5a52', trim: '#fbf4dc', seed: 641, wins: 'tall', lintel: true, corner: true, shutter: '#7a3a2a', flowers: false, drawH: 12, doors: [{ dx: 3, type: 'arch' }], sign: { text: 'MURIHOF', bg: '#5a4a38', fg: '#f4e8c0' } }));
+  m.trig(67, 18, 1, 1, { label: 'Murihof', act: () => Sur.look('murihof') });
+  m.trig(64, 19, 7, 1, { here: true, label: 'Foto: Murihof', act: () => Sur.photo('murihof'), cond: () => !Sur.hasPhoto('murihof') });
   /* Gasse durch das Obertor nach Norden zur Stadthalle */
   m.fill(71, 11, 2, 26, T.COBBLE, 1);
   /* Kirche St. Georg mit Kirchplatz, Treppe hinunter zum Rathaus */
@@ -415,47 +473,54 @@ MAP_BUILDERS.sursee = () => {
   for (const [x, y] of [[96, 20], [108, 21], [116, 21], [124, 13]]) m.add(objLamp(x, y, 'new'));
   for (let x = 96; x < 125; x += 4) m.light(x * 16, 16 * 16, 34, ['#ff8ad0', '#ffd27a', '#80e0ff'][x % 3]);
   /* Obere Häuserreihe der Oberstadt (Fassaden zur Gasse) */
-  m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], label: 'UNTERTOR', drawH: 30 })); m.solid(53, 31, 3, 6);
+  m.add(objGate(53, 31, 3, 10, { dir: 'h', pass: [37, 4], label: 'UNTERTOR', drawH: 46, roofH: 30, wall: '#f4f1e8', roof: '#8a3b2a' })); m.solid(53, 31, 3, 6);
   m.trig(53, 37, 3, 4, { here: true, label: 'Foto: Untertor', act: () => Sur.photo('untertor'), cond: () => !Sur.hasPhoto('untertor') });
-  house(m, 56, 30, 6, 7, 4, { wall: '#e8d4b0', roof: '#7a3a2a', doors: [{ dx: 2, col: '#4a2e1a', lit: true }], sign: { text: 'WILDER MANN', bg: '#3a2418', fg: '#f4d890', lit: true }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4, shutter: '#3f6b45' });
+  altHouse(m, 56, 30, 6, 7, 4, { wall: '#e8d4b0', roof: '#7a3a2a', doors: [{ dx: 2, col: '#4a2e1a', lit: true }], sign: { text: 'WILDER MANN', bg: '#3a2418', fg: '#f4d890', lit: true }, hang: { dx: 5, icon: 'beer', side: 'r' }, floors: 4, shutter: '#3f6b45' });
   m.warp(58, 36, 'wildermann', 'entry', { label: 'Wirtshaus Wilder Mann', guard: () => Sur.openGuard('wildermann') }); m.spawn('wildermann_out', 58, 37, 0);
-  house(m, 62, 30, 4, 7, 7, { wall: '#2a2a2e', roof: '#3a3a3e', trim: '#c8302a', doors: [{ dx: 1, col: '#1a1a1a', lit: true }], sign: { text: 'TNT', bg: '#c8302a', fg: '#1a1a1a', lit: true }, shutter: null, flowers: false });
+  altHouse(m, 62, 30, 4, 7, 7, { wall: '#2a2a2e', roof: '#3a3a3e', trim: '#c8302a', doors: [{ dx: 1, col: '#1a1a1a', lit: true }], sign: { text: 'TNT', bg: '#c8302a', fg: '#1a1a1a', lit: true }, shutter: null, flowers: false });
   m.warp(63, 36, 'tnt', 'entry', { label: 'TNT Rock Bar', guard: () => Sur.openGuard('tnt') }); m.spawn('tnt_out', 63, 37, 0);
-  house(m, 66, 30, 4, 7, 1);
-  m.add(objGate(70, 30, 4, 7, { dir: 'v', pass: [71, 2], label: 'OBERTOR', wall: '#e0d0ac', drawH: 40 })); m.solid(70, 30, 1, 7); m.solid(73, 30, 1, 7);
-  house(m, 74, 30, 3, 7, 6);
+  altHouse(m, 66, 30, 4, 7, 1, { wall: '#e9d9b8', doors: [{ dx: 1, col: '#4a2e1a', lit: true }], sign: { text: 'HIRSCHEN', bg: '#3f5a3b', fg: '#f4e8c0', lit: true }, hang: { dx: 3, icon: 'gams', side: 'r' } }); m.trig(67, 36, 1, 1, { label: 'Hotel Hirschen', act: () => Sur.look('hirschen') });
+  /* Obertor: Das Tor selbst steht nicht mehr (erhalten ist nur das Untertor); Mauerreste und das Strassenschild erinnern daran */
+  for (const gx of [70, 73]) m.add(mkObj(gx, 30, 1, 7, 18, (c, Wd, Hd) => { R(c, 2, 14, 12, Hd - 14, '#c8b898'); for (let yy = 18; yy < Hd; yy += 6) for (let xx = 2 + ((yy / 6) % 2) * 3; xx < 13; xx += 6) R(c, xx, yy, 5, 5, (xx + yy) % 3 ? '#d4c4a4' : '#b8a888'); R(c, 1, 12, 14, 3, '#a89878'); }, { solid: true }));
+  m.add(mkObj(71, 36, 2, 1, 14, (c, Wd) => { R(c, 15, 6, 2, 10, '#5a5e64'); R(c, 2, 0, 28, 8, '#1a3a7a'); R(c, 2, 0, 28, 1, '#ffffff'); pxText(c, 'OBERTOR', 3, 2, '#ffffff'); }, { solid: false }));
+  altHouse(m, 74, 30, 3, 7, 6);
   m.add(objRathaus(77, 30)); m.trig(80, 36, 2, 1, { label: 'Rathaus', act: () => Sur.rathausDoor() }); m.spawn('rathaus_out', 80, 38, 0);
   m.trig(77, 37, 8, 2, { here: true, label: 'Foto: Rathaus', act: () => Sur.photo('rathaus_sursee'), cond: () => !Sur.hasPhoto('rathaus_sursee') });
   m.fill(85, 28, 2, 9, T.STAIRS); m.trig(85, 29, 2, 2, { here: true, label: 'Foto: St. Georg', act: () => Sur.photo('stgeorg'), cond: () => !Sur.hasPhoto('stgeorg') });
-  house(m, 87, 30, 6, 7, 9, { wall: '#f0e8d8', roof: '#6a5a52', doors: [{ dx: 2, type: 'glass', lit: true }], shopWins: [0, 1, 3, 4, 5], goods: ['#e8c890', '#c8352d', '#5a3a24'], sign: { text: 'STADTCAFÉ', bg: '#2a2a2e', fg: '#f4e8c0', lit: true }, awning: { cols: [0, 1, 3, 4, 5], col: '#2a2a2e' } });
+  altHouse(m, 87, 30, 6, 7, 9, { wall: '#f0e8d8', roof: '#6a5a52', doors: [{ dx: 2, type: 'glass', lit: true }], shopWins: [0, 1, 3, 4, 5], goods: ['#e8c890', '#c8352d', '#5a3a24'], sign: { text: 'STADTCAFÉ', bg: '#2a2a2e', fg: '#f4e8c0', lit: true }, awning: { cols: [0, 1, 3, 4, 5], col: '#2a2a2e' } });
   m.warp(89, 36, 'stadtcafe', 'entry', { label: 'Stadtcafé', guard: () => Sur.openGuard('stadtcafe') }); m.spawn('stadtcafe_out', 89, 37, 0);
   for (const [x] of [[88], [92]]) m.add(objUmbrellaTable(x, 38, '#2a2a2e'));
-  house(m, 96, 30, 5, 7, 5, { wall: '#e8a860', roof: '#8a3b2a', doors: [{ dx: 2, col: '#7a2a1a', lit: true }], sign: { text: 'EL MOSQUITO', bg: '#c8302a', fg: '#ffd23d', lit: true }, hang: { dx: 4, icon: 'cup', side: 'r' } });
+  altHouse(m, 96, 30, 5, 7, 5, { wall: '#e8a860', roof: '#8a3b2a', doors: [{ dx: 2, col: '#7a2a1a', lit: true }], sign: { text: 'EL MOSQUITO', bg: '#c8302a', fg: '#ffd23d', lit: true }, hang: { dx: 4, icon: 'cup', side: 'r' } });
   m.warp(98, 36, 'mosquito', 'entry', { label: 'El Mosquito Bodega & Bar', guard: () => Sur.openGuard('mosquito') }); m.spawn('mosquito_out', 98, 37, 0);
-  house(m, 101, 30, 4, 7, 2);
-  house(m, 105, 30, 5, 7, 8, { wall: '#8a8e94', roof: '#4a4a50', trim: '#3a3a3e', doors: [{ dx: 2, type: 'glass', lit: true }], sign: { text: 'CRAFTWERK', bg: '#1a1a1e', fg: '#e8a83a', lit: true }, shutter: null, flowers: false });
+  altHouse(m, 101, 30, 4, 7, 2);
+  altHouse(m, 105, 30, 5, 7, 8, { wall: '#8a8e94', roof: '#4a4a50', trim: '#3a3a3e', doors: [{ dx: 2, type: 'glass', lit: true }], sign: { text: 'CRAFTWERK', bg: '#1a1a1e', fg: '#e8a83a', lit: true }, shutter: null, flowers: false });
   m.warp(107, 36, 'craftwerk', 'entry', { label: 'Craftwerk', guard: () => Sur.openGuard('craftwerk') }); m.spawn('craftwerk_out', 107, 37, 0);
-  house(m, 110, 30, 4, 7, 3); house(m, 114, 30, 4, 7, 6, { erker: [1, 2] });
+  altHouse(m, 110, 30, 4, 7, 3); altHouse(m, 114, 30, 4, 7, 6, { erker: [1, 2] });
   /* Gasse der Oberstadt mit Rathausplatz und Marienbrunnen */
   m.fill(51, 37, 69, 4, T.COBBLE, 0); m.fill(53, 41, 66, 1, T.PAVE, 1);
   m.fill(75, 37, 20, 4, T.PLAZA, 1);
   m.add(objBrunnenSursee(67, 38)); m.trig(67, 38, 2, 2, { label: 'Marienbrunnen', act: () => Sur.look('marienbrunnen') });
+  m.trig(66, 40, 4, 1, { here: true, label: 'Foto: Marienbrunnen', act: () => Sur.photo('marienbrunnen'), cond: () => !Sur.hasPhoto('marienbrunnen') });
   for (const x of [60, 72, 95, 112]) m.add(objLamp(x, 40));
   m.birdSpots.push({ x: 76, y: 38, w: 16, h: 2, n: 8 });
   /* Mittlere Häuserreihe (Fassaden zur Unterstadt) */
   m.fill(57, 41, 3, 9, T.COBBLE, 1);
-  house(m, 60, 42, 6, 8, 0, { wall: '#c8302a', roof: '#6a2a2a', doors: [{ dx: 2, col: '#3a1a1a', lit: true }], sign: { text: 'RÖSSLI', bg: '#2a1a10', fg: '#ffd23d', lit: true }, hang: { dx: 5, icon: 'bed', side: 'r' }, floors: 4, shutter: '#f4e8c0' });
+  altHouse(m, 60, 42, 6, 8, 0, { wall: '#c8302a', roof: '#6a2a2a', doors: [{ dx: 2, col: '#3a1a1a', lit: true }], sign: { text: 'RÖSSLI', bg: '#2a1a10', fg: '#ffd23d', lit: true }, hang: { dx: 5, icon: 'bed', side: 'r' }, floors: 4, shutter: '#f4e8c0' });
   m.warp(62, 49, 'roessli', 'entry', { label: 'Hotel Rössli · Nightbar', guard: () => Sur.openGuard('roessli') }); m.spawn('roessli_out', 62, 50, 0);
-  house(m, 66, 42, 4, 8, 4);
-  house(m, 70, 42, 4, 8, 7, { wall: '#3a2a20', roof: '#5a3a2a', trim: '#c8a060', doors: [{ dx: 1, type: 'glass', lit: true }], sign: { text: 'LA FUGA', bg: '#c8a060', fg: '#2a1a10', lit: true }, shutter: null });
+  altHouse(m, 66, 42, 4, 8, 4);
+  altHouse(m, 70, 42, 4, 8, 7, { wall: '#3a2a20', roof: '#5a3a2a', trim: '#c8a060', doors: [{ dx: 1, type: 'glass', lit: true }], sign: { text: 'LA FUGA', bg: '#c8a060', fg: '#2a1a10', lit: true }, shutter: null });
   m.warp(71, 49, 'lafuga', 'entry', { label: 'La Fuga Kaffeebar', guard: () => Sur.openGuard('lafuga') }); m.spawn('lafuga_out', 71, 50, 0);
-  house(m, 74, 42, 6, 8, 2, { erker: [2, 2] });
-  m.add(objDiebenturm(80, 42)); m.warp(81, 49, 'zunftstube', 'entry', { label: 'Diebenturm · Zunftstube', guard: () => Sur.diebenturmDoor() }); m.spawn('diebenturm_out', 81, 50, 0);
+  altHouse(m, 74, 42, 3, 8, 2);
+  /* Oberes Waschhaus (18./19. Jh.) am Diebenturm: im ersten Stock die Zunftstube der Zunft Heini von Uri */
+  m.add(objBuilding(77, 42, 3, 8, { floors: 3, wall: '#e8dec4', roof: '#7a3a2a', trim: '#f6efe0', shutter: '#3f6b45', flowers: false, seed: 777, drawH: 10, doors: [{ dx: 1, col: '#5a3a24', lit: true }],
+    special: (c, Wd, Hd) => { R(c, 6, Hd - 30, Wd - 12, 7, '#2a2a2e'); pxText(c, 'ZUNFT', 10, Hd - 29, '#f2d040'); R(c, Wd - 8, Hd - 44, 1, 16, '#3a3a40'); R(c, Wd - 7, Hd - 44, 8, 6, '#f2d040'); R(c, Wd - 7, Hd - 41, 8, 1, '#c8302a'); } }));
+  m.add(objDiebenturm(80, 42)); m.trig(81, 49, 2, 1, { label: 'Diebenturm', act: () => Sur.look('diebenturm') });
+  m.warp(78, 49, 'zunftstube', 'entry', { label: 'Waschhaus · Zunftstube', guard: () => Sur.diebenturmDoor() }); m.spawn('diebenturm_out', 78, 50, 0);
   m.trig(80, 50, 4, 1, { here: true, label: 'Foto: Diebenturm', act: () => Sur.photo('diebenturm'), cond: () => !Sur.hasPhoto('diebenturm') });
-  house(m, 84, 42, 5, 8, 5); house(m, 89, 42, 5, 8, 8, { arcade: true }); house(m, 94, 42, 4, 8, 1);
-  house(m, 98, 42, 6, 8, 3, { wall: '#efe0c8', roof: '#8a3b2a', doors: [{ dx: 3, col: '#5a2a1a', lit: true }], sign: { text: 'PIZZERIA ZUR MÜHLE', bg: '#2f7a3a', fg: '#ffffff', lit: true }, hang: { dx: 0, icon: 'cup', side: 'l' }, shutter: '#2f7a3a' });
+  altHouse(m, 84, 42, 5, 8, 5); altHouse(m, 89, 42, 5, 8, 8, { arcade: true }); altHouse(m, 94, 42, 4, 8, 1);
+  altHouse(m, 98, 42, 6, 8, 3, { wall: '#efe0c8', roof: '#8a3b2a', doors: [{ dx: 3, col: '#5a2a1a', lit: true }], sign: { text: 'PIZZERIA ZUR MÜHLE', bg: '#2f7a3a', fg: '#ffffff', lit: true }, hang: { dx: 0, icon: 'cup', side: 'l' }, shutter: '#2f7a3a' });
   m.warp(101, 49, 'muehle', 'entry', { label: 'Pizzeria zur Mühle', guard: () => Sur.openGuard('muehle') }); m.spawn('muehle_out', 101, 50, 0);
-  house(m, 104, 42, 5, 8, 6); house(m, 109, 42, 5, 8, 9);
+  altHouse(m, 104, 42, 5, 8, 6); altHouse(m, 109, 42, 5, 8, 9);
   /* Gasse der Unterstadt mit offenem Sure-Arm, Mühleplatz, Hirschenplatz */
   m.fill(57, 50, 61, 3, T.COBBLE, 0);
   m.fill(86, 50, 7, 3, T.COBBLE, 1); m.fill(98, 50, 12, 3, T.PLAZA, 1);
@@ -463,6 +528,7 @@ MAP_BUILDERS.sursee = () => {
   for (const x of [75, 96]) { m.fill(x, 53, 2, 1, T.BRIDGE); }
   m.add(mkObj(99, 53, 2, 1, 20, (c, Wd, Hd) => { E(c, 16, Hd - 6, 12, 12, '#6a4a2a'); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283; line(c, 16, Hd - 6, 16 + Math.cos(a) * 12, Hd - 6 + Math.sin(a) * 12, '#4a3020'); } E(c, 16, Hd - 6, 3, 3, '#3a2414'); }, { solid: true }));
   m.trig(99, 53, 2, 1, { label: 'Mühlerad an der Sure', act: () => Sur.look('muehlerad') });
+  m.trig(66, 52, 8, 1, { here: true, label: 'Foto: Sure in der Unterstadt', act: () => Sur.photo('unterstadt'), cond: () => !Sur.hasPhoto('unterstadt') });
   for (const x of [66, 84, 104]) m.add(objLamp(x, 52));
   m.add(objTafel(88, 50, '#5a3a24', 'HIR')); m.trig(88, 50, 1, 1, { label: 'Hirschenplatz', act: () => Sur.look('hirschenplatz') });
   m.birdSpots.push({ x: 60, y: 53, w: 50, h: 1, n: 5, kind: 'duck' });
@@ -629,7 +695,7 @@ MAP_BUILDERS.sursee_see = () => {
     E(c, Wd / 2, Hd - 8, 22, 9, '#8a8270'); E(c, Wd / 2, Hd - 10, 20, 7, '#5a7a3a');
     for (const [tx, h] of [[12, 34], [24, 40], [34, 30]]) { R(c, tx - 1, Hd - 12 - h * 0.5, 3, h * 0.5, '#4a3020'); E(c, tx, Hd - 14 - h * 0.6, 8, 10, '#2e5a28'); E(c, tx - 2, Hd - 17 - h * 0.6, 5, 6, '#3e6b32'); }
   }, { solid: true }));
-  m.trig(48, 16, 3, 1, { label: 'Fernrohr: Blick aufs Gamma-Inseli', act: () => Sur.look('inseli') });
+  m.trig(48, 16, 3, 1, { label: 'Fernrohr: Blick aufs Gamma-Inseli', act: async () => { await Sur.look('inseli'); if (!Sur.hasPhoto('gammainseli')) await Sur.photo('gammainseli'); } });
   m.add(mkObj(48, 16, 1, 1, 12, (c) => { R(c, 7, 6, 2, 8, '#4a4e54'); R(c, 3, 2, 10, 5, '#2f5fb8'); R(c, 11, 3, 3, 3, '#8ac0e0'); }, { solid: true }));
   /* Bojen für den Slalom, Segelboot und Schwäne draussen auf dem See */
   for (const [x, y, col] of [[44, 24, '#e8302a'], [50, 27, '#ffd23d'], [56, 24, '#e8302a'], [62, 28, '#ffd23d'], [48, 32, '#e8302a']]) m.add(mkObj(x, y, 1, 1, 6, (c) => { E(c, 8, 13, 4, 2, 'rgba(255,255,255,0.4)'); R(c, 5, 4, 6, 9, col); R(c, 5, 4, 6, 2, '#ffffff'); R(c, 7, 0, 2, 4, '#3a3a40'); }, { solid: false }));

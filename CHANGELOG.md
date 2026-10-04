@@ -12,6 +12,10 @@ Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeig
 - Chilbi auf dem Märtplatz mit Riesenrad, Achterbahn, Schiessbude, Hau den Lukas, Entenfischen, Büchsenwerfen, Putschibahn und Magenbrot. Dazu Fischen, Pedalo, Elektroboot, Stand-up-Paddle, Sprungturm, Mietvelo, Konzert in der Stadthalle, Guuggen-Probe und Römermünzen im Vicus.
 - Lokale: Wirtshaus Wilder Mann, Pizzeria zur Mühle, Stadtcafé, TNT Rock Bar, Rössli Nightbar, El Mosquito, La Fuga, Craftwerk, Triechter Buvette, Kulturwerk 118. Die Jungs kommen nach und sitzen je nach Uhrzeit in den Bars.
 - Neue Ereignisse in Sursee: Guuggen-Überfall, Gans auf der Flucht, Nebel über Sursee, Römus Drohne. Dazu Heini, der Narr, mit Rätseln und wahren Tipps.
+- Häuser nach den echten Vorbildern: weisses Untertor mit hohem Dach (1674), Rathaus mit Treppengiebeln, Sonnenuhr und zwei Türmen, St. Georg mit welscher Haube, Diebenturm mit steilem Ziegeldach und angebautem Waschhaus (dort ist die Zunftstube), barocke Häuserzeilen der Oberstadt, Murihof, Hotel Hirschen, Marienbrunnen und Heinibrunnen am Vierherrenplatz.
+- Zwölf Fotostellen in Sursee mit echten Fakten, unter anderem Rathaus, Untertor, St. Georg, Diebenturm, Marienbrunnen, Heinibrunnen, Murihof, Sankturbanhof und Gamma-Inseli.
+- Konzert in der Stadthalle mit der Stubete Gäng.
+- Easter Egg: Wer in der Luzerner Bahnhofshalle genau hinschaut, kann Innsbruck auslassen und direkt nach Sursee fahren.
 - Tracker: Fortschritt und Abschnitte für das Kapitel Sursee, neue Ereignisse.
 
 ## 2.27.4 – 04.10.2026
