@@ -49,11 +49,22 @@ h2 .tools { margin-left: auto; display: flex; gap: 8px; text-transform: none; le
 .board li:first-child { border-top: 0; }
 .board li::before { counter-increment: r; content: counter(r); font-family: var(--f-pixel); color: var(--amber); width: 16px; }
 .board li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.board .devtag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 5px; font-size: 12px; font-weight: 600; vertical-align: 1px; background: #2a3f5e; color: #cfe0f4; }
-.board .devtag.os { background: none; color: var(--dim); font-weight: 400; padding: 0; }
-.board .old { margin-left: 6px; font-size: 12px; color: var(--dim); font-style: italic; }
 .board li b { font-family: var(--f-pixel); font-weight: 500; }
 .board .empty { color: var(--dim); font-size: 14px; }
+.h2note { font-family: var(--f-body); font-size: 13px; font-weight: 500; color: var(--dim); text-transform: none; letter-spacing: 0; }
+.devtag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 5px; font-size: 12px; font-weight: 600; vertical-align: 1px; background: #2a3f5e; color: #cfe0f4; }
+.devtag.os { background: none; color: var(--dim); font-weight: 400; padding: 0; }
+.ended { display: flex; flex-direction: column; gap: 8px; }
+.endrow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--board); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.por.sm { width: 44px; height: 44px; border-radius: 8px; }
+.endwho b { font-family: var(--f-pixel); font-size: 17px; font-weight: 700; }
+.endres { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.endres small { color: var(--dim); font-size: 12.5px; }
+.endnums { display: grid; grid-template-columns: repeat(4, minmax(64px, auto)); gap: 6px; text-align: center; }
+.endnums span { background: #111d30; border: 1px solid #22344f; border-radius: 8px; padding: 4px 6px; }
+.endnums b { display: block; font-family: var(--f-pixel); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.endnums small { color: var(--dim); font-size: 11px; white-space: nowrap; }
+@media (max-width: 640px) { .endrow { grid-template-columns: auto minmax(0, 1fr); } .endnums { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; } .endnums span { min-width: 0; padding: 4px 2px; } .endnums b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; } .endnums small { display: block; font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; } }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
 .card { background: linear-gradient(180deg, var(--board-2), var(--board)); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .card.on { border-color: #3c6a48; }
@@ -1306,22 +1317,42 @@ function portraitCanvas(L, bg) {
       <div class="tile"><small>Biere total</small><b>${beers}<em>🍺</em></b></div>
     </section>`;
   }
+  /* Gerätename als Marke; ohne eingetragenen Namen das Gerät (z. B. iPhone · Safari) zur Unterscheidung */
+  const devTag = (d) => d.label ? `<small class="devtag" title="Gerät">📱 ${esc(d.label)}</small>` : d.info && d.info.os ? `<small class="devtag os">${esc([d.info.os, d.info.browser].filter(Boolean).join(' · '))}</small>` : '';
+  const ended = (s) => !!(s.finished || s.apoc || s.over);
+  const allGames = (rs) => rs.flatMap((r) => r.games.map((g) => ({ r, g, s: g.s, cur: g === r.cur })));
+  /* Ranglisten zählen nur offene Spiele: das aktuelle Spiel eines Geräts, weder Heimreise noch Apokalypse noch Game Over */
   function boards(rs) {
-    const all = rs.flatMap((r) => r.games.map((g) => ({ r, s: g.s, cur: g === r.cur })));
-    /* Laufend = aktuelles Spiel des Geräts, weder Heimreise noch Apokalypse noch Game Over */
-    /* Gerätename als Marke; ohne eingetragenen Namen das Gerät (z. B. iPhone · Safari) zur Unterscheidung */
-    const devTag = (d) => d.label ? `<small class="devtag" title="Gerät">📱 ${esc(d.label)}</small>` : d.info && d.info.os ? `<small class="devtag os">${esc([d.info.os, d.info.browser].filter(Boolean).join(' · '))}</small>` : '';
-    const running = (x) => x.cur && !x.s.finished && !x.s.apoc && !x.s.over;
-    const top = (title, val, fmt, filter = (x) => true, empty = 'Noch niemand.') => {
-      const l = all.filter((x) => filter(x) && val(x.s) > 0).sort((a, b) => val(b.s) - val(a.s)).slice(0, 5);
-      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${devTag(x.r.d)}${x.cur ? '' : '<small class="old">früheres Spiel</small>'}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : `<p class="empty">${empty}</p>`}</div>`;
+    const open = allGames(rs).filter((x) => x.cur && !ended(x.s));
+    const top = (title, val, fmt) => {
+      const l = open.filter((x) => val(x.s) > 0).sort((a, b) => val(b.s) - val(a.s)).slice(0, 5);
+      return `<div class="board"><h3>${title}</h3>${l.length ? `<ol>${l.map((x) => `<li><span>${esc(x.s.name)}${devTag(x.r.d)}</span><b>${fmt(val(x.s), x.s)}</b></li>`).join('')}</ol>` : `<p class="empty">${open.length ? 'Noch niemand.' : 'Gerade läuft kein Spiel.'}</p>`}</div>`;
     };
-    return `<h2>Ranglisten</h2><section class="boards">
-      ${top('Am weitesten · laufende Spiele', (s) => progress(s) * 100000 + (s.time || 0) + 1, (v, s) => s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '', running, 'Gerade läuft kein Spiel.')}
+    return `<h2>Ranglisten <small class="h2note">nur offene Spiele</small></h2><section class="boards">
+      ${top('Am weitesten', (s) => progress(s) * 100000 + (s.time || 0) + 1, (v, s) => s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '')}
       ${top('Meiste Biere', (s) => s.beers || 0, (v) => `${v} 🍺`)}
       ${top('Meiste Erlebnisse', (s) => (s.ach || []).length, (v, s) => `${v}/${s.achTotal || '?'}`)}
       ${top('Weitester Skisprung', (s) => (s.rec && s.rec.jump) || 0, (v) => `${v.toFixed(1).replace('.', ',')} m`)}
     </section>`;
+  }
+  /* Beendete Spiele separat: Heimreise, Apokalypse, Game Over – neueste zuerst */
+  function endedList(rs) {
+    const l = allGames(rs).filter((x) => ended(x.s)).sort((a, b) => (b.s.at || 0) - (a.s.at || 0));
+    if (!l.length) return '';
+    const res = (s) => s.apoc ? '<span class="badge apo">🌋 Apokalypse überlebt</span>' : s.finished ? '<span class="badge fin">🏁 Heimreise</span>' : '<span class="badge over">💀 Game Over</span>';
+    return `<h2>Beendete Spiele <small class="h2note">${l.length}</small></h2><section class="ended">${l.map((x) => {
+      const s = x.s, img = portrait(s.look, x.r.id + x.g.gid);
+      return `<div class="endrow">
+        ${img ? `<img class="por sm" src="${img}" alt="">` : '<div class="por sm"></div>'}
+        <div class="endwho"><b>${esc(s.name)}</b>${devTag(x.r.d)}<div class="endres">${res(s)}<small>${esc(clock(s.at))}</small></div></div>
+        <div class="endnums">
+          <span><b>${s.stage === 'free' || s.finished || s.apoc ? `Tag ${(s.day || 0) + 1}` : esc(STAGE_N[s.stage] || s.stage)}</b><small>erreicht</small></span>
+          <span><b>${s.beers || 0}</b><small>🍺 Biere</small></span>
+          <span><b>${(s.ach || []).length}/${s.achTotal || '?'}</b><small>⭐ Erlebnisse</small></span>
+          <span><b>${s.rec && s.rec.jump ? s.rec.jump.toFixed(1).replace('.', ',') + ' m' : '–'}</b><small>🎿 Sprung</small></span>
+        </div>
+      </div>`;
+    }).join('')}</section>`;
   }
   function bar(label, v, max, col, txt) {
     const p = Math.max(0, Math.min(100, (v || 0) / max * 100));
@@ -1393,7 +1424,7 @@ function portraitCanvas(L, bg) {
     const sortSel = `<label class="tools"><span class="sr" style="position:absolute;left:-9999px">Sortieren</span><select id="sort" aria-label="Sortieren">
       ${[['seen', 'Zuletzt aktiv'], ['prog', 'Fortschritt'], ['beer', 'Biere'], ['name', 'Name']].map(([k, n]) => `<option value="${k}" ${k === sortBy ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
     $('#main').innerHTML = rs.length
-      ? `${tiles(rs)}${boards(rs)}<h2>Spieler und Geräte ${sortSel}</h2><section class="grid">${rs.map(card).join('')}</section>`
+      ? `${tiles(rs)}${boards(rs)}<h2>Spieler und Geräte ${sortSel}</h2><section class="grid">${rs.map(card).join('')}</section>${endedList(rs)}`
       : '<p class="msg">Noch keine Spielstände. Sobald jemand spielt, erscheint er hier.</p>';
     const ss = $('#sort'); if (ss) ss.onchange = () => { sortBy = ss.value; try { localStorage.setItem('gleis4-tracker-sort', sortBy); } catch (e) {} render(); };
     for (const b of document.querySelectorAll('[data-label]')) b.onclick = () => rename(b.dataset.label);

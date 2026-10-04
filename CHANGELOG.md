@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.24.0 – 04.10.2026
+
+- Tracker: Alle Ranglisten zählen nur noch offene Spiele.
+- Beendete Spiele (Heimreise, Apokalypse, Game Over) stehen in einem eigenen Bereich mit Ergebnis, erreichtem Tag, Bieren, Erlebnissen und Skisprung.
+
 ## 2.23.3 – 04.10.2026
 
 - Tracker: In den Ranglisten steht der Gerätename gut sichtbar als Marke neben dem Spieler. Ohne Namen wird das Gerät angezeigt (z. B. iPhone · Safari). Ältere Spiele eines Geräts sind als „früheres Spiel“ markiert.
