@@ -41,6 +41,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 
 - Datenbank-URL in `tracking.json` (`databaseURL`) oder Umgebungsvariable `TRACK_DB` (im Workflow aus der Repo-Variable `vars.TRACK_DB`). Leer = kein Tracking. `build.py` bettet sie als `TRACK_DB` ein.
 - `src/tracker.html` wird zu `dist/tracker.html` (mit `00_util.js` und `02_look.js` für die Porträts). URL-Parameter `?db=` überschreibt die Datenbank zum Testen.
+- Ereignisse: `Story.announce` zählt jedes erlebte Ereignis in `flags.evSeen` (`Story.evSeen()`, alte Stände aus `flags.ev`), Track sendet `ev`/`evTotal`; `build.py` übernimmt die Titel aus `EV_TITLES` in die Tracker-Seite.
 - Ranglisten zählen nur offene Spiele (aktuelles Spiel des Geräts, ohne `finished`/`apoc`/`over`); beendete Spiele stehen separat in `endedList`.
 - Firebase-Regeln: `devices` lesbar, `devices/$device` beschreibbar. Fehler beim Senden dürfen das Spiel nie stören.
 

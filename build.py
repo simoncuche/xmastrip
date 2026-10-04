@@ -134,7 +134,12 @@ for name, size in (("icon-192.png", 192), ("icon-512.png", 512), ("apple-touch-i
 # ---- Tracker-Seite: Spielstände aller Geräte aus Firebase; Porträts mit dem Zeichencode des Spiels ----
 look_js = "\n".join((SRC / "js" / n).read_text(encoding="utf-8") for n in ("00_util.js", "02_look.js"))
 tracker = (SRC / "tracker.html").read_text(encoding="utf-8")
-tracker = tracker.replace("/*CONFIG*/", f"const TRACK_DB = {json.dumps(track_db)};").replace("/*LOOK*/", look_js)
+story_src = (SRC / "js" / "09_story.js").read_text(encoding="utf-8")
+ev_block = re.search(r"EV_TITLES: \{\n(.*?)\n  \},", story_src, re.S)
+if not ev_block:
+    raise SystemExit("09_story.js: EV_TITLES nicht gefunden (für die Tracker-Seite)")
+ev_titles = {m.group(1): m.group(2).replace("\\'", "'") for m in re.finditer(r"^\s+(\w+): \['((?:[^'\\]|\\.)*)'", ev_block.group(1), re.M)}
+tracker = tracker.replace("/*CONFIG*/", f"const TRACK_DB = {json.dumps(track_db)};\nconst EV_TITLES = {json.dumps(ev_titles, ensure_ascii=False)};").replace("/*LOOK*/", look_js)
 (DIST / "tracker.html").write_text(tracker, encoding="utf-8")
 (DIST / "version.json").write_text(json.dumps({"v": changelog[0]["v"], "date": changelog[0]["date"]}), encoding="utf-8")
 print(f"OK: Version {changelog[0]['v']}, {len(js_files)} JS-Module, {len(full) // 1024} KB, Tracking: {track_db or 'aus (tracking.json leer)'}")

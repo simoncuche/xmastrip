@@ -60,11 +60,11 @@ h2 .tools { margin-left: auto; display: flex; gap: 8px; text-transform: none; le
 .endwho b { font-family: var(--f-pixel); font-size: 17px; font-weight: 700; }
 .endres { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
 .endres small { color: var(--dim); font-size: 12.5px; }
-.endnums { display: grid; grid-template-columns: repeat(4, minmax(64px, auto)); gap: 6px; text-align: center; }
+.endnums { display: grid; grid-template-columns: repeat(5, minmax(64px, auto)); gap: 6px; text-align: center; }
 .endnums span { background: #111d30; border: 1px solid #22344f; border-radius: 8px; padding: 4px 6px; }
 .endnums b { display: block; font-family: var(--f-pixel); font-size: 14px; font-weight: 700; white-space: nowrap; }
 .endnums small { color: var(--dim); font-size: 11px; white-space: nowrap; }
-@media (max-width: 640px) { .endrow { grid-template-columns: auto minmax(0, 1fr); } .endnums { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; } .endnums span { min-width: 0; padding: 4px 2px; } .endnums b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; } .endnums small { display: block; font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 640px) { .endrow { grid-template-columns: auto minmax(0, 1fr); } .endnums { grid-column: 1 / -1; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; } .endnums span { min-width: 0; padding: 4px 2px; } .endnums b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; } .endnums small { display: block; font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; } }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
 .card { background: linear-gradient(180deg, var(--board-2), var(--board)); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .card.on { border-color: #3c6a48; }
@@ -105,6 +105,16 @@ h2 .tools { margin-left: auto; display: flex; gap: 8px; text-transform: none; le
 .num { background: #111d30; border: 1px solid #22344f; border-radius: 8px; padding: 6px 4px; text-align: center; min-width: 0; }
 .num b { display: block; font-family: var(--f-pixel); font-size: 17px; font-weight: 700; }
 .num small { color: var(--dim); font-size: 11.5px; white-space: nowrap; }
+.evs { display: flex; flex-direction: column; gap: 6px; }
+.evhead { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; }
+.evhead b { font-family: var(--f-sign); font-weight: 600; font-size: 14px; color: var(--dim); }
+.evhead small { color: var(--dim); }
+.evgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 4px; }
+.ev { position: relative; display: flex; align-items: center; gap: 5px; min-width: 0; padding: 4px 6px; border-radius: 7px; background: #111d30; border: 1px solid #1d2c44; opacity: 0.45; filter: grayscale(1); }
+.ev.on { opacity: 1; filter: none; background: #2a2a18; border-color: #6a5a24; }
+.ev i { font-style: normal; font-size: 14px; flex: none; }
+.ev em { font-style: normal; font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev sup { position: absolute; top: -6px; right: -3px; font-size: 10px; font-family: var(--f-pixel); background: var(--amber); color: #0f1a2b; border-radius: 6px; padding: 0 4px; }
 details { border-top: 1px solid #22344f; padding-top: 8px; }
 summary { cursor: pointer; font-family: var(--f-sign); font-weight: 600; color: var(--dim); font-size: 14px; }
 summary:hover { color: var(--ink); }
@@ -144,6 +154,12 @@ summary:hover { color: var(--ink); }
 (() => {
   const STAGES = [['meet', 'Treffpunkt Luzern'], ['board', 'Billett & Perron'], ['ride', 'Im Railjet'], ['arrived', 'Ankunft Innsbruck'], ['findHotel', 'Hotel suchen'], ['checkin', 'Check-in'], ['room', 'Hotelzimmer'], ['bar', 'Gamsbock Bar'], ['free', 'Innsbruck frei']];
   const STAGE_N = Object.fromEntries(STAGES);
+  /* Ereignisse: Titel aus dem Spielcode (EV_TITLES, von build.py eingesetzt), Symbole nur für die Anzeige */
+  const EV_ICON = { ueberfall: '🌒', polizei: '🚨', hundkatze: '🐕', taube: '🕊️', krampus: '👹', portemonnaie: '👛', ufo: '🛸', trump: '🏍️', verfolgung: '🏃', monster: '🦖', apokalypse: '🌋' };
+  const EV_SHORT = { ufo: 'UFO' };
+  const EV_IDS = Object.keys(EV_TITLES);
+  const evDone = (s) => EV_IDS.filter((id) => s.ev && s.ev[id] > 0).length;
+  const evTotal = (s) => s.evTotal || EV_IDS.length;
   /* Fünf Abschnitte für die Fortschrittsleiste */
   const PHASES = [['Luzern', ['meet', 'board']], ['Zug', ['ride', 'arrived']], ['Hotel', ['findHotel', 'checkin', 'room']], ['Bar', ['bar']], ['Innsbruck', ['free']]];
   const TRIP_DAYS = 10;
@@ -226,6 +242,7 @@ summary:hover { color: var(--ink); }
       ${top('Am weitesten', (s) => progress(s) * 100000 + (s.time || 0) + 1, (v, s) => s.stage === 'free' ? `Tag ${(s.day || 0) + 1}` : STAGE_N[s.stage] || '')}
       ${top('Meiste Biere', (s) => s.beers || 0, (v) => `${v} 🍺`)}
       ${top('Meiste Erlebnisse', (s) => (s.ach || []).length, (v, s) => `${v}/${s.achTotal || '?'}`)}
+      ${top('Meiste Ereignisse', (s) => evDone(s), (v, s) => `${v}/${evTotal(s)}`)}
       ${top('Weitester Skisprung', (s) => (s.rec && s.rec.jump) || 0, (v) => `${v.toFixed(1).replace('.', ',')} m`)}
     </section>`;
   }
@@ -243,6 +260,7 @@ summary:hover { color: var(--ink); }
           <span><b>${s.stage === 'free' || s.finished || s.apoc ? `Tag ${(s.day || 0) + 1}` : esc(STAGE_N[s.stage] || s.stage)}</b><small>erreicht</small></span>
           <span><b>${s.beers || 0}</b><small>🍺 Biere</small></span>
           <span><b>${(s.ach || []).length}/${s.achTotal || '?'}</b><small>⭐ Erlebnisse</small></span>
+          <span><b>${evDone(s)}/${evTotal(s)}</b><small>🎬 Ereignisse</small></span>
           <span><b>${s.rec && s.rec.jump ? s.rec.jump.toFixed(1).replace('.', ',') + ' m' : '–'}</b><small>🎿 Sprung</small></span>
         </div>
       </div>`;
@@ -253,7 +271,7 @@ summary:hover { color: var(--ink); }
     return `<small>${label}</small><div class="bar" role="img" aria-label="${label} ${Math.round(p)} %"><i style="width:${p}%;background:${col}"></i></div><b>${txt}</b>`;
   }
   const lvl = (v) => (v > 60 ? 'var(--ok)' : v > 30 ? 'var(--warn)' : 'var(--bad)');
-  const EV = { start: 'Neues Spiel', stage: 'Abschnitt', ach: 'Erlebnis', ende: 'Spielende', gameover: 'Game Over', optin: 'Tracking an' };
+  const EV = { start: 'Neues Spiel', stage: 'Abschnitt', ach: 'Erlebnis', ev: 'Ereignis', ende: 'Spielende', gameover: 'Game Over', optin: 'Tracking an' };
   function card(r) {
     const s = r.s, st = s.st || {}, d = r.d, info = d.info || {};
     const on = Date.now() - r.seen < ONLINE_MS;
@@ -305,6 +323,10 @@ summary:hover { color: var(--ink); }
         <div class="num"><b>${money(s.money && s.money.chf, 'Fr.')}</b><small>Franken</small></div>
         <div class="num"><b>${(s.rec && s.rec.jassW) || 0}:${(s.rec && s.rec.jassL) || 0}</b><small>🃏 Jass</small></div>
         <div class="num"><b>${s.rec && s.rec.jump ? Math.round(s.rec.jump) + ' m' : '–'}</b><small>🎿 Sprung</small></div>
+      </div>
+      <div class="evs" aria-label="Ereignisse ${evDone(s)} von ${evTotal(s)}">
+        <div class="evhead"><b>Ereignisse</b><small>${evDone(s)}/${evTotal(s)} erlebt</small></div>
+        <div class="evgrid">${EV_IDS.map((id) => { const n = (s.ev && s.ev[id]) || 0; return `<span class="ev ${n ? 'on' : ''}" title="${esc(EV_TITLES[id])}${n ? ` – ${n}× erlebt` : ' – noch nicht erlebt'}"><i>${EV_ICON[id] || '❔'}</i><em>${esc(EV_SHORT[id] || EV_TITLES[id])}</em>${n > 1 ? `<sup>${n}×</sup>` : ''}</span>`; }).join('')}</div>
       </div>
       <details data-k="${esc(r.id)}-log"><summary>Verlauf (${log.length})</summary>${log.length ? `<ul class="log">${log.map((e) => `<li><small>${esc(clock(e.at))}</small><span>${esc(EV[e.e] || e.e)}: ${esc(e.e === 'stage' ? STAGE_N[e.v] || e.v : e.v)}${e.when ? ` <small>· im Spiel ${esc(e.when)}</small>` : ''}</span></li>`).join('')}</ul>` : '<p class="empty" style="color:var(--dim);font-size:13px">Noch keine Einträge.</p>'}</details>
       ${(s.ach || []).length ? `<details data-k="${esc(r.id)}-ach"><summary>Erlebnisse (${s.ach.length}/${s.achTotal || '?'})</summary><div class="chips">${s.ach.map((a) => `<span>${esc(a)}</span>`).join('')}</div></details>` : ''}

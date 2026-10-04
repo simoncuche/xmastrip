@@ -488,6 +488,7 @@ const Story = {
     if (G.map.id !== 'ibk' || !stageAt('free')) { UI.toast('📳 Du schüttelst das Handy wie wild … aber hier drin passiert nichts. Versuch\'s draussen in Innsbruck.'); return; }
     const fl = G.S.flags, n = this.SHAKE_ORDER.length;
     achieve('schuettler');
+    this._viaShake = true;
     if (force === 'apokalypse') { UI.toast('📳📳📳 Sieben Sekunden geschüttelt … das war zu viel für Innsbruck.', 'warn'); this.announce('apokalypse').then(() => this.ev_apokalypse()); return; }
     const i = (fl.shakeIdx || 0) % n;
     const id = this.SHAKE_ORDER[i];
@@ -511,9 +512,20 @@ const Story = {
     monster: ['Godzilla', 'Er kommt über die Nordkette'],
     apokalypse: ['Apokalypse', 'Innsbruck geht unter – der letzte Zug wartet'],
   },
+  /* Zähler erlebter Ereignisse; ältere Spielstände übernehmen die Zähler des Tagesplans und die Apokalypse */
+  evSeen() {
+    const fl = G.S.flags;
+    if (!fl.evSeen) { fl.evSeen = Object.assign({}, fl.ev || {}); if (fl.apocDone) fl.evSeen.apokalypse = Math.max(1, fl.evSeen.apokalypse || 0); }
+    return fl.evSeen;
+  },
   async announce(id) {
     const el = document.getElementById('cine');
     const [title, sub] = this.EV_TITLES[id] || ['Ereignis', ''];
+    /* Erlebte Ereignisse zählen (alle Quellen: Tagesplan, Godzilla, Apokalypse, Schütteln) – für Tracker und Statistik */
+    const seen = this.evSeen();
+    seen[id] = (seen[id] || 0) + 1;
+    Track.event('ev', title + (this._viaShake ? ' (geschüttelt)' : ''), true);
+    this._viaShake = false;
     if (!el) return;
     G.busy++;
     const kick = el.querySelector('.ckick'), tt = el.querySelector('.ctitle'), ss = el.querySelector('.csub');

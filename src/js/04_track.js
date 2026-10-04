@@ -35,6 +35,7 @@ const Track = {
       beers: S.beers || 0, shots: S.shots || 0, burgers: S.burgers || 0,
       ach: Object.keys(S.ach || {}), achTotal: Object.keys(ACH).length,
       sights: Object.keys(S.photos || {}).length, rec: S.rec || {},
+      ev: Story.evSeen(), evTotal: Object.keys(Story.EV_TITLES).length,
       finished: !!S.finished, apoc: !!(S.flags && S.flags.apocDone), over: G.mode === 'over',
       v: APP_VERSION, at: { '.sv': 'timestamp' },
     };

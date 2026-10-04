@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.25.0 – 04.10.2026
+
+- Tracker: Jede Karte zeigt die 11 Ereignisse (Taschendieb, Hund gegen Katze, Taube, Krampuslauf, Fundsache, Hoher Besuch, Blaulicht, UFO, Nachtschatten, Godzilla, Apokalypse). Erlebte leuchten, mehrfach erlebte tragen eine Zahl.
+- Neue Rangliste „Meiste Ereignisse“, Ereignisse auch bei den beendeten Spielen und im Verlauf.
+- Das Spiel zählt jedes erlebte Ereignis, auch die durch Schütteln ausgelösten.
+
 ## 2.24.0 – 04.10.2026
 
 - Tracker: Alle Ranglisten zählen nur noch offene Spiele.
