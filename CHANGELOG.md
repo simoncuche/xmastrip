@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.23.1 – 04.10.2026
+
+- Tracking ist aktiv: Die Spielstände gehen an die Firebase-Datenbank der Reisegruppe und erscheinen auf der Tracker-Seite.
+
 ## 2.23.0 – 04.10.2026
 
 - Neue Tracker-Seite (tracker.html): zeigt für jedes Gerät Spieler, Avatar, Fortschritt, Tag, Werte, Biere, Erlebnisse, Rekorde und den Verlauf, dazu Ranglisten. Aktualisiert sich alle 20 Sekunden.
