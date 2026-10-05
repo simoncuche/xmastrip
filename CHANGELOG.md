@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.30.0 – 05.10.2026
+
+- Konzert in der Stadthalle: Um 20 Uhr steht die Stubete Gäng auf der Bühne (Sängerin, Gitarrist, Örgeler, Schlagzeuger) und spielt bis 23 Uhr, vorher läuft der Soundcheck. Im Kulturwerk 118 spielt abends eine Open-Stage-Band.
+- In die Stadthalle kommt man nur noch durch die grünen Glastüren beim Eingangsbau.
+- Die Türszenen beim Betreten und Verlassen zeigen jetzt zu jedem Gebäude in Sursee die passende Fassade, zum Beispiel die grüne Stadthalle mit den gelben Rohren, das Rathaus mit der Sonnenuhr, den Surseepark aus Glas und das Waschhaus beim Diebenturm.
+
 ## 2.29.0 – 05.10.2026
 
 - Texte vorlesen: Im Handy unter Optionen lassen sich Gespräche und Antwortmöglichkeiten vorlesen, auf Wunsch auch die Hinweise. Jede Figur hat ihre eigene Stimmlage (Kinder hoch), das Tempo ist einstellbar. Nutzt die Sprachausgabe des Geräts, wenn möglich auf Schweizerdeutsch.

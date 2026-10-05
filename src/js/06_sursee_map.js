@@ -728,8 +728,8 @@ MAP_BUILDERS.sursee = () => {
   m.fill(62, 0, 22, 11, T.PAVE, 2);
   m.add(objStadthalle(65, 1, 16, 8));
   for (const [ax, aw] of [[62, 3], [81, 3]]) m.add(mkObj(ax, 5, aw, 4, 10, (c, Wd, Hd) => { R(c, 0, 0, Wd, Hd - 12, '#7a7c80'); for (let i = 0; i < Wd; i += 4) P(c, i, 3 + (i % 7), '#6a6c70'); R(c, 0, Hd - 12, Wd, 12, '#e8e8e4'); R(c, 0, Hd - 12, Wd, 2, '#c9cbcc'); R(c, 3, Hd - 9, 4, 5, '#3e4c5e'); }, { solid: true }));
-  m.warp(72, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 72, 10, 0);
-  for (const x of [66, 79]) m.add(objLamp(x, 10, 'new'));
+  m.warp(78, 8, 'stadthalle', 'entry', { w: 2, label: 'Stadthalle', guard: () => Sur.stadthalleDoor() }); m.spawn('stadthalle_out', 78, 10, 0);
+  for (const x of [66, 82]) m.add(objLamp(x, 10, 'new'));
   /* Kita Villa Luna beim Märtplatz mit Garten (Timo und Lejan) */
   m.add(mkObj(98, 1, 6, 5, 22, (c, Wd, Hd) => {
     /* Villa Luna nach Foto: helle Villa, blaugraue Läden, braunes Walmdach mit Quergiebel und Ochsenauge, Balkone, Holztür mit Rankenbogen, Hecke, Punkte-Tafel */
@@ -883,7 +883,7 @@ MAP_BUILDERS.sursee = () => {
   m.add(objRathaus(77, 30)); m.trig(80, 36, 2, 1, { label: 'Rathaus', act: () => Sur.rathausDoor() }); m.spawn('rathaus_out', 80, 38, 0);
   m.trig(77, 37, 8, 2, { here: true, label: 'Foto: Rathaus', act: () => Sur.photo('rathaus_sursee'), cond: () => !Sur.hasPhoto('rathaus_sursee') });
   m.fill(85, 28, 2, 9, T.STAIRS); m.trig(85, 29, 2, 2, { here: true, label: 'Foto: St. Georg', act: () => Sur.photo('stgeorg'), cond: () => !Sur.hasPhoto('stgeorg') });
-  altHouse(m, 87, 30, 6, 7, 9, { wall: '#f0e8d8', roof: '#6a5a52', doors: [{ dx: 2, type: 'glass', lit: true }], shopWins: [0, 1, 3, 4, 5], goods: ['#e8c890', '#c8352d', '#5a3a24'], sign: { text: 'STADTCAFÉ', bg: '#2a2a2e', fg: '#f4e8c0', lit: true }, awning: { cols: [0, 1, 3, 4, 5], col: '#2a2a2e' } });
+  altHouse(m, 87, 30, 6, 7, 9, { wall: '#f0e8d8', roof: '#6a5a52', doors: [{ dx: 2, type: 'glass', lit: true }], shopWins: [0, 1, 3, 4, 5], goods: ['#e8c890', '#c8352d', '#5a3a24'], sign: { text: 'STADTCAFE', bg: '#2a2a2e', fg: '#f4e8c0', lit: true }, awning: { cols: [0, 1, 3, 4, 5], col: '#2a2a2e' } });
   m.warp(89, 36, 'stadtcafe', 'entry', { label: 'Stadtcafé', guard: () => Sur.openGuard('stadtcafe') }); m.spawn('stadtcafe_out', 89, 37, 0);
   for (const [x] of [[91], [93]]) m.add(objUmbrellaTable(x, 38, '#f2f0ea'));
   altHouse(m, 96, 30, 5, 7, 5, { wall: '#e8a860', roof: '#8a3b2a', doors: [{ dx: 2, col: '#7a2a1a', lit: true }], sign: { text: 'EL MOSQUITO', bg: '#c8302a', fg: '#ffd23d', lit: true }, hang: { dx: 4, icon: 'cup', side: 'r' } });

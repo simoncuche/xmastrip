@@ -384,7 +384,7 @@ const Sur = {
       { x: 9, y: 31, n: 'Bahnhof', c: V }, { x: 28, y: 34, n: 'Surseepark', c: S }, { x: 45, y: 43, n: 'Martigny-Platz', c: S }, { x: 54, y: 38, n: 'Untertor', c: V },
       { x: 58, y: 36, n: 'Wilder Mann', c: A }, { x: 63, y: 36, n: 'TNT', c: N }, { x: 80, y: 36, n: 'Rathaus', c: V }, { x: 89, y: 36, n: 'Stadtcafé', c: A },
       { x: 98, y: 36, n: 'El Mosquito', c: A }, { x: 107, y: 36, n: 'Craftwerk', c: N }, { x: 81, y: 22, n: 'St. Georg', c: V }, { x: 71, y: 33, n: 'Obertor', c: V },
-      { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 72, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
+      { x: 66, y: 26, n: 'Theater', c: V }, { x: 58, y: 26, n: 'Sankturbanhof', c: V }, { x: 79, y: 8, n: 'Stadthalle', c: N }, { x: 58, y: 16, n: 'Vierherrenplatz', c: V },
       { x: 110, y: 16, n: 'Chilbi', c: N }, { x: 62, y: 49, n: 'Rössli', c: N }, { x: 71, y: 49, n: 'La Fuga', c: A }, { x: 81, y: 49, n: 'Diebenturm', c: V },
       { x: 101, y: 49, n: 'Mühle', c: A }, { x: 65, y: 57, n: 'Spielplatz', c: S }, { x: 85, y: 62, n: 'Ehret-Park', c: V }, { x: 127, y: 41, n: 'Beckenhof', c: V },
       { x: 122, y: 60, n: 'Nr. 8 (Isa)', c: A }, { x: 128, y: 77, n: 'Zum See', c: V }, { x: 32, y: 11, n: 'Kloster', c: V }, { x: 13, y: 49, n: 'Kulturwerk 118', c: N }, { x: 12, y: 20, n: 'Römer-Vicus', c: V }, { x: 22, y: 55, n: 'Polizei', c: S }, { x: 27, y: 49, n: 'Dreiklang', c: V },
@@ -465,6 +465,8 @@ const Sur = {
       if (h >= 18 || h < 8) { atSpot('elin', 'elin', { pose: h >= 21 || h < 7 ? 'sit' : 'stand', bubbleRand: h >= 21 || h < 7 ? ['zzz'] : ['note'] }); atSpot('timo', 'timo', { bubbleRand: h >= 21 || h < 7 ? ['zzz'] : ['!'] }); }
     } else if (m.id === 'stadtcafe') {
       if (this.isaWhere().map === 'stadtcafe') atSpot('isa', 'isa', { pose: 'sit' });
+    } else if (m.id === 'stadthalle' || m.id === 'kulturwerk') {
+      this.spawnBand(m);
     } else if (m.id === 'inseli') {
       if (G.S.stage === 's_boot' && this.st().maskFound) atSpot('pfister', 'pfister');
     }
@@ -489,6 +491,7 @@ const Sur = {
     const h = Math.floor(hourOf(G.S.time));
     if (h !== this._h) {
       const prev = this._h; this._h = h;
+      if (prev != null && h === 20 && G.map.id === 'stadthalle') setTimeout(() => UI.toast('🎤 Licht aus, Nebel, Jubel: Die Stubete Gäng steht auf der Bühne! Mit Ticket vor die Bühne (A).', 'ach'), 400);
       if (prev != null && !G.busy && (SU_MAPS.includes(G.map.id) || G.map.spots)) { G.npcs = G.npcs.filter((n) => !(n.friend || (n.id && n.id.startsWith('su_')))); this.populate(G.map); }
       if (s.follow && (h === 20) && !G.busy) { UI.toast('💬 Isa: „Elin, Timo – ab nach Hause, es ist acht! Morgen helft ihr wieder.“'); }
     }
@@ -963,6 +966,17 @@ function drawLarve(c, x, y, a) {
   else if (ins === 'pauke') { E(c, x, y - 9, 6, 4, '#c8302a'); E(c, x, y - 11, 6, 2, '#f4f0e6'); if (Math.floor(G.t * 4) % 2) line(c, x - 6, y - 16, x - 2, y - 12, '#8a6a3a'); }
   else if (ins === 'trompete') { R(c, x + 3, y - 18, 8, 2, '#e8c84a'); E(c, x + 11, y - 17, 2, 3, '#f2d860'); }
 }
+/* Instrumente der Band, in Spielfiguren-Koordinaten (x, y = Füsse); während des Konzerts wippen alle im Takt */
+function drawBandInstr(c, x, y, a) {
+  const beat = Math.floor(G.t * 2.4 + a.x * 0.013) % 2;
+  if (a.live) a.pose = a.instr === 'mikro' ? (beat ? 'danceA' : 'danceB') : a.instr === 'trommle' ? 'stand' : (beat ? 'walkA' : 'walkB');
+  const ins = a.instr;
+  if (ins === 'gitarre' || ins === 'bass') { const col = ins === 'bass' ? '#2a2a2e' : '#c8302a'; line(c, x - 3, y - 12, x + 9, y - 19, '#5a3a24'); E(c, x - 2, y - 10, 4, 3, col); E(c, x - 4, y - 9, 3, 3, col); R(c, x + 8, y - 21, 2, 3, '#2a2a2e'); }
+  else if (ins === 'oergeli') { R(c, x - 6, y - 15, 12, 7, '#c8302a'); for (let k = -5; k < 6; k += 2) R(c, x + k, y - 15, 1, 7, '#8a1a1a'); R(c, x - 7, y - 15, 2, 7, '#2a2a2e'); R(c, x + 5, y - 15, 2, 7, '#2a2a2e'); for (let k = 0; k < 3; k++) P(c, x - 6, y - 14 + k * 2, '#f4f0e6'); }
+  else if (ins === 'trommle') { const up = Math.floor(G.t * 6) % 2; line(c, x - 2, y - 14, x - 8, y - 18 - up * 3, '#c8a060'); line(c, x + 2, y - 14, x + 8, y - 18 - (1 - up) * 3, '#c8a060'); }
+  else if (ins === 'tech') { R(c, x + 3, y - 22, 6, 1, '#2a2a2e'); E(c, x + 9, y - 22, 2, 2, '#2a2a2e'); R(c, x - 6, y - 12, 4, 6, '#3a3a40'); }
+  if (a.live && Math.floor(G.t * 1.5 + a.x * 0.01) % 3 === 0) { const col = ['#ff6ab0', '#6ae0ff', '#ffe05a'][Math.floor(a.x) % 3], ny = y - 32 - Math.floor(G.t * 4) % 3; E(c, x + 7, ny + 6, 2, 1.5, col); R(c, x + 8, ny, 1, 6, col); R(c, x + 8, ny, 3, 1, col); }
+}
 Object.assign(Sur, {
   spawnGuuggen() {
     const cols = [['#e8c23a', '#c8302a', 'pauke'], ['#3f8ec8', '#f4f0e6', 'trompete'], ['#e3589c', '#ffd23d', 'trompete'], ['#3f8e4b', '#c8302a', 'pauke'], ['#f4f0e6', '#2f5fb8', 'sousa']];
@@ -1295,6 +1309,21 @@ Object.assign(Sur, {
     if (kind === 'lukas' && r.bell) achieve('su_lukas');
     mood(5);
   },
+  /* Band auf der Bühne: Stadthalle 20–23 Uhr Stubete Gäng (18–20 Soundcheck), Kulturwerk ab 20 Uhr Open-Stage-Band */
+  spawnBand(m) {
+    const h = hourOf(G.S.time), hall = m.id === 'stadthalle', sp = m.spots || {};
+    const on = hall ? h >= 20 && h < 23 : h >= 20 || h < 3, sound = hall && h >= 18 && h < 20;
+    if (!on && !sound) return;
+    const roles = hall
+      ? [['band1', 'Sängerin der Stubete Gäng', 'mikro', { hair: 16, hairCol: 3, beard: 0, top: 2, topCol: 12, glasses: 0, hat: 0 }], ['band2', 'Gitarrist der Stubete Gäng', 'gitarre', { hair: 4, hairCol: 1, beard: 1, beardCol: 1, top: 0, topCol: 16, hat: 0 }],
+        ['band3', 'Örgeler der Stubete Gäng', 'oergeli', { hair: 7, hairCol: 4, beard: 2, beardCol: 4, top: 3, topCol: 3, hat: 3, hatCol: 2 }], ['band4', 'Schlagzeuger der Stubete Gäng', 'trommle', { hair: 2, hairCol: 0, beard: 0, top: 0, topCol: 2, hat: 0 }]]
+      : [['band1', 'Sänger der Open Stage', 'mikro', { hair: 13, hairCol: 2, beard: 1, top: 0, topCol: 2 }], ['band2', 'Gitarristin der Open Stage', 'gitarre', { hair: 10, hairCol: 5, beard: 0, top: 2, topCol: 9 }], ['band4', 'Bassist der Open Stage', 'bass', { hair: 5, hairCol: 1, beard: 2, top: 0, topCol: 16 }]];
+    const lines = on ? ['Psst – mir spiled grad! Nachher gern ein Autogramm.', 'Danke, Sursee! Ihr seid lauter als Luzern!', 'Nach der Pause kommt die Ballade. Taschentücher bereithalten.'] : ['Eins, zwei. Eins, zwei. Check.', 'Um acht geht\'s los. Hol dir ein Ticket an der Abendkasse.'];
+    (sound ? [['band2', 'Tontechniker', 'tech', { hair: 2, hairCol: 1, beard: 1, top: 0, topCol: 2, hat: 2 }]] : roles).forEach(([spot, name, instr, lk], i) => {
+      const p = sp[spot]; if (!p) return;
+      G.npcs.push(new Actor({ id: 'su_band' + i, name, look: npcLook(5500 + i + (hall ? 0 : 20), lk), x: p[0] * 16 + 8, y: p[1] * 16 + 12, dir: 0, solid: true, keepDir: true, instr, live: on, extra: drawBandInstr, bubbleRand: on ? ['note'] : ['dots'], talk: () => Story.say(name, pick(lines)), label: 'Reden: ' + name }));
+    });
+  },
   async concertKasse() {
     const h = hourOf(G.S.time);
     if (hasInv('konzertticket')) { await Story.say('Abendkasse', 'Du hast schon ein Ticket. Viel Spass!'); return; }
@@ -1306,6 +1335,7 @@ Object.assign(Sur, {
   async concert() {
     const h = hourOf(G.S.time);
     if (!hasInv('konzertticket')) { await Story.say('Security', 'Ohne Ticket geht\'s nicht vor die Bühne. Abendkasse beim Eingang.'); return; }
+    if (h >= 23 || h < 18) { await Story.say(null, 'Das Konzert ist vorbei. Die Roadies rollen die Kabel ein, auf dem Boden glitzert Konfetti.'); return; }
     if (h < 20) { await Story.say(null, 'Auf der Bühne wird noch Soundcheck gemacht. „Eins, zwei, eins, zwei.“ Um 20 Uhr geht\'s los.'); return; }
     await Story.say(null, 'Licht aus, Nebel, Jubel: Die Stubete Gäng stürmt auf die Bühne. Mundart, Schlager, Party – die ganze Stadthalle hüpft.');
     const r = await this.mini('rhythm', 'konzert');

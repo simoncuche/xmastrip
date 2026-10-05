@@ -1,25 +1,52 @@
 /* ============ Szenen für Sursee ============
    Fassaden der Lokale für die Türszenen, Bootsfahrt zum Gamma-Inseli, Umzug zur Gansabhauet,
    Räbeliechtli-Umzug und Putschibahn. */
+/* Fassaden der Sursee-Gebäude für die Türszenen, passend zu den Zeichnungen auf der Karte (Tür immer in der Mitte, x 62–98, y 30–86).
+   paint(c, t, night, off) zeichnet die Fassade über die Grundfarbe; fW zeichnet ein Fenster links/rechts der Tür. */
+const fW = (c, x, y, w, h, o = {}) => {
+  const night = o.night, off = o.off;
+  if (o.shut) { R(c, x - 5, y, 4, h, o.shut); R(c, x + w + 1, y, 4, h, o.shut); if (o.flame) for (let k = 0; k < h; k += 2) { R(c, x - 5 + (k % 4 ? 2 : 0), y + k, 2, 1, '#f4f0e6'); R(c, x + w + 1 + (k % 4 ? 0 : 2), y + k, 2, 1, '#f4f0e6'); } }
+  R(c, x - 1, y - 1, w + 2, h + 2, o.frame || '#a8a49a'); R(c, x, y, w, h, off ? '#1a2030' : night ? '#ffd27a' : (o.glass || '#7aa8c8'));
+  R(c, x + Math.floor(w / 2), y, 1, h, o.frame || '#a8a49a'); R(c, x, y + Math.floor(h / 3), w, 1, o.frame || '#a8a49a');
+  if (!night) R(c, x + 1, y + 1, 2, 3, '#c8e0f0');
+};
+const fNoise = (c, n, col, y0 = 0, y1 = 86) => { for (let i = 0; i < n; i++) P(c, Math.floor(hash(i, 51) * 160), y0 + Math.floor(hash(i, 52) * (y1 - y0)), col); };
 Object.assign(FACADES, {
-  wildermann: { name: 'WILDER MANN', wall: '#e8d4b0', door: 'wood', doorCol: '#4a2e1a', sign: ['#3a2418', '#f4d890'], inner: '#ffc870', lantern: true, flowers: true },
-  muehle: { name: 'PIZZERIA ZUR MÜHLE', wall: '#efe0c8', door: 'wood', doorCol: '#5a2a1a', sign: ['#2f7a3a', '#ffffff'], inner: '#ffb860', lantern: true, flowers: true },
-  stadtcafe: { name: 'STADTCAFÉ', wall: '#f0e8d8', door: 'glass', sign: ['#2a2a2e', '#f4e8c0'], inner: '#fff0c8', plants: true },
-  tnt: { name: 'TNT ROCK BAR', wall: '#2a2a2e', door: 'metal', sign: ['#c8302a', '#1a1a1a'], inner: '#ff6a3a', bass: true },
-  roessli: { name: 'RÖSSLI NIGHTBAR', wall: '#c8302a', door: 'curtain', sign: ['#2a1a10', '#ffd23d'], inner: '#ff4a7a', redlight: true },
-  mosquito: { name: 'EL MOSQUITO', wall: '#e8a860', door: 'wood', doorCol: '#7a2a1a', sign: ['#c8302a', '#ffd23d'], inner: '#ffb050', lantern: true },
-  lafuga: { name: 'LA FUGA', wall: '#3a2a20', door: 'glass', sign: ['#c8a060', '#2a1a10'], inner: '#ffe0a8' },
-  craftwerk: { name: 'CRAFTWERK', wall: '#8a8e94', door: 'glass', sign: ['#1a1a1e', '#e8a83a'], inner: '#ffd27a' },
-  zunftstube: { name: 'ZUNFT HEINI VON URI', wall: '#bfae8a', door: 'wood', doorCol: '#4a3420', sign: ['#2a2a2e', '#f2d040'], inner: '#ffc870', lantern: true },
-  rathaus: { name: 'RATHAUS', wall: '#e8dcc4', door: 'wood', doorCol: '#5a3a24', sign: ['#c8302a', '#ffffff'], inner: '#ffe6a8', flags: true },
+  wildermann: { name: 'WILDER MANN', wall: '#f6f4ee', door: 'wood', doorCol: '#4a2e1a', sign: ['#3a2418', '#f4d890'], inner: '#ffc870', lantern: true,
+    paint: (c, t, n, off) => { for (const wx of [14, 36, 112, 134]) for (const wy of [10, 46]) fW(c, wx, wy, 12, 18, { shut: '#b8302a', night: n, off }); for (let x = 0; x < 160; x += 8) R(c, x, 0, 4, 4, '#b8302a'); R(c, 0, 4, 160, 2, '#7a3a2a'); } },
+  muehle: { name: 'PIZZERIA ZUR MÜHLE', wall: '#e8d8b8', door: 'wood', doorCol: '#5a2a1a', sign: ['#2f7a3a', '#ffffff'], inner: '#ffb860', lantern: true, flowers: true,
+    paint: (c, t, n, off) => { fNoise(c, 120, '#d4c4a0'); for (const wx of [20, 124]) fW(c, wx, 22, 14, 18, { shut: '#3f6b45', night: n, off }); const cx = 22, cy = 66, r = 16, a = t * 0.8; c.strokeStyle = '#6a4428'; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, r, 0, 6.283); c.stroke(); for (let k = 0; k < 8; k++) { const an = a + k * 0.785; line(c, cx, cy, cx + Math.cos(an) * r, cy + Math.sin(an) * r, '#7a5434'); } E(c, cx, cy, 3, 3, '#4a2e1a'); R(c, 132, 50, 4, 2, '#3f8e4b'); R(c, 136, 50, 4, 2, '#f4f0e6'); R(c, 140, 50, 4, 2, '#c8302a'); } },
+  stadtcafe: { name: 'STADTCAFE', wall: '#f6f2ea', door: 'glass', sign: ['#2a2a2e', '#f4e8c0'], inner: '#fff0c8', plants: true,
+    paint: (c, t, n, off) => { for (const wx of [14, 40, 108, 132]) fW(c, wx, 8, 12, 16, { shut: '#8a2a2a', night: n, off }); for (let x = 4; x < 58; x += 6) R(c, x, 50, 6, 8, (x / 6) % 2 ? '#2f5fb8' : '#f4f4f0'); for (let x = 102; x < 156; x += 6) R(c, x, 50, 6, 8, (x / 6) % 2 ? '#2f5fb8' : '#f4f4f0'); for (const wx of [8, 106]) { R(c, wx, 58, 46, 22, '#3a3c40'); R(c, wx + 2, 60, 42, 18, off ? '#2a3040' : n ? '#ffe8b0' : '#cfe4f0'); } } },
+  tnt: { name: 'TNT ROCK BAR', wall: '#1e1e22', door: 'metal', sign: ['#c8302a', '#1a1a1a'], inner: '#ff6a3a', bass: true,
+    paint: (c, t, n, off) => { for (let y = 0; y < 86; y += 6) for (let x = (y / 6) % 2 ? 0 : 6; x < 160; x += 12) R(c, x, y, 11, 5, '#26262c'); const on = !off && Math.floor(t * 5) % 7 !== 0; pxText(c, 'TNT', 16, 20, on ? '#ff3a3a' : '#5a1a1a', 3); line(c, 132, 14, 124, 30, on ? '#ffd23d' : '#5a5020'); line(c, 124, 30, 134, 30, on ? '#ffd23d' : '#5a5020'); line(c, 134, 30, 126, 46, on ? '#ffd23d' : '#5a5020'); for (const [px, col] of [[14, '#e8c23a'], [34, '#7ab0f0']]) { R(c, px, 50, 16, 22, col); R(c, px + 2, 52, 12, 8, '#1a1a1a'); } } },
+  roessli: { name: 'RÖSSLI NIGHTBAR', wall: '#c8302a', door: 'curtain', sign: ['#2a1a10', '#ffd23d'], inner: '#ff4a7a', redlight: true,
+    paint: (c, t, n, off) => { for (const wx of [14, 36, 112, 134]) fW(c, wx, 12, 12, 18, { shut: '#f4e8c0', night: n, off }); R(c, 128, 46, 22, 16, '#2a1a10'); E(c, 139, 54, 6, 5, '#ffd23d'); R(c, 140, 48, 4, 6, '#ffd23d'); R(c, 138, 49, 1, 4, '#2a1a10'); } },
+  mosquito: { name: 'EL MOSQUITO', wall: '#e8a860', door: 'wood', doorCol: '#7a2a1a', sign: ['#c8302a', '#ffd23d'], inner: '#ffb050', lantern: true,
+    paint: (c, t, n, off) => { for (let x = 0; x < 160; x += 8) for (const y of [0, 80]) R(c, x, y, 7, 5, ['#2f5fb8', '#e8c23a', '#c8302a'][(x / 8) % 3]); for (const wx of [18, 126]) fW(c, wx, 18, 14, 20, { night: n, off, frame: '#7a2a1a' }); for (const px of [20, 128]) { R(c, px, 70, 10, 8, '#c86a3a'); R(c, px + 4, 54, 3, 16, '#3f8e4b'); R(c, px + 1, 58, 3, 2, '#3f8e4b'); R(c, px + 1, 56, 1, 4, '#3f8e4b'); R(c, px + 7, 60, 3, 2, '#3f8e4b'); R(c, px + 9, 58, 1, 4, '#3f8e4b'); } } },
+  lafuga: { name: 'LA FUGA', wall: '#3a2a20', door: 'glass', sign: ['#c8a060', '#2a1a10'], inner: '#ffe0a8',
+    paint: (c, t, n, off) => { for (const wx of [14, 36, 112, 134]) for (const wy of [10, 46]) fW(c, wx, wy, 12, 18, { frame: '#c8a060', night: n, off }); R(c, 0, 40, 160, 2, '#c8a060'); } },
+  craftwerk: { name: 'CRAFTWERK', wall: '#8a8e94', door: 'glass', sign: ['#1a1a1e', '#e8a83a'], inner: '#ffd27a',
+    paint: (c, t, n, off) => { for (let x = 0; x < 160; x += 4) R(c, x, 0, 1, 86, '#7a7e84'); for (const wx of [12, 116]) fW(c, wx, 14, 32, 22, { frame: '#3a3c40', night: n, off }); for (const bx of [16, 30, 118]) { E(c, bx, 76, 6, 9, '#8a5a32'); R(c, bx - 6, 72, 12, 1, '#5a5e64'); R(c, bx - 6, 80, 12, 1, '#5a5e64'); } for (let k = 0; k < 12; k++) E(c, 50 + (k % 6) * 12, 6 + Math.floor(k / 6) * 4, 3, 2, '#5a9a3a'); } },
+  zunftstube: { name: 'ZUNFT HEINI VON URI', wall: '#f2ece0', door: 'wood', doorCol: '#4a3420', sign: ['#2a2a2e', '#f2d040'], inner: '#ffc870', lantern: true,
+    paint: (c, t, n, off) => { for (const wx of [14, 36]) fW(c, wx, 16, 12, 18, { shut: '#3f6b45', night: n, off }); R(c, 112, 0, 48, 86, '#ddd3bc'); for (let y = 2, k = 0; y < 86; y += 7, k++) R(c, 112, y, k % 2 ? 6 : 10, 6, '#b8a27c'); R(c, 130, 24, 3, 8, '#3a3632'); R(c, 50, 0, 1, 24, '#3a3a40'); const wv = Math.sin(t * 5) * 1.5; R(c, 51, 2 + wv * 0.2, 16, 5, '#f2d040'); R(c, 51, 7 + wv * 0.2, 16, 5, '#c8302a'); } },
+  rathaus: { name: 'RATHAUS', wall: '#ebe9e1', door: 'wood', doorCol: '#5a3a24', sign: ['#c8302a', '#ffffff'], inner: '#ffe6a8', flags: true,
+    paint: (c, t, n, off) => { for (const wx of [12, 30, 114, 132]) fW(c, wx, 40, 12, 18, { frame: '#a8a49a', night: n, off }); R(c, 0, 34, 160, 3, '#5a4a3a'); for (const wx of [20, 124]) fW(c, wx, 8, 14, 16, { frame: '#a8a49a', night: n, off }); R(c, 44, 4, 18, 22, '#f6f2e0'); for (let k = 0; k < 7; k++) { const a = Math.PI * (k / 6); line(c, 53, 10, 53 - Math.cos(a) * 7, 10 + Math.sin(a) * 10, '#c89a3a'); } R(c, 49, 0, 8, 6, '#c8302a'); R(c, 51, 1, 4, 4, '#f4f0e6'); E(c, 80, 30, 22, 8, '#a8a49a'); } },
   theater: { name: 'STADTTHEATER', wall: '#e8d8e0', door: 'wood', doorCol: '#5a2a4a', sign: ['#5a3a6a', '#ffffff'], inner: '#ffd8a0', carpet: '#8a1a2a', trim: '#c9a227' },
-  sankturbanhof: { name: 'SANKTURBANHOF', wall: '#efe0c0', door: 'wood', doorCol: '#5a3a24', sign: ['#5a4a38', '#f4e8c0'], inner: '#fff0d0' },
-  stadthalle: { name: 'STADTHALLE SURSEE', wall: '#d8d0b8', door: 'glass', sign: ['#c8b040', '#2a2a18'], inner: 'strobe', bass: true },
-  kulturwerk: { name: 'KULTURWERK 118', wall: '#e8e4dc', door: 'metal', sign: ['#1a1a1e', '#ff3a3a'], inner: '#ff6a5a', bass: true },
-  surseepark: { name: 'SURSEEPARK', wall: '#c9ccd2', door: 'glass', sign: ['#2a2e34', '#ffffff'], inner: '#fff4d0', shop: true, goods: ['#ff7a1a', '#e8c23a', '#3f8e4b', '#c8352d'] },
-  isa_haus: { name: 'NR. 8', wall: '#e4e0d8', door: 'glass', sign: ['#2a2e34', '#f4e8c0'], inner: '#ffe8b8', plants: true },
-  polizei: { name: 'POLIZEI', wall: '#d8dce0', door: 'glass', sign: ['#1a3a7a', '#ffffff'], inner: '#eef4fa' },
-  kloster: { name: 'KAPUZINERKLOSTER', wall: '#efe6d2', door: 'wood', doorCol: '#5a3a24', sign: ['#5a3a24', '#f4e8c0'], inner: '#fff0d0', flowers: true },
+  sankturbanhof: { name: 'SANKTURBANHOF', wall: '#efe0c0', door: 'wood', doorCol: '#5a3a24', sign: ['#5a4a38', '#f4e8c0'], inner: '#fff0d0',
+    paint: (c, t, n, off) => { for (const wx of [12, 32, 116, 136]) for (const wy of [8, 44]) fW(c, wx, wy, 10, 22, { frame: '#fbf4dc', night: n, off }); R(c, 0, 38, 160, 2, '#d8c8a0'); c.fillStyle = '#e4d4b0'; c.beginPath(); c.moveTo(56, 22); c.lineTo(80, 8); c.lineTo(104, 22); c.closePath(); c.fill(); } },
+  stadthalle: { name: 'STADTHALLE', wall: '#5ccc4a', door: 'glass', sign: ['#2f8a6a', '#f2d81c'], inner: 'strobe', bass: true,
+    paint: (c, t, n, off) => { for (let x = 0; x < 160; x += 5) R(c, x, 0, 1, 86, '#48b03a'); R(c, 0, 0, 160, 12, '#2c3f6a'); for (let x = 2; x < 160; x += 9) R(c, x, 0, 1, 12, '#4a6090'); R(c, 0, 12, 160, 8, off ? '#2a4040' : '#7ac8c8'); for (let k = 0; k < 3; k++) { const bx = 14 + k * 14, top = 30 + (k % 2) * 4; R(c, bx, top, 8, 56 - top + 30, '#f2d81c'); R(c, bx + 6, top, 2, 56 - top + 30, '#c8a810'); c.strokeStyle = '#f2d81c'; c.lineWidth = 8; c.beginPath(); c.arc(bx + 10, top, 6, Math.PI, Math.PI * 1.5); c.stroke(); } R(c, 132, 20, 8, 66, '#f2d81c'); R(c, 138, 20, 2, 66, '#c8a810'); E(c, 136, 20, 4, 2, '#fff070'); if (!off) { R(c, 102, 36, 22, 30, '#1a1a2a'); pxText(c, 'STUBETE', 104, 40, '#ff6ab0'); pxText(c, 'GÄNG', 106, 48, '#ffd23d'); pxText(c, '20 UHR', 104, 56, '#ffffff'); } } },
+  kulturwerk: { name: 'KULTURWERK 118', wall: '#e8e4dc', door: 'metal', sign: ['#1a1a1e', '#ff3a3a'], inner: '#ff6a5a', bass: true,
+    paint: (c, t, n, off) => { for (const gx of [4, 108]) { R(c, gx, 30, 48, 56, '#c8302a'); for (let y = 32; y < 86; y += 5) R(c, gx, y, 48, 1, '#a8221e'); } R(c, 0, 0, 160, 12, '#c8302a'); pxText(c, 'FEUERWEHR SURSEE', 48, 3, '#ffffff'); } },
+  surseepark: { name: 'SURSEEPARK', wall: '#7ab0c0', door: 'glass', sign: ['#ffffff', '#1f6ab8'], inner: '#fff4d0',
+    paint: (c, t, n, off) => { for (let y = 0; y < 86; y += 15) { R(c, 0, y, 160, 3, '#a4a8ae'); R(c, 0, y + 3, 160, 12, n ? (off ? '#2a3a48' : '#c8b878') : y < 40 ? '#8ac0d0' : '#5a9aa8'); } for (let x = 0; x < 160; x += 12) R(c, x, 0, 1, 86, '#3e5a66'); for (let i = 0; i < 6; i++) R(c, (i * 31) % 150, 6 + (i % 4) * 15, 10, 1, 'rgba(240,250,255,0.7)'); R(c, 108, 58, 52, 28, '#b8d040'); for (let x = 108; x < 160; x += 10) R(c, x, 58, 1, 28, '#6a8a2a'); R(c, 140, 40, 14, 12, '#ff6a00'); pxText(c, 'M', 145, 43, '#ffffff'); R(c, 16, 20, 10, 66, '#f2f4f6'); for (let i = 0; i < 6; i++) pxText(c, 'SURSEE'[i], 19, 24 + i * 7, '#1f6ab8'); } },
+  isa_haus: { name: '', wall: '#6c785c', door: 'glass', sign: ['#2a2e34', '#f4e8c0'], inner: '#ffe8b8', plants: true,
+    paint: (c, t, n, off) => { for (let x = 0; x < 160; x += 2) R(c, x, 0, 1, 86, (x / 2) % 3 ? '#5a6650' : '#7c886c'); for (const y of [0, 26, 52]) R(c, 0, y, 160, 2, '#d4d8cc'); for (const wx of [14, 34, 116, 136]) for (const wy of [6, 32]) { R(c, wx, wy, 8, 16, '#d8dcd4'); R(c, wx + 1, wy + 1, 6, 14, off ? '#1a2030' : n ? '#ffd890' : '#2c3236'); } R(c, 104, 40, 10, 10, '#1f4fa0'); pxText(c, '8', 107, 42, '#ffffff'); R(c, 20, 60, 30, 3, '#c8ccc4'); for (let k = 0; k < 30; k += 3) R(c, 20 + k, 60, 1, 10, '#9a9e96'); } },
+  polizei: { name: 'POLIZEI', wall: '#d8dce0', door: 'glass', sign: ['#1a3a7a', '#ffffff'], inner: '#eef4fa',
+    paint: (c, t, n, off) => { for (const wy of [8, 34, 60]) for (const wx of [10, 26, 42, 110, 126, 142]) { R(c, wx, wy, 12, 16, '#3e4c5e'); if (n && !off && hash(wx, wy) > 0.4) R(c, wx + 1, wy + 1, 10, 14, '#ffe8b0'); } R(c, 0, 0, 160, 3, '#5a5e64'); } },
+  kloster: { name: 'KAPUZINERKLOSTER', wall: '#efe6d2', door: 'wood', doorCol: '#5a3a24', sign: ['#5a3a24', '#f4e8c0'], inner: '#fff0d0', flowers: true,
+    paint: (c, t, n, off) => { fNoise(c, 100, '#e0d6c0'); for (const wx of [16, 124]) { E(c, wx + 8, 22, 8, 6, '#a8a49a'); R(c, wx, 22, 16, 22, '#a8a49a'); E(c, wx + 8, 23, 7, 5, off ? '#1a2030' : n ? '#ffd27a' : '#6a8aa8'); R(c, wx + 1, 23, 14, 20, off ? '#1a2030' : n ? '#ffd27a' : '#6a8aa8'); } R(c, 76, 0, 8, 12, '#7a4a3a'); R(c, 78, 4, 4, 5, '#3a3a40'); } },
 });
 Object.assign(SCENES, {
   /* Elektroboot über den Triechter, das Gamma-Inseli kommt näher (back: zurück zum Quai) */
