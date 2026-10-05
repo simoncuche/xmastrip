@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.30.1 – 05.10.2026
+
+- Der Weg vom Städtli zum See ist keine Tür mehr: Man spaziert zwischen Bäumen und Laternen, vorne taucht der Sempachersee auf, auf dem Rückweg die Altstadt mit dem Rathausturm.
+
 ## 2.30.0 – 05.10.2026
 
 - Konzert in der Stadthalle: Um 20 Uhr steht die Stubete Gäng auf der Bühne (Sängerin, Gitarrist, Örgeler, Schlagzeuger) und spielt bis 23 Uhr, vorher läuft der Soundcheck. Im Kulturwerk 118 spielt abends eine Open-Stage-Band.

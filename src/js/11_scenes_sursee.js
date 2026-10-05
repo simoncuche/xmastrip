@@ -49,6 +49,37 @@ Object.assign(FACADES, {
     paint: (c, t, n, off) => { fNoise(c, 100, '#e0d6c0'); for (const wx of [16, 124]) { E(c, wx + 8, 22, 8, 6, '#a8a49a'); R(c, wx, 22, 16, 22, '#a8a49a'); E(c, wx + 8, 23, 7, 5, off ? '#1a2030' : n ? '#ffd27a' : '#6a8aa8'); R(c, wx + 1, 23, 14, 20, off ? '#1a2030' : n ? '#ffd27a' : '#6a8aa8'); } R(c, 76, 0, 8, 12, '#7a4a3a'); R(c, 78, 4, 4, 5, '#3a3a40'); } },
 });
 Object.assign(SCENES, {
+  /* Spaziergang zwischen Städtli und See: Weg mit Bäumen und Laternen zieht vorbei, am Horizont der Sempachersee (bzw. zurück die Altstadt) */
+  seeweg(c, t, p, st) {
+    const n = st.night;
+    sceneSky(c, n);
+    const hz = 40;
+    if (!st.back) {
+      sceneMountains(c, hz - 2, n ? '#2a3448' : '#8a9ab4', !n, 40);
+      R(c, 0, hz - 6, SCENE_W, 8, n ? '#1a3050' : '#5a9ac0'); for (let k = 0; k < 10; k++) R(c, (k * 37 + t * 6) % 170 - 5, hz - 4 + (k % 3) * 2, 8, 1, n ? 'rgba(200,220,255,0.3)' : 'rgba(255,255,255,0.6)');
+      E(c, 120, hz - 4, 6, 2, n ? '#1e3a1a' : '#4f7a3a'); R(c, 119, hz - 9, 1, 5, '#4a3020');
+    } else {
+      R(c, 0, hz - 4, SCENE_W, 6, n ? '#1e2a1a' : '#5a7a4a');
+      for (let i = 0; i < 9; i++) { const x = 30 + i * 11, h = 8 + (i % 3) * 3; R(c, x, hz - 4 - h, 10, h, n ? '#3a3440' : PASTELS[i % PASTELS.length]); R(c, x - 1, hz - 6 - h, 12, 3, n ? '#2a2026' : ROOFS[i % ROOFS.length]); if (n) P(c, x + 4, hz - h, '#ffd27a'); }
+      R(c, 78, hz - 30, 6, 26, n ? '#3a3a44' : '#f2eee2'); E(c, 81, hz - 32, 5, 4, n ? '#4a2a2a' : '#8e2a2e'); R(c, 80, hz - 40, 2, 6, '#5a5a5e');
+    }
+    R(c, 0, hz, SCENE_W, SCENE_H - hz, n ? '#1e2e1a' : '#5a8a3a');
+    for (let i = 0; i < 40; i++) P(c, Math.floor(hash(i, 61) * SCENE_W), hz + 2 + Math.floor(hash(i, 62) * 54), n ? '#26381e' : '#6a9e48');
+    /* Weg in die Tiefe */
+    c.fillStyle = n ? '#4a463e' : '#c8b890'; c.beginPath(); c.moveTo(76, hz); c.lineTo(84, hz); c.lineTo(120, SCENE_H); c.lineTo(40, SCENE_H); c.closePath(); c.fill();
+    /* Bäume und Laternen ziehen vorbei (von hinten nach vorne) */
+    for (let k = 0; k < 6; k++) {
+      const z = ((k / 6) + t * 0.45) % 1, sc = 0.25 + z * 1.6, y = hz + z * z * 60;
+      for (const side of [-1, 1]) {
+        const x = 80 + side * (10 + z * 70);
+        if ((k + (side > 0 ? 1 : 0)) % 3 === 0) { R(c, x - 0.5 * sc, y - 22 * sc, Math.max(1, sc), 22 * sc, '#2a2a2e'); E(c, x, y - 23 * sc, 2 * sc, 2 * sc, n ? '#ffd27a' : '#e8e4d8'); }
+        else { R(c, x - 1.5 * sc, y - 12 * sc, 3 * sc, 12 * sc, '#4a3020'); E(c, x, y - 20 * sc, 9 * sc, 10 * sc, n ? '#1e3a1e' : (k % 2 ? '#3e6b32' : '#a8641e')); E(c, x - 2 * sc, y - 23 * sc, 5 * sc, 5 * sc, n ? '#264a26' : (k % 2 ? '#4f8040' : '#c8842a')); }
+      }
+    }
+    /* Spieler läuft vom Betrachter weg den Weg entlang */
+    sceneSprite(c, st, Math.floor(t * 6) % 2 ? 'walkA' : 'walkB', 3, 71, 64);
+    pxText(c, st.back ? 'INS STÄDTLI' : 'ZUM SEMPACHERSEE', 6, 6, '#ffffff');
+  },
   /* Elektroboot über den Triechter, das Gamma-Inseli kommt näher (back: zurück zum Quai) */
   boat(c, t, p, st) {
     sceneSky(c, st.night);
