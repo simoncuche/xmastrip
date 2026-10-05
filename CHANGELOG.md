@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.29.0 – 05.10.2026
+
+- Texte vorlesen: Im Handy unter Optionen lassen sich Gespräche und Antwortmöglichkeiten vorlesen, auf Wunsch auch die Hinweise. Jede Figur hat ihre eigene Stimmlage (Kinder hoch), das Tempo ist einstellbar. Nutzt die Sprachausgabe des Geräts, wenn möglich auf Schweizerdeutsch.
+
 ## 2.28.0 – 04.10.2026
 
 - Neues Kapitel „Gans oder gar nicht“: Nach der Heimreise aus Innsbruck geht es in Luzern weiter. Auf Gleis 2 fährt die S-Bahn nach Sursee, dem Sempachersee entlang (Emmenbrücke, Rothenburg Station, Sempach-Neuenkirch, Nottwil). Wer will, geht stattdessen heim und beendet das Spiel.

@@ -77,6 +77,50 @@ function itemIconURL(icon) {
   return ICON_CACHE[icon];
 }
 
+/* ============ Vorlesen: Dialoge, Antworten und auf Wunsch Hinweise über die Sprachausgabe des Browsers (Web Speech API) ============
+   Einstellung pro Gerät unter 'gleis4-vorlesen'. mode: 0 aus, 1 Dialoge, 2 Dialoge und Hinweise. Stimme: Schweizerdeutsch, sonst Deutsch. */
+const Voice = {
+  KEY: 'gleis4-vorlesen',
+  mode: 0, rate: 1,
+  _voices: [],
+  ok() { return typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined'; },
+  init() {
+    try { const v = JSON.parse(localStorage.getItem(this.KEY) || 'null'); if (v) { this.mode = v.mode | 0; this.rate = v.rate || 1; } } catch (e) {}
+    if (!this.ok()) return;
+    const load = () => { this._voices = speechSynthesis.getVoices() || []; };
+    load(); try { speechSynthesis.addEventListener('voiceschanged', load); } catch (e) {}
+  },
+  save() { try { localStorage.setItem(this.KEY, JSON.stringify({ mode: this.mode, rate: this.rate })); } catch (e) {} },
+  voice() {
+    const v = this._voices.length ? this._voices : (this.ok() ? speechSynthesis.getVoices() : []);
+    for (const l of ['de-CH', 'de-AT', 'de-DE']) { const f = v.find((x) => x.lang && x.lang.replace('_', '-') === l); if (f) return f; }
+    return v.find((x) => x.lang && x.lang.toLowerCase().startsWith('de')) || null;
+  },
+  clean(t) {
+    return String(t).replace(/<[^>]+>/g, ' ').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}▼]/gu, '')
+      .replace(/‰/g, ' Promille').replace(/\bCHF\b/g, 'Franken').replace(/€/g, ' Euro').replace(/·/g, ',').replace(/…/g, '...').replace(/\s+/g, ' ').replace(/\s+([,.!?])/g, '$1').trim();
+  },
+  /* Stimmlage je nach Person: Kinder hoch, Erzähler neutral, alle anderen leicht verschieden */
+  pitch(sp) {
+    if (!sp) return 1;
+    if (sp.look && sp.look.kid) return 1.6;
+    let h = 7; for (const ch of String(sp.name || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return 0.8 + (h % 8) * 0.05;
+  },
+  speak(text, sp, queue) {
+    if (!this.mode || !this.ok()) return;
+    const t = this.clean(text); if (!t) return;
+    if (!queue) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    const v = this.voice(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'de-CH';
+    u.rate = this.rate; u.pitch = this.pitch(sp);
+    try { speechSynthesis.speak(u); } catch (e) {}
+  },
+  hint(text) { if (this.mode >= 2) this.speak(text, null, true); },
+  stop() { if (this.ok()) try { speechSynthesis.cancel(); } catch (e) {} },
+};
+Voice.init();
+
 const UI = {
   els: {}, dlgOpen: false, _dlgResolve: null, _typing: null, _choices: null, _sel: 0, ovOpen: false,
   init() {
@@ -119,6 +163,7 @@ const UI = {
     if (n > 20) { x.fillStyle = '#c8352d'; x.font = 'bold 11px Barlow Semi Condensed, sans-serif'; x.textAlign = 'center'; x.fillText(n, 22, 40); }
   },
   toast(html, type = '') {
+    Voice.hint(html);
     const d = document.createElement('div');
     d.className = 'toast ' + type;
     d.innerHTML = `<span>${html}</span><b class="x" aria-label="Schliessen">×</b>`;
@@ -179,6 +224,7 @@ const UI = {
   async say(sp, text) {
     this.showDlg(sp);
     this.els.dlgChoices.innerHTML = '';
+    Voice.speak(text, this.speaker(sp));
     await this.type(text);
     const more = document.createElement('span'); more.className = 'dlg-more'; more.textContent = '▼'; this.els.dlgText.appendChild(more);
     await new Promise((res) => { this._dlgResolve = res; });
@@ -190,10 +236,11 @@ const UI = {
     if (this._choices) return;
     if (this._dlgResolve) { const r = this._dlgResolve; this._dlgResolve = null; Snd.sfx('blip'); r(); }
   },
-  hideDlg() { this.els.dialog.hidden = true; this.dlgOpen = false; this.els.btnA.classList.remove('idle'); },
+  hideDlg() { this.els.dialog.hidden = true; this.dlgOpen = false; this.els.btnA.classList.remove('idle'); Voice.stop(); },
   async ask(sp, text, opts) {
     this.showDlg(sp);
     this.els.dlgChoices.innerHTML = '';
+    Voice.speak(`${text} ... ${opts.map((o, i) => `${i + 1}: ${typeof o === 'string' ? o : o.t}`).join('. ')}.`, this.speaker(sp));
     await this.type(text);
     return new Promise((res) => {
       const box = this.els.dlgChoices;
@@ -459,6 +506,9 @@ const Phone = {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
       <div class="opt-row"><span>Musik</span><button class="btn" id="oMus">${Snd.musicOn ? 'An' : 'Aus'}</button></div>
       <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
+      <div class="opt-row"><span>Texte vorlesen</span><button class="btn" id="oVoice">${!Voice.ok() ? 'Nicht verfügbar' : ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]}</button></div>
+      <div class="opt-row"><span>Vorlese-Tempo</span><button class="btn" id="oRate">${{ 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate] || 'Normal'}</button></div>
+      <p class="note">Liest Gespräche und Antwortmöglichkeiten vor, auf Wunsch auch die Hinweise oben. Nutzt die Sprachausgabe deines Geräts; beim iPhone muss der Stummschalter aus sein.</p>
       <div class="opt-row"><span>Bewegungssensoren</span><button class="btn" id="oSens">${Shake.on ? 'An' : Shake.needsPermission() ? 'Erlauben' : typeof DeviceMotionEvent === 'undefined' ? 'Nicht verfügbar' : 'An'}</button></div>
       <p class="note">Für das Zielen per Neigung beim Darts – und wer weiss, wofür sonst noch.</p>
       <div class="opt-row"><span>Jasskarten</span><button class="btn" id="oDeck">${G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'}</button></div>
@@ -471,6 +521,8 @@ const Phone = {
       <div class="changelog">${changelogHtml()}</div>`;
     b.querySelector('#oSnd').onclick = (e) => { Snd.on = !Snd.on; e.target.textContent = Snd.on ? 'An' : 'Aus'; };
     b.querySelector('#oMus').onclick = (e) => { Snd.musicOn = !Snd.musicOn; e.target.textContent = Snd.musicOn ? 'An' : 'Aus'; };
+    b.querySelector('#oVoice').onclick = (e) => { if (!Voice.ok()) return; Voice.mode = (Voice.mode + 1) % 3; Voice.save(); e.target.textContent = ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]; if (Voice.mode) Voice.speak(Voice.mode === 1 ? 'Gespräche werden jetzt vorgelesen.' : 'Gespräche und Hinweise werden jetzt vorgelesen.'); else Voice.stop(); };
+    b.querySelector('#oRate').onclick = (e) => { const r = [0.85, 1, 1.25]; Voice.rate = r[(r.indexOf(Voice.rate) + 1) % 3]; Voice.save(); e.target.textContent = { 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate]; if (Voice.mode) Voice.speak('So schnell lese ich jetzt vor.'); };
     b.querySelector('#oDeck').onclick = (e) => { G.S.flags.deck = G.S.flags.deck === 'fr' ? 'de' : 'fr'; e.target.textContent = G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'; };
     b.querySelector('#oSens').onclick = async (e) => { const ok = await Shake.ask(); e.target.textContent = ok ? 'An' : 'Nicht erlaubt'; };
     b.querySelector('#oSave').onclick = () => saveGame();
