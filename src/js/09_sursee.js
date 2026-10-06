@@ -570,7 +570,7 @@ Object.assign(Sur, {
   async photo(id) {
     const s = this.st();
     if (s.photos[id]) { UI.toast('Davon hast du schon ein Foto.'); return; }
-    try { const W = 120, H = 90; const [c, x] = canvas(W, H); const px = G.player.x - G.cam.x, py = G.player.y - G.cam.y - 30; x.drawImage(View.wcv, Math.round(px - W / 2), Math.round(py - H / 2), W, H, 0, 0, W, H); G.photoImg = G.photoImg || {}; G.photoImg['su_' + id] = c.toDataURL('image/png'); try { const all = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); all['su_' + id] = G.photoImg['su_' + id]; localStorage.setItem(SAVE_KEY + '-img', JSON.stringify(all)); } catch (e) {} } catch (e) {}
+    try { const W = 120, H = 90; const [c, x] = canvas(W * GFX, H * GFX); const px = G.player.x - G.cam.x, py = G.player.y - G.cam.y - 30; x.drawImage(View.wcv, Math.round(px - W / 2) * GFX, Math.round(py - H / 2) * GFX, W * GFX, H * GFX, 0, 0, W * GFX, H * GFX); G.photoImg = G.photoImg || {}; G.photoImg['su_' + id] = c.toDataURL('image/png'); try { const all = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); all['su_' + id] = G.photoImg['su_' + id]; localStorage.setItem(SAVE_KEY + '-img', JSON.stringify(all)); } catch (e) {} } catch (e) {}
     s.photos[id] = G.S.time; Snd.sfx('shutter'); G.fx.flash = 1; mood(3);
     UI.toast(`📷 Foto: <b>${SIGHTS_SU[id].n}</b>`);
     if (Object.keys(s.photos).length >= Object.keys(SIGHTS_SU).length) achieve('su_fotos');

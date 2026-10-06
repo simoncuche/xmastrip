@@ -956,7 +956,7 @@ const Story = {
     let timeLeft = clamp(38 + manh / 82 * 1.6, 60, 130);
     const cracks = [], bolts = [], erupts = [], scorch = [], rubble = [], trail = [];
     let t = 0, result = null, nextCrack = 0.6, nextBolt = 2.2, nextErupt = 3.5, nextBld = 1.2, nextShout = 1.5, trailT = 0, hintT = 5, falls = 0, lastSafe = { x: p.x, y: p.y };
-    const blds = m.objs.filter((o) => o.bld && o.cv && Math.hypot(o.px + o.cv.width / 2 - DOOR.x, (o.y + o.h) * TS - DOOR.y) > 190 && !(o.x <= 75 && o.x + o.w >= 73 && o.y + o.h >= 74 && o.y <= 75));
+    const blds = m.objs.filter((o) => o.bld && o.cv && Math.hypot(o.px + o.cw / 2 - DOOR.x, (o.y + o.h) * TS - DOOR.y) > 190 && !(o.x <= 75 && o.x + o.w >= 73 && o.y + o.h >= 74 && o.y <= 75));
     const VW = () => View.w, VH = () => View.h;
     /* Riss: gezackte Linie mit Lava, öffnet sich in 0,7 s */
     const addCrack = (x, y, ang, len, wMax) => { if (!walkable(x, y)) return null; const pts = []; for (let k = 0; k <= 6; k++) pts.push(k === 0 || k === 6 ? 0 : rnd(-3, 3)); const c = { kind: 'line', x, y, ang, len, w: 0, wMax, t: 0, pts }; cracks.push(c); Snd.noise(0.3, 0.05, 300); return c; };
@@ -1069,10 +1069,10 @@ const Story = {
         }
         /* Häuser brennen und versinken */
         nextBld -= dt;
-        if (nextBld <= 0) { nextBld = rnd(0.7, 1.3); const cand = blds.filter((o) => !o.apo && Math.hypot(o.px + o.cv.width / 2 - p.x, (o.y + o.h) * TS - p.y) < 300); if (cand.length) { const o = pick(cand); o.apo = { state: 'burn', t: 0, dur: rnd(1.6, 2.8) }; o.dark = true; } }
+        if (nextBld <= 0) { nextBld = rnd(0.7, 1.3); const cand = blds.filter((o) => !o.apo && Math.hypot(o.px + o.cw / 2 - p.x, (o.y + o.h) * TS - p.y) < 300); if (cand.length) { const o = pick(cand); o.apo = { state: 'burn', t: 0, dur: rnd(1.6, 2.8) }; o.dark = true; } }
         for (const o of blds) {
           if (!o.apo) continue; const A = o.apo; A.t += dt;
-          const W = o.cv.width, base = (o.y + o.h) * TS;
+          const W = o.cw, base = (o.y + o.h) * TS;
           if (A.state === 'burn') { if (Math.random() < dt * 6) addPart({ x: o.px + rnd(4, W - 4), y: o.py + rnd(0, 10), vx: rnd(-4, 4), vy: rnd(-26, -14), life: 2.2, kind: 'smoke' }); if (A.t > A.dur) { A.state = 'fall'; A.t = 0; G.fx.shake = 1; Snd.noise(2.2, 0.14, 220); Snd.tone(34, 2.2, 'sawtooth', 0.12, 0, -8); } }
           else if (A.state === 'fall') {
             o.sink = Math.min(1, A.t / 2.4);
@@ -1109,7 +1109,7 @@ const Story = {
       draw(c, cx, cy, gt) {
         const vw = VW(), vh = VH();
         /* Flammen auf brennenden Dächern */
-        for (const o of blds) { if (!o.apo || o.apo.state === 'gone') continue; const W = o.cv.width, top = o.py - cy + (o.sink ? o.sink * o.cv.height : 0) + 4, x0 = o.px - cx; if (x0 > vw || x0 + W < 0) continue; for (let k = 2; k < W - 2; k += 5) { const h = 8 + Math.abs(Math.sin(gt * 7 + k * 0.7)) * 9 + (o.apo.state === 'fall' ? 6 : 0); c.fillStyle = '#ff6a10'; c.beginPath(); c.moveTo(x0 + k - 3, top + 6); c.lineTo(x0 + k, top + 6 - h); c.lineTo(x0 + k + 3, top + 6); c.closePath(); c.fill(); c.fillStyle = '#ffd040'; c.beginPath(); c.moveTo(x0 + k - 1.5, top + 6); c.lineTo(x0 + k, top + 6 - h * 0.55); c.lineTo(x0 + k + 1.5, top + 6); c.closePath(); c.fill(); } }
+        for (const o of blds) { if (!o.apo || o.apo.state === 'gone') continue; const W = o.cw, top = o.py - cy + (o.sink ? o.sink * o.ch : 0) + 4, x0 = o.px - cx; if (x0 > vw || x0 + W < 0) continue; for (let k = 2; k < W - 2; k += 5) { const h = 8 + Math.abs(Math.sin(gt * 7 + k * 0.7)) * 9 + (o.apo.state === 'fall' ? 6 : 0); c.fillStyle = '#ff6a10'; c.beginPath(); c.moveTo(x0 + k - 3, top + 6); c.lineTo(x0 + k, top + 6 - h); c.lineTo(x0 + k + 3, top + 6); c.closePath(); c.fill(); c.fillStyle = '#ffd040'; c.beginPath(); c.moveTo(x0 + k - 1.5, top + 6); c.lineTo(x0 + k, top + 6 - h * 0.55); c.lineTo(x0 + k + 1.5, top + 6); c.closePath(); c.fill(); } }
         /* Lava-Fontänen */
         for (const e of erupts) if (e.t >= 1) { const x = e.x - cx, y = e.y - cy, h = 26 + Math.sin(gt * 14) * 6 - Math.max(0, e.t - 1.8) * 40; if (h > 0) { c.fillStyle = '#ff6a10'; c.beginPath(); c.moveTo(x - 6, y); c.quadraticCurveTo(x - 2, y - h * 0.6, x, y - h); c.quadraticCurveTo(x + 2, y - h * 0.6, x + 6, y); c.closePath(); c.fill(); c.fillStyle = '#ffe070'; c.beginPath(); c.moveTo(x - 2.5, y); c.lineTo(x, y - h * 0.7); c.lineTo(x + 2.5, y); c.closePath(); c.fill(); } E(c, x, y, 9, 4, '#e8540c'); }
         /* Blitze */
@@ -1135,7 +1135,7 @@ const Story = {
         for (const cr of cracks) if (Math.hypot(cr.x - p.x, cr.y - p.y) < 220) L.push({ x: cr.x, y: cr.y, r: cr.kind === 'pool' ? 34 : 30 + (cr.len || 0) * 0.4, c: '#ff7a20' });
         for (const e of erupts) L.push({ x: e.x, y: e.y - 10, r: e.t < 1 ? 26 : 60, c: '#ff7a20' });
         for (const b of bolts) if (b.segs && b.t < 0.95) L.push({ x: b.x, y: b.y - 40, r: 140, c: '#cfe4ff' });
-        for (const o of blds) if (o.apo && o.apo.state !== 'gone' && Math.hypot(o.px - p.x, o.py - p.y) < 300) L.push({ x: o.px + o.cv.width / 2, y: o.py + 10, r: 70, c: '#ff8a30' });
+        for (const o of blds) if (o.apo && o.apo.state !== 'gone' && Math.hypot(o.px - p.x, o.py - p.y) < 300) L.push({ x: o.px + o.cw / 2, y: o.py + 10, r: 70, c: '#ff8a30' });
         return L.slice(0, 40);
       },
       onLeave() { if (!result) result = 'lost'; },
@@ -2532,9 +2532,9 @@ const Story = {
   async photo(id) {
     try {
       const W = 120, H = 90;
-      const [c, x] = canvas(W, H);
+      const [c, x] = canvas(W * GFX, H * GFX);
       const px = G.player.x - G.cam.x, py = G.player.y - G.cam.y - 30;
-      x.drawImage(View.wcv, Math.round(px - W / 2), Math.round(py - H / 2), W, H, 0, 0, W, H);
+      x.drawImage(View.wcv, Math.round(px - W / 2) * GFX, Math.round(py - H / 2) * GFX, W * GFX, H * GFX, 0, 0, W * GFX, H * GFX);
       G.photoImg = G.photoImg || {};
       G.photoImg[id] = c.toDataURL('image/png');
       try { const all = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); all[id] = G.photoImg[id]; localStorage.setItem(SAVE_KEY + '-img', JSON.stringify(all)); } catch (e) {}

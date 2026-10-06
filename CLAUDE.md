@@ -21,7 +21,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 
 | Datei | Inhalt |
 |---|---|
-| `00_util.js` | Hilfsfunktionen, Pixel-Zeichnen (`R`, `P`, `E`, `line`), Pixelschrift `pxText`, `MAP_BUILDERS` |
+| `00_util.js` | Hilfsfunktionen, Pixel-Zeichnen (`R`, `P`, `E`, `line`), Pixelschrift `pxText`, `MAP_BUILDERS`, Grafikstufe `GFX` (2 = HD, 1 = Klassisch, Einstellung `gleis4-grafik`), `upscale` (Scale2x nur für echte Schrägen), `rimLight` (Lichtkante) |
 | `01_audio.js` | `Snd`: synthetische Soundeffekte und Musik-Loops (WebAudio) |
 | `02_look.js` | Charakter-Merkmale `LOOK_OPTS` (28 Merkmale inkl. `costume`), Kostüme `COSTUMES` + `effLook` (ersetzen Kleidung, Extras via `drawCostumeSprite`/`drawCostumeP`), Porträt 64×64, Sprite-Sheets 18×26 |
 | `03_editor.js` | Charakter-Editor (`Editor.open({mode})`: `new`, `clothes`, `hair`, `beard`) |
@@ -42,6 +42,12 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `11_minisursee.js` | Sursee-Minispiele auf `Mini` (Fischen, Pedalo, Motorboot, SUP, Sprungturm, Velo, Chilbi-Spiele, Achterbahn, Riesenrad, Gansabhauet, Kinderspiele, Rhythmus, Bootsjagd, Detektor) |
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug, Tram, Panoramalift, Übergänge bei jedem `warpTo` über `transitionFor(from, to, spawn, opts)`: `door` mit Fassade aus `FACADES`/`facadeFor` (Läden über `SHOP_SIGNS`), `stairs`, `hotellift`, `roomdoor`, `trainexit`, `thrown` (`opts.kind`), Sperrstunde (`kind: 'closing'`); `plain: true` = nur Abblenden, Jessy `jessy` mit `kind` 0–2) |
 | `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
+
+## HD-Grafik
+
+- Alles wird weiter in logischen Pixeln gezeichnet (16 pro Kachel). Bei `GFX = 2` werden Kartenboden (`m.gcv`), Objekte (`o.cv`, `o.ecv`) und Figuren (`getSheetHD`) nach dem Zeichnen mit `upscale` verdoppelt; Objekte merken sich die logische Grösse in `o.cw`/`o.ch`, beim Zeichnen immer diese Grösse angeben.
+- Die Ansichten `View.cv/wcv/lcv` sind `GFX`-mal so gross und arbeiten mit `setTransform(GFX, …)`. Wer aus `View.wcv` ausschneidet, rechnet die Quellkoordinaten mal `GFX`.
+- HD-Extras: `groundDetail(m)` (Halme, Kiesel, Holzmaserung), `shadeObject` (Lichtverlauf grosser Objekte), Kontaktschatten in `renderWorld`, `rimLight` für Figuren und kleine Objekte. Szenen und Minispiele bleiben in ihrer eigenen Auflösung.
 
 ## Vorschau des Branches sursee
 

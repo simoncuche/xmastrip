@@ -34,13 +34,16 @@ function prerenderMap(m) {
       if (fn) fn(gx, x * TS, y * TS, x, y, m, m.v[y * m.w + x]);
     }
   for (const d of m.decals) d(gx);
-  m.gcv = gc;
+  m.gcv = upscale(gc);
+  if (GFX > 1) groundDetail(m);
   for (const o of m.objs) {
     const W = o.w * TS + o.padX * 2, H = o.h * TS + o.drawH;
     const [c, x] = canvas(W, H);
     o.paint(x, W, H, o);
-    o.cv = c;
-    if (o.emit) { const [ec, ex] = canvas(W, H); o.emit(ex, W, H, o); o.ecv = ec; }
+    o.cv = upscale(c); o.cw = W; o.ch = H;
+    if (GFX > 1 && o.solid && o.h >= 2 && H >= 40) shadeObject(o.cv);
+    else if (GFX > 1 && W * H <= 12000) rimLight(o.cv, 0.16, 0.16);
+    if (o.emit) { const [ec, ex] = canvas(W, H); o.emit(ex, W, H, o); o.ecv = upscale(ec); }
     o.px = o.x * TS - o.padX; o.py = o.y * TS - o.drawH;
     /* Tiefenlinie knapp über der untersten Kachelreihe: Wer in der untersten Reihe steht (z. B. in einer Tür), wird vor dem Objekt gezeichnet;
        Akteure haben ihre Füsse bei Kachel*16+3 … +18, darum -14. */
@@ -48,6 +51,16 @@ function prerenderMap(m) {
   }
 }
 
+/* HD: feiner Lichtverlauf über grössere Objekte (oben etwas heller, unten etwas dunkler) und dunkle Kante am Fuss */
+function shadeObject(cv) {
+  const x = cv.getContext('2d'), W = cv.width, H = cv.height;
+  x.save(); x.globalCompositeOperation = 'source-atop';
+  const g = x.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, 'rgba(255,250,235,0.07)'); g.addColorStop(0.55, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(20,16,30,0.13)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(20,16,24,0.18)'; x.fillRect(0, H - 3, W, 3);
+  x.restore();
+}
 /* ============ Akteure ============ */
 class Actor {
   constructor(o) {
@@ -100,10 +113,12 @@ const Input = {
 const View = { cv: null, ctx: null, wcv: null, wctx: null, lcv: null, lctx: null, w: 320, h: 200, scale: 3 };
 function resizeView() {
   const W = window.innerWidth, H = window.innerHeight;
-  const s = Math.max(2, Math.floor(Math.min(W, H * 1.15) / (16 * 11.5)));
+  let s = Math.max(2, Math.floor(Math.min(W, H * 1.15) / (16 * 11.5)));
+  /* HD: ein HD-Pixel soll eine ganze Zahl Bildschirmpixel gross sein, sonst werden die Pixel ungleich breit */
+  if (GFX > 1 && (window.devicePixelRatio || 1) === 1 && s % 2 && s > 2) s--;
   View.scale = s;
   View.w = Math.ceil(W / s); View.h = Math.ceil(H / s);
-  for (const k of ['cv', 'wcv', 'lcv']) { View[k].width = View.w; View[k].height = View.h; }
+  for (const k of ['cv', 'wcv', 'lcv']) { View[k].width = View.w * GFX; View[k].height = View.h * GFX; }
   View.cv.style.width = View.w * s + 'px'; View.cv.style.height = View.h * s + 'px';
   for (const k of ['ctx', 'wctx', 'lctx']) View[k].imageSmoothingEnabled = false;
 }
@@ -299,15 +314,16 @@ function frameIndex(a) {
 }
 function drawActor(c, a, cx, cy) {
   if (a.hidden) return;
-  const sheet = getSheet(a.look);
+  const sheet = getSheetHD(a.look);
   const fi = frameIndex(a);
   const z = Math.round(a.z || 0); /* Sprunghöhe: Figur hebt ab, Schatten bleibt am Boden und wird kleiner */
   const vy = a.velo ? 3 : 0;
   const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1) - z - vy;
   if (a.pose !== 'sit') E(c, Math.round(a.x - cx), Math.round(a.y - cy) - 1, Math.max(2, 5 - z * 0.2), 2, `rgba(0,0,0,${z > 0 ? 0.18 : 0.25})`);
   if (a.velo) drawVelo(c, Math.round(a.x - cx), Math.round(a.y - cy), a, false);
-  if (a.sinkY) { c.save(); c.beginPath(); c.rect(x - 4, y - 8, SPR_W + 8, SPR_H + 8 - a.sinkY); c.clip(); c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y + a.sinkY, SPR_W, SPR_H); c.restore(); }
-  else c.drawImage(sheet, fi * SPR_W, a.dir * SPR_H, SPR_W, SPR_H, x, y, SPR_W, SPR_H);
+  const sg = GFX, sx = fi * SPR_W * sg, sy = a.dir * SPR_H * sg;
+  if (a.sinkY) { c.save(); c.beginPath(); c.rect(x - 4, y - 8, SPR_W + 8, SPR_H + 8 - a.sinkY); c.clip(); c.drawImage(sheet, sx, sy, SPR_W * sg, SPR_H * sg, x, y + a.sinkY, SPR_W, SPR_H); c.restore(); }
+  else c.drawImage(sheet, sx, sy, SPR_W * sg, SPR_H * sg, x, y, SPR_W, SPR_H);
   if (a.dog) {
     const dx = Math.round(a.x - cx) + (a.dir === 1 ? 10 : a.dir === 2 ? -16 : 8), dy = Math.round(a.y - cy) - 1;
     const step = a.moving && Math.floor(G.t * 8) % 2;
@@ -382,20 +398,23 @@ function renderWorld() {
   const c = View.wctx, m = G.map;
   const cx = Math.round(G.cam.x), cy = Math.round(G.cam.y);
   const vw = View.w, vh = View.h;
+  c.setTransform(GFX, 0, 0, GFX, 0, 0);
   c.fillStyle = m.bg; c.fillRect(0, 0, vw, vh);
   if (m.bgDraw) m.bgDraw(c, cx, cy, G.t);
-  c.drawImage(m.gcv, -cx, -cy);
+  if (!m.gcv) prerenderMap(m);
+  c.drawImage(m.gcv, -cx, -cy, m.w * TS, m.h * TS);
   if (m.groundAnim) m.groundAnim(c, cx, cy, G.t);
   if (G.live && G.live.drawGround) G.live.drawGround(c, cx, cy, G.t);
+  if (GFX > 1 && !m.indoor) { c.fillStyle = 'rgba(10,12,20,0.16)'; for (const o of m.objs) { if (!o.solid || o.h < 2 || o.gone || o.sink || o.ch < 40) continue; const x = o.x * TS - cx, y = (o.y + o.h) * TS - cy; if (x > vw || x + o.w * TS < -4 || y < -4 || y > vh + 8) continue; c.fillRect(x + 2, y, o.w * TS, 3); c.fillRect(x + o.w * TS, y - o.h * TS * 0.5 + 6, 3, o.h * TS * 0.5 - 3); } }
   for (const v of G.S.vomitSpots) if (v.map === m.id && G.S.time - v.t < 240) { const x = Math.round(v.x - cx), y = Math.round(v.y - cy); E(c, x, y, 11, 5, 'rgba(140,150,50,0.85)'); E(c, x + 4, y - 2, 5, 3, 'rgba(190,190,80,0.9)'); E(c, x - 5, y + 1, 4, 2, 'rgba(150,160,60,0.85)'); for (let k = 0; k < 6; k++) P(c, x - 7 + k * 3, y - 3 + (k % 3), k % 2 ? '#c8a040' : '#9aa050'); P(c, x + 9, y + 1, '#c8a040'); P(c, x - 9, y - 1, '#c8a040'); }
   /* Nachtlicht vorab berechnen: leuchtende Fenster werden mit dem Objekt gezeichnet (hinter Figuren), nicht als Ebene darüber */
   const d = darkness();
   const emitA = d.a > 0.2 ? clamp((d.a - 0.2) / 0.3, 0, 1) : 0;
-  const emitVisible = (o) => o.ecv && !(o.px - cx > vw || o.px + o.cv.width - cx < 0 || o.py - cy > vh || o.py + o.cv.height - cy < 0);
+  const emitVisible = (o) => o.ecv && !(o.px - cx > vw || o.px + o.cw - cx < 0 || o.py - cy > vh || o.py + o.ch - cy < 0);
   /* sortierte Ebene */
   const list = [];
   for (const o of m.objs) {
-    if (o.px - cx > vw || o.px + o.cv.width - cx < 0 || o.py - cy > vh || o.py + o.cv.height - cy < 0) continue;
+    if (o.px - cx > vw || o.px + o.cw - cx < 0 || o.py - cy > vh || o.py + o.ch - cy < 0) continue;
     list.push({ y: o.sortY, o });
   }
   for (const a of G.npcs) if (!a.hidden) list.push({ y: a.y + (a.sortAdd || 0), a });
@@ -410,13 +429,13 @@ function renderWorld() {
       if (o.gone) continue;
       if (o.sink) {
         /* Gebäude versinkt im Boden: nur oberhalb der Grundlinie zeichnen, Bild nach unten verschoben, leicht wackelnd */
-        const H = o.cv.height, sh = Math.round(o.sink * H), wob = o.sink < 1 ? Math.round(Math.sin(G.t * 40) * 1.5) : 0;
-        c.save(); c.beginPath(); c.rect(o.px - cx - 4, o.py - cy - 20, o.cv.width + 8, H + 20); c.clip();
-        c.drawImage(o.cv, o.px - cx + wob, o.py - cy + sh); c.restore();
+        const H = o.ch, sh = Math.round(o.sink * H), wob = o.sink < 1 ? Math.round(Math.sin(G.t * 40) * 1.5) : 0;
+        c.save(); c.beginPath(); c.rect(o.px - cx - 4, o.py - cy - 20, o.cw + 8, H + 20); c.clip();
+        c.drawImage(o.cv, o.px - cx + wob, o.py - cy + sh, o.cw, o.ch); c.restore();
         continue;
       }
-      c.drawImage(o.cv, o.px - cx, o.py - cy);
-      if (emitA > 0 && o.ecv && !o.dark) { c.globalAlpha = emitA; c.drawImage(o.ecv, o.px - cx, o.py - cy); c.globalAlpha = 1; }
+      c.drawImage(o.cv, o.px - cx, o.py - cy, o.cw, o.ch);
+      if (emitA > 0 && o.ecv && !o.dark) { c.globalAlpha = emitA; c.drawImage(o.ecv, o.px - cx, o.py - cy, o.cw, o.ch); c.globalAlpha = 1; }
       if (o.anim) o.anim(c, G.t, o.px - cx, o.py - cy);
     }
     else if (it.a) drawActor(c, it.a, cx, cy);
@@ -429,6 +448,7 @@ function renderWorld() {
   /* Licht */
   if (d.a > 0.01) {
     const l = View.lctx;
+    l.setTransform(GFX, 0, 0, GFX, 0, 0);
     l.globalCompositeOperation = 'source-over';
     l.clearRect(0, 0, vw, vh);
     l.fillStyle = `rgba(10,14,38,${d.a})`;
@@ -444,9 +464,9 @@ function renderWorld() {
     }
     if (!m.indoor) { const px = G.player.x - cx, py = G.player.y - cy - 10; const gr = l.createRadialGradient(px, py, 0, px, py, 30); gr.addColorStop(0, 'rgba(0,0,0,0.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); l.fillStyle = gr; l.fillRect(px - 30, py - 30, 60, 60); }
     /* Fensterflächen aus der Dunkelheit ausschneiden, damit sie hell leuchten – wer davor steht, wird vom Fenster angestrahlt */
-    if (emitA > 0) { l.globalAlpha = emitA * 0.9; for (const o of m.objs) if (emitVisible(o) && !o.sink && !o.gone && !o.dark) l.drawImage(o.ecv, o.px - cx, o.py - cy); l.globalAlpha = 1; }
+    if (emitA > 0) { l.globalAlpha = emitA * 0.9; for (const o of m.objs) if (emitVisible(o) && !o.sink && !o.gone && !o.dark) l.drawImage(o.ecv, o.px - cx, o.py - cy, o.cw, o.ch); l.globalAlpha = 1; }
     l.globalCompositeOperation = 'source-over';
-    c.drawImage(View.lcv, 0, 0);
+    c.drawImage(View.lcv, 0, 0, vw, vh);
     if (d.a > 0.2) {
       c.globalCompositeOperation = 'lighter';
       for (const L of lights) {
@@ -465,7 +485,7 @@ function renderWorld() {
 function renderScreen() {
   const c = View.ctx, vw = View.w, vh = View.h;
   const st = G.S ? G.S.st : null;
-  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.setTransform(GFX, 0, 0, GFX, 0, 0);
   c.fillStyle = '#05070b'; c.fillRect(0, 0, vw, vh);
   if (!G.map) return;
   const prom = st ? st.prom : 0;
@@ -474,8 +494,8 @@ function renderScreen() {
   if (G.fx.shake > 0) { ox += rnd(-1, 1) * G.fx.shake * 4; oy += rnd(-1, 1) * G.fx.shake * 4; }
   c.save();
   c.translate(vw / 2 + ox, vh / 2 + oy); c.rotate(rot); c.translate(-vw / 2, -vh / 2);
-  c.drawImage(View.wcv, 0, 0);
-  if (prom > 1.6) { c.globalAlpha = Math.min(0.42, (prom - 1.6) * 0.5); const d = 3 + Math.sin(G.t * 1.7) * 2; c.drawImage(View.wcv, d, Math.sin(G.t) * 1.5); c.globalAlpha = 1; }
+  c.drawImage(View.wcv, 0, 0, vw, vh);
+  if (prom > 1.6) { c.globalAlpha = Math.min(0.42, (prom - 1.6) * 0.5); const d = 3 + Math.sin(G.t * 1.7) * 2; c.drawImage(View.wcv, d, Math.sin(G.t) * 1.5, vw, vh); c.globalAlpha = 1; }
   c.restore();
   if (st) {
     if (st.energy < 25) { const a = (25 - st.energy) / 25 * 0.75 * (0.85 + 0.15 * Math.sin(G.t * 1.5)); vignette(c, vw, vh, a, '5,6,12'); }

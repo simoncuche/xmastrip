@@ -184,6 +184,52 @@ function rng(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+/* Grafik: 2 = HD (doppelte Pixeldichte, Kanten per Scale2x verfeinert), 1 = Klassisch. Einstellung pro Gerät unter 'gleis4-grafik'. */
+const GFX = (() => { try { return localStorage.getItem('gleis4-grafik') === 'klassisch' ? 1 : 2; } catch (e) { return 2; } })();
+/* Pixel-Art auf doppelte Auflösung bringen (Scale2x/EPX): Treppenstufen an Rundungen und Schrägen werden feiner, Flächen bleiben scharf */
+function upscale(src) {
+  if (GFX === 1) return src;
+  const w = src.width, h = src.height;
+  const [dc, dx] = canvas(w * 2, h * 2);
+  if (w * h > 6e6) { dx.drawImage(src, 0, 0, w * 2, h * 2); return dc; }
+  const s = new Uint32Array(src.getContext('2d').getImageData(0, 0, w, h).data.buffer);
+  const out = dx.createImageData(w * 2, h * 2), d = new Uint32Array(out.data.buffer), W2 = w * 2;
+  for (let y = 0; y < h; y++) {
+    const row = y * w;
+    for (let x = 0; x < w; x++) {
+      const P = s[row + x];
+      const up = y > 0, dn = y < h - 1, lf = x > 0, rt = x < w - 1;
+      const A = up ? s[row - w + x] : P, D = dn ? s[row + w + x] : P, C = lf ? s[row + x - 1] : P, B = rt ? s[row + x + 1] : P;
+      let e0 = P, e1 = P, e2 = P, e3 = P;
+      if (A !== D && C !== B) {
+        /* nur echte Schrägen glätten: die Diagonale muss weiterlaufen, sonst bleiben Rechteck-Ecken (Fenster, Mauern) scharf */
+        const AB = up && rt ? s[row - w + x + 1] : P, CD = dn && lf ? s[row + w + x - 1] : P, AC = up && lf ? s[row - w + x - 1] : P, BD = dn && rt ? s[row + w + x + 1] : P;
+        const slash = AB === P || CD === P, back = AC === P || BD === P;
+        if (C === A && slash) e0 = A; if (A === B && back) e1 = B; if (C === D && back) e2 = C; if (D === B && slash) e3 = D;
+      }
+      const o = y * 2 * W2 + x * 2;
+      d[o] = e0; d[o + 1] = e1; d[o + W2] = e2; d[o + W2 + 1] = e3;
+    }
+  }
+  dx.putImageData(out, 0, 0);
+  return dc;
+}
+/* HD-Lichtkante: Pixel mit leerem oder sehr dunklem Nachbarn oben links werden aufgehellt, unten rechts abgedunkelt (gibt Volumen) */
+function rimLight(cv, lt = 0.2, dk = 0.18) {
+  if (GFX === 1) return cv;
+  const x = cv.getContext('2d'), W = cv.width, H = cv.height;
+  if (W * H > 400000) return cv;
+  const id = x.getImageData(0, 0, W, H), d = id.data, src = new Uint8ClampedArray(d);
+  const edge = (xx, yy) => { if (xx < 0 || yy < 0 || xx >= W || yy >= H) return true; const i = (yy * W + xx) * 4; return src[i + 3] < 40 || src[i] + src[i + 1] + src[i + 2] < 90; };
+  for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) {
+    const i = (yy * W + xx) * 4;
+    if (src[i + 3] < 200 || src[i] + src[i + 1] + src[i + 2] < 90) continue;
+    if (edge(xx - 1, yy - 1) && !edge(xx + 1, yy + 1)) { for (let k = 0; k < 3; k++) d[i + k] = src[i + k] + (255 - src[i + k]) * lt; }
+    else if (edge(xx + 1, yy + 1) && !edge(xx - 1, yy - 1)) { for (let k = 0; k < 3; k++) d[i + k] = src[i + k] * (1 - dk); }
+  }
+  x.putImageData(id, 0, 0);
+  return cv;
+}
 function canvas(w, h) {
   const c = document.createElement('canvas');
   c.width = Math.max(1, w | 0);
@@ -838,6 +884,21 @@ function getSheet(L) {
   _sprCache.set(key, s);
   if (_sprCache.size > 80) _sprCache.delete(_sprCache.keys().next().value);
   return s;
+}
+/* HD-Sprite-Sheet: jedes Bild einzeln per Scale2x verfeinert (keine Übergänge zwischen Nachbarbildern) */
+const _sprCacheHD = new Map();
+function getSheetHD(L) {
+  if (GFX === 1) return getSheet(L);
+  const key = lookKey(L);
+  let s = _sprCacheHD.get(key);
+  if (s) return s;
+  const src = getSheet(L);
+  const [c, x] = canvas(src.width * 2, src.height * 2);
+  const [fc, fx] = canvas(SPR_W, SPR_H);
+  for (let d = 0; d < 4; d++) for (let p = 0; p < POSES.length; p++) { fx.clearRect(0, 0, SPR_W, SPR_H); fx.drawImage(src, p * SPR_W, d * SPR_H, SPR_W, SPR_H, 0, 0, SPR_W, SPR_H); x.drawImage(rimLight(upscale(fc), 0.22, 0.2), p * SPR_W * 2, d * SPR_H * 2); }
+  _sprCacheHD.set(key, c);
+  if (_sprCacheHD.size > 80) _sprCacheHD.delete(_sprCacheHD.keys().next().value);
+  return c;
 }
 /* Kinder (Sursee): gleicher Kopf, gestauchter Körper – kid 1 = Schulkind, 2 = Kleinkind. Füsse bleiben auf derselben Höhe. */
 function kidFrame(c, x, kid) {

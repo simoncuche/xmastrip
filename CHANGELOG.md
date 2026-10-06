@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.31.0 – 06.10.2026
+
+- HD-Grafik: Die Welt wird mit doppelter Pixeldichte gezeichnet. Schrägen und Rundungen von Dächern, Bäumen, Figuren und Möbeln werden feiner, Fenster und Mauern bleiben scharf. Neu sind Grashalme, Wiesenblumen, Kiesel, Asphaltkorn und Holzmaserung, Lichtkanten an Figuren und kleinen Dingen, ein Lichtverlauf auf den Fassaden und weiche Schatten am Fuss der Häuser. Auch die Fotos der Sehenswürdigkeiten sind schärfer.
+- Im Handy unter Optionen lässt sich zwischen „HD“ und „Klassisch“ umschalten (für ältere Handys).
+
 ## 2.30.1 – 05.10.2026
 
 - Der Weg vom Städtli zum See ist keine Tür mehr: Man spaziert zwischen Bäumen und Laternen, vorne taucht der Sempachersee auf, auf dem Rückweg die Altstadt mit dem Rathausturm.

@@ -552,6 +552,21 @@ function getSheet(L) {
   if (_sprCache.size > 80) _sprCache.delete(_sprCache.keys().next().value);
   return s;
 }
+/* HD-Sprite-Sheet: jedes Bild einzeln per Scale2x verfeinert (keine Übergänge zwischen Nachbarbildern) */
+const _sprCacheHD = new Map();
+function getSheetHD(L) {
+  if (GFX === 1) return getSheet(L);
+  const key = lookKey(L);
+  let s = _sprCacheHD.get(key);
+  if (s) return s;
+  const src = getSheet(L);
+  const [c, x] = canvas(src.width * 2, src.height * 2);
+  const [fc, fx] = canvas(SPR_W, SPR_H);
+  for (let d = 0; d < 4; d++) for (let p = 0; p < POSES.length; p++) { fx.clearRect(0, 0, SPR_W, SPR_H); fx.drawImage(src, p * SPR_W, d * SPR_H, SPR_W, SPR_H, 0, 0, SPR_W, SPR_H); x.drawImage(rimLight(upscale(fc), 0.22, 0.2), p * SPR_W * 2, d * SPR_H * 2); }
+  _sprCacheHD.set(key, c);
+  if (_sprCacheHD.size > 80) _sprCacheHD.delete(_sprCacheHD.keys().next().value);
+  return c;
+}
 /* Kinder (Sursee): gleicher Kopf, gestauchter Körper – kid 1 = Schulkind, 2 = Kleinkind. Füsse bleiben auf derselben Höhe. */
 function kidFrame(c, x, kid) {
   const [tc, tx] = canvas(c.width, c.height);

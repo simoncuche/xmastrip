@@ -205,6 +205,22 @@ function paintWallFace(x, px, py, tx, ty, m, v) {
 }
 
 /* ============ Objekte (vorgerendert, nach y sortiert) ============ */
+/* HD-Feinheiten auf dem Boden, in halben Pixeln direkt auf die hochskalierte Bodenfläche: Grashalme, Wiesenblumen, Kiesel, Asphaltkorn, Holzmaserung */
+function groundDetail(m) {
+  const c = m.gcv.getContext('2d'), S = 2 * TS;
+  const dots = (x, y, tx, ty, n, cols, w = 1, h = 1, seed = 0) => { for (let k = 0; k < n; k++) { c.fillStyle = cols[k % cols.length]; c.fillRect(x + Math.floor(hash(tx, ty, k + seed) * S), y + Math.floor(hash(ty, tx, k + seed + 40) * S), w, h); } };
+  const blades = (x, y, tx, ty, n, lt, dk) => { for (let k = 0; k < n; k++) { const hx = x + Math.floor(hash(tx, ty, k) * (S - 2)), hy = y + 2 + Math.floor(hash(ty, tx, k + 9) * (S - 4)); c.fillStyle = hash(tx, k, ty) > 0.5 ? lt : dk; c.fillRect(hx, hy, 1, 2); c.fillRect(hx + (k % 2 ? 1 : -1), hy - 1, 1, 1); } };
+  const D = {
+    [T.GRASS]: (x, y, tx, ty) => blades(x, y, tx, ty, 7, 'rgba(170,215,120,0.55)', 'rgba(25,60,25,0.4)'),
+    [T.MEADOW]: (x, y, tx, ty) => { blades(x, y, tx, ty, 6, 'rgba(190,220,130,0.5)', 'rgba(40,70,30,0.35)'); if (hash(tx, ty, 77) > 0.6) dots(x, y, tx, ty, 2, ['#f4f0e6', '#f2d040', '#e8a0c8'], 1, 1, 80); },
+    [T.FOREST]: (x, y, tx, ty) => blades(x, y, tx, ty, 5, 'rgba(120,170,90,0.45)', 'rgba(20,40,20,0.45)'),
+    [T.GRAVEL]: (x, y, tx, ty) => dots(x, y, tx, ty, 9, ['rgba(255,250,235,0.5)', 'rgba(60,50,40,0.35)', 'rgba(140,130,115,0.6)'], 2, 1),
+    [T.KIES]: (x, y, tx, ty) => dots(x, y, tx, ty, 9, ['rgba(255,250,235,0.5)', 'rgba(60,50,40,0.35)'], 2, 1),
+    [T.ASPH]: (x, y, tx, ty) => dots(x, y, tx, ty, 12, ['rgba(255,255,255,0.1)', 'rgba(0,0,0,0.14)']),
+    [T.WOOD]: (x, y, tx, ty) => { c.fillStyle = 'rgba(60,35,15,0.14)'; for (let k = 0; k < 3; k++) { const yy = y + 3 + Math.floor(hash(tx, ty, k) * (S - 6)), xx = x + Math.floor(hash(ty, tx, k) * 10); c.fillRect(xx, yy, 8 + Math.floor(hash(tx, k, ty) * 14), 1); } },
+  };
+  for (let ty = 0; ty < m.h; ty++) for (let tx = 0; tx < m.w; tx++) { const f = D[m.g[ty * m.w + tx]]; if (f) f(tx * S, ty * S, tx, ty); }
+}
 function mkObj(x, y, w, h, drawH, paint, extra = {}) {
   return Object.assign({ x, y, w, h, drawH, padX: 0, paint, solid: true }, extra);
 }

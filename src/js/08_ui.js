@@ -506,6 +506,8 @@ const Phone = {
     b.innerHTML = `<div class="opt-row"><span>Soundeffekte</span><button class="btn" id="oSnd">${Snd.on ? 'An' : 'Aus'}</button></div>
       <div class="opt-row"><span>Musik</span><button class="btn" id="oMus">${Snd.musicOn ? 'An' : 'Aus'}</button></div>
       <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
+      <div class="opt-row"><span>Grafik</span><button class="btn" id="oGfx">${GFX > 1 ? 'HD' : 'Klassisch'}</button></div>
+      <p class="note">HD zeichnet alles mit doppelter Pixeldichte und feineren Kanten. Auf älteren Handys läuft „Klassisch“ flüssiger. Nach dem Umschalten startet das Spiel neu (der Spielstand bleibt).</p>
       <div class="opt-row"><span>Texte vorlesen</span><button class="btn" id="oVoice">${!Voice.ok() ? 'Nicht verfügbar' : ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]}</button></div>
       <div class="opt-row"><span>Vorlese-Tempo</span><button class="btn" id="oRate">${{ 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate] || 'Normal'}</button></div>
       <p class="note">Liest Gespräche und Antwortmöglichkeiten vor, auf Wunsch auch die Hinweise oben. Nutzt die Sprachausgabe deines Geräts; beim iPhone muss der Stummschalter aus sein.</p>
@@ -521,6 +523,7 @@ const Phone = {
       <div class="changelog">${changelogHtml()}</div>`;
     b.querySelector('#oSnd').onclick = (e) => { Snd.on = !Snd.on; e.target.textContent = Snd.on ? 'An' : 'Aus'; };
     b.querySelector('#oMus').onclick = (e) => { Snd.musicOn = !Snd.musicOn; e.target.textContent = Snd.musicOn ? 'An' : 'Aus'; };
+    b.querySelector('#oGfx').onclick = () => { try { localStorage.setItem('gleis4-grafik', GFX > 1 ? 'klassisch' : 'hd'); } catch (e) {} saveGame(true); location.reload(); };
     b.querySelector('#oVoice').onclick = (e) => { if (!Voice.ok()) return; Voice.mode = (Voice.mode + 1) % 3; Voice.save(); e.target.textContent = ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]; if (Voice.mode) Voice.speak(Voice.mode === 1 ? 'Gespräche werden jetzt vorgelesen.' : 'Gespräche und Hinweise werden jetzt vorgelesen.'); else Voice.stop(); };
     b.querySelector('#oRate').onclick = (e) => { const r = [0.85, 1, 1.25]; Voice.rate = r[(r.indexOf(Voice.rate) + 1) % 3]; Voice.save(); e.target.textContent = { 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate]; if (Voice.mode) Voice.speak('So schnell lese ich jetzt vor.'); };
     b.querySelector('#oDeck').onclick = (e) => { G.S.flags.deck = G.S.flags.deck === 'fr' ? 'de' : 'fr'; e.target.textContent = G.S.flags.deck === 'fr' ? 'Französisch' : 'Deutsch'; };
