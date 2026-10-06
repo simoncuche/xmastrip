@@ -1156,7 +1156,7 @@ MAP_BUILDERS.sursee_see = () => {
     { id: 'kari', name: 'Schatzsucher Kari', x: 7 * 16 + 8, y: 26 * 16 + 12, dir: 2, look: npcLook(3103, { hat: 1, hatCol: 7, beard: 3, top: 7, topCol: 6, glasses: 0 }), talk: () => Sur.talk('kari'), wander: { x: 4, y: 22, w: 5, h: 10 }, bubbleRand: ['?', 'dots'] },
   );
   m.spawn('quai', 33, 17, 0);
-  m.spawn('inseli_back', 35, 18, 3);
+  m.spawn('inseli_back', 33, 19, 3);
   m.groundAnim = waterAnim;
   m.update = (dt) => Sur.mapUpdate(dt);
   return m;

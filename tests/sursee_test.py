@@ -56,6 +56,16 @@ with sync_playwright() as p:
       return bad; }""")
     if bad:
         raise SystemExit("FEHLER: Ausgänge ohne Ankunftspunkt: " + ", ".join(bad))
+    # Kein Ankunftspunkt darf in einer Wand oder im Wasser liegen
+    bad = pg.evaluate("""() => { const bad = []; for (const id of Object.keys(MAP_BUILDERS)) { let m; try { m = getMap(id); } catch (e) { continue; }
+      for (const [k, s] of Object.entries(m.spawns)) { const tx = Math.floor(s.x / TS), ty = Math.floor((s.y - 2) / TS); if (m.isSolid(tx, ty)) bad.push(`${id}:${k}`); } }
+      return bad; }""")
+    if bad:
+        raise SystemExit("FEHLER: Ankunftspunkte blockiert: " + ", ".join(bad))
+    # Rückfahrt vom Gamma-Inseli: Spieler muss sich bewegen können
+    run("enterMap('inseli', 'landing'); await Sur.inseliBoat();", 2.5, q=[0])
+    expect("G.map.id === 'sursee_see' && !G.map.isSolid(Math.floor(G.player.x / TS), Math.floor((G.player.y - 2) / TS))", "Nach dem Inseli im Wasser gelandet")
+    run("enterMap('ibk', 'hbf');", 0.6)
     # Heimreise → Luzern, Gleis 2
     run("await Story.goHome();", 1.0)
     expect("G.S.stage === 'heim' && G.map.id === 'luzern_halle' && !G.S.finished", "Nicht in Luzern angekommen")

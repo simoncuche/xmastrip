@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.32.1 – 06.10.2026
+
+- Fehler behoben: Nach der Rückfahrt vom Gamma-Inseli stand man im Wasser und konnte sich nicht mehr bewegen. Das Boot legt jetzt am Steg an.
+- Landet man irgendwo in einer Wand oder im Wasser, wird man automatisch auf den nächsten freien Platz gesetzt.
+
 ## 2.32.0 – 06.10.2026
 
 - Feinere Pixel: Die Welt wird jetzt in der vollen Auflösung des Bildschirms gezeichnet. Ein Spielpixel ist auf dem Handy rund ein Drittel kleiner als bisher, man sieht mehr von der Umgebung, und die Figuren werden mit vierfacher Pixeldichte geglättet.
