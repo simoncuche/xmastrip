@@ -887,15 +887,15 @@ function getSheet(L) {
 }
 /* HD-Sprite-Sheet: jedes Bild einzeln per Scale2x verfeinert (keine Übergänge zwischen Nachbarbildern) */
 const _sprCacheHD = new Map();
-function getSheetHD(L) {
+function getSheetHD(L, q = 2) {
   if (GFX === 1) return getSheet(L);
-  const key = lookKey(L);
+  const key = lookKey(L) + '@' + q;
   let s = _sprCacheHD.get(key);
   if (s) return s;
   const src = getSheet(L);
-  const [c, x] = canvas(src.width * 2, src.height * 2);
+  const [c, x] = canvas(src.width * q, src.height * q);
   const [fc, fx] = canvas(SPR_W, SPR_H);
-  for (let d = 0; d < 4; d++) for (let p = 0; p < POSES.length; p++) { fx.clearRect(0, 0, SPR_W, SPR_H); fx.drawImage(src, p * SPR_W, d * SPR_H, SPR_W, SPR_H, 0, 0, SPR_W, SPR_H); x.drawImage(rimLight(upscale(fc), 0.22, 0.2), p * SPR_W * 2, d * SPR_H * 2); }
+  for (let d = 0; d < 4; d++) for (let p = 0; p < POSES.length; p++) { fx.clearRect(0, 0, SPR_W, SPR_H); fx.drawImage(src, p * SPR_W, d * SPR_H, SPR_W, SPR_H, 0, 0, SPR_W, SPR_H); let f = upscale(fc); if (q === 4) f = upscale(f); x.drawImage(rimLight(f, 0.22, 0.2), p * SPR_W * q, d * SPR_H * q); }
   _sprCacheHD.set(key, c);
   if (_sprCacheHD.size > 80) _sprCacheHD.delete(_sprCacheHD.keys().next().value);
   return c;

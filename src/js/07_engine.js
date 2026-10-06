@@ -110,16 +110,31 @@ const Input = {
 };
 
 /* ============ Kamera & Ansicht ============ */
-const View = { cv: null, ctx: null, wcv: null, wctx: null, lcv: null, lctx: null, w: 320, h: 200, scale: 3 };
+const View = { cv: null, ctx: null, wcv: null, wctx: null, lcv: null, lctx: null, w: 320, h: 200, scale: 3, k: 1 };
+/* Zoom: wie viele Kacheln ungefähr in die Höhe passen (Nah = frühere Grösse) */
+const ZOOM_TILES = { nah: 11.5, normal: 14.5, weit: 18 };
+function zoomPref() { try { return localStorage.getItem('gleis4-zoom') || 'normal'; } catch (e) { return 'normal'; } }
 function resizeView() {
   const W = window.innerWidth, H = window.innerHeight;
-  let s = Math.max(2, Math.floor(Math.min(W, H * 1.15) / (16 * 11.5)));
-  /* HD: ein HD-Pixel soll eine ganze Zahl Bildschirmpixel gross sein, sonst werden die Pixel ungleich breit */
-  if (GFX > 1 && (window.devicePixelRatio || 1) === 1 && s % 2 && s > 2) s--;
-  View.scale = s;
-  View.w = Math.ceil(W / s); View.h = Math.ceil(H / s);
-  for (const k of ['cv', 'wcv', 'lcv']) { View[k].width = View.w * GFX; View[k].height = View.h * GFX; }
-  View.cv.style.width = View.w * s + 'px'; View.cv.style.height = View.h * s + 'px';
+  if (GFX === 1) {
+    /* Klassisch: Welt in Spielpixeln, der Browser vergrössert */
+    const s = Math.max(2, Math.floor(Math.min(W, H * 1.15) / (16 * 11.5)));
+    View.scale = s; View.k = 1;
+    View.w = Math.ceil(W / s); View.h = Math.ceil(H / s);
+    for (const k of ['cv', 'wcv', 'lcv']) { View[k].width = View.w; View[k].height = View.h; }
+    View.cv.style.width = View.w * s + 'px'; View.cv.style.height = View.h * s + 'px';
+  } else {
+    /* HD: in voller Geräteauflösung rendern. k = Gerätepixel pro Spielpixel, gerade, damit jedes HD-Pixel genau k/2 Gerätepixel gross ist */
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
+    const z = zoomPref(), tiles = ZOOM_TILES[z] || 14.5, base = Math.min(W, H * 1.15) * dpr;
+    let k = Math.max(2, Math.floor(base / (16 * tiles)));
+    /* ungerade: abrunden, ausser die Ansicht würde viel zu weit (z. B. Desktop mit 1× Pixeldichte) */
+    if (k % 2) k = z !== 'weit' && base / (16 * (k - 1)) > tiles * 1.4 ? k + 1 : Math.max(2, k - 1);
+    View.k = k; View.scale = k / dpr;
+    View.w = Math.ceil(W * dpr / k); View.h = Math.ceil(H * dpr / k);
+    for (const c of ['cv', 'wcv', 'lcv']) { View[c].width = View.w * k; View[c].height = View.h * k; }
+    View.cv.style.width = View.w * k / dpr + 'px'; View.cv.style.height = View.h * k / dpr + 'px';
+  }
   for (const k of ['ctx', 'wctx', 'lctx']) View[k].imageSmoothingEnabled = false;
 }
 function updateCamera(snap) {
@@ -314,14 +329,16 @@ function frameIndex(a) {
 }
 function drawActor(c, a, cx, cy) {
   if (a.hidden) return;
-  const sheet = getSheetHD(a.look);
+  /* Figuren vierfach fein, wenn ein Spielpixel 4, 8 … Gerätepixel gross ist, sonst doppelt */
+  const sg = GFX > 1 && View.k % 4 === 0 ? 4 : GFX;
+  const sheet = sg === 4 ? getSheetHD(a.look, 4) : getSheetHD(a.look);
   const fi = frameIndex(a);
   const z = Math.round(a.z || 0); /* Sprunghöhe: Figur hebt ab, Schatten bleibt am Boden und wird kleiner */
   const vy = a.velo ? 3 : 0;
   const x = Math.round(a.x - cx - SPR_W / 2), y = Math.round(a.y - cy - SPR_H + 1) - z - vy;
   if (a.pose !== 'sit') E(c, Math.round(a.x - cx), Math.round(a.y - cy) - 1, Math.max(2, 5 - z * 0.2), 2, `rgba(0,0,0,${z > 0 ? 0.18 : 0.25})`);
   if (a.velo) drawVelo(c, Math.round(a.x - cx), Math.round(a.y - cy), a, false);
-  const sg = GFX, sx = fi * SPR_W * sg, sy = a.dir * SPR_H * sg;
+  const sx = fi * SPR_W * sg, sy = a.dir * SPR_H * sg;
   if (a.sinkY) { c.save(); c.beginPath(); c.rect(x - 4, y - 8, SPR_W + 8, SPR_H + 8 - a.sinkY); c.clip(); c.drawImage(sheet, sx, sy, SPR_W * sg, SPR_H * sg, x, y + a.sinkY, SPR_W, SPR_H); c.restore(); }
   else c.drawImage(sheet, sx, sy, SPR_W * sg, SPR_H * sg, x, y, SPR_W, SPR_H);
   if (a.dog) {
@@ -398,7 +415,7 @@ function renderWorld() {
   const c = View.wctx, m = G.map;
   const cx = Math.round(G.cam.x), cy = Math.round(G.cam.y);
   const vw = View.w, vh = View.h;
-  c.setTransform(GFX, 0, 0, GFX, 0, 0);
+  c.setTransform(View.k, 0, 0, View.k, 0, 0);
   c.fillStyle = m.bg; c.fillRect(0, 0, vw, vh);
   if (m.bgDraw) m.bgDraw(c, cx, cy, G.t);
   if (!m.gcv) prerenderMap(m);
@@ -448,7 +465,7 @@ function renderWorld() {
   /* Licht */
   if (d.a > 0.01) {
     const l = View.lctx;
-    l.setTransform(GFX, 0, 0, GFX, 0, 0);
+    l.setTransform(View.k, 0, 0, View.k, 0, 0);
     l.globalCompositeOperation = 'source-over';
     l.clearRect(0, 0, vw, vh);
     l.fillStyle = `rgba(10,14,38,${d.a})`;
@@ -485,7 +502,7 @@ function renderWorld() {
 function renderScreen() {
   const c = View.ctx, vw = View.w, vh = View.h;
   const st = G.S ? G.S.st : null;
-  c.setTransform(GFX, 0, 0, GFX, 0, 0);
+  c.setTransform(View.k, 0, 0, View.k, 0, 0);
   c.fillStyle = '#05070b'; c.fillRect(0, 0, vw, vh);
   if (!G.map) return;
   const prom = st ? st.prom : 0;

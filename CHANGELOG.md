@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.32.0 – 06.10.2026
+
+- Feinere Pixel: Die Welt wird jetzt in der vollen Auflösung des Bildschirms gezeichnet. Ein Spielpixel ist auf dem Handy rund ein Drittel kleiner als bisher, man sieht mehr von der Umgebung, und die Figuren werden mit vierfacher Pixeldichte geglättet.
+- Neu im Handy unter Optionen: Zoom „Nah“ (alte Grösse), „Normal“ und „Weit“.
+- Fotos und Schnappschüsse bleiben gleich gross und scharf.
+
 ## 2.31.0 – 06.10.2026
 
 - HD-Grafik: Die Welt wird mit doppelter Pixeldichte gezeichnet. Schrägen und Rundungen von Dächern, Bäumen, Figuren und Möbeln werden feiner, Fenster und Mauern bleiben scharf. Neu sind Grashalme, Wiesenblumen, Kiesel, Asphaltkorn und Holzmaserung, Lichtkanten an Figuren und kleinen Dingen, ein Lichtverlauf auf den Fassaden und weiche Schatten am Fuss der Häuser. Auch die Fotos der Sehenswürdigkeiten sind schärfer.

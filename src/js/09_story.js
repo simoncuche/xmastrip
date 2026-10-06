@@ -2534,7 +2534,7 @@ const Story = {
       const W = 120, H = 90;
       const [c, x] = canvas(W * GFX, H * GFX);
       const px = G.player.x - G.cam.x, py = G.player.y - G.cam.y - 30;
-      x.drawImage(View.wcv, Math.round(px - W / 2) * GFX, Math.round(py - H / 2) * GFX, W * GFX, H * GFX, 0, 0, W * GFX, H * GFX);
+      x.drawImage(View.wcv, Math.round(px - W / 2) * View.k, Math.round(py - H / 2) * View.k, W * View.k, H * View.k, 0, 0, W * GFX, H * GFX);
       G.photoImg = G.photoImg || {};
       G.photoImg[id] = c.toDataURL('image/png');
       try { const all = JSON.parse(localStorage.getItem(SAVE_KEY + '-img') || '{}'); all[id] = G.photoImg[id]; localStorage.setItem(SAVE_KEY + '-img', JSON.stringify(all)); } catch (e) {}

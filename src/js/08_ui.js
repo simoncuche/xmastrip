@@ -508,6 +508,8 @@ const Phone = {
       <p class="note">Ton: ${Snd.state()}. Kein Ton auf dem Handy? Beim iPhone den Stummschalter an der Seite umlegen und die Lautstärke hochdrehen; danach einmal auf den Bildschirm tippen.</p>
       <div class="opt-row"><span>Grafik</span><button class="btn" id="oGfx">${GFX > 1 ? 'HD' : 'Klassisch'}</button></div>
       <p class="note">HD zeichnet alles mit doppelter Pixeldichte und feineren Kanten. Auf älteren Handys läuft „Klassisch“ flüssiger. Nach dem Umschalten startet das Spiel neu (der Spielstand bleibt).</p>
+      ${GFX > 1 ? `<div class="opt-row"><span>Zoom</span><button class="btn" id="oZoom">${{ nah: 'Nah', normal: 'Normal', weit: 'Weit' }[zoomPref()] || 'Normal'}</button></div>
+      <p class="note">Weit zeigt mehr von der Welt mit kleineren, feineren Pixeln; Nah zeigt alles grösser.</p>` : ''}
       <div class="opt-row"><span>Texte vorlesen</span><button class="btn" id="oVoice">${!Voice.ok() ? 'Nicht verfügbar' : ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]}</button></div>
       <div class="opt-row"><span>Vorlese-Tempo</span><button class="btn" id="oRate">${{ 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate] || 'Normal'}</button></div>
       <p class="note">Liest Gespräche und Antwortmöglichkeiten vor, auf Wunsch auch die Hinweise oben. Nutzt die Sprachausgabe deines Geräts; beim iPhone muss der Stummschalter aus sein.</p>
@@ -523,6 +525,8 @@ const Phone = {
       <div class="changelog">${changelogHtml()}</div>`;
     b.querySelector('#oSnd').onclick = (e) => { Snd.on = !Snd.on; e.target.textContent = Snd.on ? 'An' : 'Aus'; };
     b.querySelector('#oMus').onclick = (e) => { Snd.musicOn = !Snd.musicOn; e.target.textContent = Snd.musicOn ? 'An' : 'Aus'; };
+    const zb = b.querySelector('#oZoom');
+    if (zb) zb.onclick = () => { const z = ['nah', 'normal', 'weit'], n = z[(z.indexOf(zoomPref()) + 1) % 3]; try { localStorage.setItem('gleis4-zoom', n); } catch (e) {} zb.textContent = { nah: 'Nah', normal: 'Normal', weit: 'Weit' }[n]; resizeView(); updateCamera(true); };
     b.querySelector('#oGfx').onclick = () => { try { localStorage.setItem('gleis4-grafik', GFX > 1 ? 'klassisch' : 'hd'); } catch (e) {} saveGame(true); location.reload(); };
     b.querySelector('#oVoice').onclick = (e) => { if (!Voice.ok()) return; Voice.mode = (Voice.mode + 1) % 3; Voice.save(); e.target.textContent = ['Aus', 'Dialoge', 'Dialoge + Hinweise'][Voice.mode]; if (Voice.mode) Voice.speak(Voice.mode === 1 ? 'Gespräche werden jetzt vorgelesen.' : 'Gespräche und Hinweise werden jetzt vorgelesen.'); else Voice.stop(); };
     b.querySelector('#oRate').onclick = (e) => { const r = [0.85, 1, 1.25]; Voice.rate = r[(r.indexOf(Voice.rate) + 1) % 3]; Voice.save(); e.target.textContent = { 0.85: 'Langsam', 1: 'Normal', 1.25: 'Schnell' }[Voice.rate]; if (Voice.mode) Voice.speak('So schnell lese ich jetzt vor.'); };
@@ -555,10 +559,12 @@ const Snap = {
     for (;;) { try { localStorage.setItem(this.key(), JSON.stringify(l)); return true; } catch (e) { if (l.length <= 1) return false; l.shift(); } }
   },
   /* Polaroid: Bild, weisser Rand, Bildunterschrift in Pixelschrift */
-  compose(src, title, sub) {
+  compose(src0, title, sub, sc = 1) {
+    /* Rahmen und Beschriftung in logischen Pixeln, bei HD-Fotos mit sc = 2 vergrössert */
+    const src = { width: src0.width / sc, height: src0.height / sc };
     const pad = 4, bar = 22, w = src.width + pad * 2, h = src.height + pad + bar;
-    const [c, x] = canvas(w, h);
-    R(x, 0, 0, w, h, '#f4f0e6'); x.drawImage(src, pad, pad);
+    const [c, x0] = canvas(w * sc, h * sc); x0.scale(sc, sc); const x = x0;
+    R(x, 0, 0, w, h, '#f4f0e6'); x.drawImage(src0, pad, pad, src.width, src.height);
     R(x, pad, pad + src.height, src.width, 1, '#d8d2c4');
     const t1 = title.toUpperCase(); pxText(x, t1.length > 34 ? t1.slice(0, 34) : t1, pad + 2, pad + src.height + 4, '#2a2622');
     pxText(x, sub.toUpperCase(), pad + 2, pad + src.height + 12, '#8a6a4a');
@@ -570,10 +576,13 @@ const Snap = {
   /* Foto der aktuellen Szene (oder eines Minispiel-Canvas) */
   shoot(source) {
     if (G.mode !== 'play' || !G.map) return;
-    const src = source || View.cv;
+    let src = source || View.cv, sc = 1;
     if (!src || !src.width) return;
+    /* Weltbild aus der Geräteauflösung auf HD-Grösse bringen, damit der Speicher reicht */
+    if (!source && View.k > GFX) { const [hc, hx] = canvas(View.w * GFX, View.h * GFX); hx.drawImage(View.cv, 0, 0, View.w * GFX, View.h * GFX); src = hc; sc = GFX; }
+    else if (!source && GFX > 1) sc = GFX;
     const { title, sub } = this.caption();
-    const comp = this.compose(src, title, sub);
+    const comp = this.compose(src, title, sub, sc);
     let data; try { data = comp.toDataURL('image/png'); } catch (e) { UI.toast('Foto konnte nicht gespeichert werden.', 'warn'); return; }
     const sn = { id: Date.now().toString(36), gid: this.gid(), place: G.map.name, when: `${dateStr()} ${clockStr()}`, data };
     this.list().push(sn);
