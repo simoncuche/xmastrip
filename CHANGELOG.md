@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.33.2 – 07.10.2026
+
+- Neue Einsteige-Animation für die S-Bahn nach Sursee: Statt einer Haustür siehst du jetzt Gleis 2 in Luzern, läufst über den Perron zur weiss-roten S-Bahn, die Türen gehen auf, du steigst ein, es piepst und die Türen schliessen.
+- Beim Aussteigen in Sursee steht jetzt „SURSEE“ auf dem Bahnhofschild (statt „Innsbruck Hbf“), und der Zug hat die Farben der S-Bahn.
+
 ## 2.33.1 – 07.10.2026
 
 - Elin und Timo sagen nur noch zu Cuche „Papi“. Spielt man jemand anderen, sprechen sie einen mit dem Namen an (auch per Handy, bei Tipps und beim Rechnen); von Cuche reden sie dann als „mein Papi“.

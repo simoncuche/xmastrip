@@ -32,6 +32,8 @@ const sayP = (k, text) => UI.say(SU_P[k], kidText(k, text));
 const kidSay = (k, text) => (Sur.followOk() ? UI.say(SU_P[k], kidText(k, text)) : UI.say(SU_P[k], '📱 ' + kidText(k, text)));
 const askP = (k, text, opts) => UI.ask(SU_P[k], kidText(k, text), opts);
 /* Wer begleitet als „Papi“? Cuche – oder Lexx, wenn man Cuche spielt */
+/* S-Bahn Luzern (Flirt): weisser Wagenkasten, rote Türen, rotes Band – für die Tür-Szenen */
+const SBAHN_LOOK = { body: '#eeece6', top: '#b8bcc4', band: '#d8302a', doorCol: '#d8302a' };
 const playerIsCuche = () => G.S.pid === 'cuche';
 const suPapi = () => (playerIsCuche() ? (FRIENDS.lexx ? 'lexx' : who('kassier')) : 'cuche');
 
@@ -231,7 +233,7 @@ const Sur = {
     Story.setStage('sbahn');
     G.S.flags.sbDep = G.S.time + 1;
     _sbScroll = 0;
-    await Scene.play('door', { exit: false, style: { name: 'S1 SURSEE', wall: '#e8e4dc', door: 'glass', sign: ['#d8302a', '#ffffff'], inner: '#eef4fa' }, ms: 900, keep: true });
+    await Scene.play('trainboard', Object.assign({ station: 'LUZERN', gleis: 2, text: 'S1 nach Sursee', ms: 2300, keep: true }, SBAHN_LOOK));
     enterMap('sbahn', 'start');
     await UI.fadeIn();
     Snd.sfx('blip');
@@ -257,7 +259,7 @@ const Sur = {
     Story.setStage('sbahn');
     G.S.flags.sbDep = G.S.time + 1;
     _sbScroll = 0;
-    await Scene.play('door', { exit: false, style: { name: 'S1 SURSEE', wall: '#e8e4dc', door: 'glass', sign: ['#d8302a', '#ffffff'], inner: '#eef4fa' }, ms: 900, keep: true });
+    await Scene.play('trainboard', Object.assign({ station: 'LUZERN', gleis: 2, text: 'S1 nach Sursee', ms: 2300, keep: true }, SBAHN_LOOK));
     enterMap('sbahn', 'start');
     await UI.fadeIn();
     G.busy--;
@@ -289,7 +291,7 @@ const Sur = {
     achieve('su_sbahn');
     G.S.chapter = 'sursee';
     Story.setStage('s_ankunft');
-    await Scene.play('trainexit', { ms: 1400, keep: true });
+    await Scene.play('trainexit', Object.assign({ station: 'SURSEE', text: 'Sursee', ms: 1600, keep: true }, SBAHN_LOOK));
     enterMap('sursee', 'bahnhof');
     await UI.fadeIn();
     G.busy--;

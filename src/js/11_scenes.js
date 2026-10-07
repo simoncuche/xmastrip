@@ -351,28 +351,9 @@ const SCENES = {
     const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if ((enter && (p < 0.3 || p > 0.52)) || (!enter && p < 0.7)) Snd.sfx('step'); }
   },
   /* Ankunft Innsbruck Hbf: der Railjet steht am Bahnsteig, die Tür zischt auf, du steigst aus */
-  trainexit(c, t, p, st) {
-    R(c, 0, 0, SCENE_W, SCENE_H, st.night ? '#1a2030' : '#a8b4c0');
-    for (let x = -10; x < SCENE_W; x += 24) { line(c, x, 0, x + 24, 14, '#5a646c'); line(c, x + 24, 0, x, 14, '#5a646c'); }
-    R(c, 0, 14, SCENE_W, 2, '#5a646c');
-    R(c, 52, 18, 56, 9, '#1a3a7a'); pxText(c, 'INNSBRUCK HBF', 80 - pxTextW('INNSBRUCK HBF') / 2, 20, '#ffffff'); R(c, 79, 14, 2, 4, '#5a646c');
-    E(c, 132, 22, 6, 6, '#f4f4f0'); line(c, 132, 22, 132, 18, '#1a1a1e'); line(c, 132, 22, 135, 23, '#1a1a1e'); E(c, 132, 22, 6, 6, 'rgba(0,0,0,0)');
-    const ty = 30;
-    R(c, 0, ty, SCENE_W, 46, '#c8302a'); R(c, 0, ty, SCENE_W, 4, '#8a1a1a'); R(c, 0, ty + 30, SCENE_W, 3, '#f4f4f0'); R(c, 0, ty + 42, SCENE_W, 4, '#3a3c40');
-    for (const wx of [6, 30, 112, 136]) { R(c, wx, ty + 8, 20, 14, '#3a4a5a'); R(c, wx + 1, ty + 9, 18, 12, st.night ? '#ffe8b0' : '#9ac0d8'); }
-    const dx = 64, dw = 32, dh = 40, op = clamp((p - 0.12) / 0.18, 0, 1), sl = Math.round(dw / 2 * op * 0.95);
-    R(c, dx, ty + 4, dw, dh, '#2a2a30'); R(c, dx + 2, ty + 6, dw - 4, dh - 4, '#f4e8c8');
-    /* Im Wagen (abgeschnitten an der Türöffnung) nach vorne treten, dann auf den Bahnsteig hinunter */
-    const doorBot = ty + 4 + dh, f = Math.floor(t * 8) % 2 ? 'walkA' : 'walkB';
-    const q1 = clamp((p - 0.25) / 0.25, 0, 1), q = clamp((p - 0.5) / 0.4, 0, 1);
-    if (p > 0.25 && q <= 0) inRect(c, dx + 2, ty + 6, dw - 4, dh - 2, () => { const sc = 0.95 + q1 * 0.2; sceneSprite(c, st, f, 0, 80 - SPR_W * sc / 2, doorBot - 3 + q1 * 3 - SPR_H * sc, sc, q1); });
-    for (const [x0, w] of [[dx, dw / 2 - sl], [dx + dw / 2 + sl, dw / 2 - sl]]) if (w > 0) { R(c, x0, ty + 4, w, dh, '#c8302a'); R(c, x0 + 2, ty + 8, Math.max(0, w - 4), 14, '#3a4a5a'); }
-    if (q > 0) { const sc = 1.15 + q * 0.75, y = doorBot + q * (95 - doorBot) - Math.sin(q * Math.PI) * 3; sceneSprite(c, st, q < 1 ? f : 'stand', 0, 80 - SPR_W * sc / 2, y - SPR_H * sc, sc); }
-    if (op > 0 && op < 1) for (let k = 0; k < 2; k++) E(c, dx + rnd(0, dw), ty + dh + 2, 3, 1.5, 'rgba(255,255,255,0.35)');
-    R(c, 0, 82, SCENE_W, 14, '#8a8e94'); R(c, 0, 82, SCENE_W, 2, '#ffd23d'); for (let x = 0; x < SCENE_W; x += 6) P(c, x + 2, 88, '#7a7e84');
-    if (p > 0.12 && !st._hiss) { st._hiss = 1; Snd.noise(0.5, 0.06, 3000); Snd.tone(880, 0.08, 'square', 0.03); }
-    const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if (p > 0.25 && p < 0.9) Snd.sfx('step'); }
-  },
+  trainexit(c, t, p, st) { trainDoorScene(c, t, p, st, false); },
+  /* Einsteigen vom Perron: von vorne zur Tür, Türen auf, hinein, Türen zu (Farben/Bahnhof über st.station, st.body, st.doorCol, st.band, st.gleis) */
+  trainboard(c, t, p, st) { trainDoorScene(c, t, p, st, true); },
   /* Apokalypse – Endsequenz: Teil 1 der Railjet flieht aus der versinkenden Stadt, Teil 2 im Abteil mit Bier */
   apocend(c, t, p, st) {
     const sky = (top, bot) => { for (let y = 0; y < SCENE_H; y++) R(c, 0, y, SCENE_W, 1, mix(top, bot, y / SCENE_H)); };
@@ -734,6 +715,47 @@ const SCENES = {
     const wh = Math.floor(t * 8); if (wh !== st._step) { st._step = wh; if (wh % 2 === 0) Snd.noise(0.05, 0.03, 600); }
   },
 };
+/* Zugtür vom Perron aus gesehen – Aussteigen (board = false) oder Einsteigen (board = true) */
+function trainDoorScene(c, t, p, st, board) {
+  const body = st.body || '#c8302a', top = st.top || '#8a1a1a', band = st.band || '#f4f4f0', doorCol = st.doorCol || body, station = st.station || 'INNSBRUCK HBF';
+  R(c, 0, 0, SCENE_W, SCENE_H, st.night ? '#1a2030' : '#a8b4c0');
+  for (let x = -10; x < SCENE_W; x += 24) { line(c, x, 0, x + 24, 14, '#5a646c'); line(c, x + 24, 0, x, 14, '#5a646c'); }
+  R(c, 0, 14, SCENE_W, 2, '#5a646c');
+  const sw = Math.max(56, pxTextW(station) + 10);
+  R(c, 80 - sw / 2, 18, sw, 9, '#1a3a7a'); pxText(c, station, 80 - pxTextW(station) / 2, 20, '#ffffff'); R(c, 79, 14, 2, 4, '#5a646c');
+  if (st.gleis) { R(c, 14, 17, 11, 11, '#ffffff'); R(c, 15, 18, 9, 9, '#1a3a7a'); pxText(c, String(st.gleis), 20 - pxTextW(String(st.gleis)) / 2, 20, '#ffffff'); }
+  E(c, 132, 22, 6, 6, '#f4f4f0'); line(c, 132, 22, 132, 18, '#1a1a1e'); line(c, 132, 22, 135, 23, '#1a1a1e');
+  const ty = 30;
+  R(c, 0, ty, SCENE_W, 46, body); R(c, 0, ty, SCENE_W, 4, top); R(c, 0, ty + 30, SCENE_W, 3, band); R(c, 0, ty + 42, SCENE_W, 4, '#3a3c40');
+  for (const wx of [6, 30, 112, 136]) { R(c, wx, ty + 8, 20, 14, '#3a4a5a'); R(c, wx + 1, ty + 9, 18, 12, st.night ? '#ffe8b0' : '#9ac0d8'); }
+  const dx = 64, dw = 32, dh = 40;
+  /* Türen: beim Aussteigen gehen sie auf, beim Einsteigen auf und am Schluss wieder zu */
+  const op = board ? clamp((p - 0.06) / 0.14, 0, 1) * (1 - clamp((p - 0.84) / 0.12, 0, 1)) : clamp((p - 0.12) / 0.18, 0, 1), sl = Math.round(dw / 2 * op * 0.95);
+  R(c, dx, ty + 4, dw, dh, '#2a2a30'); R(c, dx + 2, ty + 6, dw - 4, dh - 4, '#f4e8c8');
+  const doorBot = ty + 4 + dh, f = Math.floor(t * 8) % 2 ? 'walkA' : 'walkB';
+  let inside = null, outside = null;
+  if (board) {
+    /* vom Perron (vorne, gross, von hinten gesehen) zur Tür, dann im Wagen verschwinden */
+    const q = clamp((p - 0.08) / 0.47, 0, 1), q1 = clamp((p - 0.55) / 0.22, 0, 1);
+    if (p < 0.55) outside = { sc: 1.9 - q * 0.75, y: 95 + q * (doorBot - 95) - Math.sin(q * Math.PI) * 3, pose: p < 0.08 ? 'stand' : f, a: 1 };
+    else if (q1 < 1) inside = { sc: 1.15 - q1 * 0.2, y: doorBot - q1 * 3, pose: f, a: 1 - q1 };
+  } else {
+    const q1 = clamp((p - 0.25) / 0.25, 0, 1), q = clamp((p - 0.5) / 0.4, 0, 1);
+    if (p > 0.25 && q <= 0) inside = { sc: 0.95 + q1 * 0.2, y: doorBot - 3 + q1 * 3, pose: f, a: q1 };
+    if (q > 0) outside = { sc: 1.15 + q * 0.75, y: doorBot + q * (95 - doorBot) - Math.sin(q * Math.PI) * 3, pose: q < 1 ? f : 'stand', a: 1 };
+  }
+  const dir = board ? 3 : 0;
+  if (inside) inRect(c, dx + 2, ty + 6, dw - 4, dh - 2, () => sceneSprite(c, st, inside.pose, dir, 80 - SPR_W * inside.sc / 2, inside.y - SPR_H * inside.sc, inside.sc, inside.a));
+  for (const [x0, w] of [[dx, dw / 2 - sl], [dx + dw / 2 + sl, dw / 2 - sl]]) if (w > 0) { R(c, x0, ty + 4, w, dh, doorCol); R(c, x0 + 2, ty + 8, Math.max(0, w - 4), 14, '#3a4a5a'); }
+  if (op > 0.02 && op < 1) for (let k = 0; k < 2; k++) E(c, dx + rnd(0, dw), ty + dh + 2, 3, 1.5, 'rgba(255,255,255,0.35)');
+  R(c, 0, 82, SCENE_W, 14, '#8a8e94'); R(c, 0, 82, SCENE_W, 2, '#ffd23d'); for (let x = 0; x < SCENE_W; x += 6) P(c, x + 2, 88, '#7a7e84');
+  if (outside) sceneSprite(c, st, outside.pose, dir, 80 - SPR_W * outside.sc / 2, outside.y - SPR_H * outside.sc, outside.sc, outside.a);
+  const hissAt = board ? 0.06 : 0.12;
+  if (p > hissAt && !st._hiss) { st._hiss = 1; Snd.noise(0.5, 0.06, 3000); Snd.tone(880, 0.08, 'square', 0.03); }
+  if (board && p > 0.8 && !st._beep) { st._beep = 1; for (let k = 0; k < 3; k++) Snd.tone(1320, 0.06, 'square', 0.03, k * 0.12); }
+  if (board && p > 0.86 && !st._hiss2) { st._hiss2 = 1; Snd.noise(0.4, 0.05, 2600); }
+  const stp = Math.floor(t * 8); if (stp !== st._step) { st._step = stp; if (board ? p > 0.08 && p < 0.75 : p > 0.25 && p < 0.9) Snd.sfx('step'); }
+}
 const SCENE_SS = 4;
 /* Kontext der Szenen-Leinwand: drawImage nimmt für Sprite-Sheets automatisch die HD-Version (Quellkoordinaten × q) */
 function sceneCtx(cv) {
