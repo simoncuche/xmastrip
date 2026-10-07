@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.33.0 – 07.10.2026
+
+- HD auch in den Szenen: Übergänge (Türen, Treppen, Lift, Zug, Taxi, Boot …) und alle anderen Zwischenszenen werden in vierfacher Auflösung gezeichnet. Die eigene Figur und die Kollegen erscheinen dort jetzt so fein wie in der Welt, und Schriften wie die Ladenschilder sind gestochen scharf.
+
 ## 2.32.1 – 06.10.2026
 
 - Fehler behoben: Nach der Rückfahrt vom Gamma-Inseli stand man im Wasser und konnte sich nicht mehr bewegen. Das Boot legt jetzt am Steg an.

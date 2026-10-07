@@ -548,6 +548,7 @@ function getSheet(L) {
       else x.drawImage(fc, p * SPR_W, d * SPR_H);
     }
   s = c;
+  s._look = Object.assign({}, L); /* damit Szenen das HD-Sheet dazu finden (hdSheetOf) */
   _sprCache.set(key, s);
   if (_sprCache.size > 80) _sprCache.delete(_sprCache.keys().next().value);
   return s;
@@ -567,6 +568,8 @@ function getSheetHD(L, q = 2) {
   if (_sprCacheHD.size > 80) _sprCacheHD.delete(_sprCacheHD.keys().next().value);
   return c;
 }
+/* Zu einem normalen Sprite-Sheet das HD-Sheet mit q-facher Dichte (null, wenn keins möglich) */
+function hdSheetOf(sheet, q = 4) { return GFX > 1 && sheet && sheet._look ? getSheetHD(sheet._look, q) : null; }
 /* Kinder (Sursee): gleicher Kopf, gestauchter Körper – kid 1 = Schulkind, 2 = Kleinkind. Füsse bleiben auf derselben Höhe. */
 function kidFrame(c, x, kid) {
   const [tc, tx] = canvas(c.width, c.height);

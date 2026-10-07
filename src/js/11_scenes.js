@@ -734,13 +734,33 @@ const SCENES = {
     const wh = Math.floor(t * 8); if (wh !== st._step) { st._step = wh; if (wh % 2 === 0) Snd.noise(0.05, 0.03, 600); }
   },
 };
+const SCENE_SS = 4;
+/* Kontext der Szenen-Leinwand: drawImage nimmt für Sprite-Sheets automatisch die HD-Version (Quellkoordinaten × q) */
+function sceneCtx(cv) {
+  const x = cv.getContext('2d');
+  if (!x._hdDraw) {
+    const orig = x.drawImage.bind(x);
+    x._hdDraw = true;
+    x.drawImage = (img, ...a) => {
+      const hd = hdSheetOf(img, SCENE_SS);
+      if (!hd) return orig(img, ...a);
+      const q = hd.width / img.width;
+      if (a.length === 8) return orig(hd, a[0] * q, a[1] * q, a[2] * q, a[3] * q, a[4], a[5], a[6], a[7]);
+      if (a.length === 4) return orig(hd, a[0], a[1], a[2], a[3]);
+      return orig(hd, a[0], a[1], img.width, img.height);
+    };
+  }
+  return x;
+}
 const Scene = {
   async play(kind, o = {}) {
     const els = UI.els, cv = els.fadeCv;
     const draw = SCENES[kind];
     if (!cv || !draw) { await UI.fadeOut(o.text || ''); await sleep(o.ms || 1500); if (!o.keep) await UI.fadeIn(); return; }
-    cv.width = SCENE_W; cv.height = SCENE_H;
-    const x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
+    /* HD: Szene in vierfacher Auflösung, Figuren aus den HD-Sheets – gezeichnet wird weiter in 160×96 */
+    const ss = GFX > 1 ? SCENE_SS : 1;
+    cv.width = SCENE_W * ss; cv.height = SCENE_H * ss;
+    const x = sceneCtx(cv); x.setTransform(ss, 0, 0, ss, 0, 0); x.imageSmoothingEnabled = false;
     els.fadeText.textContent = o.text || '';
     const st = Object.assign({ sheet: getSheet(G.S.look), look: G.S.look, night: isNight() }, o);
     try { draw(x, 0, 0, st); } catch (e) { console.error(e); }

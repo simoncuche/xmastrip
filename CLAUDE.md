@@ -47,7 +47,7 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 
 - Alles wird weiter in logischen Pixeln gezeichnet (16 pro Kachel). Bei `GFX = 2` werden Kartenboden (`m.gcv`), Objekte (`o.cv`, `o.ecv`) und Figuren (`getSheetHD`) nach dem Zeichnen mit `upscale` verdoppelt; Objekte merken sich die logische Grösse in `o.cw`/`o.ch`, beim Zeichnen immer diese Grösse angeben.
 - Bei HD rendern die Ansichten `View.cv/wcv/lcv` in voller Geräteauflösung: `View.k` = Gerätepixel pro Spielpixel (gerade, aus `devicePixelRatio` und Zoom `gleis4-zoom` = `nah`/`normal`/`weit` über `ZOOM_TILES`), gezeichnet wird mit `setTransform(View.k, …)`. Wer aus `View.wcv` ausschneidet, rechnet die Quellkoordinaten mal `View.k`. Ist `View.k` durch 4 teilbar, nimmt `drawActor` die Figuren aus `getSheetHD(look, 4)`. Bei Klassisch ist `View.k = 1`.
-- HD-Extras: `groundDetail(m)` (Halme, Kiesel, Holzmaserung), `shadeObject` (Lichtverlauf grosser Objekte), Kontaktschatten in `renderWorld`, `rimLight` für Figuren und kleine Objekte. Szenen und Minispiele bleiben in ihrer eigenen Auflösung.
+- HD-Extras: `groundDetail(m)` (Halme, Kiesel, Holzmaserung), `shadeObject` (Lichtverlauf grosser Objekte), Kontaktschatten in `renderWorld`, `rimLight` für Figuren und kleine Objekte. Szenen (`Scene.play`) zeichnen weiter in 160×96, die Leinwand ist bei HD aber `SCENE_SS`-mal (4) so gross; `sceneCtx` biegt `drawImage` so um, dass normale Sprite-Sheets (`getSheet`, merken sich `_look`) automatisch durch `hdSheetOf(sheet, 4)` ersetzt werden. Minispiele bleiben in ihrer eigenen Auflösung.
 
 ## Vorschau des Branches sursee
 
