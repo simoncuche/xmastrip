@@ -56,6 +56,9 @@ with sync_playwright() as p:
       return bad; }""")
     if bad:
         raise SystemExit("FEHLER: Ausgänge ohne Ankunftspunkt: " + ", ".join(bad))
+    # Elin und Timo sagen nur zu Cuche „Papi“
+    expect("kidText('elin', 'PAPI! Mami, Papi ist da!') === 'HOSHY! Mami, Hoshy ist da!' && kidText('isa', 'Papi') === 'Papi'", "Kinder nennen den Spieler nicht beim Namen")
+    expect("(() => { const p = G.S.pid; G.S.pid = 'cuche'; const r = kidText('timo', 'Hoi Papi!'); G.S.pid = p; return r === 'Hoi Papi!'; })()", "Kinder sagen zu Cuche nicht Papi")
     # Kein Ankunftspunkt darf in einer Wand oder im Wasser liegen
     bad = pg.evaluate("""() => { const bad = []; for (const id of Object.keys(MAP_BUILDERS)) { let m; try { m = getMap(id); } catch (e) { continue; }
       for (const [k, s] of Object.entries(m.spawns)) { const tx = Math.floor(s.x / TS), ty = Math.floor((s.y - 2) / TS); if (m.isSolid(tx, ty)) bad.push(`${id}:${k}`); } }

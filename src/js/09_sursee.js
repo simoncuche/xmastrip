@@ -24,10 +24,13 @@ const SU_P = {
 };
 SU_P.lejan = { name: 'Lejan', bg: '#4a6a2a', look: Object.assign({}, SU_P.timo.look, { hair: 6, hairCol: 1, skin: 2, topCol: 3, kid: 2 }) };
 const suP = (k) => SU_P[k];
-const sayP = (k, text) => UI.say(SU_P[k], text);
+/* Elin und Timo sagen nur zu Cuche „Papi“ – alle anderen sprechen sie mit dem Namen an */
+const kidCall = () => (G.S.pid === 'cuche' ? 'Papi' : G.S.name);
+const kidText = (k, text) => (k !== 'elin' && k !== 'timo' || G.S.pid === 'cuche' ? text : String(text).replace(/\bPAPI\b/g, G.S.name.toUpperCase()).replace(/\bPapi\b/g, G.S.name));
+const sayP = (k, text) => UI.say(SU_P[k], kidText(k, text));
 /* Elin und Timo: vor Ort, wenn sie dich begleiten – sonst per Handy */
-const kidSay = (k, text) => (Sur.followOk() ? UI.say(SU_P[k], text) : UI.say(SU_P[k], '📱 ' + text));
-const askP = (k, text, opts) => UI.ask(SU_P[k], text, opts);
+const kidSay = (k, text) => (Sur.followOk() ? UI.say(SU_P[k], kidText(k, text)) : UI.say(SU_P[k], '📱 ' + kidText(k, text)));
+const askP = (k, text, opts) => UI.ask(SU_P[k], kidText(k, text), opts);
 /* Wer begleitet als „Papi“? Cuche – oder Lexx, wenn man Cuche spielt */
 const playerIsCuche = () => G.S.pid === 'cuche';
 const suPapi = () => (playerIsCuche() ? (FRIENDS.lexx ? 'lexx' : who('kassier')) : 'cuche');
@@ -484,7 +487,7 @@ const Sur = {
     if (m.id === 'zunftstube' && G.S.stage === 's_ankunft') setTimeout(() => this.tatortStart(), 600);
     if (m.id === 'sursee_see' && G.S.stage === 's_boot' && !s.bootReady) { s.bootReady = 1; setTimeout(() => this.bootsjagd(), 500); }
     if (m.id === 'inseli') s.photosInseli = 1;
-    if (m.id === 'muehle' && this.followOk()) setTimeout(() => { UI.toast(`💬 Timo: „Teigwaren mit Käse! Ohne Sauce! Nur Käse! Und noch mehr Käse!“`); setTimeout(() => UI.toast(`💬 Elin: „Pizza Margherita. Aber deine Pizza ist besser, Papi. Psst, nicht dem Gino sagen.“`), 2600); }, 900);
+    if (m.id === 'muehle' && this.followOk()) setTimeout(() => { UI.toast(`💬 Timo: „Teigwaren mit Käse! Ohne Sauce! Nur Käse! Und noch mehr Käse!“`); setTimeout(() => UI.toast(`💬 Elin: „Pizza Margherita. Aber ${playerIsCuche() ? 'deine Pizza ist besser, Papi' : 'Papis Pizza ist besser'}. Psst, nicht dem Gino sagen.“`), 2600); }, 900);
   },
   minute() {
     const s = this.st();
@@ -1381,12 +1384,12 @@ Object.assign(Sur, {
   },
   /* ---------- Familie: Sprüche, Rechnen, Kita, Gitarre, Kaffee, Bauernhof-Quiz ---------- */
   kidFact(k) {
-    const papa = 'deine', wk = dayOf(G.S.time) % 7 > 2 && hourOf(G.S.time) < 12;
+    const wk = dayOf(G.S.time) % 7 > 2 && hourOf(G.S.time) < 12;
     const F = {
-      elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', `Die besten Pizzas der Welt sind ${papa}, Papi. Besser als in der Mühle. Aber sag das nicht dem Gino.`,
+      elin: ['Ich geh in die zweite Klasse im Schulhaus St. Martin. Meine Lehrerin sagt, ich bin schnell im Kopfrechnen. Willst du mich testen?', 'Ich spiel Gitarre! G, C und D kann ich schon. Mit D tun mir noch die Finger weh.', playerIsCuche() ? 'Die besten Pizzas der Welt sind deine, Papi. Besser als in der Mühle. Aber sag das nicht dem Gino.' : 'Die besten Pizzas der Welt macht mein Papi. Besser als in der Mühle. Aber sag das nicht dem Gino.',
         'Wenn ich gross bin, werd ich Detektivin. Oder Gitarristin. Oder Detektivin mit Gitarre.', 'Timo hat heute wieder nur Teigwaren mit Käse gegessen. Zum Zmorge!', 'Mami trinkt so viel Kaffee, dass die Kaffeemaschine einen Namen hat. Sie heisst Bruno.',
         wk ? 'Eigentlich hätte ich jetzt Schule im St. Martin. Aber Mami sagt, Detektivarbeit ist auch Bildung.' : 'In der Pause im St. Martin spielen wir immer Detektiv. Jetzt bin ich eine echte!'],
-      timo: ['Papi, weisst du noch? Ich geh in die Kita Villa Luna beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Papi, ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
+      timo: ['Papi, weisst du was? Ich geh in die Kita Villa Luna beim Märtplatz! Mein bester Freund heisst Lejan.', 'Lejan kann ganz laut rülpsen. Ich auch, aber leiser.', 'Papi, ich mag Velo fahren! Ganz schnell! Ohne Stützräder!', 'Teigwaren mit Käse. Und dann noch mehr Käse. Das ist mein Lieblingsessen.',
         'Wenn ich gross bin, fahr ich Postauto. Und dann fahr ich auch in den Poller. KLONK!', 'Mami hat heute schon fünf Kaffee getrunken. Ich hab gezählt. Bis fünf kann ich.', 'Elin spielt Gitarre. Immer das gleiche Lied. Ich tanz trotzdem.'],
       thierry: ['Wir wohnen in Schenkon, gleich neben Sursee. Ich und Louve. Von uns aus sieht man den See!', 'Ein Kreiselheuer wirbelt das Gras durch die Luft, damit es schneller trocknet. Dann wird es Heu.', 'Ein Mähdrescher mäht das Korn und drischt es gleich. Zwei Maschinen in einer!',
         'Mit dem Schwader macht man aus dem Heu lange Reihen. Dann kommt die Ballenpresse und macht Ballen. Rund oder eckig!', 'Der Traktor vom Gänsehof hat einen Frontlader. Damit hebt er Siloballen wie nichts.', 'Mit dem Ladewagen holt man das Gras vom Feld. Mit dem Güllenfass bringt man … das riecht man dann.',
@@ -1421,7 +1424,7 @@ Object.assign(Sur, {
     await Story.say('Betreuerin der Villa Luna', 'Grüezi! Ah, Timos Familie. Lejan fragt schon den ganzen Tag, wo Timo ist.');
     if (this.followOk()) {
       await kidSay('timo', 'LEJAN!'); await sayP('lejan', 'TIMO! Bist du jetzt Detektiv? Hast du eine Lupe?');
-      await kidSay('timo', 'Ich hab einen Papi mit einem Notizbuch. Das ist besser als eine Lupe.');
+      await kidSay('timo', playerIsCuche() ? 'Ich hab einen Papi mit einem Notizbuch. Das ist besser als eine Lupe.' : `Ich hab ${G.S.name} dabei. Mit Notizbuch! Das ist besser als eine Lupe.`);
       await sayP('lejan', 'Ich hab heute Teigwaren mit Käse gegessen!'); await kidSay('timo', 'ICH AUCH! Gestern! Und vorgestern!');
       achieve('su_kita'); mood(5);
       if (!s.lejanTip && suAt('s_faehrten') && !suAt('s_gans')) { s.lejanTip = 1; await sayP('lejan', 'Mein Papi hat gesagt, an der Chilbi hat einer ganz viele Jetons von der Achterbahn verloren. Ein Mann mit einem roten Mantel.'); this.note('lejan', 'Lejan (Kita): An der Chilbi hat ein Mann im roten Mantel viele Achterbahn-Jetons verloren.'); }

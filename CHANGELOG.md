@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.33.1 – 07.10.2026
+
+- Elin und Timo sagen nur noch zu Cuche „Papi“. Spielt man jemand anderen, sprechen sie einen mit dem Namen an (auch per Handy, bei Tipps und beim Rechnen); von Cuche reden sie dann als „mein Papi“.
+
 ## 2.33.0 – 07.10.2026
 
 - HD auch in den Szenen: Übergänge (Türen, Treppen, Lift, Zug, Taxi, Boot …) und alle anderen Zwischenszenen werden in vierfacher Auflösung gezeichnet. Die eigene Figur und die Kollegen erscheinen dort jetzt so fein wie in der Welt, und Schriften wie die Ladenschilder sind gestochen scharf.
