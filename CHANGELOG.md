@@ -3,10 +3,6 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
-## 2.35.3 – 09.10.2026
-
-- Kusi heisst jetzt „der Freche“ statt „der kleine Freche“ (auch seine Sprüche spielen nicht mehr auf die Grösse an).
-
 ## 2.35.2 – 09.10.2026
 
 - Startseite: „Steuerung“ und „Was ist neu?“ öffnen sich jetzt als Fenster in der Mitte des Bildschirms (mit ✕ oder Tippen daneben schliessen). Vorher klappte der Inhalt unten auf, wo man ihn nicht sah.
