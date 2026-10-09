@@ -65,10 +65,11 @@ function showTitle() {
         ${save && save.finished ? `<p class="t-done">🏁 Letzte Reise abgeschlossen: ${save.name}, ${Object.keys(save.ach || {}).length} Erlebnisse in ${Math.floor(save.time / 1440) + 1} Tagen.</p>` : ''}
         <button class="t-btn ${cont ? 't-new2' : 't-new'}" id="tNew"><span class="t-ico" aria-hidden="true">🎟</span><span><b>Neues Spiel</b><small>Charakter wählen und los</small></span></button>
       </div>
-      <details class="t-keys"><summary>Steuerung</summary><div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, der Spielstand bleibt auf diesem Gerät.</div></details>
-      <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}${BUILD_VARIANT ? ` · Vorschau ${BUILD_VARIANT}` : ''}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
-      <div class="changelog" id="tChangelog" hidden>${changelogHtml()}</div>
+      <div class="version"><button class="link" id="tKeys">⌨ Steuerung</button><span>v${APP_VERSION}${BUILD_VARIANT ? ` · Vorschau ${BUILD_VARIANT}` : ''}</span><button class="link" id="tLog">Was ist neu?</button></div>
     </section>
+  </div>
+  <div class="t-sheet" id="tSheet" hidden role="dialog" aria-modal="true" aria-labelledby="tSheetTitle">
+    <div class="t-panel"><div class="t-phead"><h2 id="tSheetTitle"></h2><button class="t-x" id="tSheetX" aria-label="Schliessen">✕</button></div><div class="t-pbody" id="tSheetBody"></div></div>
   </div>`;
   if (cont) { try { const pc = t.querySelector('#tCont canvas').getContext('2d'); pc.imageSmoothingEnabled = false; pc.drawImage(portraitCanvas(save.look, '#2a3a52'), 0, 0); } catch (e) {} }
   /* Abfahrtstafel: Fallblatt-Effekt */
@@ -82,8 +83,34 @@ function showTitle() {
     }, 55);
   });
   TitleScene.start(t.querySelector('#tScene'), t.querySelector('#tStage'));
-  const logBtn = t.querySelector('#tLog'), logBox = t.querySelector('#tChangelog');
-  logBtn.onclick = () => { const open = logBox.hidden; logBox.hidden = !open; logBtn.textContent = open ? 'Historie schliessen' : 'Was ist neu?'; logBtn.setAttribute('aria-expanded', String(open)); if (open) logBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+  /* Steuerung und Versionshistorie als Fenster über der Startseite – immer sichtbar, egal wie hoch der Bildschirm ist */
+  const sheet = t.querySelector('#tSheet');
+  const openSheet = (title, html, from) => {
+    t.querySelector('#tSheetTitle').textContent = title;
+    t.querySelector('#tSheetBody').innerHTML = html;
+    t.querySelector('#tSheetBody').scrollTop = 0;
+    sheet.hidden = false; sheet._from = from;
+    t.querySelector('#tSheetX').focus();
+  };
+  const closeSheet = () => { sheet.hidden = true; if (sheet._from) sheet._from.focus(); };
+  t.querySelector('#tSheetX').onclick = closeSheet;
+  sheet.onclick = (e) => { if (e.target === sheet) closeSheet(); };
+  sheet.onkeydown = (e) => { if (e.key === 'Escape') closeSheet(); };
+  t.querySelector('#tKeys').onclick = (e) => openSheet('Steuerung', `
+    <div class="t-ctl"><h3>📱 Am Handy</h3><ul>
+      <li><b>Gehen:</b> Finger auf die Spielwelt legen und in die gewünschte Richtung ziehen – je weiter, desto schneller.</li>
+      <li><b>A-Knopf</b> unten rechts: reden, Türen, Läden, Aktionen. Die Beschriftung über dem Knopf zeigt, was passiert.</li>
+      <li><b>Handy-Symbol</b> oben rechts: Ziele, Tasche, Karte, Freunde, Fotos, Optionen.</li>
+      <li><b>Kamera-Knopf</b> oben: Schnappschuss.</li>
+    </ul></div>
+    <div class="t-ctl"><h3>⌨ Mit Tastatur</h3><ul>
+      <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> oder <kbd>Pfeile</kbd>: gehen, mit <kbd>Shift</kbd> rennen</li>
+      <li><kbd>E</kbd>, <kbd>Leertaste</kbd> oder <kbd>Enter</kbd>: Aktion, reden, Dialog weiter</li>
+      <li><kbd>M</kbd> oder <kbd>Tab</kbd>: Handy öffnen · <kbd>Esc</kbd>: schliessen</li>
+      <li><kbd>P</kbd>: Schnappschuss</li>
+    </ul></div>
+    <p class="t-note">Läuft komplett im Browser. Der Spielstand bleibt auf diesem Gerät gespeichert.</p>`, e.currentTarget);
+  t.querySelector('#tLog').onclick = (e) => openSheet(`Was ist neu? · Version ${APP_VERSION}`, `<div class="changelog">${changelogHtml()}</div>`, e.currentTarget);
   const contBtn = t.querySelector('#tCont');
   if (contBtn) contBtn.onclick = () => { Snd.init(); startGame(save); };
   t.querySelector('#tNew').onclick = async () => {

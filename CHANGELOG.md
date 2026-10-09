@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.35.2 – 09.10.2026
+
+- Startseite: „Steuerung“ und „Was ist neu?“ öffnen sich jetzt als Fenster in der Mitte des Bildschirms (mit ✕ oder Tippen daneben schliessen). Vorher klappte der Inhalt unten auf, wo man ihn nicht sah.
+- Die Steuerung ist ausführlicher erklärt: Handy (Ziehen, A-Knopf, Handy-Symbol, Kamera) und Tastatur.
+
 ## 2.35.1 – 09.10.2026
 
 - iPhone/Safari: Das Spiel nimmt nur noch den sichtbaren Bereich ein, die Adress- und Tableiste von Safari verdecken nichts mehr – weder „Neues Spiel“ auf der Startseite noch die Knöpfe im Spiel.
