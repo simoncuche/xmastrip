@@ -4,7 +4,7 @@ const CREW = [
   { id: 'didu', name: 'Didu', role: 'der Säufer', fn: 'saeufer', bg: '#5a2a24' },
   { id: 'dous', name: 'Dous', role: 'der Gourmet', fn: 'gourmet', bg: '#5a4024' },
   { id: 'coel', name: 'Coel', role: 'der Partylöwe', fn: 'party', bg: '#4a2a5a' },
-  { id: 'kusi', name: 'Kusi', role: 'der kleine Freche', fn: 'frech', bg: '#2a4a5a' },
+  { id: 'kusi', name: 'Kusi', role: 'der Freche', fn: 'frech', bg: '#2a4a5a' },
   { id: 'roemu', name: 'Römu', role: 'der Pilot', fn: 'pilot', bg: '#2a3a5a' },
   { id: 'floeru', name: 'Flöru', role: 'der Tänzer', fn: 'taenzer', bg: '#5a2a4a' },
   { id: 'hoshy', name: 'Hoshy', role: 'der Muskelprotz', fn: 'muskel', bg: '#3a3a3a' },
@@ -1379,7 +1379,7 @@ const Story = {
       saeufer: ['Prost! Auf die Gesundheit – von der hab ich ja genug.', 'Bier ist flüssiges Brot. Ich ernähre mich also gesund.', 'Hast du das Weissbier probiert? Und das Märzen? Und den Zirbenschnaps? Ich schon.'],
       gourmet: ['Der BBQ-Burger hier: Brioche, Röstzwiebeln, rauchige Sauce. Neun von zehn Punkten.', 'Hast du den Kaiserschmarrn auf der Seegrube probiert? Ein Gedicht.', 'Käsekrainer vom Würstelstand um Mitternacht. Das ist österreichische Hochkultur.'],
       party: ['Heute Nacht: Club Lawine in den Bögen! Ab 22 Uhr. Du kommst mit, keine Diskussion.', 'Ich spür\'s, heute wird legendär.', 'Shots? Shots!'],
-      frech: ['Klein, aber oho! Wer mich unterschätzt, zahlt die nächste Runde.', 'Ich hab dem Barkeeper erzählt, du hast Geburtstag. Viel Spass!', 'Wetten, ich schlag dich am Kicker? Mit links.'],
+      frech: ['Frech, aber herzlich! Wer mich unterschätzt, zahlt die nächste Runde.', 'Ich hab dem Barkeeper erzählt, du hast Geburtstag. Viel Spass!', 'Wetten, ich schlag dich am Kicker? Mit links.'],
       pilot: ['Von der Seegrube aus siehst du die ganze Anflugschneise. Innsbruck ist einer der anspruchsvollsten Flughäfen der Alpen.', 'Hätten wir fliegen sollen? Nein. Zug ist Romantik.', 'Wind aus Süden heute – Föhn. Darum ist die Sicht so klar.'],
       taenzer: ['Ich hab mir für heute Abend neue Moves überlegt. Warte nur.', 'Der DJ im Club Lawine spielt angeblich gute Sachen. Ich bin bereit.', 'Tanzen ist wie Jassen: alles eine Frage des Timings.'],
       muskel: ['Armdrücken? Ich hab heute nur 200 Liegestütze gemacht, also bin ich fair.', 'Proteine! Hast du das Schnitzel gesehen? Das sind Proteine.', 'Die Hosenträger der Lederhosen würden bei mir platzen.'],
@@ -2270,7 +2270,7 @@ const Story = {
     if (res == null) return;
     passTime(10);
     if (res) { mood(6); if (opp) await this.say(opp.id, opp.fn === 'frech' ? 'Ich hab dich gewinnen lassen. Aus Mitleid.' : 'Nicht schlecht!'); }
-    else if (opp) await this.say(opp.id, opp.fn === 'frech' ? 'Klein, aber gemein! Hab ich doch gesagt.' : 'Gewonnen!');
+    else if (opp) await this.say(opp.id, opp.fn === 'frech' ? 'Frech gewinnt! Hab ich doch gesagt.' : 'Gewonnen!');
   },
   async jukebox() {
     const c = await this.ask(null, 'Die Jukebox leuchtet. Ein Lied kostet 1 €.', ['Ländler', 'Gemütlicher Bar-Swing', 'Disco-Kracher', 'Doch nicht']);
