@@ -3,6 +3,11 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.35.1 – 09.10.2026
+
+- iPhone/Safari: Das Spiel nimmt nur noch den sichtbaren Bereich ein, die Adress- und Tableiste von Safari verdecken nichts mehr – weder „Neues Spiel“ auf der Startseite noch die Knöpfe im Spiel.
+- Auf niedrigen Bildschirmen wird die Startseite kompakter (kürzerer Text, kleinere Bühne), damit die Knöpfe ohne Scrollen sichtbar sind.
+
 ## 2.35.0 – 09.10.2026
 
 - Neue Startseite: Winternacht am Gleis 4 mit Bergen, Altstadt-Dächern, Mond und Schneefall. Alle 13 Jungs stehen auf dem Perron, laufen herum, tanzen, trinken, hüpfen und rufen Sprüche („PROST!“, „SURF'S UP!“, „SORRY, EH!“). Wer eine Figur antippt, sieht Name und Rolle.

@@ -2,7 +2,13 @@
 G.mode = 'title';
 function isTouch() { return window.matchMedia && (matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window); }
 
+/* Sichtbare Höhe ohne Browser-Leisten (iOS Safari legt die Tableiste sonst über den unteren Rand) */
+function setAppHeight() { document.documentElement.style.setProperty('--app-h', Math.round(window.innerHeight) + 'px'); }
 function boot() {
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  if (window.visualViewport) visualViewport.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', () => setTimeout(setAppHeight, 300));
   View.cv = document.getElementById('screen');
   View.ctx = View.cv.getContext('2d');
   [View.wcv, View.wctx] = canvas(320, 200);
