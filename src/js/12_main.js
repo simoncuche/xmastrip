@@ -39,24 +39,47 @@ function showTitle() {
   const t = document.getElementById('title');
   const save = loadSave();
   t.hidden = false;
-  t.innerHTML = `<div class="snow" aria-hidden="true"></div><div class="title-card">
-    <div class="lights" aria-hidden="true"></div>
-    <p class="title-kicker">❄ Gleis 4 nach Innsbruck · Freitag, 11. Dezember 2026 ❄</p>
-    <h1 class="title-name">🎄 Wiehnachtsreisli 2026 <span>nach Innsbruck</span></h1>
-    <p class="title-sub">Dreizehn Jungs, ein Gruppenbillett, ein Hotel in der Altstadt. Bau dir deinen Charakter, kauf das Billett, erwisch den Zug um 9:10, jass im Zug, finde das Hotel, triff die Kollegen in der Bar – und dann ist Innsbruck dein Spielplatz.</p>
-    <div class="title-btns">
-      ${save && !save.finished ? `<button class="btn primary" id="tCont">Weiterspielen · ${save.name}, ${dateStr(save.time)} ${clockStr(save.time)}</button>` : ''}
-      ${save && save.finished ? `<p class="title-sub">Letzte Reise abgeschlossen: ${save.name}, ${Object.keys(save.ach || {}).length} Erlebnisse in ${Math.floor(save.time / 1440) + 1} Tagen.</p>` : ''}
-      <button class="btn ${save && !save.finished ? '' : 'primary'}" id="tNew">Neues Spiel</button>
-    </div>
-    <div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, Spielstand bleibt auf diesem Gerät.</div>
-    <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}${BUILD_VARIANT ? ` · Vorschau ${BUILD_VARIANT}` : ''}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
-    <div class="changelog" id="tChangelog" hidden>${changelogHtml()}</div>
+  const cont = save && !save.finished;
+  t.innerHTML = `<canvas id="tScene" aria-hidden="true"></canvas>
+  <div class="t-scroll">
+    <header class="t-head">
+      <p class="t-kicker"><span>Fr 11.12.2026</span><span class="t-dot">·</span><span>Abfahrt 09:10</span><span class="t-dot">·</span><span>Gleis 4</span></p>
+      <h1 class="t-logo"><span class="t-l1">Wiehnachts&shy;reisli</span><span class="t-l2">2026 · nach Innsbruck</span></h1>
+    </header>
+    <div class="t-stage" id="tStage"><p class="t-hint">👆 Tipp einen der Jungs an</p></div>
+    <section class="t-card">
+      <div class="lights" aria-hidden="true"></div>
+      <div class="t-board" role="img" aria-label="Abfahrtstafel: 09:10 IR 70 nach Innsbruck Hbf, Gleis 4. Danach S1 nach Sursee, Gleis 2.">
+        <div class="t-row"><b class="t-tm">09:10</b><span class="t-ds"><i data-flap="Innsbruck Hbf">Innsbruck Hbf</i><small>IR 70 · via Zürich HB · Railjet</small></span><b class="t-gl">4</b></div>
+        <div class="t-row t-row2"><b class="t-tm">später</b><span class="t-ds"><i data-flap="Sursee">Sursee</i><small>S1 · Kapitel 2 „Gans oder gar nicht“</small></span><b class="t-gl">2</b></div>
+      </div>
+      <p class="t-sub">Dreizehn Jungs, ein Gruppenbillett und vier Tage Innsbruck: Billett kaufen, Zug erwischen, im Zug jassen, Hotel finden – und dann gehört die Stadt euch. Danach wartet Sursee mit einem Krimi.</p>
+      <div class="t-btns">
+        ${cont ? `<button class="t-btn t-cont" id="tCont"><canvas width="64" height="64" aria-hidden="true"></canvas><span><b>Weiterspielen</b><small>${save.name} · ${dateStr(save.time)} · ${clockStr(save.time)}</small></span></button>` : ''}
+        ${save && save.finished ? `<p class="t-done">🏁 Letzte Reise abgeschlossen: ${save.name}, ${Object.keys(save.ach || {}).length} Erlebnisse in ${Math.floor(save.time / 1440) + 1} Tagen.</p>` : ''}
+        <button class="t-btn ${cont ? 't-new2' : 't-new'}" id="tNew"><span class="t-ico" aria-hidden="true">🎟</span><span><b>Neues Spiel</b><small>Charakter wählen und los</small></span></button>
+      </div>
+      <details class="t-keys"><summary>Steuerung</summary><div class="keys">Tastatur: <kbd>WASD</kbd>/<kbd>Pfeile</kbd> gehen · <kbd>Shift</kbd> rennen · <kbd>E</kbd> Aktion · <kbd>M</kbd> Handy. Am Handy: links ziehen zum Gehen, <kbd>A</kbd> für Aktionen. Läuft komplett im Browser, der Spielstand bleibt auf diesem Gerät.</div></details>
+      <div class="version"><span>Version ${APP_VERSION} · ${APP_VERSION_DATE}${BUILD_VARIANT ? ` · Vorschau ${BUILD_VARIANT}` : ''}</span><button class="link" id="tLog" aria-expanded="false">Was ist neu?</button></div>
+      <div class="changelog" id="tChangelog" hidden>${changelogHtml()}</div>
+    </section>
   </div>`;
+  if (cont) { try { const pc = t.querySelector('#tCont canvas').getContext('2d'); pc.imageSmoothingEnabled = false; pc.drawImage(portraitCanvas(save.look, '#2a3a52'), 0, 0); } catch (e) {} }
+  /* Abfahrtstafel: Fallblatt-Effekt */
+  t.querySelectorAll('[data-flap]').forEach((el, n) => {
+    const target = el.dataset.flap, AB = 'ABCDEFGHIJKLMNOPRSTUVWZ';
+    let step = 0;
+    const iv = setInterval(() => {
+      step++;
+      el.textContent = [...target].map((ch, i) => (ch === ' ' || i < step - 6 - n * 3 ? ch : AB[Math.floor(Math.random() * AB.length)])).join('');
+      if (step > target.length + 8 + n * 3) { clearInterval(iv); el.textContent = target; }
+    }, 55);
+  });
+  TitleScene.start(t.querySelector('#tScene'), t.querySelector('#tStage'));
   const logBtn = t.querySelector('#tLog'), logBox = t.querySelector('#tChangelog');
   logBtn.onclick = () => { const open = logBox.hidden; logBox.hidden = !open; logBtn.textContent = open ? 'Historie schliessen' : 'Was ist neu?'; logBtn.setAttribute('aria-expanded', String(open)); if (open) logBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
-  const cont = t.querySelector('#tCont');
-  if (cont) cont.onclick = () => { Snd.init(); startGame(save); };
+  const contBtn = t.querySelector('#tCont');
+  if (contBtn) contBtn.onclick = () => { Snd.init(); startGame(save); };
   t.querySelector('#tNew').onclick = async () => {
     Snd.init();
     t.hidden = true;

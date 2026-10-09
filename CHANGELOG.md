@@ -3,6 +3,12 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.35.0 – 09.10.2026
+
+- Neue Startseite: Winternacht am Gleis 4 mit Bergen, Altstadt-Dächern, Mond und Schneefall. Alle 13 Jungs stehen auf dem Perron, laufen herum, tanzen, trinken, hüpfen und rufen Sprüche („PROST!“, „SURF'S UP!“, „SORRY, EH!“). Wer eine Figur antippt, sieht Name und Rolle.
+- Ab und zu fährt der Railjet durch – und hinter den Bergen schaut manchmal jemand Grosses hervor.
+- Neues Logo, Abfahrtstafel mit Fallblatt-Effekt (Innsbruck und später Sursee), Knöpfe im Billett-Look, „Weiterspielen“ mit Porträt der eigenen Figur, Steuerung zum Aufklappen. Im Querformat stehen Jungs und Karte nebeneinander.
+
 ## 2.34.1 – 09.10.2026
 
 - Die separate Sursee-Vorschau (/sursee/) ist weg: Das Sursee-Kapitel ist längst im Hauptspiel, es gibt nur noch einen Link.

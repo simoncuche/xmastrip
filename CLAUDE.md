@@ -41,7 +41,8 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 | `11_scenes_sursee.js` | Fassaden aller Sursee-Gebäude (`FACADES`, eigene Zeichnung über `paint(c, t, night, off)`, Helfer `fW`), Band auf der Bühne siehe `Sur.spawnBand` (Stadthalle 20–23 Uhr, Soundcheck 18–20, Kulturwerk ab 20 Uhr, Instrumente `drawBandInstr`), Szenen `boat`, `umzug`, `raebeli`, `putschi` |
 | `11_minisursee.js` | Sursee-Minispiele auf `Mini` (Fischen, Pedalo, Motorboot, SUP, Sprungturm, Velo, Chilbi-Spiele, Achterbahn, Riesenrad, Gansabhauet, Kinderspiele, Rhythmus, Bootsjagd, Detektor) |
 | `11_scenes.js` | `Scene.play(kind, opts)`: animierte 160×96-Pixelszenen im Überblend-Overlay (Brunnenbad, Fiaker, Schlafen, Duschen, WC, Seilbahn, Turm, Taxi, Zug, Tram, Panoramalift, Übergänge bei jedem `warpTo` über `transitionFor(from, to, spawn, opts)`: `door` mit Fassade aus `FACADES`/`facadeFor` (Läden über `SHOP_SIGNS`), `stairs`, `hotellift`, `roomdoor`, `trainexit`/`trainboard` (Aus-/Einsteigen am Perron über `trainDoorScene`, Optionen `station`, `gleis`, `body`, `top`, `band`, `doorCol`; S-Bahn-Farben in `SBAHN_LOOK`), `thrown` (`opts.kind`), Sperrstunde (`kind: 'closing'`); `plain: true` = nur Abblenden, Jessy `jessy` mit `kind` 0–2) |
-| `12_main.js` | Titel, Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
+| `11_title.js` | Startseite `TitleScene` (Canvas hinter dem Titel: Winternacht am Gleis 4, alle `CREW` als Figuren mit Zuständen walk/dance/drink/idle/Sprung, Sprechblasen `TITLE_LINES`, Antippen zeigt Name und Rolle, Railjet, Godzilla hinter den Bergen; Perron-Kante = Unterkante von `#tStage`, Laufbereich = Breite von `#tStage`; stoppt, sobald `#title` versteckt ist) |
+| `12_main.js` | Titel (`showTitle`: Logo, Fallblatt-Abfahrtstafel, Billett-Knöpfe `#tCont`/`#tNew`), Start, Eingabe (Tastatur + Touch-Joystick), Hauptschleife |
 
 ## HD-Grafik
 

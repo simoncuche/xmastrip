@@ -275,7 +275,63 @@ body.stick-on #stickHint { opacity: .2; }
 }
 
 /* ---------- Titel: Winternacht mit Lichterkette und Schnee ---------- */
-#title { position: absolute; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 115%, #1f5a3a 0%, #163a58 38%, #0c1a2f 70%); display: grid; place-items: center; padding: 24px 16px; overflow: auto; }
+#title { position: absolute; inset: 0; z-index: 50; background: #0a1328; overflow: hidden; }
+#tScene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; cursor: pointer; }
+.t-scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; padding: max(18px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); pointer-events: none; touch-action: pan-y; }
+.t-head { text-align: center; display: grid; gap: 8px; animation: tdrop .7s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes tdrop { from { opacity: 0; transform: translateY(-24px) scale(.96); } }
+.t-kicker { margin: 0; display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; font-family: var(--f-sign); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #bfe8c8; text-shadow: 0 1px 0 #000; }
+.t-dot { color: var(--amber); }
+.t-logo { margin: 0; display: grid; justify-items: center; gap: 8px; }
+.t-l1 { font-family: var(--f-pixel); font-weight: 700; font-size: clamp(38px, 11.5vw, 76px); line-height: .95; letter-spacing: .01em; color: #fff4dc; hyphens: manual;
+  text-shadow: 0 3px 0 #c8302a, 0 6px 0 #7a1a18, 0 9px 0 #3a0c0c, 0 0 30px rgba(255,181,61,.45); animation: tbob 3.2s ease-in-out infinite; }
+@keyframes tbob { 50% { transform: translateY(-4px) rotate(-.6deg); } }
+.t-l2 { display: inline-block; font-family: var(--f-sign); font-weight: 700; font-size: clamp(15px, 4.2vw, 21px); letter-spacing: .12em; text-transform: uppercase; color: #fff; background: #c8302a; padding: 4px 18px; position: relative; box-shadow: 0 4px 0 #7a1a18;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 50%, 100% 100%, 0 100%, 10px 50%); }
+.t-stage { flex: 1 0 clamp(150px, 31vh, 330px); width: 100%; position: relative; pointer-events: none; }
+.t-hint { position: absolute; left: 50%; top: 6px; transform: translateX(-50%); margin: 0; font-family: var(--f-sign); font-size: 13px; font-weight: 600; color: #fff; background: rgba(10,19,40,.7); border: 1px solid rgba(255,255,255,.18); padding: 3px 10px; border-radius: 999px; white-space: nowrap; transition: opacity .5s; animation: thint 2.4s ease-in-out 1.5s infinite; }
+.t-hint.gone { opacity: 0; }
+@keyframes thint { 50% { transform: translateX(-50%) translateY(3px); } }
+.t-card { pointer-events: auto; width: min(560px, 100%); display: grid; gap: 14px; background: linear-gradient(180deg, rgba(18,30,52,.94), rgba(11,19,36,.96)); border: 2px solid #2f4a70; border-radius: 18px; padding: 14px 16px 14px; box-shadow: 0 -2px 0 rgba(255,255,255,.05) inset, 0 18px 50px rgba(0,0,0,.6); animation: trise .7s .1s cubic-bezier(.2,1.2,.4,1) both; }
+@keyframes trise { from { opacity: 0; transform: translateY(30px); } }
+.t-card .lights { margin: -2px 4px -4px; }
+.t-board { background: #0b1220; border: 2px solid #23324e; border-radius: 10px; overflow: hidden; font-family: var(--f-sign); }
+.t-row { display: grid; grid-template-columns: 62px 1fr 34px; gap: 10px; align-items: center; padding: 9px 12px; }
+.t-row2 { border-top: 1px dashed #2b3e5c; opacity: .8; }
+.t-tm { color: var(--amber); font-size: 21px; font-variant-numeric: tabular-nums; }
+.t-row2 .t-tm { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; }
+.t-ds i { display: block; font-style: normal; font-weight: 700; font-size: 21px; letter-spacing: .02em; color: #f4f0e4; font-variant-numeric: tabular-nums; }
+.t-ds small { display: block; font-size: 12.5px; color: var(--ink-dim); }
+.t-gl { justify-self: end; background: #f4f0e4; color: #0b1220; border-radius: 5px; padding: 1px 8px; font-size: 18px; }
+.t-sub { margin: 0; color: var(--ink-dim); line-height: 1.5; font-size: 14.5px; }
+.t-btns { display: grid; gap: 10px; }
+.t-btn { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; text-align: left; padding: 12px 16px; border-radius: 14px; border: 0; font-family: var(--f-sign); position: relative; transition: transform .12s, filter .12s; }
+.t-btn b { display: block; font-size: 20px; font-weight: 700; letter-spacing: .01em; }
+.t-btn small { display: block; font-size: 13px; opacity: .85; }
+.t-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.t-btn:active { transform: translateY(2px); }
+.t-new, .t-cont { background: linear-gradient(180deg, #ffc65a, #ff9f2a); color: #2a1606; box-shadow: 0 5px 0 #b8641a, 0 10px 24px rgba(255,160,40,.25); }
+.t-new2 { background: #1d2c48; color: var(--ink); box-shadow: 0 4px 0 #0e1628; border: 1px solid #2f4a70; }
+/* Billett-Look: gestanzte Ränder links und rechts */
+.t-new::before, .t-new::after, .t-cont::before, .t-cont::after { content: ''; position: absolute; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: #111c33; }
+.t-new::before, .t-cont::before { left: -7px; } .t-new::after, .t-cont::after { right: -7px; }
+.t-ico { font-size: 28px; line-height: 1; filter: drop-shadow(0 2px 0 rgba(0,0,0,.25)); }
+.t-cont canvas { width: 44px; height: 44px; image-rendering: pixelated; border-radius: 10px; box-shadow: 0 0 0 2px rgba(42,22,6,.35); }
+.t-done { margin: 0; font-family: var(--f-sign); font-size: 14px; color: #bfe8c8; text-align: center; }
+.t-keys summary { cursor: pointer; font-family: var(--f-sign); font-weight: 600; font-size: 14px; color: var(--ink-dim); list-style: none; }
+.t-keys summary::before { content: '⌨  '; }
+.t-keys summary::-webkit-details-marker { display: none; }
+.t-keys[open] summary { color: var(--ink); margin-bottom: 6px; }
+@media (min-width: 900px) and (min-height: 640px) { .t-card { padding: 18px 22px; } }
+@media (orientation: landscape) and (max-height: 600px) {
+  .t-scroll { display: grid; grid-template-columns: minmax(0, 1fr) min(380px, 46%); grid-template-rows: auto 1fr; column-gap: 16px; align-items: start; padding: 10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left)); }
+  .t-head { grid-column: 1; grid-row: 1; }
+  .t-stage { grid-column: 1; grid-row: 2; height: 100%; min-height: 120px; }
+  .t-card { grid-column: 2; grid-row: 1 / 3; align-self: center; width: auto; min-width: 0; gap: 10px; padding: 10px 14px; }
+  .t-l1 { font-size: clamp(30px, 6vw, 44px); } .t-l2 { font-size: 14px; }
+  .t-sub, .t-row2 { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .t-l1, .t-hint, .t-head, .t-card { animation: none; } }
 .snow { position: absolute; inset: 0; pointer-events: none; overflow: hidden;
   background-image: radial-gradient(2px 2px at 20px 30px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 120px 90px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 200px 160px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 60px 210px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 260px 40px, #fff 60%, transparent 61%), radial-gradient(2px 2px at 160px 260px, #fff 60%, transparent 61%), radial-gradient(1.5px 1.5px at 300px 300px, #fff 60%, transparent 61%);
   background-size: 320px 320px; opacity: .55; animation: snowfall 18s linear infinite; }
