@@ -416,7 +416,7 @@ const Sur = {
       saeufer: h >= 11 || night ? 'wildermann' : null, gourmet: (h >= 11 && h < 14) || (h >= 18 && h < 23) ? 'muehle' : 'lafuga',
       party: night || h >= 18 ? 'tnt' : h >= 14 ? 'chilbi' : 'stadtcafe', frech: h >= 10 && h < 22 ? 'chilbi' : 'roessli', pilot: h >= 9 && h < 16 ? 'martigny' : 'craftwerk',
       taenzer: night ? 'roessli' : 'stadtcafe', charmeur: night ? 'roessli' : 'stadtcafe', muskel: h >= 10 && h < 17 ? 'quai' : 'craftwerk',
-      kanadier: h >= 9 && h < 16 ? 'quai' : 'craftwerk', raucher: h >= 17 || night ? 'diebenturm' : 'lafuga', anwalt: h >= 9 && h < 18 ? 'stadtcafe' : 'wildermann', kassier: 'stadtcafe',
+      kanadier: h >= 9 && h < 16 ? 'quai' : 'craftwerk', raucher: h >= 17 || night ? 'diebenturm' : 'lafuga', anwalt: h >= 9 && h < 18 ? 'stadtcafe' : 'wildermann', kassier: 'stadtcafe', surfer: h >= 10 && h < 16 ? 'quai' : 'craftwerk',
     };
     return T[fn] || 'wildermann';
   },
@@ -679,17 +679,18 @@ Object.assign(Sur, {
   },
   async friendTalk(id) {
     const s = this.st();
-    const opts = ['Wie gefällt dir Sursee?', 'Hilfst du mir beim Fall?', 'Ein Bier zusammen?', 'Tschüss'];
     const fn = FRIENDS[id].fn;
+    const opts = ['Wie gefällt dir Sursee?', 'Hilfst du mir beim Fall?', 'Ein Bier zusammen?', ...(fn === 'surfer' ? ['Fachsimpeln: Hang, Tour, Bike'] : []), 'Tschüss'];
     const first = {
       saeufer: 'Der Wilde Mann ist seit 1495 offen. Das ist Vertrauen. Ich bleib hier.', gourmet: 'Diese Pizza … der Holzofen … ich glaub, ich zieh nach Sursee.', party: 'Chilbi ist wie Club, nur mit Zuckerwatte. Ich liebe es.',
       frech: 'Ich bin dreimal Putschibahn gefahren. Der Mann an der Kasse kennt jetzt meinen Namen. Und meine Mutter.', pilot: 'Ich hab die Drohne über die Altstadt geflogen. Von oben sieht man alles. ALLES.',
       taenzer: 'Rössli Nightbar. Ich sag nur: Schlager-Nacht. Ich war der König.', charmeur: 'Die Barfrau im Rössli hat gelacht. Zweimal. Das zählt.', muskel: 'Bin am See. Wenn du ein Boot brauchst, ich steuer.',
-      kanadier: 'This lake is nice, eh. Like Canada, but smaller. And everything is closed at 6.', raucher: 'Ich steh hier beim Diebenturm. Hab da in Innsbruck … egal. Hier ist gut rauchen.', anwalt: 'Wenn du jemanden anklagst, brauchst du drei Beweise. Nicht zwei. Drei.', kassier: 'Isa hat gesagt, ich soll den Detektiv nicht stören. Also: Ich stör nicht.',
+      kanadier: 'This lake is nice, eh. Like Canada, but smaller. And everything is closed at 6.', raucher: 'Ich steh hier beim Diebenturm. Hab da in Innsbruck … egal. Hier ist gut rauchen.', anwalt: 'Wenn du jemanden anklagst, brauchst du drei Beweise. Nicht zwei. Drei.', surfer: 'Sempachersee, null Wind, null Welle. Ich bin trotzdem aufs SUP. Im Neopren. Die Schwäne fanden\'s lustig.', kassier: 'Isa hat gesagt, ich soll den Detektiv nicht stören. Also: Ich stör nicht.',
     }[fn] || 'Sursee ist herzig.';
     const c = await Story.ask(id, first, opts);
     if (c === 0) await Story.say(id, pick(['Kleiner als Innsbruck, aber das Bier ist näher.', 'Die Altstadt ist schön. Und der See! Im Sommer kommen wir wieder.', 'Hier kennt jeder jeden. Die Wirtin wusste schon meinen Namen.']));
     if (c === 1) await Story.say(id, this.friendHint(id));
+    if (fn === 'surfer' && c === 3) await Story.fibuTalk(id);
     if (c === 2) { if (pay('chf', 6.8)) { consume('lager'); Story.friendDrink(id, 0.24); Snd.sfx('clink'); await Story.say(id, 'Prost! Auf Sursee. Und auf den Detektiv.'); G.S.aff[id] = clamp((G.S.aff[id] || 50) + 4, 0, 100); } else UI.toast('Zu wenig Franken.', 'warn'); }
   },
   friendHint(id) {

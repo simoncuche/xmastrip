@@ -12,6 +12,7 @@ const CREW = [
   { id: 'yaennu', name: 'Yännu', role: 'der Raucher', fn: 'raucher', bg: '#3a3a4a' },
   { id: 'lexx', name: 'Lexx', role: 'der Anwalt', fn: 'anwalt', bg: '#2a2a3a' },
   { id: 'haennsu', name: 'Hännsu', role: 'der Frauenschwarm', fn: 'charmeur', bg: '#5a3a4a' },
+  { id: 'fibu', name: 'Fibu', role: 'der Surfer', fn: 'surfer', bg: '#1f4a52' },
 ];
 /* Vordefiniertes Aussehen der Kollegen (Indizes siehe LOOK_OPTS in 02_look.js). Alles, was hier nicht steht, wird ausgewürfelt.
    Für alle gilt zusätzlich CREW_COMMON: helle Haut und braune Augen. */
@@ -41,6 +42,8 @@ const CREW_LOOKS = {
   lexx: { head: 3, ears: 0, eyes: 3, brows: 4, nose: 3, mouth: 1, mark: 0, build: 0, height: 2, jewel: 0, hair: 10, hairCol: 5, beard: 0, glasses: 0, top: 1, topCol: 13, print: 0, pants: 1, pantsCol: 10, shoes: 0, shoesCol: 0, hat: 0 },
   /* Hännsu: volles, kurzes schwarzes Haar, schwarze Brille, schwarze Kleider */
   haennsu: { head: 0, ears: 1, eyes: 6, brows: 0, nose: 1, mouth: 0, mark: 0, build: 1, height: 1, jewel: 0, hair: 2, hairCol: 0, beard: 1, beardCol: 0, glasses: 2, top: 4, topCol: 16, print: 0, pants: 0, pantsCol: 2, shoes: 0, shoesCol: 1, acc: 0, hat: 0 },
+  /* Fibu: Surfer aus Thun – lange braune Surferhaare, 3-Tage-Bart, Petrol-Hoodie, Cargohose, Wanderschuhe, Rucksack */
+  fibu: { head: 1, ears: 0, eyes: 1, brows: 1, nose: 1, mouth: 2, mark: 0, build: 2, height: 2, jewel: 0, hair: 10, hairCol: 2, beard: 1, beardCol: 2, glasses: 0, top: 3, topCol: 7, print: 5, pants: 2, pantsCol: 6, shoes: 2, shoesCol: 2, acc: 1, hat: 0 },
 };
 const FN_FALLBACK = {
   kassier: ['cuche', 'lexx'], jass: ['lexx', 'didu', 'dous'], arm: ['hoshy', 'coel', 'didu'], darts: ['didu', 'kusi', 'hoshy'],
@@ -72,7 +75,7 @@ const playerIsKassier = () => G.S.pid === 'cuche';
 const T2P = (tx, ty) => ({ x: tx * 16 + 8, y: ty * 16 + 12 });
 /* Abfahrt in Luzern: Der Spieler kauft das Gruppenbillett, alle müssen um 9:10 im Zug sein. */
 const DEP_TIME = 9 * 60 + 10;
-const TICKET_PRICE = 468; /* 12 × 39.00 CHF */
+const TICKET_PRICE = 507; /* 13 × 39.00 CHF */
 const TICKET_CASH = 500;  /* was der Kassier für das Billett herausrückt */
 /* Der Raucher verpasst den Zug – wer auch immer gerade die Rolle hat. Spielt man selbst Yännu, verpasst man ihn selbst:
    Zigaretten kaufen, vor dem Bahnhof rauchen, Zug weg, Taxi-Ticket in der Halle, Taxistand auf dem Bahnhofplatz. */
@@ -257,7 +260,7 @@ const Story = {
   stepsBase() {
     return [
       { t: 'Die Jungs beim Torbogen treffen', d: `Bahnhofplatz Luzern – ${playerIsKassier() ? `${fname(who('party'))} und ${fname(who('foto'))}` : `${fname(who('party'))}, ${fname(who('foto'))} und ${fname(who('kassier'))}`} begrüssen, insgesamt mindestens vier`, done: stageAt('board') },
-      { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 12 Personen', done: hasInv('billett') || stageAt('ride') },
+      { t: 'Gruppenbillett kaufen', d: 'Billettautomat in der Bahnhofshalle, 13 Personen', done: hasInv('billett') || stageAt('ride') },
       { t: 'Pünktlich um 9:10 in den IR nach Zürich', d: 'Gleis 4, umsteigen in Zürich HB', done: stageAt('arrived') },
       { t: 'Hotel Zirbe finden', d: 'Gasse südlich vom Goldenen Dachl', done: stageAt('checkin') },
       { t: 'Einchecken', d: 'Rezeption bei Frau Hofer', done: stageAt('room') },
@@ -347,7 +350,7 @@ const Story = {
       return;
     }
     if (m.id === 'luzern' && s === 'meet') {
-      const spots = [[14, 15, 0], [16, 15, 0], [18, 15, 0], [20, 15, 1], [13, 14, 2], [21, 14, 1], [15, 16, 3], [19, 16, 3], [17, 16, 3]];
+      const spots = [[14, 15, 0], [16, 15, 0], [18, 15, 0], [20, 15, 1], [13, 14, 2], [21, 14, 1], [15, 16, 3], [19, 16, 3], [17, 16, 3], [22, 15, 1]];
       const org = who('kassier'), party = who('party'), foto = who('foto');
       let k = 0;
       for (const id of ids) {
@@ -373,7 +376,7 @@ const Story = {
         return;
       }
       const tm = trainState().tm;
-      const seats = [[46, 3, 2], [46, 2, 2], [48, 2, 1], [46, 5, 2], [48, 5, 1], [46, 6, 2], [48, 6, 1], [50, 2, 2], [52, 2, 1], [50, 3, 2], [52, 3, 1]];
+      const seats = [[46, 3, 2], [46, 2, 2], [48, 2, 1], [46, 5, 2], [48, 5, 1], [46, 6, 2], [48, 6, 1], [50, 2, 2], [52, 2, 1], [50, 3, 2], [52, 3, 1], [50, 5, 2], [52, 5, 1]];
       const jassP = who('jass');
       const order = [jassP, ...ids.filter((x) => x !== jassP)];
       let k = 0;
@@ -1192,7 +1195,7 @@ const Story = {
         f1.solid = false; f1.speed = 95;
         await this.say('me', `${fname(h1).toUpperCase()}! HOSHY! HIER!`);
         await this.walk(f1, p.x - side * 20, p.y);
-        await this.say(h1, `Heast, lass meinen Kollegen in Ruhe! ${h2 !== h1 ? fname(h2) + ' kommt auch gleich' : 'Wir sind zwölf'} – willst du das wirklich?`);
+        await this.say(h1, `Heast, lass meinen Kollegen in Ruhe! ${h2 !== h1 ? fname(h2) + ' kommt auch gleich' : 'Wir sind dreizehn'} – willst du das wirklich?`);
         await this.say(a, 'Schon gut, schon gut. War nur Spass, Burschen.');
         a.path = [{ x: a.x + side * 220, y: a.y }];
         mood(8); G.S.aff[h1] = clamp(G.S.aff[h1] + 10, 0, 100);
@@ -1383,6 +1386,9 @@ const Story = {
       kanadier: ['Sorry, eh! Bei uns in Kanada sind die Berge grösser. Aber das Bier hier ist besser.', 'Jassen ist wie Eishockey, nur mit Karten. Und ohne Zähne verlieren.', 'Ich hab Ahornsirup im Rucksack. Für Notfälle.'],
       raucher: ['Kurz eine rauchen? Draussen natürlich, drinnen ist in Österreich seit 2019 Rauchverbot.', 'Die Trafik beim Bahnhof hat bis 22 Uhr offen. Gut zu wissen.', 'Im Club gibt\'s einen Raucherhof. Dort lernt man die besten Leute kennen.'],
       anwalt: ['Rechtlich gesehen ist Baden im Leopoldsbrunnen... sagen wir mal: eine Grauzone. Eher grau.', 'Beim Jassen gilt: Angeben ist Pflicht! Ausser beim Puur. Steht so im Reglement.', 'Falls du ein Organmandat kriegst: Ich vertrete dich. Mein Honorar: ein Bier.'],
+      surfer: ['Bei uns in Thun sagen sie: Wer surfen will, muss warten können. Auf die Welle, auf den Wind, auf die Rundi.', 'Hast du die Steinschlagnetze über der Strasse gesehen? Ringnetze an Felsankern. Schönes Handwerk.',
+        'Morgen früh mit den Fellen auf den Glungezer? Nein? Dann halt Kaiserschmarrn.', 'Die Nordkette mit dem Bike runter, von der Seegrube bis zur Hungerburg. Im Sommer. Versprochen.', 'Im Dezember surft man im Kopf. Und im Frühling am Atlantik.',
+        'Lawinenbulletin hab ich schon gelesen. Für die Bar gilt Stufe 1: geringe Gefahr. Ausser beim Bierpong.', 'Ich komm aus Thun. Wir haben den See, die Aare und das Stockhorn vor der Haustür. Und trotzdem fahren wir nach Innsbruck.'],
       charmeur: ['Die Bardame hat mir vorhin zugelächelt. Ganz sicher.', 'Ich hab heute schon drei Telefonnummern bekommen. Okay, eine davon war vom Hotel.', 'Frisur sitzt. Hemd sitzt. Heute Abend sitzt alles.'],
     };
     if (m === 'zug') p.push(pick(['Gleich kommt der Arlbergtunnel, über zehn Kilometer!', 'Am Vierertisch ist noch ein Platz frei. Jassen?', 'Im Speisewagen gibt\'s Gulaschsuppe. Und Bier.', `${fname(latecomer())} sitzt jetzt sechs Stunden im Taxi. Für eine Zigarette.`]));
@@ -1456,6 +1462,7 @@ const Story = {
     if (id === who('kassier') && !playerIsKassier()) opts.push({ t: 'Etwas aus der Gruppenkasse?', k: 'kasse' });
     if (id === who('party')) opts.push({ t: 'Was läuft heute Nacht?', k: 'party' });
     if (id === who('food')) opts.push({ t: 'Was soll ich essen?', k: 'food' });
+    if (FRIENDS[id].fn === 'surfer') opts.push({ t: 'Fachsimpeln: Hang, Tour, Bike', k: 'fibu' });
     if (FRIENDS[id].fn === 'anwalt' && G.S.flags.mandat) opts.push({ t: 'Kannst du mir beim Organmandat helfen?', k: 'law' });
     const others = this.friendsHere().filter((x) => x !== id);
     if (others.length && ['bar', 'stueberl', 'club', 'ibk'].includes(G.map.id)) opts.push({ t: 'Gemeinsam ein Taxi nehmen', k: 'taxi' });
@@ -1506,7 +1513,42 @@ const Story = {
       case 'food': await this.say(id, G.S.st.food < 40 ? 'In der Gamsbock Bar: der BBQ-Burger. Im Stüberl: Gröstl mit Spiegelei. Und nach Mitternacht: Käsekrainer am Würstelstand beim Bahnhof.' : 'Du bist ja noch satt. Aber Kaiserschmarrn passt immer rein.'); break;
       case 'law': await this.say(id, 'Laut Gesetz… zahl einfach. Und bade das nächste Mal in der Hotel-Dusche. Kostet nichts.'); break;
       case 'taxi': await this.taxi({ group: true }); break;
+      case 'fibu': await this.fibuTalk(id); break;
     }
+  },
+  /* Fibu (der Surfer aus Thun) fachsimpelt: Hangsicherungen, Skitouren, Bike – je Thema eine kleine Frage */
+  async fibuTalk(id) {
+    const T = [
+      { t: 'Hangsicherung', a: [
+        'Siehst du die Netze am Hang über der Strasse? Ringnetze. Die hängen an Tragseilen, und die Seile an Ankern, die metertief im Fels stecken.',
+        'Kommt ein Block runter, verformen sich Bremsringe in den Seilen und schlucken die Energie. Die besten Netze halten mehrere tausend Kilojoule aus.',
+        'Und wo der Hang selber rutscht: Bodennägel, Spritzbeton, Drahtgeflecht. Oder ganz sanft mit Weidenstecklingen – die Wurzeln halten den Boden zusammen.'],
+        q: 'Was hält so ein Steinschlagnetz am Hang fest?', o: ['Anker und Tragseile', 'Viel Kabelbinder', 'Gutes Zureden'], ok: 'Genau! Anker, Seile, Bremsringe. Du könntest bei uns anfangen.', no: 'Haha, nein. Anker im Fels und Tragseile. Kabelbinder halten nur mein Bike-Schutzblech.' },
+      { t: 'Skitouren', a: [
+        'Felle auf die Ski, und dann gehst du hoch, statt den Lift zu nehmen. Oben eine Thermoskanne Tee – und die Abfahrt gehört dir allein.',
+        'Ohne LVS, Schaufel und Sonde geh ich nirgends hin. Und am Morgen zuerst das Lawinenbulletin. In der Schweiz macht es das SLF in Davos, hier in Tirol der Lawinenwarndienst.',
+        'Rund um Innsbruck hat\'s Touren ohne Ende. Und daheim fahr ich gern ins Diemtigtal, gleich hinter Thun.'],
+        q: 'Was gehört bei einer Skitour in den Rucksack?', o: ['LVS, Schaufel und Sonde', 'Ein Liegestuhl', 'Fondue-Caquelon'], ok: 'Richtig. Und Tee. Und Schoggi. Du darfst mitkommen.', no: 'Fast … aber zuerst LVS, Schaufel und Sonde. Das Caquelon gibt\'s erst in der Hütte.' },
+      { t: 'Bike', a: [
+        'Der Nordkette Singletrail führt von der Seegrube runter zur Hungerburg. Einer der härtesten Trails in den Alpen: Felsstufen, Wurzeln, Spitzkehren.',
+        'In Spitzkehren musst du das Hinterrad versetzen. Bremsen, Gewicht nach vorne, Hinterrad rum. Sieht cool aus, wenn\'s klappt. Sonst gibt\'s blaue Flecken.',
+        'Daheim fahr ich nach Feierabend über dem Thunersee. Und im Winter? Fatbike im Schnee. Oder Glühwein. Meistens Glühwein.'],
+        q: 'Was ist eine Spitzkehre?', o: ['Eine enge Kurve, fast 180 Grad', 'Ein Bike mit spitzem Sattel', 'Ein Tiroler Schnaps'], ok: 'Genau! Und auf dem Singletrail kommt die nächste gleich hinterher.', no: 'Nein, haha. Eine enge Kurve, fast eine Wende. Der Schnaps kommt erst danach.' },
+      { t: 'Surfen', a: [
+        'Ich bin Surfer durch und durch. Im Frühling an den Atlantik nach Frankreich, im Sommer aufs Wasser, wo immer es sich bewegt.',
+        'Auf dem Thunersee halt mit dem Windsurfer oder dem SUP, wenn der Wind mal mag. Und im Winter surf ich halt auf Pulverschnee.'],
+        q: 'Was ist das Wichtigste beim Surfen?', o: ['Geduld – auf die richtige Welle warten', 'Möglichst viel paddeln, egal wohin', 'Ein teures Brett'], ok: 'Genau. Warten können. Wie an der Bar, wenn der Barkeeper dich ignoriert.', no: 'Nein, Geduld! Die richtige Welle kommt. Oder halt die nächste Runde.' },
+    ];
+    const c = await this.ask(id, 'Worüber willst du fachsimpeln?', [...T.map((x) => x.t), 'Ein anderes Mal']);
+    if (c >= T.length) return;
+    const top = T[c];
+    for (const l of top.a) await this.say(id, l);
+    const r = await this.ask(id, top.q, top.o);
+    if (r === 0) { mood(4); G.S.aff[id] = clamp((G.S.aff[id] || 50) + 4, 0, 100); Snd.sfx('ding'); await this.say(id, top.ok); }
+    else { mood(1); await this.say(id, top.no); }
+    const f = G.S.flags.fibuTopics || (G.S.flags.fibuTopics = {});
+    f[c] = 1;
+    if (Object.keys(f).length >= T.length) achieve('fibu');
   },
   async meetTalk(id) {
     const fl = G.S.flags, org = who('kassier'), party = who('party'), foto = who('foto');
@@ -1579,8 +1621,8 @@ const Story = {
     if (hasInv('billett')) { await this.say(null, 'Du hast das Gruppenbillett schon in der Tasche. Ab auf Gleis 4!'); return; }
     if (stageAt('ride')) { await this.say(null, 'Der Automat zeigt „Ausser Betrieb“.'); return; }
     const c = await this.ask('Billettautomat', 'SBB Billettautomat. Bitte wählen:', [
-      { t: 'Gruppenbillett Luzern–Innsbruck Hbf, 12 Personen, 2. Klasse', r: fmtChf(TICKET_PRICE) },
-      { t: 'Gruppenbillett 1. Klasse, 12 Personen', r: fmtChf(TICKET_PRICE * 2) },
+      { t: 'Gruppenbillett Luzern–Innsbruck Hbf, 13 Personen, 2. Klasse', r: fmtChf(TICKET_PRICE) },
+      { t: 'Gruppenbillett 1. Klasse, 13 Personen', r: fmtChf(TICKET_PRICE * 2) },
       { t: 'Einzelbillett Luzern–Innsbruck Hbf', r: fmtChf(78) },
       { t: 'Abbrechen' },
     ]);
@@ -1591,7 +1633,7 @@ const Story = {
     pay('chf', price);
     addInv('billett');
     achieve('billett');
-    await this.say(null, `Der Automat rattert, dann rutscht ein langes Papier heraus: Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen${c === 1 ? ', 1. Klasse' : ''}, gültig heute.`);
+    await this.say(null, `Der Automat rattert, dann rutscht ein langes Papier heraus: Gruppenbillett Luzern – Innsbruck Hbf, 13 Personen${c === 1 ? ', 1. Klasse' : ''}, gültig heute.`);
     UI.toast(`Gruppenbillett eingepackt. Jetzt zu den Jungs auf Gleis 4 – Abfahrt ${clockStr(DEP_TIME)}!`);
   },
   /* ---------- Yännu: Zug verraucht, Taxi nach Innsbruck ---------- */
@@ -1782,10 +1824,10 @@ const Story = {
     const cond = actor || { name: 'Zugbegleiterin', look: this.conductorLook() };
     if (actor) { actor.bubble = '!'; actor.bubbleT = 1.5; await sleep(400); }
     await this.say(cond, 'Grüß Gott, die Fahrkarten bitte!');
-    await this.say('me', 'Hier, das Gruppenbillett für zwölf Personen.');
+    await this.say('me', 'Hier, das Gruppenbillett für dreizehn Personen.');
     if (G.S.flags.late) {
-      await this.say(cond, 'Zwölf? Ich zähle elf.');
-      await this.say(FRIENDS.lexx && 'lexx' !== latecomer() ? 'lexx' : voice('jass'), `Der Zwölfte sitzt in einem Taxi irgendwo bei Sargans. Lange Geschichte. Rechtlich gesehen ist das Billett trotzdem gültig.`);
+      await this.say(cond, 'Dreizehn? Ich zähle zwölf.');
+      await this.say(FRIENDS.lexx && 'lexx' !== latecomer() ? 'lexx' : voice('jass'), `Der Dreizehnte sitzt in einem Taxi irgendwo bei Sargans. Lange Geschichte. Rechtlich gesehen ist das Billett trotzdem gültig.`);
     }
     await this.say(cond, 'Danke, passt. Gute Weiterfahrt nach Innsbruck – und viel Spass!');
     G.busy--;
@@ -1834,11 +1876,11 @@ const Story = {
     if (k) { k.bubble = '!'; k.bubbleT = 1.5; await sleep(350); }
     if (meK) {
       UI.toast('Dein Rucksack klimpert verdächtig …');
-      await this.say(null, 'Im Rucksack, sauber in Socken eingewickelt: zwölf Mini-Fläschli. Du hast sie extra für die Grenze eingepackt.');
+      await this.say(null, 'Im Rucksack, sauber in Socken eingewickelt: dreizehn Mini-Fläschli. Du hast sie extra für die Grenze eingepackt.');
       await this.say('me', 'Jungs! Mir sind grad über d\'Grenze – Österreich! Das schreit nach ere Schöttli-Rundi!');
     } else {
       await this.say(K, `${G.S.name}! Mir sind grad über d'Grenze – Österreich! Das schreit nach ere Schöttli-Rundi!`);
-      await this.say(null, `${fname('kusi')} öffnet seinen Rucksack: Zwischen Socken und Ladekabel klimpern zwölf Mini-Fläschli.`);
+      await this.say(null, `${fname('kusi')} öffnet seinen Rucksack: Zwischen Socken und Ladekabel klimpern dreizehn Mini-Fläschli.`);
       await this.say(K, `Eis für jede – und eis für de ${fname(late)} im Taxi. Das trink ich stellvertretend. Isch Ehresach.`);
     }
     if (crew.length) await this.say(pick(crew), pick(['SCHÖTT-LI! SCHÖTT-LI! SCHÖTT-LI!', 'Kusi, du bisch en Held!', 'Ich han gwüsst, dass de Rucksack z\'schwer isch für nur e Zahbürschte.']));
@@ -1945,7 +1987,7 @@ const Story = {
       await this.say(hof, 'Grüß Gott im Hotel Zirbe! Haben Sie reserviert?');
       const c = await this.ask(hof, 'Auf welchen Namen läuft die Reservation?', [`Gruppe ${org}, aus Luzern`, 'Äh… gute Frage']);
       if (c === 1) await this.say(hof, 'Ah, Sie sind sicher der Nachzügler der Schweizer Gruppe! Ihre Freunde sind schon oben.');
-      else await this.say(hof, 'Die zwölf Herren aus der Schweiz! Ihre Freunde haben schon eingecheckt.');
+      else await this.say(hof, 'Die dreizehn Herren aus der Schweiz! Ihre Freunde haben schon eingecheckt.');
       await this.say(hof, `Dann trage ich Sie ein: ${G.S.name}. Darf ich noch einen Ausweis sehen?`);
       const c2 = await this.ask('me', 'Du kramst in deiner Tasche…', ['Identitätskarte zeigen', 'Pass zeigen', 'Führerschein zeigen']);
       if (c2 === 2) await this.say(hof, 'Der Führerschein geht ausnahmsweise. Sie schauen ja vertrauenswürdig aus.');
@@ -1976,7 +2018,7 @@ const Story = {
       if (G.S.stage === 'room' && !G.S.flags.roomHint) { G.S.flags.roomHint = 1; UI.toast('Pack deinen Rucksack aus (Kofferablage unten links).'); }
       return;
     }
-    const rooms = { 301: ['didu', 'dous'], 302: ['coel', 'kusi'], 303: ['roemu', 'floeru'], 304: ['hoshy', 'oelu'], 305: ['yaennu', 'lexx'], 306: ['haennsu', 'cuche'] };
+    const rooms = { 301: ['didu', 'dous'], 302: ['coel', 'kusi'], 303: ['roemu', 'floeru'], 304: ['hoshy', 'oelu'], 305: ['yaennu', 'lexx'], 306: ['haennsu', 'cuche', 'fibu'] };
     const inside = (rooms[n] || []).filter((id) => FRIENDS[id] && this.schedule(id) === 'hotel');
     Snd.sfx('door');
     if (!inside.length) { await this.say(null, `Du klopfst an Zimmer ${n}. Niemand macht auf.`); return; }
@@ -2749,7 +2791,7 @@ const Story = {
   async goHome() {
     G.busy++;
     const here = Object.keys(FRIENDS);
-    await this.say(voice('kassier'), `Alle da? Zwölf … ${G.S.flags.jail ? 'elf, einer sitzt noch' : 'zwölf'}. Billette hab ich. Luzern, wir kommen.`);
+    await this.say(voice('kassier'), `Alle da? Dreizehn … ${G.S.flags.jail ? 'zwölf, einer sitzt noch' : 'dreizehn'}. Billette hab ich. Luzern, wir kommen.`);
     await this.say(voice('party'), 'Letzte Runde war gestern. Oder vorgestern. Egal. Es war LEGENDÄR.');
     achieve('heimreise');
     await Scene.play('train', { text: 'Railjet · Innsbruck → Zürich HB → Luzern', ms: 4200, label: 'RAILJET', col: '#a8282a', lake: true, keep: true });
@@ -2912,7 +2954,7 @@ const Story = {
     const I = ITEMS[id];
     if (I.t === 'pack') { takeInv(id); addInv(I.give, I.count); UI.toast(`${I.count} × ${ITEMS[I.give].n} ausgepackt.`); return; }
     if (I.t === 'smoke') return this.smoke();
-    if (I.t === 'ticket') { await this.say(null, 'Gruppenbillett Luzern – Innsbruck Hbf, 12 Personen, 2. Klasse, gültig heute. Nicht verlieren!'); return; }
+    if (I.t === 'ticket') { await this.say(null, 'Gruppenbillett Luzern – Innsbruck Hbf, 13 Personen, 2. Klasse, gültig heute. Nicht verlieren!'); return; }
     if (I.t === 'read') { await this.say(null, pick(['Schlagzeile: „Föhnsturm am Wochenende erwartet“.', 'Sportteil: Ski-Saison startet bald am Gletscher.', 'Lokales: Neue Tram-Linie bis zum Flughafen geplant?'])); passTime(10); mood(1); return; }
     if (I.t === 'souv') { await this.say(null, { schneekugel: 'Du schüttelst die Schneekugel. Schnee rieselt aufs Goldene Dachl.', magnet: 'Ein Magnet mit dem Goldenen Dachl. Für den Kühlschrank zu Hause.', postkarte: 'Eine Postkarte der Nordkette. Am Schreibtisch im Hotel kannst du sie schreiben.', edelweiss: 'Ein Edelweiss-Anstecker. Du steckst ihn dir an.', muenze: 'Deine Glücksmünze.', strahl: 'Ein goldener, gezackter Strahl aus dünnem Blech. Er gehört zur Sonnenmaske der Zunft.', sonnenmaske: 'Die goldene Sonnenmaske der Zunft Heini von Uri. Ein Strahl fehlt.', felchen: 'Ein schöner Felchen aus dem Sempachersee. Fischer Wäli wird sich freuen.', pluschgans: 'Eine weiche Plüschgans. Timo hat sie Ruedi getauft.', legofeuerwehr: 'Ein Lego-Feuerwehrauto mit ausfahrbarer Leiter. Timo baut es schon im Kopf zusammen.', kinderhelm: 'Ein kleiner Velohelm mit Blitzen drauf. Timo will ihn nie mehr ausziehen.', plektren: 'Drei Plektren in Rot, Gelb und Glitzer. Für Elins Gitarre.', krimi: 'Ein Lokalkrimi. Der Täter ist … nein, nicht vorblättern.', bilderbuch: 'Ein Bilderbuch über einen kleinen roten Traktor. Thierry kennt es auswendig.', detektor: hasInv('detektor') && Sur.active() ? 'Der Metalldetektor. Im Römer-Vicus westlich der Altstadt piepst er bestimmt.' : 'Ein Metalldetektor.', konzertticket: 'Konzertticket für die Stubete Gäng in der Stadthalle Sursee. Los geht es um 20 Uhr.' }[id] || I.n); return; }
     if (I.uses) { G.S.uses[id] = (G.S.uses[id] || I.uses) - 1; if (G.S.uses[id] <= 0) { takeInv(id); delete G.S.uses[id]; } }

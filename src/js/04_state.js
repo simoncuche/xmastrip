@@ -114,6 +114,7 @@ const ACH = {
   jass: ['Jass-König', 'Eine Jass-Runde gewonnen'],
   match: ['Match!', 'Alle neun Stiche in einer Runde geholt'],
   checkin: ['Eingecheckt', 'Im Hotel Zirbe eingecheckt'],
+  fibu: ['Fachsimpel', 'Mit Fibu über Hangsicherung, Skitouren, Bike und Surfen gefachsimpelt'],
   ersteRunde: ['Prost!', 'Das erste Bier in Innsbruck'],
   burger: ['Burger-Boss', 'Einen Burger verdrückt'],
   brunnen: ['Brunnenbad', 'Im Leopoldsbrunnen gebadet'],

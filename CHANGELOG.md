@@ -3,6 +3,13 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.34.0 – 09.10.2026
+
+- Neuer Kollege: **Fibu, der Surfer** aus Thun. Lange braune Surferhaare, Petrol-Hoodie, Rucksack. Man kann ihn auch selber spielen.
+- Mit Fibu kann man fachsimpeln: Hangsicherungen (Steinschlagnetze, Anker, Bodennägel), Skitouren (Felle, LVS, Lawinenbulletin), Bike (Nordkette Singletrail, Spitzkehren) und Surfen – je mit einer kleinen Frage. Wer alle vier Themen durch hat, bekommt das Erlebnis „Fachsimpel“.
+- Fibu sitzt im Zug mit am Tisch, wohnt im Hotel mit Hännsu und Cuche in Zimmer 306, jasst mit (eigene Sprüche) und ist in Sursee tagsüber am Quai.
+- Die Reisegruppe ist jetzt dreizehn Mann: Gruppenbillett für 13 Personen (507 CHF).
+
 ## 2.33.2 – 07.10.2026
 
 - Neue Einsteige-Animation für die S-Bahn nach Sursee: Statt einer Haustür siehst du jetzt Gleis 2 in Luzern, läufst über den Perron zur weiss-roten S-Bahn, die Türen gehen auf, du steigst ein, es piepst und die Türen schliessen.

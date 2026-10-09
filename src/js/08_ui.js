@@ -369,7 +369,7 @@ const UI = {
 function itemDesc(id) {
   const it = ITEMS[id]; if (!it) return '';
   const p = [];
-  if (it.t === 'ticket') p.push('12 Personen, 2. Klasse, gültig heute');
+  if (it.t === 'ticket') p.push('13 Personen, 2. Klasse, gültig heute');
   if (it.alc) p.push('Alkohol');
   if (it.food) p.push(it.food >= 50 ? 'macht richtig satt' : it.food >= 25 ? 'macht satt' : 'Snack');
   if (it.en > 10) p.push('weckt auf');

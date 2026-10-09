@@ -116,6 +116,12 @@ const Jass = {
         ['In Dublin het {a} sis Portemonnaie im Pub vergässe. Zwei Mal.', 'Und beidi Mal het\'s de Barkeeper zruggbracht. Irland, gäll.'],
         ['Weisch no, wie mir z\'Turin de Zug verpasst händ?', 'Mir händ en nöd verpasst. Er isch eifach zfrüe gfahre.'],
       ];
+      /* Fibu, der Surfer aus Thun */
+      if (FRIENDS.fibu || G.S.pid === 'fibu') { const Fb = fname('fibu'); TRIP.push(
+        [`${Fb}, wie isch de Swell hüt?`, 'Flach wie de Thunersee am Morge. Drum jass ich.'],
+        [`De ${Fb} het scho d'Lawinebulletin vo morn glese.`, 'Für d\'Bar gilt Stufe eis. Für de Jasstisch Stufe vier.'],
+        [`${Fb}, chunsch mit de Felle uf d'Nordkette?`, 'Nur wenn obe e Hütte mit Kaiserschmarrn wartet.'],
+      ); }
       /* Flöru und Hännsu sind 40 */
       const F = fname('floeru'), Hn = fname('haennsu');
       TRIP.push(
