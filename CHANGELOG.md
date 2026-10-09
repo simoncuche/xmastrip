@@ -3,6 +3,10 @@
 Die aktuelle Version steht immer zuoberst. `build.py` liest diese Datei und zeigt sie im Spiel
 (Startbildschirm und Handy → Optionen). Format: `## x.y.z – TT.MM.JJJJ`, darunter Stichpunkte mit `- `.
 
+## 2.34.1 – 09.10.2026
+
+- Die separate Sursee-Vorschau (/sursee/) ist weg: Das Sursee-Kapitel ist längst im Hauptspiel, es gibt nur noch einen Link.
+
 ## 2.34.0 – 09.10.2026
 
 - Neuer Kollege: **Fibu, der Surfer** aus Thun. Lange braune Surferhaare, Petrol-Hoodie, Rucksack. Man kann ihn auch selber spielen.

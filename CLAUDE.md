@@ -49,11 +49,10 @@ Dateien mit kleinerer Nummer zugreifen (sonst TDZ-Fehler bei `const`). Funktione
 - Bei HD rendern die Ansichten `View.cv/wcv/lcv` in voller Geräteauflösung: `View.k` = Gerätepixel pro Spielpixel (gerade, aus `devicePixelRatio` und Zoom `gleis4-zoom` = `nah`/`normal`/`weit` über `ZOOM_TILES`), gezeichnet wird mit `setTransform(View.k, …)`. Wer aus `View.wcv` ausschneidet, rechnet die Quellkoordinaten mal `View.k`. Ist `View.k` durch 4 teilbar, nimmt `drawActor` die Figuren aus `getSheetHD(look, 4)`. Bei Klassisch ist `View.k = 1`.
 - HD-Extras: `groundDetail(m)` (Halme, Kiesel, Holzmaserung), `shadeObject` (Lichtverlauf grosser Objekte), Kontaktschatten in `renderWorld`, `rimLight` für Figuren und kleine Objekte. Szenen (`Scene.play`) zeichnen weiter in 160×96, die Leinwand ist bei HD aber `SCENE_SS`-mal (4) so gross; `sceneCtx` biegt `drawImage` so um, dass normale Sprite-Sheets (`getSheet`, merken sich `_look`) automatisch durch `hdSheetOf(sheet, 4)` ersetzt werden. Minispiele bleiben in ihrer eigenen Auflösung.
 
-## Vorschau des Branches sursee
+## Veröffentlichung
 
-- GitHub Pages (`.github/workflows/pages.yml`, läuft immer vom Hauptbranch) baut die Hauptversion nach `/` und den Branch `sursee` nach `/sursee/`.
-- Ein Push auf `sursee` startet `sursee-preview.yml` („Sursee-Vorschau“); dessen Abschluss löst `pages.yml` per `workflow_run` aus.
-- Die Vorschau wird mit `BUILD_VARIANT=sursee NO_TRACK=1 python3 build.py` gebaut: eigener Speicherstand (`SAVE_KEY` + `-sursee`), kein Tracking, Hinweis „Vorschau“ auf dem Titelbildschirm.
+- GitHub Pages (`.github/workflows/pages.yml`) baut bei jedem Push auf `main` und veröffentlicht `dist/` unter https://simoncuche.github.io/xmastrip/.
+- `build.py` kennt noch `BUILD_VARIANT` (eigener Speicherstand `SAVE_KEY` + `-<variante>`, Hinweis „Vorschau“ im Titel) und `NO_TRACK=1` (ohne Tracking), falls wieder einmal eine Vorschau gebraucht wird.
 
 ## Tracking und Tracker-Seite
 
